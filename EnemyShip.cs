@@ -1,6 +1,6 @@
-﻿using HarmonyLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,76 +8,88 @@ using UnityEngine;
 
 namespace DSP_Battle
 {
-    public class Ship
+    public class EnemyShip
     {
+        public ShipData shipData;
+        public ShipRenderingData renderingData;
+        public ShipUIRenderingData renderingUIData;
+        public int hp;
+        public float maxSpeed;
 
-        public static ShipData shipData = new ShipData();
-        public static int targetStationGid = 1;
-        public static ShipRenderingData renderingData = new ShipRenderingData();
-        public static ShipUIRenderingData renderingUIData = new ShipUIRenderingData();
-        public static bool paused = false;
-        // 需要存档。后续需要开数组？
-        public static int CurHp = 0;
-
-        public static void Init()
+        public enum State
         {
-            renderingData.SetEmpty();
-            renderingData.gid = 10000;
-            renderingUIData.SetEmpty();
-            renderingUIData.gid = 10001;
+            active,
+            distroyed,
+            landed,
+        }
+        public State state;
 
+        public VectorLF3 uPos
+        {
+            get { return shipData.uPos; }
+            set { shipData.uPos = value; }
+        }
+
+        public EnemyShip() : this(0, 0, VectorLF3.zero, 0, 0, 0) { }
+
+        public EnemyShip(int gid, int stationGid, VectorLF3 initPos, int initHp, float maxSpeed, int itemId)
+        {
             shipData = new ShipData();
+            shipData.direction = 1;
+            shipData.stage = 0;
 
             shipData.direction = 1;
             shipData.stage = 0;
-            shipData.shipIndex = 1;
             shipData.uAngularVel = Vector3.zero;
             shipData.uAngularSpeed = 0;
-            shipData.otherGId = targetStationGid;
-            shipData.planetB = GameMain.data.galacticTransport.stationPool[targetStationGid].planetId;
+            shipData.shipIndex = gid;
+            shipData.otherGId = stationGid;
+            shipData.planetB = GameMain.data.galacticTransport.stationPool[stationGid].planetId;
+            shipData.uPos = initPos;
+            shipData.itemId = itemId;
+            shipData.uRot = Quaternion.identity;
+            hp = initHp;
+            this.maxSpeed = maxSpeed;
+            state = State.active;
 
-            PlanetData planet = GameMain.galaxy.PlanetById(shipData.planetB);
-            VectorLF3 starPos = planet.star.uPosition;
-            VectorLF3 planetPos = planet.uPosition;
-            shipData.uPos = (starPos + planetPos) / 2;
-            shipData.uRot = GameMain.data.galaxy.astroPoses[shipData.planetB].uRot;
+            renderingData = new ShipRenderingData();
+            renderingData.SetEmpty();
+            renderingData.gid = gid;
 
-            CurHp = 100; //hp
-
-            Main.logger.LogInfo("==========> Started!");
-            // MovePlayer();
+            renderingUIData = new ShipUIRenderingData();
+            renderingUIData.SetEmpty();
+            renderingUIData.gid = gid;
         }
 
-        public static void MovePlayer()
+        public void BeAttacked(int atk)
         {
-            GameMain.mainPlayer.uPosition = shipData.uPos;
+            hp -= atk;
+            if (hp <= 0)
+            {
+                hp = 0;
+                state = State.distroyed;
+            }
         }
 
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(GameData), "GameTick")]
-        public static void GameData_GameTick(ref GameData __instance, long time)
+        public void Update()
         {
-            if (shipData.shipIndex == 0 || paused) return;
+            if (state != State.active) return;
             Quaternion quaternion = Quaternion.identity;
             bool flag7 = false;
             if (shipData.stage == 0) UpdateStage0(out quaternion, out flag7);
             else if (shipData.stage == 1) UpdateStage1();
             else if (shipData.stage == 2) UpdateStage2();
 
-
             PlanetData planet = GameMain.galaxy.PlanetById(shipData.planetB);
             renderingData.SetPose(shipData.uPos, flag7 ? quaternion : shipData.uRot, GameMain.data.relativePos, GameMain.data.relativeRot, shipData.uVel * shipData.uSpeed, 6002);
             renderingUIData.SetPose(shipData.uPos, flag7 ? quaternion : shipData.uRot, (float)(planet.star.uPosition - planet.uPosition).magnitude, shipData.uSpeed, 6002);
             if (renderingData.anim.z < 0) renderingData.anim.z = 0;
-
-
-            Main.logger.LogInfo("=======> " + flag7 + ", " + shipData.uPos + ", " + renderingData.pos);
         }
 
-        // Decompile the original code
-        static void UpdateStage0(out Quaternion quaternion, out bool flag7)
+        private void UpdateStage0(out Quaternion quaternion, out bool flag7)
         {
-            float shipSailSpeed = GameMain.history.logisticShipSailSpeedModified;
+            // float shipSailSpeed = GameMain.history.logisticShipSailSpeedModified;
+            float shipSailSpeed = maxSpeed;
 
             float num31 = Mathf.Sqrt(shipSailSpeed / 600f);
             float num32 = num31;
@@ -342,11 +354,10 @@ namespace DSP_Battle
 
             renderingData.anim.w = shipData.warpState;
         }
-
-        static void UpdateStage1()
+        private void UpdateStage1()
         {
 
-            float shipSailSpeed = GameMain.history.logisticShipSailSpeedModified;
+            float shipSailSpeed = maxSpeed;
             float num31 = Mathf.Sqrt(shipSailSpeed / 600f);
             float num36 = num31 * 0.006f + 1E-05f;
             AstroPose[] astroPoses = GameMain.data.galaxy.astroPoses;
@@ -408,15 +419,14 @@ namespace DSP_Battle
             shipData.uAngularSpeed = 0f;
             renderingData.anim.z = num78 * 1.7f - 0.7f;
         }
-        static void UpdateStage2()
+        private void UpdateStage2()
         {
             shipData.t -= 0.0334f;
 
             if (shipData.t <= 0f)
             {
                 shipData.t = 0f;
-                shipData.shipIndex = 0;
-                Main.logger.LogInfo("==========> Finished!");
+                state = State.landed;
                 return;
             }
 
@@ -437,65 +447,22 @@ namespace DSP_Battle
             shipData.pPosTemp = Vector3.zero;
             shipData.pRotTemp = Quaternion.identity;
             renderingData.anim.z = 0;
-
         }
 
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(LogisticShipRenderer), "Update")]
-        public static void LogisticShipRenderer_Update(ref LogisticShipRenderer __instance)
+        public void Export(BinaryWriter w)
         {
-            if (shipData.shipIndex == 0) return;
-            if (__instance.transport == null) return;
-            if (__instance.capacity < __instance.shipCount + 1)
-            {
-                __instance.Expand2x();
-            }
-
-            __instance.shipsArr[__instance.shipCount] = renderingData;
-            __instance.shipCount++;
-
-            ref ComputeBuffer shipsBuffer = ref AccessTools.FieldRefAccess<LogisticShipRenderer, ComputeBuffer>(__instance, "shipsBuffer");
-            if (shipsBuffer != null)
-            {
-                shipsBuffer.SetData(__instance.shipsArr, 0, 0, __instance.shipCount);
-            }
+            shipData.Export(w);
+            w.Write(hp);
+            w.Write(maxSpeed);
+            w.Write((int)state);
         }
 
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(LogisticShipUIRenderer), "Update")]
-        public static void LogisticShipUIRenderer_Update(ref LogisticShipUIRenderer __instance)
+        public void Import(BinaryReader r)
         {
-            if (shipData.shipIndex == 0) return;
-
-            ref UIStarmap uiStarMap = ref AccessTools.FieldRefAccess<LogisticShipUIRenderer, UIStarmap>(__instance, "uiStarmap");
-            ref ComputeBuffer shipsBuffer = ref AccessTools.FieldRefAccess<LogisticShipUIRenderer, ComputeBuffer>(__instance, "shipsBuffer");
-            ref ShipUIRenderingData[] shipsArr = ref AccessTools.FieldRefAccess<LogisticShipUIRenderer, ShipUIRenderingData[]>(__instance, "shipsArr");
-            ref int shipCount = ref AccessTools.FieldRefAccess<LogisticShipUIRenderer, int>(__instance, "shipCount");
-            if (__instance.transport == null || uiStarMap == null || !uiStarMap.active) return;
-
-            if (__instance.capacity < shipCount + 1)
-            {
-                __instance.Expand2x();
-            }
-
-            renderingUIData.rpos = (renderingUIData.upos - uiStarMap.viewTargetUPos) * 0.00025;
-
-            shipsArr[shipCount++] = renderingUIData;
-
-            if (shipsBuffer != null)
-            {
-                shipsBuffer.SetData(shipsArr, 0, 0, shipCount);
-            }
-        }
-
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(GameData), "OnDraw")]
-        public static void GameData_OnDraw(ref GameData __instance, int frame)
-        {
-            if (__instance.galacticTransport != null)
-            {
-                __instance.galacticTransport.shipRenderer.Update();
-            }
+            shipData.Import(r);
+            hp = r.ReadInt32();
+            maxSpeed = r.ReadSingle();
+            state = (State)r.ReadInt32();
         }
 
     }

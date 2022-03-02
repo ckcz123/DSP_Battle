@@ -17,26 +17,26 @@ namespace DSP_Battle
         {
             Logger.LogInfo("=========> Done!");
             logger = Logger;
-            Harmony.CreateAndPatchAll(typeof(Ship));
+            Harmony.CreateAndPatchAll(typeof(EnemyShips));
             Harmony.CreateAndPatchAll(typeof(Cannon));
-            Cannon.testFrameCount = 0;
         }
 
         public void Update()
         {
             if (Input.GetKeyDown(KeyCode.Minus))
             {
-                Ship.Init();
-            }
-            if (Input.GetKeyDown(KeyCode.Equals))
-            {
-                Ship.MovePlayer();
+                int stationGid = 2;
+                int planetId = GameMain.data.galacticTransport.stationPool[stationGid].planetId;
+                PlanetData planet = GameMain.galaxy.PlanetById(planetId);
+
+                EnemyShips.Create(stationGid, 
+                    (planet.star.uPosition + planet.uPosition) / 2
+                    , 100, 6002);
             }
             if (Input.GetKeyDown(KeyCode.BackQuote))
             {
-                Ship.paused = !Ship.paused;
+                EnemyShips.paused = !EnemyShips.paused;
             }
-            Cannon.BulletTrack();
         }
 
         public static ManualLogSource logger;

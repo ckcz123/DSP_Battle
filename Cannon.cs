@@ -11,43 +11,46 @@ namespace DSP_Battle
     class Cannon
     {
         public static DysonSwarm curSwarm;
-        public static DysonSwarm[] swarms;
-        public static int testFrameCount = 0;
+        // public static DysonSwarm[] swarms;
         public static double BulletMaxtDivisor = 2000.0; // 原本5000.0
         public static float numMinus = 0.0f;
         public static VectorLF3 endPos = new VectorLF3(2000,2000,2000);
         public static bool doTrack = true;
         public static System.Random rand = new System.Random();
 
-        /// <summary>
-        /// 每帧调用刷新子弹终点
-        /// </summary>
-        public static void BulletTrack()
+		/// <summary>
+		/// 每帧调用刷新子弹终点
+		/// </summary>
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(GameData), "GameTick")]
+		public static void GameData_GameTick(ref GameData __instance, long time)
         {
-            testFrameCount = (testFrameCount + 1) % 60;
-            if (!doTrack) return;
-            try
-            {
-                for (int i = 1; i < curSwarm.bulletCursor; i++)
-                {
-                    curSwarm.bulletPool[i].uEnd = Ship.shipData.uPos;// + new VectorLF3(rand.NextDouble()*100, rand.NextDouble() * 100, rand.NextDouble() * 100)
-                }
+			if (!doTrack) return;
 
-            }
-            catch (Exception)
-            {
-                Main.logger.LogWarning("redirecting err");
-            }
+			// TODO: Find nearest ship
+			EnemyShip ship = EnemyShips.FindNearestShip(VectorLF3.zero);
+			if (ship == null) return;
+			try
+			{
+				for (int i = 1; i < curSwarm.bulletCursor; i++)
+				{
+					curSwarm.bulletPool[i].uEnd = ship.uPos;// + new VectorLF3(rand.NextDouble()*100, rand.NextDouble() * 100, rand.NextDouble() * 100)
+				}
 
-
-        }
-
-
+			}
+			catch (Exception)
+			{
+				// Main.logger.LogWarning("redirecting err");
+			}
+		}
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(EjectorComponent), "InternalUpdate")]
         public static bool EjectorPatch(ref EjectorComponent __instance, float power, DysonSwarm swarm, AstroPose[] astroPoses, AnimData[] animPool, int[] consumeRegister, ref uint __result)
         {
+			EnemyShip ship = EnemyShips.FindNearestShip(VectorLF3.zero);
+			if (ship == null) return true;
+
 			curSwarm = swarm;
 
 			int planetId = __instance.planetId;
@@ -146,7 +149,7 @@ namespace DSP_Battle
                 
 				try //设定目标
                 {
-					vectorLF2 = Ship.shipData.uPos;
+					vectorLF2 = ship.uPos;
 				}
                 catch (Exception)
                 {
@@ -156,7 +159,7 @@ namespace DSP_Battle
                 //如果没有船/船没血了，就不打炮了
                 try
                 {
-					if (Ship.CurHp <= 0)
+					if (ship.hp <= 0)
 						return false;
 
 				}
@@ -270,86 +273,6 @@ namespace DSP_Battle
 			}
 		}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        /// <summary>
-        /// 每帧/特定情况下创建子弹
-        /// </summary>
-        /// <param name="__instance"></param>
-        /// <param name="power"></param>
-        /// <param name="swarm"></param>
-        /// <param name="astroPoses"></param>
-        /// <param name="animPool"></param>
-        /// <param name="consumeRegister"></param>
-        //[HarmonyPostfix]
-        //[HarmonyPatch(typeof(EjectorComponent), "InternalUpdate")]
-        public static void EjectorPatch(ref EjectorComponent __instance, float power, DysonSwarm swarm, AstroPose[] astroPoses, AnimData[] animPool, int[] consumeRegister)
-        {
-            curSwarm = swarm;
-            if (testFrameCount % 20 != 0)
-                return;
-            try
-            {
-                int num4 = __instance.planetId / 100 * 100;
-                float num5 = __instance.localAlt + __instance.pivotY + (__instance.muzzleY - __instance.pivotY) / Mathf.Max(0.1f, Mathf.Sqrt(1f - __instance.localDir.y * __instance.localDir.y));
-                //Vector3 vector = new Vector3(__instance.localPosN.x * num5, __instance.localPosN.y * num5, __instance.localPosN.z * num5);
-
-                //VectorLF3 vectorLF = astroPoses[__instance.planetId].uPos + Maths.QRotateLF(astroPoses[__instance.planetId].uRot, vector);
-                //VectorLF3 uPos = astroPoses[num4].uPos;
-                ////uPos = new VectorLF3(500, 700, 900);
-                //VectorLF3 b = uPos - vectorLF;
-                //VectorLF3 vectorLF2 = uPos;
-
-                Vector3 vector = new Vector3(__instance.localPosN.x * num5, __instance.localPosN.y * num5, __instance.localPosN.z * num5);
-                VectorLF3 vectorLF = astroPoses[__instance.planetId].uPos + Maths.QRotateLF(astroPoses[__instance.planetId].uRot, vector);
-                Quaternion q = astroPoses[__instance.planetId].uRot * __instance.localRot;
-                VectorLF3 uPos = astroPoses[num4].uPos;
-                VectorLF3 b = uPos - vectorLF;
-                VectorLF3 vectorLF2 = uPos + VectorLF3.Cross(swarm.orbits[__instance.orbitId].up, b).normalized * (double)swarm.orbits[__instance.orbitId].radius;
-                try
-                {
-					vectorLF2 = Ship.shipData.uPos;
-				}
-                catch (Exception)
-                {
-                }
-                VectorLF3 vectorLF3 = vectorLF2 - vectorLF;
-                __instance.targetDist = vectorLF3.magnitude;
-
-
-
-                swarm.AddBullet(new SailBullet
-                {
-                    maxt = (float)(__instance.targetDist / BulletMaxtDivisor),//子弹飞行到终点的时间，可能即使后续更改终点，时间到了也会到达（或消失？），然后创建太阳帆
-                    lBegin = vector,
-                    uEndVel = VectorLF3.Cross(vectorLF2 - uPos, swarm.orbits[__instance.orbitId].up).normalized * Math.Sqrt((double)(swarm.dysonSphere.gravity / swarm.orbits[__instance.orbitId].radius)),
-                    //uEndVel = vectorLF2,
-                    uBegin = vectorLF,
-                    uEnd = vectorLF2
-				}, __instance.orbitId);
-            }
-            catch (Exception)
-            {
-                Main.logger.LogWarning("new bullet err");
-            }
-
-        }
-
         /// <summary>
         /// 创建后删除子弹
         /// </summary>
@@ -359,13 +282,15 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(DysonSwarm), "AddSolarSail")]
         public static void GetSailIndexWhenAdd(ref DysonSwarm __instance, int __result)
         {
+			// TODO: Find nearest ship
+			EnemyShip ship = EnemyShips.FindNearestShip(VectorLF3.zero);
             try
             {
                 __instance.RemoveSolarSail(__result);
-				Ship.CurHp -= 2;
-				if(Ship.CurHp <= 0)
+
+				if (ship != null)
                 {
-					Ship.shipData.shipIndex = 0;
+					ship.BeAttacked(2);
                 }
             }
             catch (Exception)
