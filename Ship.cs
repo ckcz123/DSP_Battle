@@ -342,7 +342,7 @@ namespace DSP_Battle
         static void UpdateStage1()
         {
 
-            float shipSailSpeed = GameMain.history.logisticDroneSpeedModified;
+            float shipSailSpeed = GameMain.history.logisticShipSailSpeedModified;
             float num31 = Mathf.Sqrt(shipSailSpeed / 600f);
             float num36 = num31 * 0.006f + 1E-05f;
             AstroPose[] astroPoses = GameMain.data.galaxy.astroPoses;
