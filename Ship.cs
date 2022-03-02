@@ -12,10 +12,12 @@ namespace DSP_Battle
     {
 
         public static ShipData shipData = new ShipData();
-        public static int targetStationGid = 2;
+        public static int targetStationGid = 1;
         public static ShipRenderingData renderingData = new ShipRenderingData();
         public static ShipUIRenderingData renderingUIData = new ShipUIRenderingData();
         public static bool paused = false;
+        // 需要存档。后续需要开数组？
+        public static int CurHp = 0;
 
         public static void Init()
         {
@@ -39,6 +41,8 @@ namespace DSP_Battle
             VectorLF3 planetPos = planet.uPosition;
             shipData.uPos = (starPos + planetPos) / 2;
             shipData.uRot = GameMain.data.galaxy.astroPoses[shipData.planetB].uRot;
+
+            CurHp = 100; //hp
 
             Main.logger.LogInfo("==========> Started!");
             // MovePlayer();
