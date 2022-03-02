@@ -18,6 +18,8 @@ namespace DSP_Battle
             Logger.LogInfo("=========> Done!");
             logger = Logger;
             Harmony.CreateAndPatchAll(typeof(Ship));
+            Harmony.CreateAndPatchAll(typeof(Cannon));
+            Cannon.testFrameCount = 0;
         }
 
         public void Update()
@@ -34,6 +36,7 @@ namespace DSP_Battle
             {
                 Ship.paused = !Ship.paused;
             }
+            Cannon.BulletTrack();
         }
 
         public static ManualLogSource logger;
