@@ -30,6 +30,10 @@ namespace DSP_Battle
             {
                 Ship.MovePlayer();
             }
+            if (Input.GetKeyDown(KeyCode.BackQuote))
+            {
+                Ship.paused = !Ship.paused;
+            }
         }
 
         public static ManualLogSource logger;
