@@ -146,19 +146,31 @@ namespace DSP_Battle
             {
                 animPool[__instance.entityId].time = 0f;
             }
-            if (__instance.orbitId < 0 || __instance.orbitId >= swarm.orbitCursor || swarm.orbits[__instance.orbitId].id != __instance.orbitId || !swarm.orbits[__instance.orbitId].enabled)
+
+            //下面是因为 炮需要用orbitId记录索敌模式，而orbitId有可能超出已设定的轨道数，为了避免溢出，炮的orbitalId在参与计算时需要独立指定为1。
+            //后续所有的__instance.orbitId都被替换为此
+            int calcOrbitId = __instance.orbitId;
+            if(gmProtoId != 2311)
             {
-                __instance.orbitId = 0;
+                calcOrbitId = 1;
+            }
+            
+            if (calcOrbitId < 0 || calcOrbitId >= swarm.orbitCursor || swarm.orbits[calcOrbitId].id != calcOrbitId || !swarm.orbits[calcOrbitId].enabled)
+            {
+                calcOrbitId = 0;
+                //如果是原本的弹射器，则修改也得同步到真正的orbitId上
+                if (gmProtoId == 2311)
+                    __instance.orbitId = calcOrbitId;
             }
             float num2 = (float)Cargo.accTableMilli[__instance.incLevel];
             int num3 = (int)(power * 10000f * (1f + num2) + 0.1f);
-            if(__instance.orbitId == 0)
-            {
-                __instance.orbitId = 1;
 
+            if(calcOrbitId == 0 && gmProtoId != 2311)
+            {
+                calcOrbitId = 1;
             }
 
-            if (__instance.orbitId == 0)
+            if (calcOrbitId == 0)
             {
                 if (__instance.direction == 1)
                 {
@@ -189,6 +201,14 @@ namespace DSP_Battle
             {
                 if (power < 0.1f)
                 {
+                    if (EjectorUIPatch.needToRefreshTarget) //如果需要刷新目标，又没电。必须告诉UI面板没有目标，而不能维持前一个选择的弹射器的状况
+                    {
+                        if (EjectorUIPatch.curEjectorPlanetId == __instance.planetId && EjectorUIPatch.curEjectorEntityId == __instance.entityId)
+                        {
+                            EjectorUIPatch.curTarget = null;
+                        }
+                    }
+
                     if (__instance.direction == 1)
                     {
                         __instance.time = (int)((long)__instance.time * (long)__instance.coldSpend / (long)__instance.chargeSpend);
@@ -207,7 +227,11 @@ namespace DSP_Battle
                 Quaternion q = astroPoses[__instance.planetId].uRot * __instance.localRot;
                 VectorLF3 uPos = astroPoses[num4].uPos;
                 VectorLF3 b = uPos - vectorLF;
-                VectorLF3 vectorLF2 = uPos + VectorLF3.Cross(swarm.orbits[__instance.orbitId].up, b).normalized * (double)swarm.orbits[__instance.orbitId].radius;
+
+                
+
+
+                VectorLF3 vectorLF2 = uPos + VectorLF3.Cross(swarm.orbits[calcOrbitId].up, b).normalized * (double)swarm.orbits[calcOrbitId].radius;
 
                 //不该参与循环的部分，换到循环前了
 
@@ -335,10 +359,10 @@ namespace DSP_Battle
                         {
                             maxt = (float)(__instance.targetDist / maxtDivisor),
                             lBegin = vector,
-                            uEndVel = VectorLF3.Cross(vectorLF2 - uPos, swarm.orbits[__instance.orbitId].up).normalized * Math.Sqrt((double)(swarm.dysonSphere.gravity / swarm.orbits[__instance.orbitId].radius)),
+                            uEndVel = VectorLF3.Cross(vectorLF2 - uPos, swarm.orbits[calcOrbitId].up).normalized * Math.Sqrt((double)(swarm.dysonSphere.gravity / swarm.orbits[calcOrbitId].radius)),
                             uBegin = vectorLF,
                             uEnd = vectorLF2
-                        }, __instance.orbitId);
+                        }, calcOrbitId);
 
 
 
