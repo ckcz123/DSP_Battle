@@ -11,23 +11,52 @@ namespace DSP_Battle
 {
     public class EnemyShips
     {
-        public static List<EnemyShip> ships = new List<EnemyShip>();
+
+        public static Dictionary<int, EnemyShip> ships = new Dictionary<int, EnemyShip>();
+
         public static System.Random gidRandom = new System.Random();
         public static bool paused = false;
+        public static List<List<EnemyShip>> sortedShips = SortShips();
 
         public static void Create(int stationGid, VectorLF3 initPos, int initHp, int itemId = 0)
         {
+            int nextGid = gidRandom.Next(1 << 27, 1 << 29);
+            while (ships.ContainsKey(nextGid)) nextGid = gidRandom.Next(1 << 27, 1 << 29);
+
             EnemyShip enemyShip = new EnemyShip(
-                gidRandom.Next(1<<25, 1<<27),
+                nextGid,
                 stationGid,
                 initPos,
                 initHp,
                 GameMain.history.logisticShipSailSpeedModified,
                 itemId);
-            Main.logger.LogInfo("=========> Init ship at station " + enemyShip.shipData.otherGId);
-            ships.Add(enemyShip);
+            Main.logger.LogInfo("=========> Init ship " + nextGid + " at station " + enemyShip.shipData.otherGId);
+
+            ships.Add(nextGid, enemyShip);
         }
 
+        public static List<List<EnemyShip>> SortShips()
+        {
+            List<List<EnemyShip>> sortedShips = new List<List<EnemyShip>>(100);
+            for (var i = 0; i < 100; ++i) sortedShips.Add(new List<EnemyShip>());
+            if (ships.Count == 0) return sortedShips;
+
+            List<KeyValuePair<double, EnemyShip>> distance = new List<KeyValuePair<double, EnemyShip>>();
+            foreach (EnemyShip ship in ships.Values)
+            {
+                if (ship.state != EnemyShip.State.active) continue;
+                distance.Add(new KeyValuePair<double, EnemyShip>(ship.distanceToTarget, ship));
+            }
+            distance.Sort((v1, v2) => Math.Sign(v1.Key - v2.Key));
+            Main.logger.LogInfo("=====> Sort ship: " + distance.Select(v => v.Value.shipIndex + ":" + v.Key).Join(null, "; "));
+            foreach (var v in distance)
+            {
+                sortedShips[v.Value.starIndex].Add(v.Value);
+            }
+            return sortedShips;
+        }
+
+        /*
         public static EnemyShip FindNearestShip(VectorLF3 uPos)
         {
             if (ships.Count == 0) return null;
@@ -42,6 +71,7 @@ namespace DSP_Battle
 
             return ship;
         }
+        */
 
         public static void OnShipLanded(EnemyShip ship)
         {
@@ -54,14 +84,23 @@ namespace DSP_Battle
         {
             if (paused) return;
 
-            List<EnemyShip> newList = new List<EnemyShip>();
-            ships.Do(ship =>
+            List<EnemyShip> list = ships.Values.ToList();
+
+            list.Do(ship =>
             {
                 ship.Update();
-                if (ship.state == EnemyShip.State.active) newList.Add(ship);
-                else if (ship.state == EnemyShip.State.landed) OnShipLanded(ship);
+                if (ship.state != EnemyShip.State.active)
+                {
+                    if (ship.state == EnemyShip.State.landed) OnShipLanded(ship);
+                    ships.Remove(ship.shipIndex);
+                }
             });
-            ships = newList;
+
+            // time is the frame since start
+            if (time % 60 == 1)
+            {
+                sortedShips = SortShips();
+            }
         }
 
         [HarmonyPostfix]
@@ -75,11 +114,10 @@ namespace DSP_Battle
                 __instance.Expand2x();
             }
 
-            for (int i = 0; i < ships.Count; ++i)
+            foreach (var ship in ships.Values)
             {
-                __instance.shipsArr[__instance.shipCount + i] = ships[i].renderingData;
+                __instance.shipsArr[__instance.shipCount ++] = ship.renderingData;
             }
-            __instance.shipCount += ships.Count;
 
             ref ComputeBuffer shipsBuffer = ref AccessTools.FieldRefAccess<LogisticShipRenderer, ComputeBuffer>(__instance, "shipsBuffer");
             if (shipsBuffer != null)
@@ -105,12 +143,12 @@ namespace DSP_Battle
                 __instance.Expand2x();
             }
 
-            for (int i = 0; i < ships.Count; ++i)
+            foreach (var ship in ships.Values)
             {
-                shipsArr[shipCount + i] = ships[i].renderingUIData;
-                shipsArr[shipCount + i].rpos = (shipsArr[shipCount + i].upos - uiStarMap.viewTargetUPos) * 0.00025;
+                shipsArr[shipCount] = ship.renderingUIData;
+                shipsArr[shipCount].rpos = (shipsArr[shipCount].upos - uiStarMap.viewTargetUPos) * 0.00025;
+                shipCount++;
             }
-            shipCount += ships.Count;
 
             if (shipsBuffer != null)
             {
@@ -130,10 +168,7 @@ namespace DSP_Battle
         public static void Export(BinaryWriter w)
         {
             w.Write(ships.Count);
-            for (var i = 0; i < ships.Count; ++i)
-            {
-                ships[i].Export(w);
-            }
+            ships.Values.Do(ship => ship.Export(w));
 
         }
 
@@ -143,13 +178,16 @@ namespace DSP_Battle
             ships.Clear();
             for (var i = 0; i < cnt; ++i)
             {
-                ships.Add(new EnemyShip(r));
+                EnemyShip ship = new EnemyShip(r);
+                ships.Add(ship.shipIndex, ship);
             }
+            sortedShips = SortShips();
         }
 
         public static void IntoOtherSave()
         {
             ships.Clear();
+            sortedShips = SortShips();
         }
     }
 }

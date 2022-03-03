@@ -16,7 +16,7 @@ namespace DSP_Battle
 {
     [BepInPlugin("com.ckcz123.DSP_Battle", "DSP_Battle", "1.0.0")]
     [BepInDependency(DSPModSavePlugin.MODGUID)]
-    public class Main : BaseUnityPlugin
+    public class Main : BaseUnityPlugin, IModCanSave
     {
         public static System.Random randSeed = new System.Random();
         public void Awake()
@@ -25,10 +25,10 @@ namespace DSP_Battle
             logger = Logger;
             Harmony.CreateAndPatchAll(typeof(EnemyShips));
             Harmony.CreateAndPatchAll(typeof(Cannon));
-            Harmony.CreateAndPatchAll(typeof(BattleProtos));
+            // Harmony.CreateAndPatchAll(typeof(BattleProtos));
 
-            LDBTool.PreAddDataAction += BattleProtos.AddNewCannons;
-            LDBTool.PostAddDataAction += BattleProtos.CopyPrefabDesc;
+            // LDBTool.PreAddDataAction += BattleProtos.AddNewCannons;
+            // LDBTool.PostAddDataAction += BattleProtos.CopyPrefabDesc;
 
             Cannon.testFrameCount = 0;
             //Cannon.ReInitAll();
@@ -38,7 +38,7 @@ namespace DSP_Battle
         {
             if (Input.GetKeyDown(KeyCode.Minus))
             {
-                int stationGid = 1;
+                int stationGid = 2;
                 int planetId = GameMain.data.galacticTransport.stationPool[stationGid].planetId;
                 PlanetData planet = GameMain.galaxy.PlanetById(planetId);
 

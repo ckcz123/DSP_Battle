@@ -30,6 +30,30 @@ namespace DSP_Battle
             set { shipData.uPos = value; }
         }
 
+        public int shipIndex
+        {
+            get { return shipData.shipIndex; }
+        }
+
+        public double distanceToTarget
+        {
+            get
+            {
+                if (state != State.active) return -1;
+                AstroPose[] astroPoses = GameMain.data.galaxy.astroPoses;
+                StationComponent[] gStationPool = GameMain.data.galacticTransport.stationPool;
+
+                AstroPose pose = astroPoses[shipData.planetB];
+                VectorLF3 targetUPos = pose.uPos + Maths.QRotateLF(pose.uRot, gStationPool[shipData.otherGId].shipDockPos + gStationPool[shipData.otherGId].shipDockPos.normalized * 25f);
+                return (targetUPos - uPos).magnitude;
+            }
+        }
+
+        public int starIndex
+        {
+            get { return shipData.planetB / 100 - 1; }
+        }
+
         public EnemyShip(BinaryReader r) {
             shipData = new ShipData();
             renderingData = new ShipRenderingData();
