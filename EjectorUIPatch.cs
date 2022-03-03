@@ -104,7 +104,7 @@ namespace DSP_Battle
         {
             if (curEjectorIsCannon)
             {
-                if (curTarget != null && curTarget.hp > 0)
+                if (curTarget != null && curTarget.state == EnemyShip.State.active)// && EnemyShips.ships.ContainsKey(curTarget.shipIndex)
                 {
                     SolarSailAmoutLabel.text = "目标生命值".Translate();
                     __instance.valueText6.text = curTarget.hp.ToString();
@@ -116,7 +116,7 @@ namespace DSP_Battle
                     SolarSailAmoutLabel.text = "无攻击目标".Translate();
                     __instance.valueText6.text = "-";
                 }
-                orbitalPickerObj.active = false;
+                orbitalPickerObj.SetActive(false);
                 EjectCycleLabel.text = "射速".Translate();
                 remainEnemyShipsLabel.text = "剩余敌舰".Translate();
                 remainEnemyShipsValue.text = EnemyShips.ships.Count.ToString();
@@ -124,7 +124,7 @@ namespace DSP_Battle
             else
             {
                 SolarSailAmoutLabel.text = "太阳帆总数".Translate();
-                orbitalPickerObj.active = true;
+                orbitalPickerObj.SetActive(false);
                 EjectCycleLabel.text = "弹射周期".Translate();
                 remainEnemyShipsLabel.text = "";
                 remainEnemyShipsValue.text = "";

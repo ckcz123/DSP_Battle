@@ -21,7 +21,7 @@ namespace DSP_Battle
         //
 
         public static int testFrameCount = 0;
-        public static double BulletMaxtDivisor = 12000.0; // 原本5000.0
+        public static double BulletMaxtDivisor = 7000.0; // 原本5000.0
         public static float numMinus = 0.0f;
         public static VectorLF3 endPos = new VectorLF3(2000,2000,2000);
         public static bool doTrack = true;
@@ -59,10 +59,10 @@ namespace DSP_Battle
                                 {
                                     swarm.bulletPool[j].uEnd = EnemyShips.ships[targetShipIndex].uPos;
                                 }
-                                else
-                                {
-                                    BulletTargets[starIndex].Remove(j);
-                                }
+                                //else
+                                //{
+                                //    BulletTargets[starIndex].Remove(j);
+                                //}
                             }
 
                         }
@@ -78,8 +78,8 @@ namespace DSP_Battle
 
         }
 
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(GameSave), "LoadCurrentGame")]
+        //[HarmonyPostfix]
+        //[HarmonyPatch(typeof(GameSave), "LoadCurrentGame")]
         public static void ReInitAll()
         {
             try
@@ -438,11 +438,12 @@ namespace DSP_Battle
                     //此处原本函数有array[num3].t = array[num3].t + num;其中num是1/60，但是这是postfix，已经执行过t增加了，所以不能再加一次，否则会使子弹变成二倍速
 
                     //为什么下面的if注释掉了呢？我发现在创建子弹时就设置成state=0貌似也没什么影响。。那既然state=0不会创建太阳帆，那就一开始设置吧，不要每帧检测了。
-                    //if (__instance.bulletPool[i].t >= __instance.bulletPool[i].maxt - 0.02f) //
-                    //{
-                    //    __instance.bulletPool[i].state = 0; //这就阻止了后续创建太阳帆的可能，但也可能带来其他影响，但无所谓，只有最多2帧的异常帧
+                    //好吧我又加回来了，因为读档后会出现莫名其妙的太阳帆，有了这个就不出来了
+                    if (__instance.bulletPool[i].t >= __instance.bulletPool[i].maxt - 0.02f) //
+                    {
+                        __instance.bulletPool[i].state = 0; //这就阻止了后续创建太阳帆的可能，但也可能带来其他影响，但无所谓，只有最多2帧的异常帧
                         
-                    //}
+                    }
                     if (__instance.bulletPool[i].t >= __instance.bulletPool[i].maxt && BulletTargets[starIndex].ContainsKey(i) && canDoDamage[starIndex].ContainsKey(i))
                     {
                         if (EnemyShips.ships.ContainsKey(BulletTargets[starIndex][i]))
@@ -466,10 +467,10 @@ namespace DSP_Battle
             {
                 sailBulletsIndex[__instance.starData.index].Remove(id); //删除，i不再被记为太阳帆子弹。子弹实体会在后续自动被游戏原本逻辑移除
             }
-            if(BulletTargets[__instance.starData.index].ContainsKey(id))
-            {
-                BulletTargets[__instance.starData.index].Remove(id);
-            }
+            //if(BulletTargets[__instance.starData.index].ContainsKey(id))
+            //{
+            //    BulletTargets[__instance.starData.index].Remove(id);
+            //}
 
         }
 

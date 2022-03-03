@@ -39,18 +39,13 @@ namespace DSP_Battle
         {
             if (Input.GetKeyDown(KeyCode.Minus))
             {
-                int stationGid = 2;
-                int planetId = GameMain.data.galacticTransport.stationPool[stationGid].planetId;
-                PlanetData planet = GameMain.galaxy.PlanetById(planetId);
-
-                EnemyShips.Create(stationGid, 
-                    (planet.star.uPosition + planet.uPosition) / 2 + new VectorLF3((randSeed.NextDouble()-0.5)*60000, (randSeed.NextDouble() - 0.5) * 60000, (randSeed.NextDouble()-0.5) * 60000)
-                    , 100, 6002);
+                InitNew();
             }
             if (Input.GetKeyDown(KeyCode.BackQuote))
             {
                 EnemyShips.paused = !EnemyShips.paused;
             }
+            //Cannon.BulletTrack();
         }
 
         public void InitNew()

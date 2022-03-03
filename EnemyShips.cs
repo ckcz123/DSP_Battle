@@ -17,8 +17,8 @@ namespace DSP_Battle
         public static System.Random gidRandom = new System.Random();
         public static bool paused = false;
         public static List<List<EnemyShip>> sortedShips = SortShips();
-      
-        public static bool shouldDistroy = true;
+
+        public static bool shouldDistroy = false;
         private static bool removingComponets = false;
 
         public static void Create(int stationGid, VectorLF3 initPos, int initHp, int damageRange = 50, int itemId = 0)
