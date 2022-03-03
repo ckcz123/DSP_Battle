@@ -66,7 +66,7 @@ namespace DSP_Battle
                         component.gid,
                         planetData.uPosition +
                              new VectorLF3((randSeed.NextDouble() - 0.5) * 60000, (randSeed.NextDouble() - 0.5) * 60000, (randSeed.NextDouble() - 0.5) * 60000),
-                        100, 6002
+                        100, 50, 6002
                         );
                     return;
                 }

@@ -19,8 +19,9 @@ namespace DSP_Battle
         public static List<List<EnemyShip>> sortedShips = SortShips();
 
         public static bool shouldDistroy = true;
+        private static bool removingComponets = false;
 
-        public static void Create(int stationGid, VectorLF3 initPos, int initHp, int itemId = 0)
+        public static void Create(int stationGid, VectorLF3 initPos, int initHp, int damageRange = 50, int itemId = 0)
         {
             int nextGid = gidRandom.Next(1 << 27, 1 << 29);
             while (ships.ContainsKey(nextGid)) nextGid = gidRandom.Next(1 << 27, 1 << 29);
@@ -31,6 +32,7 @@ namespace DSP_Battle
                 initPos,
                 initHp,
                 GameMain.history.logisticShipSailSpeedModified,
+                damageRange,
                 itemId);
             Main.logger.LogInfo("=========> Init ship " + nextGid + " at station " + enemyShip.shipData.otherGId);
 
@@ -85,11 +87,18 @@ namespace DSP_Battle
             if (station == null || station.entityId <= 0) return;
 
             PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
-            for (var i = 0; i < station.storage.Length; ++i)
-            {
-                station.storage[i].itemId = 0;
-            }
+            removingComponets = true;
+            Vector3 stationPos = planetFactory.entityPool[station.entityId].pos;
             planetFactory.RemoveEntityWithComponents(station.entityId);
+            // Find all entities in damageRange
+            for (int i = 0; i < planetFactory.entityPool.Length; ++i)
+            {
+                if (planetFactory.entityPool[i].notNull && (planetFactory.entityPool[i].pos - stationPos).magnitude <= ship.damageRange)
+                {
+                    planetFactory.RemoveEntityWithComponents(i);
+                }
+            }
+            removingComponets = false;
         }
 
         [HarmonyPostfix]
@@ -182,6 +191,26 @@ namespace DSP_Battle
                 __instance.galacticTransport.shipRenderer.Update();
             }
         }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Player), "TryAddItemToPackage")]
+        public static bool Player_TryAddItemToPackage(ref Player __instance, ref int __result, int itemId, int count, int inc, bool throwTrash, int objId = 0)
+        {
+            if (removingComponets)
+            {
+                __result = count;
+                return false;
+            }
+            return true;
+        }
+        
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UIItemup), "Up")]
+        public static bool UIItemup_Up(int itemId, int upCount)
+        {
+            return !removingComponets;
+        } 
+
         public static void Export(BinaryWriter w)
         {
             w.Write(ships.Count);
