@@ -18,8 +18,6 @@ namespace DSP_Battle
         public static bool paused = false;
         public static List<List<EnemyShip>> sortedShips = SortShips();
 
-        public static bool shouldDistroy = true;
-
         public static void Create(int stationGid, VectorLF3 initPos, int initHp, int itemId = 0)
         {
             int nextGid = gidRandom.Next(1 << 27, 1 << 29);
@@ -78,18 +76,6 @@ namespace DSP_Battle
         public static void OnShipLanded(EnemyShip ship)
         {
             Main.logger.LogInfo("=========> Ship landed at station " + ship.shipData.otherGId);
-
-            if (!shouldDistroy) return;
-
-            StationComponent station = ship.targetStation;
-            if (station == null || station.entityId <= 0) return;
-
-            PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
-            for (var i = 0; i < station.storage.Length; ++i)
-            {
-                station.storage[i].itemId = 0;
-            }
-            planetFactory.RemoveEntityWithComponents(station.entityId);
         }
 
         [HarmonyPostfix]
