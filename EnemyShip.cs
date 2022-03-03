@@ -108,11 +108,13 @@ namespace DSP_Battle
 
         public void BeAttacked(int atk)
         {
+            if (state != State.active) return;
             hp -= atk;
             if (hp <= 0)
             {
                 hp = 0;
                 state = State.distroyed;
+                EnemyShips.OnShipDistroyed(this);
             }
         }
 

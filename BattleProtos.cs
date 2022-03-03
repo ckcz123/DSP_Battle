@@ -77,6 +77,7 @@ namespace DSP_Battle
             Cannon.IsEntity = true;
             Cannon.isRaw = false;
             Cannon.CanBuild = true;
+            Cannon.IconPath = LDB.items.Select(2311).IconPath;
             //Traverse.Create(Cannon).Field("_iconSprite").SetValue(Traverse.Create(oriRecipe).Field("_iconSprite").GetValue());
             LDBTool.PreAddProto(CannonModel);
             LDBTool.PreAddProto(CannonRecipe);

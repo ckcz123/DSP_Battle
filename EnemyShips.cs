@@ -101,6 +101,12 @@ namespace DSP_Battle
             removingComponets = false;
         }
 
+        public static void OnShipDistroyed(EnemyShip ship)
+        {
+            ships.Remove(ship.shipIndex);
+            sortedShips = SortShips();
+        }
+
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameData), "GameTick")]
         public static void GameData_GameTick(ref GameData __instance, long time)

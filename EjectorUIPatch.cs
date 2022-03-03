@@ -13,10 +13,10 @@ namespace DSP_Battle
     {
         public static int curEjectorPlanetId = -1;
         public static int curEjectorEntityId = -1;
+        public static int curEjectorPoolId = -1;
         public static bool needToRefreshTarget = false;
         public static bool curEjectorIsCannon = false;
         public static EnemyShip curTarget = null;
-        public static EjectorComponent curEjector;
 
         public static Text SolarSailAmoutLabel = null; //原本显示的是太阳帆总数的标题，现在要改成“剩余生命值”之类的
         public static Text EjectCycleLabel = null; //原本是显示弹射周期的标题，现在要改成“射速”字样
@@ -37,10 +37,6 @@ namespace DSP_Battle
         public static Button setModeButton3;
         public static GameObject setModeButton4Obj;
         public static Button setModeButton4;
-
-        public static Color defaultButtonColor = new Color(1, 1, 1, 0.3725f);
-        public static Color activeButtonColor = new Color(0.5f, 0.95f, 1f, 0.9f);
-        public static Color disabledButtonColor = new Color(1, 1, 1, 0.725f);
 
         public static void InitGameObjects()
         {
@@ -78,7 +74,7 @@ namespace DSP_Battle
                 setAimingModeLabel = setAimingModeLabelObj.GetComponent<Text>();
 
 
-                GameObject oriOrbitalSelectButtonObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Ejector Window/orbit-picker/button (Edit)");
+                GameObject oriOrbitalSelectButtonObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Ejector Window/orbit-picker/button (1)");
                 setModeButton1Obj = GameObject.Instantiate(oriOrbitalSelectButtonObj);
                 setModeButton1Obj.name = "setMode1";
                 setModeButton1Obj.transform.SetParent(parent.transform, false);
@@ -142,7 +138,6 @@ namespace DSP_Battle
             {
                 curEjectorIsCannon = true;
                 EjectorComponent ejectorComponent = __instance.factorySystem.ejectorPool[__instance.ejectorId];
-                curEjector = ejectorComponent;
                 int planetId = ejectorComponent.planetId;
                 PlanetFactory factory = GameMain.galaxy.stars[planetId / 100 - 1].planets[planetId % 100 - 1].factory;
                 int gmProtoId = factory.entityPool[ejectorComponent.entityId].protoId;
@@ -152,6 +147,7 @@ namespace DSP_Battle
                     curEjectorIsCannon = false;
                 }
                 curEjectorPlanetId = ejectorComponent.planetId;
+                curEjectorPoolId = __instance.ejectorId;
                 curEjectorEntityId = ejectorComponent.entityId; //二者均相符时，代表是同一个建筑
                 needToRefreshTarget = true;//在ejector选择目标时，如果needToRefreshTarget，则将选择的目标刷新传递过来，供UI显示所需属性，同时将此项设置为false，不重复刷新
                 RefreshEjectorUIOnce();
@@ -169,12 +165,17 @@ namespace DSP_Battle
         {
             if (curEjectorIsCannon)
             {
+                int orbitId = GameMain.data.galaxy.PlanetById(curEjectorPlanetId).factory.factorySystem.ejectorPool[curEjectorPoolId].orbitId;
                 orbitalPickerObj.SetActive(false);
                 setAimingModeLabelObj.SetActive(true);
                 setModeButton1Obj.SetActive(true);
+                setModeButton1Obj.GetComponent<UIButton>().highlighted = orbitId == 1;
                 setModeButton2Obj.SetActive(true);
+                setModeButton2Obj.GetComponent<UIButton>().highlighted = orbitId == 2;
                 setModeButton3Obj.SetActive(true);
+                setModeButton3Obj.GetComponent<UIButton>().highlighted = orbitId == 3;
                 setModeButton4Obj.SetActive(true);
+                setModeButton4Obj.GetComponent<UIButton>().highlighted = orbitId == 4;
                 remainEnemyShipsValueObj.SetActive(true);
                 remainEnemyShipsLabelObj.SetActive(true);
                 EjectCycleLabel.text = "射速".Translate();
@@ -184,27 +185,6 @@ namespace DSP_Battle
                 setModeButton2Obj.transform.Find("Text").GetComponent<Text>().text = "最大威胁".Translate();
                 setModeButton3Obj.transform.Find("Text").GetComponent<Text>().text = "最低生命".Translate();
                 setModeButton4Obj.transform.Find("Text").GetComponent<Text>().text = "最高生命".Translate(); 
-                setModeButton1Obj.GetComponent<Image>().color = defaultButtonColor;
-                setModeButton2Obj.GetComponent<Image>().color = defaultButtonColor;
-                setModeButton3Obj.GetComponent<Image>().color = defaultButtonColor;
-                setModeButton4Obj.GetComponent<Image>().color = defaultButtonColor;
-                switch (curEjector.orbitId)
-                {
-                    case 1:
-                        setModeButton1Obj.GetComponent<Image>().color = activeButtonColor;
-                        break;
-                    case 2:
-                        setModeButton2Obj.GetComponent<Image>().color = activeButtonColor;
-                        break;
-                    case 3:
-                        setModeButton3Obj.GetComponent<Image>().color = activeButtonColor;
-                        break;
-                    case 4:
-                        setModeButton4Obj.GetComponent<Image>().color = activeButtonColor;
-                        break;
-                    default:
-                        break;
-                }
 
             }
             else
@@ -257,7 +237,7 @@ namespace DSP_Battle
             {
                 try
                 {
-                    curEjector.SetOrbit(modenum);
+                    GameMain.data.galaxy.PlanetById(curEjectorPlanetId).factory.factorySystem.ejectorPool[curEjectorPoolId].SetOrbit(modenum);
                     RefreshEjectorUIOnce();
                 }
                 catch (Exception)
