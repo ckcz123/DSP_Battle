@@ -25,12 +25,13 @@ namespace DSP_Battle
             logger = Logger;
             Harmony.CreateAndPatchAll(typeof(EnemyShips));
             Harmony.CreateAndPatchAll(typeof(Cannon));
-            // Harmony.CreateAndPatchAll(typeof(BattleProtos));
+            Harmony.CreateAndPatchAll(typeof(BattleProtos));
+            Harmony.CreateAndPatchAll(typeof(EjectorUIPatch));
 
-            // LDBTool.PreAddDataAction += BattleProtos.AddNewCannons;
-            // LDBTool.PostAddDataAction += BattleProtos.CopyPrefabDesc;
+            LDBTool.PreAddDataAction += BattleProtos.AddNewCannons;
+            LDBTool.PostAddDataAction += BattleProtos.CopyPrefabDesc;
 
-            Cannon.testFrameCount = 0;
+            //Cannon.testFrameCount = 0;
             //Cannon.ReInitAll();
         }
 
@@ -44,7 +45,7 @@ namespace DSP_Battle
             {
                 EnemyShips.paused = !EnemyShips.paused;
             }
-            Cannon.BulletTrack();
+            //Cannon.BulletTrack();
         }
 
         public void InitNew()
@@ -76,16 +77,19 @@ namespace DSP_Battle
         public void Export(BinaryWriter w)
         {
             EnemyShips.Export(w);
+            Cannon.Export(w);
         }
 
         public void Import(BinaryReader r)
         {
             EnemyShips.Import(r);
+            Cannon.Import(r);
         }
 
         public void IntoOtherSave()
         {
             EnemyShips.IntoOtherSave();
+            Cannon.IntoOtherSave();
         }
 
         public static ManualLogSource logger;
