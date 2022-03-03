@@ -15,6 +15,7 @@ namespace DSP_Battle
         public ShipUIRenderingData renderingUIData;
         public int hp;
         public float maxSpeed;
+        public int damageRange;
 
         public enum State
         {
@@ -62,7 +63,7 @@ namespace DSP_Battle
             Import(r);
         }
 
-        public EnemyShip(int gid, int stationGid, VectorLF3 initPos, int initHp, float maxSpeed, int itemId)
+        public EnemyShip(int gid, int stationGid, VectorLF3 initPos, int initHp, float maxSpeed, int damageRange, int itemId)
         {
             shipData = new ShipData();
             shipData.direction = 1;
@@ -79,6 +80,7 @@ namespace DSP_Battle
             shipData.itemId = itemId;
             shipData.uRot = Quaternion.identity;
             hp = initHp;
+            this.damageRange = damageRange;
             this.maxSpeed = maxSpeed;
             state = State.active;
 
@@ -487,6 +489,7 @@ namespace DSP_Battle
             w.Write(hp);
             w.Write(maxSpeed);
             w.Write((int)state);
+            w.Write(damageRange);
         }
 
         public void Import(BinaryReader r)
@@ -497,6 +500,7 @@ namespace DSP_Battle
             hp = r.ReadInt32();
             maxSpeed = r.ReadSingle();
             state = (State)r.ReadInt32();
+            damageRange = r.ReadInt32();
 
             renderingData.SetEmpty();
             renderingData.gid = shipData.shipIndex;
