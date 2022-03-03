@@ -30,7 +30,13 @@ namespace DSP_Battle
             set { shipData.uPos = value; }
         }
 
-        public EnemyShip() : this(0, 0, VectorLF3.zero, 0, 0, 0) { }
+        public EnemyShip(BinaryReader r) {
+            shipData = new ShipData();
+            renderingData = new ShipRenderingData();
+            renderingUIData = new ShipUIRenderingData();
+
+            Import(r);
+        }
 
         public EnemyShip(int gid, int stationGid, VectorLF3 initPos, int initHp, float maxSpeed, int itemId)
         {
@@ -451,6 +457,8 @@ namespace DSP_Battle
 
         public void Export(BinaryWriter w)
         {
+            Main.logger.LogInfo("======> Exporting ship...");
+
             shipData.Export(w);
             w.Write(hp);
             w.Write(maxSpeed);
@@ -459,10 +467,18 @@ namespace DSP_Battle
 
         public void Import(BinaryReader r)
         {
+            Main.logger.LogInfo("======> Importing ship...");
+
             shipData.Import(r);
             hp = r.ReadInt32();
             maxSpeed = r.ReadSingle();
             state = (State)r.ReadInt32();
+
+            renderingData.SetEmpty();
+            renderingData.gid = shipData.shipIndex;
+            renderingUIData.SetEmpty();
+            renderingUIData.gid = shipData.shipIndex;
+
         }
 
     }

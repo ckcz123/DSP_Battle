@@ -1,5 +1,4 @@
-﻿using crecheng.DSPModSave;
-using HarmonyLib;
+﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +9,7 @@ using UnityEngine;
 
 namespace DSP_Battle
 {
-    public class EnemyShips : IModCanSave
+    public class EnemyShips
     {
         public static List<EnemyShip> ships = new List<EnemyShip>();
         public static System.Random gidRandom = new System.Random();
@@ -128,7 +127,7 @@ namespace DSP_Battle
                 __instance.galacticTransport.shipRenderer.Update();
             }
         }
-        public void Export(BinaryWriter w)
+        public static void Export(BinaryWriter w)
         {
             w.Write(ships.Count);
             for (var i = 0; i < ships.Count; ++i)
@@ -138,19 +137,17 @@ namespace DSP_Battle
 
         }
 
-        public void Import(BinaryReader r)
+        public static void Import(BinaryReader r)
         {
             int cnt = r.ReadInt32();
             ships.Clear();
             for (var i = 0; i < cnt; ++i)
             {
-                EnemyShip ship = new EnemyShip();
-                ship.Import(r);
-                ships.Add(ship);
+                ships.Add(new EnemyShip(r));
             }
         }
 
-        public void IntoOtherSave()
+        public static void IntoOtherSave()
         {
             ships.Clear();
         }

@@ -1,4 +1,5 @@
-﻿using BepInEx;
+﻿using crecheng.DSPModSave;
+using BepInEx;
 using UnityEngine;
 using HarmonyLib;
 using System;
@@ -7,15 +8,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BepInEx.Logging;
+using System.IO;
 
 namespace DSP_Battle
 {
     [BepInPlugin("com.ckcz123.DSP_Battle", "DSP_Battle", "1.0.0")]
-    public class Main : BaseUnityPlugin
+    [BepInDependency(DSPModSavePlugin.MODGUID)]
+    public class Main : BaseUnityPlugin, IModCanSave
     {
         public void Awake()
         {
-            Logger.LogInfo("=========> Done!");
+            Logger.LogInfo("=========> DSP_Battle initialized!");
             logger = Logger;
             Harmony.CreateAndPatchAll(typeof(EnemyShips));
             Harmony.CreateAndPatchAll(typeof(Cannon));
@@ -39,7 +42,24 @@ namespace DSP_Battle
             }
         }
 
+        public void Export(BinaryWriter w)
+        {
+            EnemyShips.Export(w);
+        }
+
+        public void Import(BinaryReader r)
+        {
+            EnemyShips.Import(r);
+        }
+
+        public void IntoOtherSave()
+        {
+            EnemyShips.IntoOtherSave();
+        }
+
         public static ManualLogSource logger;
        
+        
+
     }
 }
