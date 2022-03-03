@@ -18,6 +18,8 @@ namespace DSP_Battle
         public static bool paused = false;
         public static List<List<EnemyShip>> sortedShips = SortShips();
 
+        public static bool shouldDistroy = true;
+
         public static void Create(int stationGid, VectorLF3 initPos, int initHp, int itemId = 0)
         {
             int nextGid = gidRandom.Next(1 << 27, 1 << 29);
@@ -76,6 +78,18 @@ namespace DSP_Battle
         public static void OnShipLanded(EnemyShip ship)
         {
             Main.logger.LogInfo("=========> Ship landed at station " + ship.shipData.otherGId);
+
+            if (!shouldDistroy) return;
+
+            StationComponent station = ship.targetStation;
+            if (station == null || station.entityId <= 0) return;
+
+            PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
+            for (var i = 0; i < station.storage.Length; ++i)
+            {
+                station.storage[i].itemId = 0;
+            }
+            planetFactory.RemoveEntityWithComponents(station.entityId);
         }
 
         [HarmonyPostfix]
@@ -86,6 +100,8 @@ namespace DSP_Battle
 
             List<EnemyShip> list = ships.Values.ToList();
 
+            bool hasRemoved = false;
+
             list.Do(ship =>
             {
                 ship.Update();
@@ -93,11 +109,12 @@ namespace DSP_Battle
                 {
                     if (ship.state == EnemyShip.State.landed) OnShipLanded(ship);
                     ships.Remove(ship.shipIndex);
+                    hasRemoved = true;
                 }
             });
 
             // time is the frame since start
-            if (time % 60 == 1)
+            if (hasRemoved || time % 60 == 1)
             {
                 sortedShips = SortShips();
             }

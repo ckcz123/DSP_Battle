@@ -16,6 +16,8 @@ namespace DSP_Battle
         public int hp;
         public float maxSpeed;
 
+        private static System.Random random = new System.Random();
+
         public enum State
         {
             active,
@@ -41,11 +43,22 @@ namespace DSP_Battle
             {
                 if (state != State.active) return -1;
                 AstroPose[] astroPoses = GameMain.data.galaxy.astroPoses;
-                StationComponent[] gStationPool = GameMain.data.galacticTransport.stationPool;
+                StationComponent station = targetStation;
+                if (station == null) return -1;
 
                 AstroPose pose = astroPoses[shipData.planetB];
-                VectorLF3 targetUPos = pose.uPos + Maths.QRotateLF(pose.uRot, gStationPool[shipData.otherGId].shipDockPos + gStationPool[shipData.otherGId].shipDockPos.normalized * 25f);
+                VectorLF3 targetUPos = pose.uPos + Maths.QRotateLF(pose.uRot, station.shipDockPos + station.shipDockPos.normalized * 25f);
                 return (targetUPos - uPos).magnitude;
+            }
+        }
+
+        public StationComponent targetStation
+        {
+            get
+            {
+                StationComponent[] gStationPool = GameMain.data.galacticTransport.stationPool;
+                if (gStationPool.Length <= shipData.otherGId) return null;
+                return gStationPool[shipData.otherGId];
             }
         }
 
@@ -101,9 +114,42 @@ namespace DSP_Battle
             }
         }
 
+        public void FindAnotherStation()
+        {
+            if (shipData.stage == 2)
+            {
+                state = State.distroyed;
+                return;
+            }
+            shipData.stage = 0;
+
+            PlanetFactory factory = GameMain.galaxy.PlanetById(shipData.planetB).factory;
+            PlanetTransport transport = factory.transport;
+            List<StationComponent> stations = new List<StationComponent>(transport.stationPool);
+            int index = random.Next(0, stations.Count);
+            for (var i = 0; i < stations.Count; ++i)
+            {
+                StationComponent component = stations[(index + i) % stations.Count];
+                if (component != null && component.id != 0 && component.isStellar)
+                {
+                    shipData.otherGId = component.gid;
+                    return;
+                }
+            }
+
+            state = State.distroyed;
+        }
+
         public void Update()
         {
             if (state != State.active) return;
+
+            StationComponent station = targetStation;
+            if (station == null || station.id == 0) {
+                FindAnotherStation();
+                if (state != State.active) return;
+            }
+
             Quaternion quaternion = Quaternion.identity;
             bool flag7 = false;
             if (shipData.stage == 0) UpdateStage0(out quaternion, out flag7);
@@ -132,13 +178,14 @@ namespace DSP_Battle
             float num35 = shipSailSpeed * 0.4f * num31;
             double dt = 0.016666666666666666;
             AstroPose[] astroPoses = GameMain.data.galaxy.astroPoses;
-            StationComponent[] gStationPool = GameMain.data.galacticTransport.stationPool;
 
             quaternion = Quaternion.identity;
             flag7 = false;
+            StationComponent station = targetStation;
+            if (station == null) return;
 
             AstroPose astroPose2 = astroPoses[shipData.planetB];
-            VectorLF3 lhs3 = astroPose2.uPos + Maths.QRotateLF(astroPose2.uRot, gStationPool[shipData.otherGId].shipDockPos + gStationPool[shipData.otherGId].shipDockPos.normalized * 25f);
+            VectorLF3 lhs3 = astroPose2.uPos + Maths.QRotateLF(astroPose2.uRot, station.shipDockPos + station.shipDockPos.normalized * 25f);
             VectorLF3 vectorLF = lhs3 - shipData.uPos;
             double num38 = Math.Sqrt(vectorLF.x * vectorLF.x + vectorLF.y * vectorLF.y + vectorLF.z * vectorLF.z);
             bool flag8 = false;
@@ -357,7 +404,7 @@ namespace DSP_Battle
                 float num77 = 1f - (float)num38 / 100f;
                 num77 = (3f - num77 - num77) * num77 * num77;
                 num77 *= num77;
-                quaternion = Quaternion.Slerp(shipData.uRot, astroPose2.uRot * (gStationPool[shipData.otherGId].shipDockRot * new Quaternion(0.707106769f, 0f, 0f, -0.707106769f)), num77);
+                quaternion = Quaternion.Slerp(shipData.uRot, astroPose2.uRot * (station.shipDockRot * new Quaternion(0.707106769f, 0f, 0f, -0.707106769f)), num77);
 
                 flag7 = true;
             }
@@ -391,7 +438,7 @@ namespace DSP_Battle
             float num31 = Mathf.Sqrt(shipSailSpeed / 600f);
             float num36 = num31 * 0.006f + 1E-05f;
             AstroPose[] astroPoses = GameMain.data.galaxy.astroPoses;
-            StationComponent[] gStationPool = GameMain.data.galacticTransport.stationPool;
+            StationComponent station = targetStation;
 
             AstroPose astroPose3 = astroPoses[shipData.planetB];
             float num78 = 0f;
@@ -409,18 +456,18 @@ namespace DSP_Battle
                 num78 = (3f - num78 - num78) * num78 * num78;
                 float num79 = num78 * 2f;
                 float num80 = num78 * 2f - 1f;
-                VectorLF3 lhs7 = astroPose3.uPos + Maths.QRotateLF(astroPose3.uRot, gStationPool[shipData.otherGId].shipDockPos + gStationPool[shipData.otherGId].shipDockPos.normalized * 7.27000046f);
+                VectorLF3 lhs7 = astroPose3.uPos + Maths.QRotateLF(astroPose3.uRot, station.shipDockPos + station.shipDockPos.normalized * 7.27000046f);
                 if (num78 > 0.5f)
                 {
                     VectorLF3 lhs8 = astroPose3.uPos + Maths.QRotateLF(astroPose3.uRot, shipData.pPosTemp);
                     shipData.uPos = lhs7 * (1f - num80) + lhs8 * num80;
-                    shipData.uRot = astroPose3.uRot * Quaternion.Slerp(gStationPool[shipData.otherGId].shipDockRot * new Quaternion(0.707106769f, 0f, 0f, -0.707106769f), shipData.pRotTemp, num80 * 1.5f - 0.5f);
+                    shipData.uRot = astroPose3.uRot * Quaternion.Slerp(station.shipDockRot * new Quaternion(0.707106769f, 0f, 0f, -0.707106769f), shipData.pRotTemp, num80 * 1.5f - 0.5f);
                 }
                 else
                 {
-                    VectorLF3 lhs9 = astroPose3.uPos + Maths.QRotateLF(astroPose3.uRot, gStationPool[shipData.otherGId].shipDockPos + gStationPool[shipData.otherGId].shipDockPos.normalized * -14.4f);
+                    VectorLF3 lhs9 = astroPose3.uPos + Maths.QRotateLF(astroPose3.uRot, station.shipDockPos + station.shipDockPos.normalized * -14.4f);
                     shipData.uPos = lhs9 * (1f - num79) + lhs7 * num79;
-                    shipData.uRot = astroPose3.uRot * (gStationPool[shipData.otherGId].shipDockRot * new Quaternion(0.707106769f, 0f, 0f, -0.707106769f));
+                    shipData.uRot = astroPose3.uRot * (station.shipDockRot * new Quaternion(0.707106769f, 0f, 0f, -0.707106769f));
                 }
             }
             else
@@ -435,8 +482,8 @@ namespace DSP_Battle
                 }
 
                 num78 = (3f - num78 - num78) * num78 * num78;
-                shipData.uPos = astroPose3.uPos + Maths.QRotateLF(astroPose3.uRot, gStationPool[shipData.otherGId].shipDockPos + gStationPool[shipData.otherGId].shipDockPos.normalized * (-14.4f + 39.4f * num78));
-                shipData.uRot = astroPose3.uRot * (gStationPool[shipData.otherGId].shipDockRot * new Quaternion(0.707106769f, 0f, 0f, -0.707106769f));
+                shipData.uPos = astroPose3.uPos + Maths.QRotateLF(astroPose3.uRot, station.shipDockPos + station.shipDockPos.normalized * (-14.4f + 39.4f * num78));
+                shipData.uRot = astroPose3.uRot * (station.shipDockRot * new Quaternion(0.707106769f, 0f, 0f, -0.707106769f));
             }
 
             shipData.uVel.x = 0f;
@@ -461,15 +508,15 @@ namespace DSP_Battle
             }
 
             AstroPose[] astroPoses = GameMain.data.galaxy.astroPoses;
-            StationComponent[] gStationPool = GameMain.data.galacticTransport.stationPool;
+            StationComponent station = targetStation;
 
             AstroPose astroPose4 = astroPoses[shipData.planetB];
-            shipData.uPos = astroPose4.uPos + Maths.QRotateLF(astroPose4.uRot, gStationPool[shipData.otherGId].shipDockPos + gStationPool[shipData.otherGId].shipDockPos.normalized * -14.4f);
+            shipData.uPos = astroPose4.uPos + Maths.QRotateLF(astroPose4.uRot, station.shipDockPos + station.shipDockPos.normalized * -14.4f);
             shipData.uVel.x = 0f;
             shipData.uVel.y = 0f;
             shipData.uVel.z = 0f;
             shipData.uSpeed = 0f;
-            shipData.uRot = astroPose4.uRot * (gStationPool[shipData.otherGId].shipDockRot * new Quaternion(0.707106769f, 0f, 0f, -0.707106769f));
+            shipData.uRot = astroPose4.uRot * (station.shipDockRot * new Quaternion(0.707106769f, 0f, 0f, -0.707106769f));
             shipData.uAngularVel.x = 0f;
             shipData.uAngularVel.y = 0f;
             shipData.uAngularVel.z = 0f;
