@@ -11,11 +11,15 @@ using xiaoye97;
 using CommonAPI;
 using crecheng.DSPModSave;
 using System.IO;
+using CommonAPI.Systems;
 
 namespace DSP_Battle
 {
     [BepInPlugin("com.ckcz123.DSP_Battle", "DSP_Battle", "1.0.0")]
     [BepInDependency(DSPModSavePlugin.MODGUID)]
+    [BepInDependency(CommonAPIPlugin.GUID)]
+    [BepInDependency(LDBToolPlugin.MODGUID)]
+    [CommonAPISubmoduleDependency(nameof(ProtoRegistry))]
     public class Main : BaseUnityPlugin, IModCanSave
     {
         public static System.Random randSeed = new System.Random();
@@ -83,7 +87,7 @@ namespace DSP_Battle
 
         public void InitNew()
         {
-            int planetId = 103;
+            int planetId = 104;
 
             PlanetData planetData = GameMain.galaxy.PlanetById(planetId);
             PlanetFactory factory = planetData.factory;
