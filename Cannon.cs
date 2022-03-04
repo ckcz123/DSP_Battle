@@ -233,9 +233,7 @@ namespace DSP_Battle
 
                 VectorLF3 vectorLF2 = uPos + VectorLF3.Cross(swarm.orbits[calcOrbitId].up, b).normalized * (double)swarm.orbits[calcOrbitId].radius;
 
-                //不该参与循环的部分，换到循环前了
-
-                bool flag2 = __instance.bulletCount > 0;
+                
 
                 //下面的参数根据是否是炮还是太阳帆的弹射器有不同的修改
                 double maxtDivisor = 5000.0;
@@ -246,9 +244,18 @@ namespace DSP_Battle
                 {
 
                     loopNum = EnemyShips.sortedShips[starIndex].Count;
-                    maxtDivisor = BulletMaxtDivisor;
+                    maxtDivisor = 30000;
                 }
 
+                //子弹需求循环，不知是否可行
+                if(__instance.bulletCount == 0 && testFrameCount == 0)
+                {
+                    __instance.bulletId = (__instance.bulletId - 1100) % 5 + 1101;
+                }
+
+                //不该参与循环的部分，换到循环前了
+
+                bool flag2 = __instance.bulletCount > 0;
 
                 for (int gm = 0; gm < loopNum; gm++)
                 {
@@ -354,13 +361,15 @@ namespace DSP_Battle
 
                         __instance.fired = true;
                         animPool[__instance.entityId].time = 10f;
+                        VectorLF3 uBeginChange = vectorLF;
+
                         //下面是添加子弹
                         int bulletIndex = swarm.AddBullet(new SailBullet
                         {
                             maxt = (float)(__instance.targetDist / maxtDivisor),
                             lBegin = vector,
-                            uEndVel = VectorLF3.Cross(vectorLF2 - uPos, swarm.orbits[calcOrbitId].up).normalized * Math.Sqrt((double)(swarm.dysonSphere.gravity / swarm.orbits[calcOrbitId].radius)),
-                            uBegin = vectorLF,
+                            uEndVel = VectorLF3.Cross(vectorLF2 - uPos, swarm.orbits[calcOrbitId].up).normalized * Math.Sqrt((double)(swarm.dysonSphere.gravity / swarm.orbits[calcOrbitId].radius)), //至少影响着形成的太阳帆的初速度方向
+                            uBegin = uBeginChange,
                             uEnd = vectorLF2
                         }, calcOrbitId);
 
