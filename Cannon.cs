@@ -113,7 +113,7 @@ namespace DSP_Battle
             PlanetFactory factory = GameMain.galaxy.stars[starIndex].planets[planetId % 100 - 1].factory;
             int gmProtoId = factory.entityPool[__instance.entityId].protoId;
 
-            //if (gmProtoId != 9801) return true; // 应该是true，但是现在其他配合还没写完，所以暂时阻止所有普通弹射器运行。如果不是自己自定义的炮，的建筑protoId，就返回原函数
+            if (gmProtoId != 9801) return true; // 应该是true，但是现在其他配合还没写完，所以暂时阻止所有普通弹射器运行。如果不是自己自定义的炮，的建筑protoId，就返回原函数
 
             if (__instance.needs == null)
             {
@@ -462,7 +462,7 @@ namespace DSP_Battle
         {
             int starIndex = __instance.starData.index;
 
-            for (int i = 1; i < __instance.bulletCursor; i++)
+            foreach (var i in BulletTargets[starIndex].Keys)
             {
                 if (__instance.bulletPool[i].id == i && !sailBulletsIndex[starIndex].Contains(i)) //后面的判断条件就是说只对攻击用的子弹生效，不对正常的太阳帆操作
                 {

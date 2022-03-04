@@ -21,14 +21,17 @@ namespace DSP_Battle
         public static bool shouldDistroy = false;
         private static bool removingComponets = false;
 
-        public static void Create(int stationGid, VectorLF3 initPos, int initHp, int damageRange = 50, int itemId = 0)
+        public static void Create(int starIndex, VectorLF3 initPos, int initHp, int damageRange = 50, int itemId = 0)
         {
             int nextGid = gidRandom.Next(1 << 27, 1 << 29);
             while (ships.ContainsKey(nextGid)) nextGid = gidRandom.Next(1 << 27, 1 << 29);
 
+            int stationId = FindNearestStation(GameMain.galaxy.stars[starIndex], initPos);
+            if (stationId < 0) return;
+
             EnemyShip enemyShip = new EnemyShip(
                 nextGid,
-                stationGid,
+                stationId,
                 initPos,
                 initHp,
                 GameMain.history.logisticShipSailSpeedModified,
@@ -37,6 +40,32 @@ namespace DSP_Battle
             Main.logger.LogInfo("=========> Init ship " + nextGid + " at station " + enemyShip.shipData.otherGId);
 
             ships.Add(nextGid, enemyShip);
+        }
+
+        public static int FindNearestStation(StarData starData, VectorLF3 pos)
+        {
+            StationComponent[] stations = GameMain.data.galacticTransport.stationPool;
+            AstroPose[] astroPoses = GameMain.data.galaxy.astroPoses;
+
+            int index = -1;
+            double distance = 1e99;
+            for (int i = 0; i < stations.Length; ++i)
+            {
+                if (stations[i] != null && stations[i].id != 0 && stations[i].gid != 0 && stations[i].isStellar && 
+                    !stations[i].isCollector && !stations[i].isVeinCollector && stations[i].planetId / 100 - 1 == starData.index)
+                {
+                    AstroPose astroPose = astroPoses[stations[i].planetId];
+                    VectorLF3 stationPos = astroPose.uPos + Maths.QRotateLF(astroPose.uRot, stations[i].shipDockPos + stations[i].shipDockPos.normalized * 25f);
+
+                    double dis = (pos - stationPos).magnitude;
+                    if (dis < distance)
+                    {
+                        distance = dis;
+                        index = i;
+                    }
+                }
+            }
+            return index;
         }
 
         public static List<List<EnemyShip>> SortShips()
@@ -89,17 +118,49 @@ namespace DSP_Battle
             PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
             removingComponets = true;
             Vector3 stationPos = planetFactory.entityPool[station.entityId].pos;
-            planetFactory.RemoveEntityWithComponents(station.entityId);
+            RemoveEntity(planetFactory, station.entityId);
             // Find all entities in damageRange
             for (int i = 0; i < planetFactory.entityPool.Length; ++i)
             {
                 if (planetFactory.entityPool[i].notNull && (planetFactory.entityPool[i].pos - stationPos).magnitude <= ship.damageRange)
                 {
-                    planetFactory.RemoveEntityWithComponents(i);
+                    RemoveEntity(planetFactory, i);
                 }
             }
             removingComponets = false;
         }
+        private static void RemoveEntity(PlanetFactory factory, int entityId)
+        {
+            try
+            {
+                if (entityId >= factory.entityPool.Length || factory.entityPool[entityId].isNull) return;
+
+                int labId = factory.entityPool[entityId].labId;
+                if (labId != 0 && labId < factory.factorySystem.labPool.Length && factory.factorySystem.labPool[labId].id != 0)
+                {
+                    labId = factory.factorySystem.labPool[labId].nextLabId;
+                    if (labId != 0 && labId < factory.factorySystem.labPool.Length && factory.factorySystem.labPool[labId].id != 0)
+                    {
+                        RemoveEntity(factory, factory.factorySystem.labPool[labId].entityId);
+                    }
+                }
+
+                int storageId = factory.entityPool[entityId].storageId;
+                if (storageId != 0 && storageId < factory.factoryStorage.storagePool.Length && factory.factoryStorage.storagePool[storageId].id != 0)
+                {
+                    StorageComponent nextStorage = factory.factoryStorage.storagePool[storageId].nextStorage;
+                    if (nextStorage != null)
+                    {
+                        RemoveEntity(factory, nextStorage.entityId);
+                    }
+                }
+
+                factory.RemoveEntityWithComponents(entityId);
+            }
+            catch (Exception e) { }
+
+        }
+
 
         public static void OnShipDistroyed(EnemyShip ship)
         {
