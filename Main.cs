@@ -39,6 +39,7 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(BattleProtos));
             Harmony.CreateAndPatchAll(typeof(EjectorUIPatch));
             Harmony.CreateAndPatchAll(typeof(UIAlert));
+            Harmony.CreateAndPatchAll(typeof(MissileSilo));
 
             LDBTool.PreAddDataAction += BattleProtos.AddNewCannons;
             LDBTool.PostAddDataAction += BattleProtos.CopyPrefabDesc;
@@ -87,46 +88,32 @@ namespace DSP_Battle
 
         public void InitNew()
         {
-            int planetId = 104;
+            StarData star = GameMain.localStar;
+            if (star == null) return;
 
-            PlanetData planetData = GameMain.galaxy.PlanetById(planetId);
-            PlanetFactory factory = planetData.factory;
-            PlanetTransport transport = factory.transport;
-            List<StationComponent> stations = new List<StationComponent>(transport.stationPool);
-            if (stations.Count == 0) return;
-            int index = randSeed.Next(0, stations.Count);
-            for (var i = 0; i < stations.Count; ++i)
-            {
-                StationComponent component = stations[(index + i) % stations.Count];
-                if (component != null && component.id != 0 && component.isStellar)
-                {
-                    EnemyShips.Create(
-                        component.gid,
-                        planetData.uPosition +
-                             new VectorLF3((randSeed.NextDouble() - 0.5) * 60000, (randSeed.NextDouble() - 0.5) * 60000, (randSeed.NextDouble() - 0.5) * 60000),
-                        100, 50, 6002
-                        );
-                    return;
-                }
-            }
+            EnemyShips.Create(star.index, star.uPosition + new VectorLF3((randSeed.NextDouble() - 0.5) * 60000, (randSeed.NextDouble() - 0.5) * 60000, (randSeed.NextDouble() - 0.5) * 60000),
+                100, 50, 6002);
         }
 
         public void Export(BinaryWriter w)
         {
             EnemyShips.Export(w);
             Cannon.Export(w);
+            MissileSilo.Export(w);
         }
 
         public void Import(BinaryReader r)
         {
             EnemyShips.Import(r);
             Cannon.Import(r);
+            MissileSilo.Import(r);
         }
 
         public void IntoOtherSave()
         {
             EnemyShips.IntoOtherSave();
             Cannon.IntoOtherSave();
+            MissileSilo.IntoOtherSave();
         }
 
         public static ManualLogSource logger;

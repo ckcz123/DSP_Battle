@@ -120,28 +120,16 @@ namespace DSP_Battle
 
         public void FindAnotherStation()
         {
-            if (shipData.stage == 2)
+            int nextStationId = EnemyShips.FindNearestStation(GameMain.galaxy.PlanetById(shipData.planetB).star, shipData.uPos);
+            if (nextStationId < 0)
             {
                 state = State.distroyed;
                 return;
             }
+
             shipData.stage = 0;
-
-            PlanetFactory factory = GameMain.galaxy.PlanetById(shipData.planetB).factory;
-            PlanetTransport transport = factory.transport;
-            List<StationComponent> stations = new List<StationComponent>(transport.stationPool);
-            int index = random.Next(0, stations.Count);
-            for (var i = 0; i < stations.Count; ++i)
-            {
-                StationComponent component = stations[(index + i) % stations.Count];
-                if (component != null && component.id != 0 && component.isStellar)
-                {
-                    shipData.otherGId = component.gid;
-                    return;
-                }
-            }
-
-            state = State.distroyed;
+            shipData.otherGId = nextStationId;
+            shipData.planetB = GameMain.data.galacticTransport.stationPool[nextStationId].planetId;
         }
 
         public void Update()
@@ -158,7 +146,6 @@ namespace DSP_Battle
             bool flag7 = false;
             if (shipData.stage == 0) UpdateStage0(out quaternion, out flag7);
             else if (shipData.stage == 1) UpdateStage1();
-            else if (shipData.stage == 2) UpdateStage2();
 
             PlanetData planet = GameMain.galaxy.PlanetById(shipData.planetB);
             renderingData.SetPose(shipData.uPos, flag7 ? quaternion : shipData.uRot, GameMain.data.relativePos, GameMain.data.relativeRot, shipData.uVel * shipData.uSpeed, 6002);
@@ -437,7 +424,6 @@ namespace DSP_Battle
         }
         private void UpdateStage1()
         {
-
             float shipSailSpeed = maxSpeed;
             float num31 = Mathf.Sqrt(shipSailSpeed / 600f);
             float num36 = num31 * 0.006f + 1E-05f;
@@ -452,9 +438,10 @@ namespace DSP_Battle
                 num78 = shipData.t;
                 if (shipData.t < 0f)
                 {
-                    shipData.t = 1f;
-                    num78 = 0f;
-                    shipData.stage = 2;
+                    shipData.t = 0f;
+                    state = State.landed;
+                    return;
+
                 }
 
                 num78 = (3f - num78 - num78) * num78 * num78;
@@ -499,35 +486,6 @@ namespace DSP_Battle
             shipData.uAngularVel.z = 0f;
             shipData.uAngularSpeed = 0f;
             renderingData.anim.z = num78 * 1.7f - 0.7f;
-        }
-        private void UpdateStage2()
-        {
-            shipData.t -= 0.0334f;
-
-            if (shipData.t <= 0f)
-            {
-                shipData.t = 0f;
-                state = State.landed;
-                return;
-            }
-
-            AstroPose[] astroPoses = GameMain.data.galaxy.astroPoses;
-            StationComponent station = targetStation;
-
-            AstroPose astroPose4 = astroPoses[shipData.planetB];
-            shipData.uPos = astroPose4.uPos + Maths.QRotateLF(astroPose4.uRot, station.shipDockPos + station.shipDockPos.normalized * -14.4f);
-            shipData.uVel.x = 0f;
-            shipData.uVel.y = 0f;
-            shipData.uVel.z = 0f;
-            shipData.uSpeed = 0f;
-            shipData.uRot = astroPose4.uRot * (station.shipDockRot * new Quaternion(0.707106769f, 0f, 0f, -0.707106769f));
-            shipData.uAngularVel.x = 0f;
-            shipData.uAngularVel.y = 0f;
-            shipData.uAngularVel.z = 0f;
-            shipData.uAngularSpeed = 0f;
-            shipData.pPosTemp = Vector3.zero;
-            shipData.pRotTemp = Quaternion.identity;
-            renderingData.anim.z = 0;
         }
 
         public void Export(BinaryWriter w)
