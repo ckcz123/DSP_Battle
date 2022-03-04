@@ -106,8 +106,8 @@
     <Compile Include="EnemyShips.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="MissileSilo.cs" />
-    <Compile Include="UIAlert.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UIAlert.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

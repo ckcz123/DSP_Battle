@@ -7,13 +7,14 @@ using HarmonyLib;
 using System.Reflection;
 using UnityEngine;
 using System.IO;
+using System.Collections.Concurrent;
 
 namespace DSP_Battle
 {
     class MissileSilo
     {
-		public static List<Dictionary<int, int>> MissileTargets; //记录导弹的目标
-		public static List<Dictionary<int, int>> canDoDamage; //记录导弹还能造成多少伤害
+		public static List<ConcurrentDictionary<int, int>> MissileTargets; //记录导弹的目标
+		public static List<ConcurrentDictionary<int, int>> canDoDamage; //记录导弹还能造成多少伤害
 		
 
 		public static float missileMaxSpeed = 5000;
@@ -24,12 +25,12 @@ namespace DSP_Battle
 
 		public static void ReInitAll()
         {
-			MissileTargets = new List<Dictionary<int, int>>();
-			canDoDamage = new List<Dictionary<int, int>>();
+			MissileTargets = new List<ConcurrentDictionary<int, int>>();
+			canDoDamage = new List<ConcurrentDictionary<int, int>>();
 			for (int i = 0; i < GameMain.galaxy.starCount; i++)
 			{
-				MissileTargets.Add(new Dictionary<int, int>());
-				canDoDamage.Add(new Dictionary<int, int>());
+				MissileTargets.Add(new ConcurrentDictionary<int, int>());
+				canDoDamage.Add(new ConcurrentDictionary<int, int>());
 			}
 		}
 
