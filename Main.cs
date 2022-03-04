@@ -19,6 +19,13 @@ namespace DSP_Battle
     public class Main : BaseUnityPlugin, IModCanSave
     {
         public static System.Random randSeed = new System.Random();
+        public static int minShowDetaisSecond; //取决于科技
+        public static int framesUntilNextWave;
+        public static int nextWaveShipCount;
+        public static int nextWaveStrength;
+        public static int nextWaveAward;
+        public static int destroyedCount;
+        public static bool preparingNextWave = false;
         public void Awake()
         {
             Logger.LogInfo("=========> Done!");
@@ -27,6 +34,7 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(Cannon));
             Harmony.CreateAndPatchAll(typeof(BattleProtos));
             Harmony.CreateAndPatchAll(typeof(EjectorUIPatch));
+            Harmony.CreateAndPatchAll(typeof(UIAlert));
 
             LDBTool.PreAddDataAction += BattleProtos.AddNewCannons;
             LDBTool.PostAddDataAction += BattleProtos.CopyPrefabDesc;
@@ -45,7 +53,32 @@ namespace DSP_Battle
             {
                 EnemyShips.paused = !EnemyShips.paused;
             }
+            if(Input.GetKeyDown(KeyCode.Backspace))
+            {
+                UIAlert.OnActiveChange();
+            }
+            if (Input.GetKeyDown(KeyCode.J))
+            {
+                framesUntilNextWave = 3700 * 60;
+                nextWaveShipCount = 12;
+                nextWaveStrength = 240;
+                nextWaveAward = 3724;
+                preparingNextWave = true;
+            }
+            if (Input.GetKeyDown(KeyCode.K))
+            {
+                framesUntilNextWave -= 3600;
+            }
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                preparingNextWave = false;
+            }
             //Cannon.BulletTrack();
+            if (preparingNextWave)
+            {
+                framesUntilNextWave -= 1;
+                UIAlert.CountDownRefresh(preparingNextWave, framesUntilNextWave, 0, nextWaveShipCount, nextWaveStrength, nextWaveAward, 0, false); //第二个0应该传入已经摧毁的建筑数
+            }
         }
 
         public void InitNew()
