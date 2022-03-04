@@ -115,6 +115,7 @@ namespace DSP_Battle
 
             //if (gmProtoId != 9801) return true; // 暂时不要取消注释，下面已经做了普通弹射器的适配。
 
+
             if (__instance.needs == null)
             {
                 __instance.needs = new int[6];
