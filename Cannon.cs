@@ -44,7 +44,7 @@ namespace DSP_Battle
                     int starIndex = GameMain.data.dysonSpheres[i].starData.index;
                     if (swarm != null)
                     {
-                        for (int j = 1; j < swarm.bulletCursor; j++)
+                        foreach (var j in BulletTargets[starIndex].Keys)
                         {
                             //if ((curSwarm.bulletPool[i].uEnd - curSwarm.bulletPool[i].uBegin).magnitude > 500)
                             //{
@@ -113,7 +113,8 @@ namespace DSP_Battle
             PlanetFactory factory = GameMain.galaxy.stars[starIndex].planets[planetId % 100 - 1].factory;
             int gmProtoId = factory.entityPool[__instance.entityId].protoId;
 
-            if (gmProtoId != 9801) return true; // 应该是true，但是现在其他配合还没写完，所以暂时阻止所有普通弹射器运行。如果不是自己自定义的炮，的建筑protoId，就返回原函数
+            //if (gmProtoId != 9801) return true; // 暂时不要取消注释，下面已经做了普通弹射器的适配。
+
 
             if (__instance.needs == null)
             {
@@ -392,14 +393,11 @@ namespace DSP_Battle
                                 Main.logger.LogInfo("bullet info1 set error.");
                             }
 
-                            try
-                            {
-                                BulletTargets[swarm.starData.index][bulletIndex] = curTarget.shipIndex;
-                            }
-                            catch (Exception)
-                            {
-                                Main.logger.LogInfo("bullet info2 set error.");
-                            }
+                            
+                            BulletTargets[swarm.starData.index][bulletIndex] = curTarget.shipIndex;
+                            
+                            //Main.logger.LogInfo("bullet info2 set error.");
+                            
                             
                             try
                             {
@@ -500,10 +498,10 @@ namespace DSP_Battle
             {
                 sailBulletsIndex[__instance.starData.index].Remove(id); //删除，i不再被记为太阳帆子弹。子弹实体会在后续自动被游戏原本逻辑移除
             }
-            //if(BulletTargets[__instance.starData.index].ContainsKey(id))
-            //{
-            //    BulletTargets[__instance.starData.index].Remove(id);
-            //}
+            if (BulletTargets[__instance.starData.index].ContainsKey(id))
+            {
+                BulletTargets[__instance.starData.index].Remove(id);
+            }
 
         }
 

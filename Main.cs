@@ -39,6 +39,7 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(BattleProtos));
             Harmony.CreateAndPatchAll(typeof(EjectorUIPatch));
             Harmony.CreateAndPatchAll(typeof(UIAlert));
+            Harmony.CreateAndPatchAll(typeof(MissileSilo));
 
             LDBTool.PreAddDataAction += BattleProtos.AddNewCannons;
             LDBTool.PostAddDataAction += BattleProtos.CopyPrefabDesc;
@@ -98,18 +99,21 @@ namespace DSP_Battle
         {
             EnemyShips.Export(w);
             Cannon.Export(w);
+            MissileSilo.Export(w);
         }
 
         public void Import(BinaryReader r)
         {
             EnemyShips.Import(r);
             Cannon.Import(r);
+            MissileSilo.Import(r);
         }
 
         public void IntoOtherSave()
         {
             EnemyShips.IntoOtherSave();
             Cannon.IntoOtherSave();
+            MissileSilo.IntoOtherSave();
         }
 
         public static ManualLogSource logger;
