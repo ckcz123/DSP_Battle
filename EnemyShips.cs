@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace DSP_Battle
     public class EnemyShips
     {
 
-        public static Dictionary<int, EnemyShip> ships = new Dictionary<int, EnemyShip>();
+        public static ConcurrentDictionary<int, EnemyShip> ships = new ConcurrentDictionary<int, EnemyShip>();
 
         public static System.Random gidRandom = new System.Random();
         public static bool paused = false;
@@ -39,7 +40,7 @@ namespace DSP_Battle
                 itemId);
             Main.logger.LogInfo("=========> Init ship " + nextGid + " at station " + enemyShip.shipData.otherGId);
 
-            ships.Add(nextGid, enemyShip);
+            ships.TryAdd(nextGid, enemyShip);
         }
 
         public static int FindNearestStation(StarData starData, VectorLF3 pos)
@@ -164,7 +165,8 @@ namespace DSP_Battle
 
         public static void OnShipDistroyed(EnemyShip ship)
         {
-            ships.Remove(ship.shipIndex);
+            EnemyShip v;
+            ships.TryRemove(ship.shipIndex, out v);
             sortedShips = SortShips();
         }
 
@@ -184,7 +186,8 @@ namespace DSP_Battle
                 if (ship.state != EnemyShip.State.active)
                 {
                     if (ship.state == EnemyShip.State.landed) OnShipLanded(ship);
-                    ships.Remove(ship.shipIndex);
+                    EnemyShip v;
+                    ships.TryRemove(ship.shipIndex, out v);
                     hasRemoved = true;
                 }
             });
@@ -292,7 +295,7 @@ namespace DSP_Battle
             for (var i = 0; i < cnt; ++i)
             {
                 EnemyShip ship = new EnemyShip(r);
-                ships.Add(ship.shipIndex, ship);
+                ships.TryAdd(ship.shipIndex, ship);
             }
             sortedShips = SortShips();
         }
