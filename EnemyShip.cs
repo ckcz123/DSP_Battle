@@ -106,6 +106,11 @@ namespace DSP_Battle
             renderingUIData.gid = gid;
         }
 
+        public double distanceTo(VectorLF3 pos)
+        {
+            return (pos - uPos).magnitude;
+        }
+
         public void BeAttacked(int atk)
         {
             if (state != State.active) return;

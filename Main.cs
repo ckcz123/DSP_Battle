@@ -86,7 +86,7 @@ namespace DSP_Battle
             }
         }
 
-        public void InitNew()
+        public static void InitNew()
         {
             StarData star = GameMain.localStar;
             if (star == null) return;

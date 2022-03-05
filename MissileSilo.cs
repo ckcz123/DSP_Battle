@@ -1383,8 +1383,9 @@ namespace DSP_Battle
 						num2 = num;
 						if (num2 == _this.rocketCapacity)
 						{
-							Traverse.Create(_this).Method("SetRocketCapacity").GetValue(_this.rocketCapacity * 2);
-							//_this.SetRocketCapacity(_this.rocketCapacity * 2);
+							// Traverse.Create(_this).Method("SetRocketCapacity").GetValue(_this.rocketCapacity * 2);
+							AccessTools.Method(typeof(DysonSphere), "SetRocketCapacity").Invoke(_this, new object[] { _this.rocketCapacity * 2 });
+							// _this.SetRocketCapacity(_this.rocketCapacity * 2);
 						}
 					}
 					_this.rocketPool[num2] = rocket;

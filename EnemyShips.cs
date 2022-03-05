@@ -69,6 +69,19 @@ namespace DSP_Battle
             return index;
         }
 
+        public static List<int> FindShipsInRange(VectorLF3 pos, double range)
+        {
+            List<int> list = new List<int>();
+            foreach (var ship in ships.Values)
+            {
+                if (ship.state == EnemyShip.State.active && ship.distanceTo(pos) <= range)
+                {
+                    list.Add(ship.shipIndex);
+                }
+            }
+            return list;
+        }
+
         public static List<List<EnemyShip>> SortShips()
         {
             List<List<EnemyShip>> sortedShips = new List<List<EnemyShip>>(100);
