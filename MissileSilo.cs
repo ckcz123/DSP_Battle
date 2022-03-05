@@ -15,13 +15,13 @@ namespace DSP_Battle
     {
 		public static List<ConcurrentDictionary<int, int>> MissileTargets; //记录导弹的目标
 		public static List<ConcurrentDictionary<int, int>> canDoDamage; //记录导弹还能造成多少伤害
-		
+
 
 		public static float missileMaxSpeed = 5000;
 		public static float missileSpeedUp = 50;
 
 		//以下数值尽量不要改动
-		public static double distIntoTrackStage2;
+		//public static double distIntoTrackStage2;
 
 		public static void ReInitAll()
         {
@@ -415,8 +415,13 @@ namespace DSP_Battle
 								}, 1);
 
 								__instance.swarm.bulletPool[bulletIndex].state = 0;
-
-								EnemyShips.ships[MissileTargets[starIndex][i]].BeAttacked(canDoDamage[starIndex][i]);
+								//范围伤害
+								var shipsHit = EnemyShips.FindShipsInRange(dysonRocket.uPos, 500);
+								foreach (var item in shipsHit)
+								{
+									if (EnemyShips.ships.ContainsKey(item))
+										EnemyShips.ships[item].BeAttacked(canDoDamage[starIndex][i]);
+								}
 								canDoDamage[starIndex][i] = 0;
 								__instance.RemoveDysonRocket(i);
 								goto IL_BDF;
@@ -1002,7 +1007,13 @@ namespace DSP_Battle
 
 									__instance.swarm.bulletPool[bulletIndex].state = 0;
 
-									EnemyShips.ships[MissileTargets[starIndex][i]].BeAttacked(canDoDamage[starIndex][i]);
+									//范围伤害
+									var shipsHit = EnemyShips.FindShipsInRange(dysonRocket.uPos, 500);
+                                    foreach (var item in shipsHit)
+                                    {
+										if(EnemyShips.ships.ContainsKey(item))
+											EnemyShips.ships[item].BeAttacked(canDoDamage[starIndex][i]);
+									}
 									canDoDamage[starIndex][i] = 0;
 									__instance.RemoveDysonRocket(i);
 									goto IL_BDF;
@@ -1405,12 +1416,58 @@ namespace DSP_Battle
 
 		public static void Export(BinaryWriter w)
 		{
-			
+			w.Write(MissileTargets.Count);
+            for (int i1 = 0; i1 < MissileTargets.Count; i1++)
+            {
+				w.Write(MissileTargets[i1].Count);
+                foreach (var item in MissileTargets[i1])
+                {
+					w.Write(item.Key);
+					w.Write(item.Value);
+                }
+            }
+			w.Write(canDoDamage.Count);
+            for (int i2 = 0; i2 < canDoDamage.Count; i2++)
+            {
+				w.Write(canDoDamage[i2].Count);
+                foreach (var item in canDoDamage[i2])
+                {
+					w.Write(item.Key);
+					w.Write(item.Value);
+                }
+            }
 		}
 
 		public static void Import(BinaryReader r)
 		{
 			ReInitAll();
+			int total1 = r.ReadInt32();
+            for (int c1 = 0; c1 < total1 - MissileTargets.Count; c1++)
+            {
+				MissileTargets.Add(new ConcurrentDictionary<int, int>());
+            }
+            for (int i1 = 0; i1 < total1; i1++)
+            {
+				int num1 = r.ReadInt32();
+                for (int j1 = 0; j1 < num1; j1++)
+                {
+					MissileTargets[i1].TryAdd(r.ReadInt32(),r.ReadInt32());
+                }
+            }
+
+			int total2 = r.ReadInt32();
+            for (int c2 = 0; c2 < total2 - canDoDamage.Count; c2++)
+            {
+				canDoDamage.Add(new ConcurrentDictionary<int, int>());
+            }
+			for (int i2 = 0; i2 < total2; i2++)
+			{
+				int num2 = r.ReadInt32();
+				for (int j2 = 0; j2 < num2; j2++)
+				{
+					canDoDamage[i2].TryAdd(r.ReadInt32(), r.ReadInt32());
+				}
+			}
 		}
 
 		public static void IntoOtherSave()

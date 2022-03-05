@@ -18,7 +18,7 @@ namespace DSP_Battle
         //需要存读档
         // 这里应该是HashSet，为了线程安全还是用ConcurrentDictionary
         public static List<ConcurrentDictionary<int,int>> sailBulletsIndex; //记录应该变成太阳帆的子弹，原本是记录攻击用子弹，但是总有漏网之鱼变成太阳帆，找不到原因，所以反过来记录应该变成太阳帆的子弹，这可能导致0.1%（目测，或许远低于此）的太阳帆无法生成
-        public static List<ConcurrentDictionary<int,int>> BulletTargets; //记录子弹的目标
+        public static List<ConcurrentDictionary<int,int>> bulletTargets; //记录子弹的目标
         public static List<ConcurrentDictionary<int,int>> canDoDamage; //记录子弹还能造成多少伤害
         //
 
@@ -46,7 +46,7 @@ namespace DSP_Battle
                     int starIndex = GameMain.data.dysonSpheres[i].starData.index;
                     if (swarm != null)
                     {
-                        foreach (var j in BulletTargets[starIndex].Keys)
+                        foreach (var j in bulletTargets[starIndex].Keys)
                         {
                             //if ((curSwarm.bulletPool[i].uEnd - curSwarm.bulletPool[i].uBegin).magnitude > 500)
                             //{
@@ -54,16 +54,16 @@ namespace DSP_Battle
                             //    curSwarm.bulletPool[i].maxt = curSwarm.bulletPool[i].maxt - curSwarm.bulletPool[i].t;
                             //    curSwarm.bulletPool[i].t = 0;
                             //}
-                            if (!sailBulletsIndex[starIndex].ContainsKey(j) && BulletTargets[starIndex].ContainsKey(j)) //只有对应swarm的对应位置的bullet不是之前存下来的solarsail的Bullet的时候才改变目标终点
+                            if (!sailBulletsIndex[starIndex].ContainsKey(j) && bulletTargets[starIndex].ContainsKey(j)) //只有对应swarm的对应位置的bullet不是之前存下来的solarsail的Bullet的时候才改变目标终点
                             {
-                                int targetShipIndex = BulletTargets[starIndex][j];
+                                int targetShipIndex = bulletTargets[starIndex][j];
                                 if (EnemyShips.ships.ContainsKey(targetShipIndex) && EnemyShips.ships[targetShipIndex].state == EnemyShip.State.active)
                                 {
                                     swarm.bulletPool[j].uEnd = EnemyShips.ships[targetShipIndex].uPos;
                                 }
                                 //else
                                 //{
-                                //    BulletTargets[starIndex].Remove(j);
+                                //    bulletTargets[starIndex].Remove(j);
                                 //}
                             }
 
@@ -87,13 +87,13 @@ namespace DSP_Battle
             try
             {
                 sailBulletsIndex = new List<ConcurrentDictionary<int,int>>();
-                BulletTargets = new List<ConcurrentDictionary<int, int>>();
+                bulletTargets = new List<ConcurrentDictionary<int, int>>();
                 canDoDamage = new List<ConcurrentDictionary<int, int>>();
 
                 for (int i = 0; i < GameMain.galaxy.starCount; i++)
                 {
                     sailBulletsIndex.Add(new ConcurrentDictionary<int, int>());
-                    BulletTargets.Add(new ConcurrentDictionary<int, int>());
+                    bulletTargets.Add(new ConcurrentDictionary<int, int>());
                     canDoDamage.Add(new ConcurrentDictionary<int, int>());
                 }
 
@@ -395,7 +395,7 @@ namespace DSP_Battle
                                 Main.logger.LogInfo("bullet info1 set error.");
                             }
 
-                            BulletTargets[swarm.starData.index].AddOrUpdate(bulletIndex, curTarget.shipIndex, (x, y) => curTarget.shipIndex);
+                            bulletTargets[swarm.starData.index].AddOrUpdate(bulletIndex, curTarget.shipIndex, (x, y) => curTarget.shipIndex);
                             
                             //Main.logger.LogInfo("bullet info2 set error.");
                             
@@ -462,9 +462,9 @@ namespace DSP_Battle
         {
             int starIndex = __instance.starData.index;
 
-            foreach (var i in BulletTargets[starIndex].Keys)
+            foreach (var i in bulletTargets[starIndex].Keys)
             {
-                if (__instance.bulletPool[i].id == i && !sailBulletsIndex[starIndex].ContainsKey(i)) //后面的判断条件就是说只对攻击用的子弹生效，不对正常的太阳帆操作
+                if (__instance.bulletPool.Length > i && __instance.bulletPool[i].id == i && !sailBulletsIndex[starIndex].ContainsKey(i)) //后面的判断条件就是说只对攻击用的子弹生效，不对正常的太阳帆操作
                 {
                     //SailBullet[] array = __instance.bulletPool;
                     //int num3 = i;
@@ -477,11 +477,11 @@ namespace DSP_Battle
                         __instance.bulletPool[i].state = 0; //这就阻止了后续创建太阳帆的可能，但也可能带来其他影响，但无所谓，只有最多2帧的异常帧
                         
                     }
-                    if (__instance.bulletPool[i].t >= __instance.bulletPool[i].maxt && BulletTargets[starIndex].ContainsKey(i) && canDoDamage[starIndex].ContainsKey(i))
+                    if (__instance.bulletPool[i].t >= __instance.bulletPool[i].maxt && bulletTargets[starIndex].ContainsKey(i) && canDoDamage[starIndex].ContainsKey(i))
                     {
-                        if (EnemyShips.ships.ContainsKey(BulletTargets[starIndex][i]))
+                        if (EnemyShips.ships.ContainsKey(bulletTargets[starIndex][i]))
                         {
-                            EnemyShips.ships[BulletTargets[starIndex][i]].BeAttacked(canDoDamage[starIndex][i]); //击中造成伤害  //如果在RemoveBullet的postpatch写这个，可以不用每帧循环检测，但是伤害将在爆炸动画后结算，感觉不太合理
+                            EnemyShips.ships[bulletTargets[starIndex][i]].BeAttacked(canDoDamage[starIndex][i]); //击中造成伤害  //如果在RemoveBullet的postpatch写这个，可以不用每帧循环检测，但是伤害将在爆炸动画后结算，感觉不太合理
                         }
                         int v;
                         canDoDamage[starIndex].TryRemove(i,out v); //该子弹已造成过伤害，或者因为飞船已经不存在了，这两种情况都要将子弹的未来还可造成的伤害设置成0
@@ -502,17 +502,18 @@ namespace DSP_Battle
                 int v;
                 sailBulletsIndex[__instance.starData.index].TryRemove(id, out v); //删除，i不再被记为太阳帆子弹。子弹实体会在后续自动被游戏原本逻辑移除
             }
-            if (BulletTargets[__instance.starData.index].ContainsKey(id))
+            if (bulletTargets[__instance.starData.index].ContainsKey(id))
             {
                 int v;
-                BulletTargets[__instance.starData.index].TryRemove(id, out v);
+                bulletTargets[__instance.starData.index].TryRemove(id, out v);
             }
 
         }
 
         public static void Export(BinaryWriter w)
         {
-            for (int i1 = 0; i1 < GameMain.galaxy.starCount; i1++)
+            w.Write(sailBulletsIndex.Count);
+            for (int i1 = 0; i1 < sailBulletsIndex.Count; i1++)
             {
                 w.Write(sailBulletsIndex[i1].Count);
                 foreach (var item in sailBulletsIndex[i1].Keys)
@@ -520,16 +521,18 @@ namespace DSP_Battle
                     w.Write(item);
                 }
             }
-            for (int i2 = 0; i2 < GameMain.galaxy.starCount; i2++)
+            w.Write(bulletTargets.Count);
+            for (int i2 = 0; i2 < bulletTargets.Count; i2++)
             {
-                w.Write(BulletTargets[i2].Count);
-                foreach (var item in BulletTargets[i2])
+                w.Write(bulletTargets[i2].Count);
+                foreach (var item in bulletTargets[i2])
                 {
                     w.Write(item.Key);
                     w.Write(item.Value);
                 }
             }
-            for (int i3 = 0; i3 < GameMain.galaxy.starCount; i3++)
+            w.Write(canDoDamage.Count);
+            for (int i3 = 0; i3 < canDoDamage.Count; i3++)
             {
                 w.Write(canDoDamage[i3].Count);
                 foreach (var item in canDoDamage[i3])
@@ -544,7 +547,12 @@ namespace DSP_Battle
         public static void Import(BinaryReader r)
         {
             ReInitAll();
-            for (int i1 = 0; i1 < GameMain.galaxy.starCount; i1++)
+            int total1 = r.ReadInt32();
+            for (int c1 = 0; c1 < total1 - sailBulletsIndex.Count; c1++)
+            {
+                sailBulletsIndex.Add(new ConcurrentDictionary<int, int>());
+            }
+            for (int i1 = 0; i1 < total1; i1++)
             {
                 int num1 = r.ReadInt32();
                 for (int j1 = 0; j1 < num1; j1++)
@@ -552,15 +560,27 @@ namespace DSP_Battle
                     sailBulletsIndex[i1].TryAdd(r.ReadInt32(), 0);
                 }
             }
-            for (int i2 = 0; i2 < GameMain.galaxy.starCount; i2++)
+
+            int total2 = r.ReadInt32();
+            for (int c2 = 0; c2 < total2 - bulletTargets.Count; c2++)
+            {
+                bulletTargets.Add(new ConcurrentDictionary<int, int>());
+            }
+            for (int i2 = 0; i2 < total2; i2++)
             {
                 int num2 =  r.ReadInt32();
                 for (int j2 = 0; j2 < num2; j2++)
                 {
-                    BulletTargets[i2].TryAdd(r.ReadInt32(), r.ReadInt32());
+                    bulletTargets[i2].TryAdd(r.ReadInt32(), r.ReadInt32());
                 }
             }
-            for (int i3 = 0; i3 < GameMain.galaxy.starCount; i3++)
+
+            int total3 = r.ReadInt32();
+            for (int c3 = 0; c3 < total3 - canDoDamage.Count; c3++)
+            {
+                canDoDamage.Add(new ConcurrentDictionary<int, int>());
+            }
+            for (int i3 = 0; i3 < total3; i3++)
             {
                 int num3 = r.ReadInt32();
                 for (int j3 = 0; j3 < num3; j3++)
