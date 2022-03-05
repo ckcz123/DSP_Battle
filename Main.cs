@@ -41,7 +41,9 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(BattleProtos));
             Harmony.CreateAndPatchAll(typeof(EjectorUIPatch));
             Harmony.CreateAndPatchAll(typeof(UIAlert));
+
             Harmony.CreateAndPatchAll(typeof(MissileSilo));
+            Harmony.CreateAndPatchAll(typeof(WormholeUIPatch));
 
             LDBTool.PreAddDataAction += BattleProtos.AddNewCannons;
             LDBTool.PostAddDataAction += BattleProtos.CopyPrefabDesc;
@@ -93,8 +95,11 @@ namespace DSP_Battle
             StarData star = GameMain.localStar;
             if (star == null) return;
 
+            /*
             EnemyShips.Create(star.index, star.uPosition + new VectorLF3((randSeed.NextDouble() - 0.5) * 60000, (randSeed.NextDouble() - 0.5) * 60000, (randSeed.NextDouble() - 0.5) * 60000),
                 100, 50, 6002);
+            */
+            EnemyShips.Create(star.index, WormholeUIPatch.starData.uPosition, 100, 50, 6002);
         }
 
         public void Export(BinaryWriter w)

@@ -92,6 +92,7 @@ namespace DSP_Battle
             shipData.uPos = initPos;
             shipData.itemId = itemId;
             shipData.uRot = Quaternion.identity;
+            shipData.uSpeed = 0;
             hp = initHp;
             this.damageRange = damageRange;
             this.maxSpeed = maxSpeed;

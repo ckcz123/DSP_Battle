@@ -81,6 +81,10 @@
       <HintPath>..\..\..\Steam\steamapps\common\Dyson Sphere Program\DSPGAME_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>..\..\..\Steam\steamapps\common\Dyson Sphere Program\DSPGAME_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>..\..\..\Steam\steamapps\common\Dyson Sphere Program\DSPGAME_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
       <Private>False</Private>
@@ -107,7 +111,7 @@
     <Compile Include="Main.cs" />
     <Compile Include="MissileSilo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestAddStar.cs" />
+    <Compile Include="WormholeUIPatch.cs" />
     <Compile Include="UIAlert.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
