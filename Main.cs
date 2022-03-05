@@ -30,6 +30,8 @@ namespace DSP_Battle
         public static int nextWaveAward;
         public static int destroyedCount;
         public static bool preparingNextWave = false;
+
+
         public void Awake()
         {
             Logger.LogInfo("=========> Done!");
