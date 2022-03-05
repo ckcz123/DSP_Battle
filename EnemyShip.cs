@@ -53,6 +53,15 @@ namespace DSP_Battle
             }
         }
 
+        public double threat
+        {
+            get
+            {
+                if (state != State.active) return -1;
+                return hp * shipData.uSpeed / distanceToTarget;
+            }
+        }
+
         public StationComponent targetStation
         {
             get

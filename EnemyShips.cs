@@ -13,14 +13,23 @@ namespace DSP_Battle
     public class EnemyShips
     {
 
-        public static ConcurrentDictionary<int, EnemyShip> ships = new ConcurrentDictionary<int, EnemyShip>();
+        public static ConcurrentDictionary<int, EnemyShip> ships;
 
         public static System.Random gidRandom = new System.Random();
         public static bool paused = false;
-        public static List<List<EnemyShip>> sortedShips = SortShips();
+        public static List<List<EnemyShip>> minTargetDisSortedShips;
+        public static List<Dictionary<int, List<EnemyShip>>> minPlanetDisSortedShips;
+        public static List<List<EnemyShip>> maxThreatSortedShips;
+        public static List<List<EnemyShip>> minHpSortedShips;
 
         public static bool shouldDistroy = false;
         private static bool removingComponets = false;
+
+        public static void Init()
+        {
+            ships = new ConcurrentDictionary<int, EnemyShip>();
+            SortShips();
+        }
 
         public static void Create(int starIndex, VectorLF3 initPos, int initHp, int damageRange = 50, int itemId = 0)
         {
@@ -82,26 +91,122 @@ namespace DSP_Battle
             return list;
         }
 
-        public static List<List<EnemyShip>> SortShips()
+        public static void SortShips()
         {
-            List<List<EnemyShip>> sortedShips = new List<List<EnemyShip>>(100);
-            for (var i = 0; i < 100; ++i) sortedShips.Add(new List<EnemyShip>());
-            if (ships.Count == 0) return sortedShips;
+            SortShipsMinTargetDis();
+            SortShipsMinPlanetDis();
+            SortShipsMaxThreat();
+            SortShipsMinHp();
+        }
 
-            List<KeyValuePair<double, EnemyShip>> distance = new List<KeyValuePair<double, EnemyShip>>();
+        public static List<EnemyShip> sortedShips(int strategy, int starIndex, int planetId)
+        {
+            // 最接近物流塔
+            if (strategy == 1) return minTargetDisSortedShips[starIndex];
+            // 最大威胁
+            if (strategy == 2) return maxThreatSortedShips[starIndex];
+            // 距自己最近
+            if (strategy == 3) return minPlanetDisSortedShips[starIndex][planetId];
+            // 最低生命
+            if (strategy == 4) return minHpSortedShips[starIndex];
+            return new List<EnemyShip>();
+        }
+
+        public static void SortShipsMinTargetDis()
+        {
+            var sortedShips = new List<List<EnemyShip>>(100);
+            for (var i = 0; i < 100; ++i) sortedShips.Add(new List<EnemyShip>());
+
+            Dictionary<int, double> distances = new Dictionary<int, double>();
             foreach (EnemyShip ship in ships.Values)
             {
                 if (ship.state != EnemyShip.State.active) continue;
-                distance.Add(new KeyValuePair<double, EnemyShip>(ship.distanceToTarget, ship));
+                distances.Add(ship.shipIndex, ship.distanceToTarget);
+                sortedShips[ship.starIndex].Add(ship);
             }
-            distance.Sort((v1, v2) => Math.Sign(v1.Key - v2.Key));
-            Main.logger.LogInfo("=====> Sort ship: " + distance.Select(v => v.Value.shipIndex + ":" + v.Key).Join(null, "; "));
-            foreach (var v in distance)
+            foreach (var shipArr in sortedShips)
             {
-                sortedShips[v.Value.starIndex].Add(v.Value);
+                shipArr.Sort((v1, v2) => Math.Sign(distances[v1.shipIndex] - distances[v2.shipIndex]));
             }
-            return sortedShips;
+            minTargetDisSortedShips = sortedShips;
         }
+
+        public static void SortShipsMinPlanetDis()
+        {
+            var sortedShips = new List<Dictionary<int, List<EnemyShip>>>(100);
+            for (var i = 0; i < 100; ++i)
+            {
+                var dictionary = new Dictionary<int, List<EnemyShip>>();
+                for (var j = 0; j < 10; ++j)
+                {
+                    dictionary.Add(100 * (i + 1) + j, new List<EnemyShip>());
+                }
+                sortedShips.Add(dictionary);
+            }
+
+            Dictionary<int, Dictionary<int, double>> distances = new Dictionary<int, Dictionary<int, double>>();
+            foreach (EnemyShip ship in ships.Values)
+            {
+                if (ship.state != EnemyShip.State.active) continue;
+                int starIndex = ship.starIndex;
+                StarData starData = GameMain.galaxy.stars[starIndex];
+                foreach (PlanetData planet in starData.planets)
+                {
+                    int planetId = planet.id;
+                    if (!distances.ContainsKey(planetId)) distances.Add(planetId, new Dictionary<int, double>());
+                    distances[planetId].Add(ship.shipIndex, ship.distanceTo(planet.uPosition));
+                    sortedShips[starIndex][planetId].Add(ship);
+                }
+            }
+
+            foreach (var one in sortedShips)
+            {
+                foreach (var entry in one)
+                {
+                    int planetId = entry.Key;
+                    entry.Value.Sort((v1, v2) => Math.Sign(distances[planetId][v1.shipIndex] - distances[planetId][v2.shipIndex]));
+                }
+            }
+            minPlanetDisSortedShips = sortedShips;
+        }
+
+        public static void SortShipsMaxThreat()
+        {
+            var sortedShips = new List<List<EnemyShip>>(100);
+            for (var i = 0; i < 100; ++i) sortedShips.Add(new List<EnemyShip>());
+
+            Dictionary<int, double> distances = new Dictionary<int, double>();
+            foreach (EnemyShip ship in ships.Values)
+            {
+                if (ship.state != EnemyShip.State.active) continue;
+                distances.Add(ship.shipIndex, ship.threat);
+                sortedShips[ship.starIndex].Add(ship);
+            }
+            foreach (var shipArr in sortedShips)
+            {
+                shipArr.Sort((v1, v2) => Math.Sign(distances[v2.shipIndex] - distances[v1.shipIndex]));
+            }
+            maxThreatSortedShips = sortedShips;
+        }
+
+        public static void SortShipsMinHp()
+        {
+            var sortedShips = new List<List<EnemyShip>>(100);
+            for (var i = 0; i < 100; ++i) sortedShips.Add(new List<EnemyShip>());
+
+            foreach (EnemyShip ship in ships.Values)
+            {
+                if (ship.state != EnemyShip.State.active) continue;
+                sortedShips[ship.starIndex].Add(ship);
+            }
+            foreach (var shipArr in sortedShips)
+            {
+                shipArr.Sort((v1, v2) => Math.Sign(v1.hp - v2.hp));
+            }
+            minHpSortedShips = sortedShips;
+        }
+
+
 
         /*
         public static EnemyShip FindNearestShip(VectorLF3 uPos)
@@ -178,9 +283,7 @@ namespace DSP_Battle
 
         public static void OnShipDistroyed(EnemyShip ship)
         {
-            EnemyShip v;
-            ships.TryRemove(ship.shipIndex, out v);
-            sortedShips = SortShips();
+            RemoveShip(ship);
         }
 
         [HarmonyPostfix]
@@ -191,24 +294,31 @@ namespace DSP_Battle
 
             List<EnemyShip> list = ships.Values.ToList();
 
-            bool hasRemoved = false;
-
             list.Do(ship =>
             {
                 ship.Update();
                 if (ship.state != EnemyShip.State.active)
                 {
                     if (ship.state == EnemyShip.State.landed) OnShipLanded(ship);
-                    EnemyShip v;
-                    ships.TryRemove(ship.shipIndex, out v);
-                    hasRemoved = true;
+                    RemoveShip(ship);
                 }
             });
 
             // time is the frame since start
-            if (hasRemoved || time % 60 == 1)
+            if (time % 60 == 1)
             {
-                sortedShips = SortShips();
+               SortShips();
+            }
+        }
+
+        public static void RemoveShip(EnemyShip ship)
+        {
+            ships.TryRemove(ship.shipIndex, out EnemyShip _);
+            minTargetDisSortedShips[ship.starIndex].Remove(ship);
+            minHpSortedShips[ship.starIndex].Remove(ship);
+            foreach (var entry in minPlanetDisSortedShips[ship.starIndex])
+            {
+                entry.Value.Remove(ship);
             }
         }
 
@@ -310,13 +420,13 @@ namespace DSP_Battle
                 EnemyShip ship = new EnemyShip(r);
                 ships.TryAdd(ship.shipIndex, ship);
             }
-            sortedShips = SortShips();
+            SortShips();
         }
 
         public static void IntoOtherSave()
         {
             ships.Clear();
-            sortedShips = SortShips();
+            SortShips();
         }
     }
 }

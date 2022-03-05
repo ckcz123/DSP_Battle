@@ -36,6 +36,7 @@ namespace DSP_Battle
         {
             Logger.LogInfo("=========> Done!");
             logger = Logger;
+            EnemyShips.Init();
             Harmony.CreateAndPatchAll(typeof(EnemyShips));
             Harmony.CreateAndPatchAll(typeof(Cannon));
             Harmony.CreateAndPatchAll(typeof(BattleProtos));

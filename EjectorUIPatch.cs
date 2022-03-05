@@ -183,8 +183,8 @@ namespace DSP_Battle
                 setAimingModeLabel.text = "设定索敌最高优先级".Translate();
                 setModeButton1Obj.transform.Find("Text").GetComponent<Text>().text = "最接近物流塔".Translate();
                 setModeButton2Obj.transform.Find("Text").GetComponent<Text>().text = "最大威胁".Translate();
-                setModeButton3Obj.transform.Find("Text").GetComponent<Text>().text = "最低生命".Translate();
-                setModeButton4Obj.transform.Find("Text").GetComponent<Text>().text = "最高生命".Translate(); 
+                setModeButton3Obj.transform.Find("Text").GetComponent<Text>().text = "距自己最近".Translate();
+                setModeButton4Obj.transform.Find("Text").GetComponent<Text>().text = "最低生命".Translate(); 
 
             }
             else

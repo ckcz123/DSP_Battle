@@ -116,7 +116,7 @@ namespace DSP_Battle
             int gmProtoId = factory.entityPool[__instance.entityId].protoId;
 
             //if (gmProtoId != 9801) return true; // 暂时不要取消注释，下面已经做了普通弹射器的适配。
-
+            bool newEjector = isNewEjector(gmProtoId);
 
             if (__instance.needs == null)
             {
@@ -153,25 +153,22 @@ namespace DSP_Battle
             //下面是因为 炮需要用orbitId记录索敌模式，而orbitId有可能超出已设定的轨道数，为了避免溢出，炮的orbitalId在参与计算时需要独立指定为1。
             //后续所有的__instance.orbitId都被替换为此
             int calcOrbitId = __instance.orbitId;
-            if(gmProtoId != 2311)
+            if(newEjector)
             {
-                calcOrbitId = 1;
+                if (calcOrbitId <= 0 || calcOrbitId > 4) calcOrbitId = 1;
+            } else
+            {
+                if (calcOrbitId < 0 || calcOrbitId >= swarm.orbitCursor || swarm.orbits[calcOrbitId].id != calcOrbitId || !swarm.orbits[calcOrbitId].enabled)
+                {
+                    calcOrbitId = 0;
+                    //如果是原本的弹射器，则修改也得同步到真正的orbitId上
+                    __instance.orbitId = calcOrbitId;
+                }
+
             }
             
-            if (calcOrbitId < 0 || calcOrbitId >= swarm.orbitCursor || swarm.orbits[calcOrbitId].id != calcOrbitId || !swarm.orbits[calcOrbitId].enabled)
-            {
-                calcOrbitId = 0;
-                //如果是原本的弹射器，则修改也得同步到真正的orbitId上
-                if (gmProtoId == 2311)
-                    __instance.orbitId = calcOrbitId;
-            }
             float num2 = (float)Cargo.accTableMilli[__instance.incLevel];
             int num3 = (int)(power * 10000f * (1f + num2) + 0.1f);
-
-            if(calcOrbitId == 0 && gmProtoId != 2311)
-            {
-                calcOrbitId = 1;
-            }
 
             if (calcOrbitId == 0)
             {
@@ -231,22 +228,17 @@ namespace DSP_Battle
                 VectorLF3 uPos = astroPoses[num4].uPos;
                 VectorLF3 b = uPos - vectorLF;
 
-                
-
-
-                VectorLF3 vectorLF2 = uPos + VectorLF3.Cross(swarm.orbits[calcOrbitId].up, b).normalized * (double)swarm.orbits[calcOrbitId].radius;
-
-                
+                List<EnemyShip> sortedShips = EnemyShips.sortedShips(calcOrbitId, starIndex, __instance.planetId);
 
                 //下面的参数根据是否是炮还是太阳帆的弹射器有不同的修改
                 double maxtDivisor = 5000.0;
                 int loopNum = 1;
                 EnemyShip curTarget = null;
 
-                if (gmProtoId == 9801)
+                if (newEjector)
                 {
 
-                    loopNum = EnemyShips.sortedShips[starIndex].Count;
+                    loopNum = sortedShips.Count;
                     maxtDivisor = 30000;
                 }
 
@@ -259,6 +251,7 @@ namespace DSP_Battle
                 //不该参与循环的部分，换到循环前了
 
                 bool flag2 = __instance.bulletCount > 0;
+                VectorLF3 vectorLF2 = VectorLF3.zero;
 
                 for (int gm = 0; gm < loopNum; gm++)
                 {
@@ -269,10 +262,14 @@ namespace DSP_Battle
                     flag2 = __instance.bulletCount > 0;
 
                     int shipIdx = 0;//ship总表中的唯一标识：index
-                    if (gmProtoId == 9801)
+                    if (newEjector)
                     {
-                        vectorLF2 = EnemyShips.sortedShips[starIndex][gm].uPos;
-                        shipIdx = EnemyShips.sortedShips[starIndex][gm].shipIndex;
+                        vectorLF2 = sortedShips[gm].uPos;
+                        shipIdx = sortedShips[gm].shipIndex;
+                    }
+                    else
+                    {
+                        vectorLF2 = uPos + VectorLF3.Cross(swarm.orbits[calcOrbitId].up, b).normalized * (double)swarm.orbits[calcOrbitId].radius;
                     }
                     VectorLF3 vectorLF3 = vectorLF2 - vectorLF;
                     __instance.targetDist = vectorLF3.magnitude;
@@ -315,7 +312,7 @@ namespace DSP_Battle
                             }
                         }
                     }
-                    if(gmProtoId == 9801 && EnemyShips.ships.ContainsKey(shipIdx) && EnemyShips.ships[shipIdx].state == EnemyShip.State.active && __instance.targetState != EjectorComponent.ETargetState.Blocked && __instance.targetState != EjectorComponent.ETargetState.AngleLimit)
+                    if(newEjector && EnemyShips.ships.ContainsKey(shipIdx) && EnemyShips.ships[shipIdx].state == EnemyShip.State.active && __instance.targetState != EjectorComponent.ETargetState.Blocked && __instance.targetState != EjectorComponent.ETargetState.AngleLimit)
                     {
                         curTarget = EnemyShips.ships[shipIdx]; //设定目标
                         if(EjectorUIPatch.needToRefreshTarget) //如果需要刷新目标
@@ -330,11 +327,11 @@ namespace DSP_Battle
                 }
 
                 //如果没有船/船没血了，就不打炮了
-                if (curTarget == null && gmProtoId == 9801)
+                if (curTarget == null && newEjector)
                 {
                     flag = false; //本身是由于俯仰限制或路径被阻挡的判断，现在找不到目标而不打炮也算做里面
                 }
-                else if (curTarget != null && curTarget.hp <= 0 && gmProtoId == 9801)
+                else if (curTarget != null && curTarget.hp <= 0 && newEjector)
                 {
                     flag = false;
                 }
@@ -384,7 +381,7 @@ namespace DSP_Battle
                             sailBulletsIndex[swarm.starData.index].AddOrUpdate(bulletIndex, 0, (x, y)=> 0);
                         }
                         //如果是炮，设定子弹目标
-                        else if (gmProtoId == 9801)
+                        else if (newEjector)
                         {
                             try
                             {
@@ -451,6 +448,11 @@ namespace DSP_Battle
                 __result = result;
                 return false;
             }
+        }
+
+        private static bool isNewEjector(int protoId)
+        {
+            return protoId == 9801;
         }
 
         /// <summary>

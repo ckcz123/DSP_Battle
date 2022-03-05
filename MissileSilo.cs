@@ -80,7 +80,7 @@ namespace DSP_Battle
 			{
 				//下面设定目标，目前是随机设定目标
 				int targetIndex = 0;
-				if (EnemyShips.sortedShips[starIndex].Count > 0) targetIndex = EnemyShips.sortedShips[starIndex][Main.randSeed.Next(0, EnemyShips.sortedShips[starIndex].Count)].shipIndex;
+				if (EnemyShips.minTargetDisSortedShips[starIndex].Count > 0) targetIndex = EnemyShips.minTargetDisSortedShips[starIndex][Main.randSeed.Next(0, EnemyShips.minTargetDisSortedShips[starIndex].Count)].shipIndex;
 
 				__instance.hasNode = (sphere.GetAutoNodeCount() > 0);
 				if(targetIndex == 0)  //if (!__instance.hasNode) 原本是没有节点，因此不发射
@@ -243,9 +243,9 @@ namespace DSP_Battle
 								{
 									vectorLF2 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
 								}
-								else if (EnemyShips.sortedShips[starIndex].Count > 0) //否则，火箭继续寻敌
+								else if (EnemyShips.minTargetDisSortedShips[starIndex].Count > 0) //否则，火箭继续寻敌
 								{
-									int newTargetId = EnemyShips.sortedShips[starIndex][Main.randSeed.Next(0, EnemyShips.sortedShips[starIndex].Count)].shipIndex;
+									int newTargetId = EnemyShips.minTargetDisSortedShips[starIndex][Main.randSeed.Next(0, EnemyShips.minTargetDisSortedShips[starIndex].Count)].shipIndex;
 									MissileTargets[starIndex][i] = newTargetId;
 									vectorLF2 = EnemyShips.ships[newTargetId].uPos - dysonRocket.uPos;
 									dysonRocket.t = 0; //让其回到第一阶段，允许避障
@@ -386,9 +386,9 @@ namespace DSP_Battle
 							{
 								vectorLF5 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
 							}
-							else if (EnemyShips.sortedShips[starIndex].Count > 0) //否则，火箭继续寻敌
+							else if (EnemyShips.minTargetDisSortedShips[starIndex].Count > 0) //否则，火箭继续寻敌
 							{
-								int newTargetId = EnemyShips.sortedShips[starIndex][Main.randSeed.Next(0, EnemyShips.sortedShips[starIndex].Count)].shipIndex;
+								int newTargetId = EnemyShips.minTargetDisSortedShips[starIndex][Main.randSeed.Next(0, EnemyShips.minTargetDisSortedShips[starIndex].Count)].shipIndex;
 								MissileTargets[starIndex][i] = newTargetId;
 								vectorLF5 = EnemyShips.ships[newTargetId].uPos - dysonRocket.uPos;
 								dysonRocket.t = 0; //让其回到第一阶段，允许避障
@@ -835,9 +835,9 @@ namespace DSP_Battle
 									{
 										vectorLF2 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
 									}
-									else if (EnemyShips.sortedShips[starIndex].Count > 0) //否则，火箭继续寻敌
+									else if (EnemyShips.minTargetDisSortedShips[starIndex].Count > 0) //否则，火箭继续寻敌
 									{
-										int newTargetId = EnemyShips.sortedShips[starIndex][Main.randSeed.Next(0, EnemyShips.sortedShips[starIndex].Count)].shipIndex;
+										int newTargetId = EnemyShips.minTargetDisSortedShips[starIndex][Main.randSeed.Next(0, EnemyShips.minTargetDisSortedShips[starIndex].Count)].shipIndex;
 										MissileTargets[starIndex][i] = newTargetId;
 										vectorLF2 = EnemyShips.ships[newTargetId].uPos - dysonRocket.uPos;
 										dysonRocket.t = 0; //让其回到第一阶段，允许避障
@@ -977,9 +977,9 @@ namespace DSP_Battle
 								{
 									vectorLF5 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
 								}
-								else if (EnemyShips.sortedShips[starIndex].Count > 0) //否则，火箭继续寻敌
+								else if (EnemyShips.minTargetDisSortedShips[starIndex].Count > 0) //否则，火箭继续寻敌
 								{
-									int newTargetId = EnemyShips.sortedShips[starIndex][Main.randSeed.Next(0, EnemyShips.sortedShips[starIndex].Count)].shipIndex;
+									int newTargetId = EnemyShips.minTargetDisSortedShips[starIndex][Main.randSeed.Next(0, EnemyShips.minTargetDisSortedShips[starIndex].Count)].shipIndex;
 									MissileTargets[starIndex][i] = newTargetId;
 									vectorLF5 = EnemyShips.ships[newTargetId].uPos - dysonRocket.uPos;
 									dysonRocket.t = 0; //让其回到第一阶段，允许避障
