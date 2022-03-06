@@ -196,7 +196,7 @@ namespace DSP_Battle
             enemySpeed[4] = config.Bind("config", "enemy5Speed", defaultValue: 3000f, "敌方飞船5速度（米每秒）").Value;
             enemyRange[4] = config.Bind("config", "enemy5Range", defaultValue: 100, "敌方飞船5破坏范围").Value;
 
-            _wormholeRange = config.Bind("config", "wormholeRange", defaultValue: 20000, "初始虫洞刷新范围，米为单位").Value;
+            _wormholeRange = config.Bind("config", "wormholeRange", defaultValue: 40000, "初始虫洞刷新范围，米为单位").Value;
 
             intensity = config.Bind("config", "intensity", defaultValue: "2,5,10,15,20,30,50,80,100,150,250,300,400,500,600,800,1000,1100,1500,1800,2000,2500,3000,4000", "每波总强度（以逗号分隔）")
                 .Value.Split(',').Select(e=>int.Parse(e)).ToArray();

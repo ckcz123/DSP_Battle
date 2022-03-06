@@ -36,16 +36,24 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(GameData), "GameTick")]
         public static void BulletTrack()
         {
-            testFrameCount = (testFrameCount + 1) % 60;
+            //testFrameCount = (testFrameCount + 1) % 60;
             if (!doTrack) return;
             try
             {
                 for (int i = 0; i < GameMain.data.dysonSpheres.Length; i++)
                 {
+                    DysonSphere sphere = GameMain.data.dysonSpheres[i];
+                    if (sphere == null)
+                        continue;
                     DysonSwarm swarm = GameMain.data.dysonSpheres[i].swarm;
                     int starIndex = GameMain.data.dysonSpheres[i].starData.index;
                     if (swarm != null)
                     {
+                        if (bulletTargets[starIndex] == null)
+                        {
+                            DspBattlePlugin.logger.LogWarning($"null bullettargets index{starIndex}");
+                            continue;
+                        }
                         foreach (var j in bulletTargets[starIndex].Keys)
                         {
                             //if ((curSwarm.bulletPool[i].uEnd - curSwarm.bulletPool[i].uBegin).magnitude > 500)
@@ -54,7 +62,7 @@ namespace DSP_Battle
                             //    curSwarm.bulletPool[i].maxt = curSwarm.bulletPool[i].maxt - curSwarm.bulletPool[i].t;
                             //    curSwarm.bulletPool[i].t = 0;
                             //}
-                            if (!sailBulletsIndex[starIndex].ContainsKey(j) && bulletTargets[starIndex].ContainsKey(j)) //只有对应swarm的对应位置的bullet不是之前存下来的solarsail的Bullet的时候才改变目标终点
+                            if (!sailBulletsIndex[starIndex].ContainsKey(j)) //只有对应swarm的对应位置的bullet不是之前存下来的solarsail的Bullet的时候才改变目标终点
                             {
                                 int targetShipIndex = bulletTargets[starIndex][j];
                                 if (EnemyShips.ships.ContainsKey(targetShipIndex) && EnemyShips.ships[targetShipIndex].state == EnemyShip.State.active)
