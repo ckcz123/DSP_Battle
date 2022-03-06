@@ -36,16 +36,24 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(GameData), "GameTick")]
         public static void BulletTrack()
         {
-            testFrameCount = (testFrameCount + 1) % 60;
+            //testFrameCount = (testFrameCount + 1) % 60;
             if (!doTrack) return;
             try
             {
                 for (int i = 0; i < GameMain.data.dysonSpheres.Length; i++)
                 {
+                    DysonSphere sphere = GameMain.data.dysonSpheres[i];
+                    if (sphere == null)
+                        continue;
                     DysonSwarm swarm = GameMain.data.dysonSpheres[i].swarm;
                     int starIndex = GameMain.data.dysonSpheres[i].starData.index;
                     if (swarm != null)
                     {
+                        if (bulletTargets[starIndex] == null)
+                        {
+                            DspBattlePlugin.logger.LogWarning($"null bullettargets index{starIndex}");
+                            continue;
+                        }
                         foreach (var j in bulletTargets[starIndex].Keys)
                         {
                             //if ((curSwarm.bulletPool[i].uEnd - curSwarm.bulletPool[i].uBegin).magnitude > 500)
@@ -54,7 +62,7 @@ namespace DSP_Battle
                             //    curSwarm.bulletPool[i].maxt = curSwarm.bulletPool[i].maxt - curSwarm.bulletPool[i].t;
                             //    curSwarm.bulletPool[i].t = 0;
                             //}
-                            if (!sailBulletsIndex[starIndex].ContainsKey(j) && bulletTargets[starIndex].ContainsKey(j)) //只有对应swarm的对应位置的bullet不是之前存下来的solarsail的Bullet的时候才改变目标终点
+                            if (!sailBulletsIndex[starIndex].ContainsKey(j)) //只有对应swarm的对应位置的bullet不是之前存下来的solarsail的Bullet的时候才改变目标终点
                             {
                                 int targetShipIndex = bulletTargets[starIndex][j];
                                 if (EnemyShips.ships.ContainsKey(targetShipIndex) && EnemyShips.ships[targetShipIndex].state == EnemyShip.State.active)
@@ -118,6 +126,17 @@ namespace DSP_Battle
             //if (gmProtoId != 9801) return true; // 暂时不要取消注释，下面已经做了普通弹射器的适配。
             bool cannon = isCannon(gmProtoId);
 
+            //子弹需求循环
+            if (cannon && __instance.bulletCount == 0 && gmProtoId != 8014 && GameMain.instance.timei % 60 == 0)
+            {
+                __instance.bulletId = nextBulletId(__instance.bulletId);
+            }
+            else if (gmProtoId == 8014)
+            {
+                __instance.bulletId = 8007;
+            }
+
+
             if (__instance.needs == null)
             {
                 __instance.needs = new int[6];
@@ -156,7 +175,8 @@ namespace DSP_Battle
             if(cannon)
             {
                 if (calcOrbitId <= 0 || calcOrbitId > 4) calcOrbitId = 1;
-            } else
+            } 
+            else
             {
                 if (calcOrbitId < 0 || calcOrbitId >= swarm.orbitCursor || swarm.orbits[calcOrbitId].id != calcOrbitId || !swarm.orbits[calcOrbitId].enabled)
                 {
@@ -168,8 +188,11 @@ namespace DSP_Battle
             }
             
             float num2 = (float)Cargo.accTableMilli[__instance.incLevel];
-            int num3 = (int)(power * 10000f * (1f + num2) + 0.1f);
 
+            if(cannon)
+                num2 = (float)Cargo.incTableMilli[__instance.incLevel];
+
+            int num3 = (int)(power * 10000f * (1f + num2) + 0.1f);
             if (calcOrbitId == 0)
             {
                 if (__instance.direction == 1)
@@ -247,27 +270,30 @@ namespace DSP_Battle
                         maxtDivisor = 50 * Configs.bullet1Speed * cannonSpeedScale;
                         damage = (int)(Configs.bullet1Atk * cannonSpeedScale); //只有这个子弹能够因为引力弹射器而强化伤害
                     }
-                    if (__instance.bulletId == 8002)
+                    else if (__instance.bulletId == 8002)
                     {
                         maxtDivisor = 50 * Configs.bullet2Speed * cannonSpeedScale;
                         damage = Configs.bullet2Atk;
                     }
-                    if (__instance.bulletId == 8003)
+                    else if (__instance.bulletId == 8003)
                     {
                         maxtDivisor = 50 * Configs.bullet3Speed * cannonSpeedScale;
                         damage = Configs.bullet3Atk;
                     }
+                    else if (__instance.bulletId == 8007)
+                    {
+                        maxtDivisor = 50 * Configs.bullet4Speed; //没有速度加成
+                        damage = Configs.bullet4Atk;
+                    }
                 }
 
-                //子弹需求循环，不知是否可行
-                if (cannon && __instance.bulletCount == 0 && testFrameCount == 0)
-                {
-                    __instance.bulletId = nextBulletId(__instance.bulletId);
-                }
+                
 
                 //不该参与循环的部分，换到循环前了
 
                 bool flag2 = __instance.bulletCount > 0;
+                if (gmProtoId == 8014) //脉冲炮不需要子弹
+                    flag2 = true;
                 VectorLF3 vectorLF2 = VectorLF3.zero;
 
                 for (int gm = 0; gm < loopNum; gm++)
@@ -277,6 +303,8 @@ namespace DSP_Battle
                     __instance.targetState = EjectorComponent.ETargetState.OK;
                     flag = true;
                     flag2 = __instance.bulletCount > 0;
+                    if (gmProtoId == 8014) //脉冲炮不需要子弹
+                        flag2 = true;
 
                     int shipIdx = 0;//ship总表中的唯一标识：index
                     if (cannon)
@@ -425,12 +453,15 @@ namespace DSP_Battle
                             }
 
                         }
-
-                        __instance.bulletInc -= __instance.bulletInc / __instance.bulletCount;
+                        if (__instance.bulletCount != 0)
+                        {
+                            __instance.bulletInc -= __instance.bulletInc / __instance.bulletCount;
+                        }
                         __instance.bulletCount--;
-                        if (__instance.bulletCount == 0)
+                        if (__instance.bulletCount <= 0)
                         {
                             __instance.bulletInc = 0;
+                            __instance.bulletCount = 0;
                         }
                         lock (consumeRegister)
                         {
@@ -438,6 +469,9 @@ namespace DSP_Battle
                         }
                         __instance.time = __instance.coldSpend;
                         __instance.direction = -1;
+
+                        //if (gmProtoId == 8014) //激光炮为了视觉效果，取消冷却阶段每帧都发射（不能简单地将charge和cold的spend设置为0，因为会出现除以0的错误）
+                        //    __instance.direction = 1;
 
                     }
                 }
@@ -508,7 +542,7 @@ namespace DSP_Battle
                             EnemyShips.ships[bulletTargets[starIndex][i]].BeAttacked(canDoDamage[starIndex][i]); //击中造成伤害  //如果在RemoveBullet的postpatch写这个，可以不用每帧循环检测，但是伤害将在爆炸动画后结算，感觉不太合理
                         }
                         int v;
-                        canDoDamage[starIndex].TryRemove(i,out v); //该子弹已造成过伤害，或者因为飞船已经不存在了，这两种情况都要将子弹的未来还可造成的伤害设置成0
+                        //canDoDamage[starIndex].TryRemove(i,out v); //该子弹已造成过伤害，或者因为飞船已经不存在了，这两种情况都要将子弹的未来还可造成的伤害设置成0
                     }
                 }
                 
