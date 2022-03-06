@@ -23,18 +23,17 @@ namespace DSP_Battle
         {
             for (int i = 0; i < 100; ++i)
             {
-                if (simulator[i] != null) UnityEngine.Object.DestroyImmediate(simulator[i]);
+                if (simulator[i] == null) simulator[i] = UnityEngine.Object.Instantiate<StarSimulator>(__instance.starPrefab, __instance.transform);
             }
 
             CopyBlackHoleData();
 
             for (int i = 0; i < 100; ++i)
             {
-                simulator[i] = UnityEngine.Object.Instantiate<StarSimulator>(__instance.starPrefab, __instance.transform);
                 simulator[i].universeSimulator = __instance;
                 simulator[i].SetStarData(starData[i]);
                 simulator[i].gameObject.layer = 24;
-                simulator[i].gameObject.name = "Wormhole";
+                simulator[i].gameObject.name = "Wormhole_" + i;
                 // simulator[i].gameObject.SetActive((Configs.nextWaveState == 2 || Configs.nextWaveState == 3) && i < Configs.nextWaveWormCount);
                 simulator[i].gameObject.SetActive(false);
             }
@@ -65,9 +64,9 @@ namespace DSP_Battle
                 simulator[i].starData.uPosition = 
                     planet.uPosition
                     + new VectorLF3(
-                            Configs.wormholeRange * Math.Cos(angle1 * Math.PI / 360) * Math.Cos(angle2 * Math.PI / 360), // rcosAcosB
-                            Configs.wormholeRange * Math.Cos(angle1 * Math.PI / 360) * Math.Sin(angle2 * Math.PI / 360), // rcosAsinB
-                            Configs.wormholeRange * Math.Sin(angle1 * Math.PI / 360) // rsinA
+                            (Configs.wormholeRange + planet.radius) * Math.Cos(angle1 * Math.PI / 360) * Math.Cos(angle2 * Math.PI / 360), // rcosAcosB
+                            (Configs.wormholeRange + planet.radius) * Math.Cos(angle1 * Math.PI / 360) * Math.Sin(angle2 * Math.PI / 360), // rcosAsinB
+                            (Configs.wormholeRange + planet.radius) * Math.Sin(angle1 * Math.PI / 360) // rsinA
                     );
                 simulator[i].UpdateUniversalPosition(position, uPosition, position2, rotation);
             }
@@ -118,82 +117,58 @@ namespace DSP_Battle
             __instance.blackRenderer.transform.localScale = Vector3.one * (__instance.solidRadius * 2f);
 		}
 
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(StarSimulator), "LateUpdate")]
-        public static bool StarSimulator_LateUpdate(ref StarSimulator __instance)
-        {
-            if (__instance.starData == null || __instance.starData.id != -1) return true;
-            __instance.sunLight.enabled = !FactoryModel.whiteMode0;
-
-            if (!FactoryModel.whiteMode0)
-            {
-                Vector3 forward = __instance.transform.forward;
-                Shader.SetGlobalVector("_Global_SunDir", new Vector4(forward.x, forward.y, forward.z, 0f));
-                Shader.SetGlobalColor("_Global_SunsetColor0", Color.Lerp(Color.white, __instance.sunsetColor0, __instance.useSunsetColor));
-                Shader.SetGlobalColor("_Global_SunsetColor1", Color.Lerp(Color.white, __instance.sunsetColor1, __instance.useSunsetColor));
-                Shader.SetGlobalColor("_Global_SunsetColor2", Color.Lerp(Color.white, __instance.sunsetColor2, __instance.useSunsetColor));
-            }
-            else
-            {
-                Transform transform = GameCamera.instance.camLight.transform;
-                transform.rotation = Quaternion.LookRotation((GameMain.mainPlayer.position * 0.75f - transform.position).normalized, transform.position.normalized);
-                Vector3 vector = -GameCamera.instance.camLight.transform.forward;
-                Shader.SetGlobalVector("_Global_SunDir", new Vector4(vector.x, vector.y, vector.z, 0f));
-                Shader.SetGlobalColor("_Global_SunsetColor0", Color.white);
-                Shader.SetGlobalColor("_Global_SunsetColor1", Color.white);
-                Shader.SetGlobalColor("_Global_SunsetColor2", Color.white);
-            }
-            ref Material bodyMaterial = ref AccessTools.FieldRefAccess<StarSimulator, Material>(__instance, "bodyMaterial");
-            bodyMaterial.renderQueue = 2981;
-            ref Material haloMaterial = ref AccessTools.FieldRefAccess<StarSimulator, Material>(__instance, "haloMaterial");
-            haloMaterial.renderQueue = 2981;
-            __instance.blackRenderer.enabled = false;
-            AccessTools.Method(typeof(StarSimulator), "GpuAnalysis").Invoke(__instance, new object[] { });
-            return false;
-        }
-
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UIStarmap), "CreateAllStarUIs")]
         public static void UIStarmap_CreateAllStarUIs(ref UIStarmap __instance)
         {
             for (var i = 0; i < 100; ++i)
             {
-                if (uiStar[i] != null) UnityEngine.Object.DestroyImmediate(uiStar[i]);
+                if (uiStar[i] == null) uiStar[i] = UnityEngine.Object.Instantiate(__instance.starUIPrefab, __instance.starUIPrefab.transform.parent);
             }
 
             CopyBlackHoleData();
 
             for (var i = 0; i < 100; ++i)
             {
-                uiStar[i] = UnityEngine.Object.Instantiate(__instance.starUIPrefab, __instance.starUIPrefab.transform.parent);
                 uiStar[i]._Create();
                 uiStar[i]._Init(starData[i]);
+                uiStar[i].gameObject.name = "WormholeUI_" + i;
                 uiStar[i].gameObject.SetActive(false);
             }
 
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(UIStarmap), "_OnOpen")]
-        public static void UIStarmap_OnOpen(ref UIStarmap __instance)
-        {
-            if (Configs.nextWaveState != 2 && Configs.nextWaveState != 3) return;
-            for (var i = 0; i < Configs.nextWaveWormCount; ++i) uiStar[i]._Open();
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(UIStarmap), "_OnClose")]
-        public static void UIStarmap_OnClose(ref UIStarmap __instance)
-        {
-            for (var i = 0; i < 100; ++i) uiStar[i]._Close();
-        }
-
-        [HarmonyPostfix]
         [HarmonyPatch(typeof(UIStarmap), "_OnUpdate")]
         public static void UIStarmap_OnUpdate(ref UIStarmap __instance)
         {
-            if (Configs.nextWaveState != 2 && Configs.nextWaveState != 3) return;
-            for (var i = 0; i < Configs.nextWaveWormCount; ++i) uiStar[i]._Update();
+            for (var i = 0; i < 100; ++i)
+            {
+                if ((Configs.nextWaveState != 2 && Configs.nextWaveState != 3) || i >= Configs.nextWaveWormCount)
+                {
+                    if (uiStar[i].active)
+                    {
+                        uiStar[i]._Close();
+                    }
+                    if (uiStar[i].starObject.gameObject.activeSelf) 
+                    {
+                        uiStar[i].starObject.gameObject.SetActive(false);
+                    }
+                }
+                else
+                {
+                    if (!uiStar[i].active)
+                    {
+                        uiStar[i]._Open();
+                    }
+                    if (!uiStar[i].starObject.gameObject.activeSelf)
+                    {
+                        uiStar[i].gameObject.SetActive(true);
+                    }
+
+                    uiStar[i]._Update();
+                }
+            }
         }
 
         [HarmonyPostfix]

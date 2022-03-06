@@ -99,7 +99,8 @@ namespace DSP_Battle
             shipData.planetB = GameMain.data.galacticTransport.stationPool[stationGid].planetId;
             shipData.uPos = initPos;
             shipData.itemId = Configs.enemyItemIds[enemyId];
-            shipData.uRot = Quaternion.identity;
+            shipData.uRot = new Quaternion((float)DspBattlePlugin.randSeed.NextDouble(), (float)DspBattlePlugin.randSeed.NextDouble(), (float)DspBattlePlugin.randSeed.NextDouble(), (float)DspBattlePlugin.randSeed.NextDouble());
+            shipData.uRot.Normalize();
             shipData.uSpeed = 0;
             hp = Configs.enemyHp[enemyId];
             damageRange = Configs.enemyRange[enemyId];
@@ -163,8 +164,8 @@ namespace DSP_Battle
             else if (shipData.stage == 1) UpdateStage1();
 
             PlanetData planet = GameMain.galaxy.PlanetById(shipData.planetB);
-            renderingData.SetPose(shipData.uPos, flag7 ? quaternion : shipData.uRot, GameMain.data.relativePos, GameMain.data.relativeRot, shipData.uVel * shipData.uSpeed, 6002);
-            renderingUIData.SetPose(shipData.uPos, flag7 ? quaternion : shipData.uRot, (float)(planet.star.uPosition - planet.uPosition).magnitude, shipData.uSpeed, 6002);
+            renderingData.SetPose(shipData.uPos, flag7 ? quaternion : shipData.uRot, GameMain.data.relativePos, GameMain.data.relativeRot, shipData.uVel * shipData.uSpeed, shipData.itemId);
+            renderingUIData.SetPose(shipData.uPos, flag7 ? quaternion : shipData.uRot, (float)(planet.star.uPosition - planet.uPosition).magnitude, shipData.uSpeed, shipData.itemId);
             if (renderingData.anim.z < 0) renderingData.anim.z = 0;
         }
 

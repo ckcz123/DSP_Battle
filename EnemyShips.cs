@@ -317,24 +317,15 @@ namespace DSP_Battle
                 case 0:
                     if (time % 1800 != 1) break;
                     DspBattlePlugin.logger.LogInfo("=====> Initializing next wave");
-                    List<int> indexes = new List<int>();
-                    StationComponent[] stations = GameMain.data.galacticTransport.stationPool;
-                    for (var i = 0; i < stations.Length; ++i)
-                    {
-                        if (stations[i] != null && stations[i].isStellar && stations[i].gid != 0 && stations[i].id != 0)
-                        {
-                            indexes.Add(i);
-                        }
-                    }
-                    DspBattlePlugin.logger.LogInfo("=====> Indexes: " + indexes.Join(s=>""+s, ","));
-                    if (indexes.Count == 0) break;
-                    int index = indexes[gidRandom.Next(0, indexes.Count)];
-                    DspBattlePlugin.logger.LogInfo("=====> Index: " + index);
-                    int planetId = GameMain.data.galacticTransport.stationPool[index].planetId;
+                    StationComponent[] stations = GameMain.data.galacticTransport.stationPool.Where(e => e!=null && e.isStellar && e.gid != 0 && e.id != 0).ToArray();
+                    if (stations.Length == 0) break;
+                    int planetId = stations[gidRandom.Next(0, stations.Length)].planetId;
                     int starId = planetId / 100 - 1;
 
                     // Gen next wave
-                    Configs.nextWaveFrameIndex = time + (Configs.coldTime[Math.Min(Configs.coldTime.Length - 1, Configs.totalWave)] + 1) * 3600;
+                    int deltaFrames = (Configs.coldTime[Math.Min(Configs.coldTime.Length - 1, Configs.totalWave)] + 1) * 3600;
+                    Configs.nextWaveFrameIndex = time + deltaFrames;
+                    DspBattlePlugin.logger.LogInfo("=====> DeltaFrames: " + deltaFrames);
                     Configs.nextWaveIntensity = Configs.intensity[Math.Min(Configs.intensity.Length - 1, Configs.wavePerStar[starId])];
                     Configs.nextWavePlanetId = planetId;
                     Configs.nextWaveState = 1;
@@ -351,19 +342,19 @@ namespace DSP_Battle
                         intensity -= Configs.nextWaveEnemy[i] * Configs.enemyIntensity[i];
                     }
                     Configs.nextWaveEnemy[0] = intensity / Configs.enemyIntensity[0];
-                    Configs.nextWaveWormCount = Math.Min(gidRandom.Next(1, 20), Configs.nextWaveEnemy.Sum());
+                    Configs.nextWaveWormCount = gidRandom.Next(0, Math.Min(20, Configs.nextWaveEnemy.Sum())) + 1;
 
                     DspBattlePlugin.logger.LogInfo("=====> nextWaveWormCount: " + Configs.nextWaveWormCount);
                     DspBattlePlugin.logger.LogInfo("=====> nextWaveWormEnemy: " + Configs.nextWaveEnemy.Select(e=>e+"").Join(null, ","));
 
                     UIRealtimeTip.Popup("下一波进攻即将到来！".Translate());
+                    UIAlert.ShowAlert(true);
                     break;
                 case 1:
-                    if (time < Configs.nextWaveFrameIndex - 3600) break;
+                    if (time < Configs.nextWaveFrameIndex - 3600 * 5) break;
 
                     PlanetData planet = GameMain.galaxy.PlanetById(Configs.nextWavePlanetId);
                     StarData star = planet.star;
-                    int distance = Configs.wormholeRange;
 
                     for (int i = 0; i < Configs.nextWaveWormCount; ++i)
                     {
@@ -372,15 +363,15 @@ namespace DSP_Battle
                             int angle1 = gidRandom.Next(0, 360);
                             int angle2 = gidRandom.Next(0, 360);
                             VectorLF3 pos = planet.uPosition + new VectorLF3(
-                                distance * Math.Cos(angle1 * Math.PI / 360) * Math.Cos(angle2 * Math.PI / 360), // rcosAcosB
-                                distance * Math.Cos(angle1 * Math.PI / 360) * Math.Sin(angle2 * Math.PI / 360), // rcosAsinB
-                                distance * Math.Sin(angle1 * Math.PI / 360) // rsinA
+                                (Configs.wormholeRange + planet.radius) * Math.Cos(angle1 * Math.PI / 360) * Math.Cos(angle2 * Math.PI / 360), // rcosAcosB
+                                (Configs.wormholeRange + planet.radius) * Math.Cos(angle1 * Math.PI / 360) * Math.Sin(angle2 * Math.PI / 360), // rcosAsinB
+                                (Configs.wormholeRange + planet.radius) * Math.Sin(angle1 * Math.PI / 360) // rsinA
                             );
-                            if ((star.uPosition - pos).magnitude < distance - 10) continue;
+                            if ((star.uPosition - pos).magnitude < Configs.wormholeRange + planet.radius - 10) continue;
                             bool valid = true;
                             foreach (PlanetData planetData in star.planets)
                             {
-                                if ((planetData.uPosition - pos).magnitude < distance - 10) valid = false;
+                                if ((planetData.uPosition - pos).magnitude < Configs.wormholeRange + planetData.radius - 10) valid = false;
                             }
                             if (valid)
                             {
@@ -392,6 +383,7 @@ namespace DSP_Battle
                     }
 
                     Configs.nextWaveState = 2;
+                    UIAlert.ShowAlert(true);
                     UIRealtimeTip.Popup("虫洞已生成！".Translate());
                     break;
                 case 2:
@@ -408,9 +400,9 @@ namespace DSP_Battle
                                 Create(Configs.nextWavePlanetId / 100 - 1,
                                     planetData.uPosition
                                     + new VectorLF3(
-                                         Configs.wormholeRange * Math.Cos(angle1 * Math.PI / 360) * Math.Cos(angle2 * Math.PI / 360), // rcosAcosB
-                                         Configs.wormholeRange * Math.Cos(angle1 * Math.PI / 360) * Math.Sin(angle2 * Math.PI / 360), // rcosAsinB
-                                         Configs.wormholeRange * Math.Sin(angle1 * Math.PI / 360) // rsinA
+                                         (Configs.wormholeRange + planetData.radius) * Math.Cos(angle1 * Math.PI / 360) * Math.Cos(angle2 * Math.PI / 360), // rcosAcosB
+                                         (Configs.wormholeRange + planetData.radius) * Math.Cos(angle1 * Math.PI / 360) * Math.Sin(angle2 * Math.PI / 360), // rcosAsinB
+                                         (Configs.wormholeRange + planetData.radius) * Math.Sin(angle1 * Math.PI / 360) // rsinA
                                     ), i);
                                 u++;
                             }
@@ -422,6 +414,7 @@ namespace DSP_Battle
                 case 3:
                     if (ships.Count == 0)
                     {
+                        Configs.wavePerStar[Configs.nextWavePlanetId / 100 - 1]++;
                         Configs.nextWaveState = 0;
                         Configs.nextWaveFrameIndex = -1;
                         Configs.nextWavePlanetId = -1;

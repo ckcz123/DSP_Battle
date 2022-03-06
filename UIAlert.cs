@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,6 +34,34 @@ namespace DSP_Battle
         public static string txtColorAlert2 = "<color=#a10000>";
         public static string txtColorRight = "</color>";
 
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIRoot), "OnGameLoadStart")]
+        public static void UIRoot_OnGameLoadStart()
+        {
+            if (!DSPGame.IsMenuDemo)
+            {
+                if (titleObj != null)
+                {
+                    titleObj.SetActive(false);
+                    statisticObj.SetActive(false);
+                }
+            }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIRoot), "OnGameBegin")]
+        public static void UIRoot_OnGameBegin()
+        {
+            if (!DSPGame.IsMenuDemo)
+            {
+                if (titleObj != null)
+                {
+                    titleObj.SetActive(isActive);
+                    statisticObj.SetActive(isActive);
+                    RefreshUIAlert(GameMain.instance.timei, true);
+                }
+            }
+        }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameSave), "LoadCurrentGame")]
@@ -81,6 +110,23 @@ namespace DSP_Battle
         public static void GameData_GameTick(ref GameData __instance, long time)
         {
             RefreshUIAlert(time, false);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameMain), "Pause")]
+        public static void OnPaused()
+        {
+            titleObj.SetActive(false);
+            statisticObj.SetActive(false);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameMain), "Resume")]
+        public static void OnResumed()
+        {
+            titleObj.SetActive(isActive);
+            statisticObj.SetActive(isActive);
+            RefreshUIAlert(GameMain.instance.timei, true);
         }
 
         public static void RefreshUIAlert(long time, bool forceRefresh = false)
@@ -137,8 +183,8 @@ namespace DSP_Battle
                 stat1label.text = "预估数量".Translate();
                 stat2label.text = "预估强度".Translate();
                 stat3label.text = "虫洞数量".Translate();
-                stat1value.text = RoundByDetail(Configs.nextWaveEnemy.Sum(), showDetails);
-                stat2value.text = RoundByDetail(Configs.nextWaveIntensity, showDetails);
+                stat1value.text = Configs.nextWaveEnemy.Sum().ToString();
+                stat2value.text = Configs.nextWaveIntensity.ToString();
                 stat3value.text = Configs.nextWaveWormCount.ToString();
             }
         }
@@ -198,23 +244,19 @@ namespace DSP_Battle
             return left + res + right;
         }
 
-        static string RoundByDetail(int num, bool showDetails)
+        public static void Export(BinaryWriter w)
         {
-            if (showDetails)
-                return num.ToString();
-            else
-            {
-                if (num > 1000000)
-                    return "约".Translate() + (num / 1000000).ToString() + "M";
-                else if (num > 1000)
-                    return "约".Translate() + (num / 1000).ToString() + "k";
-                else if (num > 100)
-                    return "约".Translate() + (num / 100 * 100).ToString();
-                else if (num > 10)
-                    return "约".Translate() + (num / 10 * 10).ToString();
-                else
-                    return "约".Translate() + "10";
-            }
+            w.Write(isActive);
+        }
+
+        public static void Import(BinaryReader r)
+        {
+            isActive = r.ReadBoolean();
+        }
+
+        public static void IntoOtherSave()
+        {
+            isActive = false;
         }
     }
 }

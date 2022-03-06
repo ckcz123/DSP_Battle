@@ -63,11 +63,11 @@ namespace DSP_Battle
 
         public void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Minus) && Configs.nextWaveState == 1)
+            if (Input.GetKeyDown(KeyCode.Minus) && (Configs.nextWaveState == 1 || Configs.nextWaveState == 2))
             {
                 Configs.nextWaveFrameIndex -= 60 * 60;
             }
-            if (Input.GetKeyDown(KeyCode.Backspace))
+            if (Input.GetKeyDown(KeyCode.Backspace) && !GameMain.isPaused)
             {
                 UIAlert.OnActiveChange();
             }
@@ -115,6 +115,7 @@ namespace DSP_Battle
             EnemyShips.Export(w);
             Cannon.Export(w);
             MissileSilo.Export(w);
+            UIAlert.Export(w);
         }
 
         public void Import(BinaryReader r)
@@ -123,6 +124,7 @@ namespace DSP_Battle
             EnemyShips.Import(r);
             Cannon.Import(r);
             MissileSilo.Import(r);
+            UIAlert.Import(r);
         }
 
         public void IntoOtherSave()
@@ -131,6 +133,7 @@ namespace DSP_Battle
             EnemyShips.IntoOtherSave();
             Cannon.IntoOtherSave();
             MissileSilo.IntoOtherSave();
+            UIAlert.IntoOtherSave();
         }
 
         public static ManualLogSource logger;
