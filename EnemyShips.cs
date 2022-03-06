@@ -546,8 +546,11 @@ namespace DSP_Battle
 
         public static void IntoOtherSave()
         {
+            
+            
             ships.Clear();
             SortShips();
+            
         }
     }
 }

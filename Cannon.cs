@@ -231,15 +231,32 @@ namespace DSP_Battle
                 List<EnemyShip> sortedShips = EnemyShips.sortedShips(calcOrbitId, starIndex, __instance.planetId);
 
                 //下面的参数根据是否是炮还是太阳帆的弹射器有不同的修改
-                double maxtDivisor = 5000.0;
+                double maxtDivisor = 5000.0; //决定子弹速度
+                int damage = 0;
                 int loopNum = 1;
+                double cannonSpeedScale = 1;
+                if (gmProtoId == 8012)
+                    cannonSpeedScale = 2;
                 EnemyShip curTarget = null;
 
                 if (cannon)
                 {
-
                     loopNum = sortedShips.Count;
-                    maxtDivisor = 30000;
+                    if (__instance.bulletId == 1901)
+                    {
+                        maxtDivisor = 50 * Configs.bullet1Speed * cannonSpeedScale;
+                        damage = (int)(Configs.bullet1Atk * cannonSpeedScale); //只有这个子弹能够因为引力弹射器而强化伤害
+                    }
+                    if (__instance.bulletId == 1902)
+                    {
+                        maxtDivisor = 50 * Configs.bullet2Speed * cannonSpeedScale;
+                        damage = Configs.bullet2Atk;
+                    }
+                    if (__instance.bulletId == 1903)
+                    {
+                        maxtDivisor = 50 * Configs.bullet3Speed * cannonSpeedScale;
+                        damage = Configs.bullet3Atk;
+                    }
                 }
 
                 //子弹需求循环，不知是否可行
@@ -380,7 +397,7 @@ namespace DSP_Battle
                         {
                             sailBulletsIndex[swarm.starData.index].AddOrUpdate(bulletIndex, 0, (x, y)=> 0);
                         }
-                        //如果是炮，设定子弹目标
+                        //如果是炮，设定子弹目标以及伤害
                         else if (cannon)
                         {
                             try
@@ -399,7 +416,7 @@ namespace DSP_Battle
                             
                             try
                             {
-                                canDoDamage[swarm.starData.index].AddOrUpdate(bulletIndex, 1, (x, y) => 1);
+                                canDoDamage[swarm.starData.index].AddOrUpdate(bulletIndex, damage, (x, y) => 1);
                                 // canDoDamage[swarm.starData.index][bulletIndex] = 1;//后续可以根据子弹类型/炮类型设定不同数值
                             }
                             catch (Exception)

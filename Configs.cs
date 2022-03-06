@@ -29,6 +29,18 @@ namespace DSP_Battle
 
         public static int missile1Range;
 
+        public static double _missile2Speed;
+
+        public static int _missile2Atk;
+
+        public static int missile2Range;
+
+        public static double _missile3Speed;
+
+        public static int _missile3Atk;
+
+        public static int missile3Range;
+
         // --- 敌方战舰信息
         public static int[] enemyIntensity = new int[10];
 
@@ -101,6 +113,22 @@ namespace DSP_Battle
         {
             get { return (int)(_missile1Atk * bulletAtkScale); }
         }
+        public static double missile2Speed
+        {
+            get { return _missile2Speed * bulletSpeedScale; }
+        }
+        public static int missile2Atk
+        {
+            get { return (int)(_missile2Atk * bulletAtkScale); }
+        }
+        public static double missile3Speed
+        {
+            get { return _missile3Speed * bulletSpeedScale; }
+        }
+        public static int missile3Atk
+        {
+            get { return (int)(_missile3Atk * bulletAtkScale); }
+        }
         public static int wormholeRange
         {
             get { return _wormholeRange + wormholeRangeAdded; }
@@ -111,13 +139,22 @@ namespace DSP_Battle
         {
             _bullet1Speed = config.Bind("config", "bullet1Speed", defaultValue: 100.0, "穿甲磁轨弹速度（默认太阳帆速度视为100）").Value;
             _bullet1Atk = config.Bind("config", "bullet1Atk", defaultValue: 100, "穿甲磁轨弹攻击力").Value;
-            _bullet2Speed = config.Bind("config", "bullet2Speed", defaultValue: 200.0, "强酸磁轨弹速度（默认太阳帆速度视为100）").Value;
-            _bullet2Atk = config.Bind("config", "bullet2Atk", defaultValue: 200, "强酸磁轨弹攻击力").Value;
-            _bullet3Speed = config.Bind("config", "bullet3Speed", defaultValue: 15, "氘核爆破弹速度（默认太阳帆速度视为100）").Value;
+            _bullet2Speed = config.Bind("config", "bullet2Speed", defaultValue: 100.0, "强酸磁轨弹速度（默认太阳帆速度视为100）").Value;
+            _bullet2Atk = config.Bind("config", "bullet2Atk", defaultValue: 180, "强酸磁轨弹攻击力").Value;
+            _bullet3Speed = config.Bind("config", "bullet3Speed", defaultValue: 100, "氘核爆破弹速度（默认太阳帆速度视为100）").Value;
             _bullet3Atk = config.Bind("config", "bullet3Atk", defaultValue: 400, "氘核爆破弹攻击力").Value;
-            _missile1Speed = config.Bind("config", "missile1Speed", defaultValue: 3000.0, "热核导弹速度（米每秒）").Value;
+
+            _missile1Speed = config.Bind("config", "missile1Speed", defaultValue: 5000.0, "热核导弹速度（米每秒）").Value;
             _missile1Atk = config.Bind("config", "missile1Atk", defaultValue: 5000, "热核导弹攻击力").Value;
             missile1Range = config.Bind("config", "missile1Range", defaultValue: 500, "热核导弹破坏范围").Value;
+
+            _missile2Speed = config.Bind("config", "missile2Speed", defaultValue: 5000.0, "反物质导弹速度（米每秒）").Value;
+            _missile2Atk = config.Bind("config", "missile2Atk", defaultValue: 20000, "反物质导弹攻击力").Value;
+            missile2Range = config.Bind("config", "missile2Range", defaultValue: 800, "反物质导弹破坏范围").Value;
+
+            _missile3Speed = config.Bind("config", "missile3Speed", defaultValue: 5000.0, "引力塌陷导弹速度（米每秒）").Value;
+            _missile3Atk = config.Bind("config", "missile3Atk", defaultValue: 2500, "引力塌陷导弹攻击力").Value;
+            missile3Range = config.Bind("config", "missile3Range", defaultValue: 5000, "引力塌陷导弹破坏范围").Value;
 
             enemyIntensity[0] = config.Bind("config", "enemy1Intensity", defaultValue: 1, "敌方飞船1强度").Value;
             enemyHp[0] = config.Bind("config", "enemy1Hp", defaultValue: 4000, "敌方飞船1血量").Value;
