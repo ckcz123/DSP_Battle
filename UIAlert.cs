@@ -68,66 +68,57 @@ namespace DSP_Battle
             stat3label = sons.Find("sail-cnt-label").GetComponent<Text>();
             stat3value = sons.Find("sail-cnt-text").GetComponent<Text>();
 
-            CountDownRefresh(false, 0, 0, 0, 0, 0, 0, false);
             isActive = false;
             titleObj.SetActive(false);
             statisticObj.SetActive(false);
 
         }
 
-        /// <summary>
-        /// 如果是active状态，则每帧刷新？
-        /// </summary>
-        /// <param name="framesUntilAttack"></param> 距离下一波还有多少帧
-        /// <param name="shipNum"></param> 下一波来袭的敌舰总数
-        /// <param name="totalStrength"></param> 下一波来袭的敌舰总强度
-        /// <param name="awards"></param> 下一波完成的最大奖励
-        /// <param name="showDetails"></param> 是否能够显示下一波来袭的具体细节，例如时间倒数和敌舰信息
-        public static void CountDownRefresh(bool Invasion, int framesUntilNextWave, int starIndex, int shipNum, int totalStrength, int awards, int destoryed = 0, bool showDetails = false)
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameData), "GameTick")]
+        public static void GameData_GameTick(ref GameData __instance, long time)
         {
-
-            if (framesUntilNextWave == 3600 || framesUntilNextWave == 600 || framesUntilNextWave == -1)
-                ShowAlert();
-
-            if(!Invasion)
+            if (DSPGame.IsMenuDemo) return;
+            if (Configs.nextWaveState == 0 || Configs.nextWaveFrameIndex < 0 || Configs.nextWavePlanetId < 0)
             {
-                alertMainText.text = "未探测到威胁".Translate();
-                stat1label.text = "预估数量".Translate();
-                stat2label.text = "预估强度".Translate();
-                stat3label.text = "携带资源".Translate();
-                stat1value.text = "0";
-                stat2value.text = "0";
-                stat3value.text = "0";
+                ShowAlert(false);
+                return;
             }
 
-            if (framesUntilNextWave < 18000)
-                showDetails = true;
+            long framesUntilNextWave = Configs.nextWaveFrameIndex - time;
+            bool showDetails = framesUntilNextWave < 18000;
+
+            if (showDetails || framesUntilNextWave == 60 * 60 * 30 || framesUntilNextWave == 60 * 60 * 60 || framesUntilNextWave == 36000) ShowAlert(true);
+
+            if (time % 30 != 1) return;
+
             if (framesUntilNextWave < 0)
             {
                 if ((-framesUntilNextWave) / 60 % 2 != 0)
-                    alertMainText.text = txtColorAlert1 + "敌舰正在入侵".Translate() + GameMain.galaxy.stars[starIndex].displayName + "!" + txtColorRight;
+                    alertMainText.text = txtColorAlert1 + "敌舰正在入侵".Translate() + GameMain.galaxy.stars[Configs.nextWavePlanetId / 100 - 1].displayName + "!" + txtColorRight;
                 else
-                    alertMainText.text = txtColorAlert2 + "敌舰正在入侵".Translate() + GameMain.galaxy.stars[starIndex].displayName + "!" + txtColorRight;
+                    alertMainText.text = txtColorAlert2 + "敌舰正在入侵".Translate() + GameMain.galaxy.stars[Configs.nextWavePlanetId / 100 - 1].displayName + "!" + txtColorRight;
 
                 stat1label.text = "剩余敌舰".Translate();
                 stat2label.text = "剩余强度".Translate();
                 stat3label.text = "已被摧毁".Translate();
-                stat1value.text = shipNum.ToString();
-                stat2value.text = totalStrength.ToString();
-                stat3value.text = destoryed.ToString();
+                stat1value.text = EnemyShips.ships.Count.ToString();
+                stat2value.text = EnemyShips.ships.Values.ToList().Sum(e => e.intensity).ToString();
+                stat3value.text = (Configs.nextWaveEnemy.Sum() - EnemyShips.ships.Count).ToString();
             }
             else
             {
-                int seconds = framesUntilNextWave / 60;
-                alertMainText.text = "下一次入侵预计于".Translate() + Sec2StrTime(seconds, showDetails) + "后抵达".Translate() + GameMain.galaxy.stars[starIndex].displayName;
+                int seconds = (int) framesUntilNextWave / 60;
+                alertMainText.text = "下一次入侵预计于".Translate() + Sec2StrTime(seconds, showDetails) + "后抵达".Translate() + GameMain.galaxy.stars[Configs.nextWavePlanetId / 100 - 1].displayName;
                 stat1label.text = "预估数量".Translate();
                 stat2label.text = "预估强度".Translate();
-                stat3label.text = "携带资源".Translate();
-                stat1value.text = RoundByDetail(shipNum, showDetails);
-                stat2value.text = RoundByDetail(totalStrength, showDetails);
-                stat3value.text = RoundByDetail(awards, showDetails);
+                stat3label.text = "虫洞数量".Translate();
+                stat1value.text = RoundByDetail(Configs.nextWaveEnemy.Sum(), showDetails);
+                stat2value.text = RoundByDetail(Configs.nextWaveIntensity, showDetails);
+                stat3value.text = Configs.nextWaveWormCount.ToString();
             }
         }
+
 
 
         public static void OnActiveChange()
@@ -137,16 +128,12 @@ namespace DSP_Battle
             statisticObj.SetActive(isActive);
         }
 
-        public static void ShowAlert()
+        public static void ShowAlert(bool active)
         {
-            isActive = true;
+            if (isActive == active) return;
+            isActive = active;
             titleObj.SetActive(isActive);
             statisticObj.SetActive(isActive);
-        }
-
-        public static void ClearAlert()
-        {
-
         }
 
         static string Sec2StrTime(int sec, bool showDetails)

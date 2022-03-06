@@ -50,8 +50,7 @@ namespace DSP_Battle
 			int starIndex = planetId / 100 - 1;
 			PlanetFactory factory = GameMain.galaxy.stars[starIndex].planets[planetId % 100 - 1].factory;
 			int gmProtoId = factory.entityPool[__instance.entityId].protoId;
-			if (gmProtoId == 0) return true; //要改的！！！改成原始发射井返回原函数
-			__instance.bulletCount = 100; //测试用，请删除
+			if (gmProtoId == 2312) return true; //要改的！！！改成原始发射井返回原函数
 
 			if (__instance.needs == null)
 			{
@@ -80,7 +79,7 @@ namespace DSP_Battle
 			{
 				//下面设定目标，目前是随机设定目标
 				int targetIndex = 0;
-				if (EnemyShips.minTargetDisSortedShips[starIndex].Count > 0) targetIndex = EnemyShips.minTargetDisSortedShips[starIndex][Main.randSeed.Next(0, EnemyShips.minTargetDisSortedShips[starIndex].Count)].shipIndex;
+				if (EnemyShips.minTargetDisSortedShips[starIndex].Count > 0) targetIndex = EnemyShips.minTargetDisSortedShips[starIndex][DspBattlePlugin.randSeed.Next(0, EnemyShips.minTargetDisSortedShips[starIndex].Count)].shipIndex;
 
 				__instance.hasNode = (sphere.GetAutoNodeCount() > 0);
 				if(targetIndex == 0)  //if (!__instance.hasNode) 原本是没有节点，因此不发射
@@ -245,7 +244,7 @@ namespace DSP_Battle
 								}
 								else if (EnemyShips.minTargetDisSortedShips[starIndex].Count > 0) //否则，火箭继续寻敌
 								{
-									int newTargetId = EnemyShips.minTargetDisSortedShips[starIndex][Main.randSeed.Next(0, EnemyShips.minTargetDisSortedShips[starIndex].Count)].shipIndex;
+									int newTargetId = EnemyShips.minTargetDisSortedShips[starIndex][DspBattlePlugin.randSeed.Next(0, EnemyShips.minTargetDisSortedShips[starIndex].Count)].shipIndex;
 									MissileTargets[starIndex][i] = newTargetId;
 									vectorLF2 = EnemyShips.ships[newTargetId].uPos - dysonRocket.uPos;
 									dysonRocket.t = 0; //让其回到第一阶段，允许避障
@@ -388,7 +387,7 @@ namespace DSP_Battle
 							}
 							else if (EnemyShips.minTargetDisSortedShips[starIndex].Count > 0) //否则，火箭继续寻敌
 							{
-								int newTargetId = EnemyShips.minTargetDisSortedShips[starIndex][Main.randSeed.Next(0, EnemyShips.minTargetDisSortedShips[starIndex].Count)].shipIndex;
+								int newTargetId = EnemyShips.minTargetDisSortedShips[starIndex][DspBattlePlugin.randSeed.Next(0, EnemyShips.minTargetDisSortedShips[starIndex].Count)].shipIndex;
 								MissileTargets[starIndex][i] = newTargetId;
 								vectorLF5 = EnemyShips.ships[newTargetId].uPos - dysonRocket.uPos;
 								dysonRocket.t = 0; //让其回到第一阶段，允许避障
@@ -770,12 +769,6 @@ namespace DSP_Battle
 			return false;
 		}
 
-
-
-
-
-
-
 		[HarmonyPrefix]
 		[HarmonyPatch(typeof(DysonSphere), "RocketGameTick", new Type[] { typeof(int), typeof(int), typeof(int) })]
 		public static bool RocketGameTickThreadPatch(ref DysonSphere __instance, int _usedThreadCnt, int _curThreadIdx, int _minimumMissionCnt)
@@ -837,7 +830,7 @@ namespace DSP_Battle
 									}
 									else if (EnemyShips.minTargetDisSortedShips[starIndex].Count > 0) //否则，火箭继续寻敌
 									{
-										int newTargetId = EnemyShips.minTargetDisSortedShips[starIndex][Main.randSeed.Next(0, EnemyShips.minTargetDisSortedShips[starIndex].Count)].shipIndex;
+										int newTargetId = EnemyShips.minTargetDisSortedShips[starIndex][DspBattlePlugin.randSeed.Next(0, EnemyShips.minTargetDisSortedShips[starIndex].Count)].shipIndex;
 										MissileTargets[starIndex][i] = newTargetId;
 										vectorLF2 = EnemyShips.ships[newTargetId].uPos - dysonRocket.uPos;
 										dysonRocket.t = 0; //让其回到第一阶段，允许避障
@@ -979,7 +972,7 @@ namespace DSP_Battle
 								}
 								else if (EnemyShips.minTargetDisSortedShips[starIndex].Count > 0) //否则，火箭继续寻敌
 								{
-									int newTargetId = EnemyShips.minTargetDisSortedShips[starIndex][Main.randSeed.Next(0, EnemyShips.minTargetDisSortedShips[starIndex].Count)].shipIndex;
+									int newTargetId = EnemyShips.minTargetDisSortedShips[starIndex][DspBattlePlugin.randSeed.Next(0, EnemyShips.minTargetDisSortedShips[starIndex].Count)].shipIndex;
 									MissileTargets[starIndex][i] = newTargetId;
 									vectorLF5 = EnemyShips.ships[newTargetId].uPos - dysonRocket.uPos;
 									dysonRocket.t = 0; //让其回到第一阶段，允许避障

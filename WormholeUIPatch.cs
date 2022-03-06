@@ -13,60 +13,69 @@ namespace DSP_Battle
     class WormholeUIPatch
     {
 
-        public static StarData starData;
-        public static StarSimulator simulator;
-        public static UIStarmapStar uiStar;
+        public static StarData[] starData = new StarData[100];
+        public static StarSimulator[] simulator = new StarSimulator[100];
+        public static UIStarmapStar[] uiStar = new UIStarmapStar[100];
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UniverseSimulator), "OnGameLoaded")]
         public static void UniverseSimulator_OnGameLoaded(ref UniverseSimulator __instance)
         {
-            if (simulator != null)
+            for (int i = 0; i < 100; ++i)
             {
-                UnityEngine.Object.DestroyImmediate(simulator);
-                simulator = null;
+                if (simulator[i] != null) UnityEngine.Object.DestroyImmediate(simulator[i]);
             }
+
             CopyBlackHoleData();
 
-            simulator = UnityEngine.Object.Instantiate<StarSimulator>(__instance.starPrefab, __instance.transform);
-            simulator.universeSimulator = __instance;
-            simulator.SetStarData(starData);
-            simulator.gameObject.layer = 24;
-            simulator.gameObject.name = "Wormhole";
-            simulator.gameObject.SetActive(true);
+            for (int i = 0; i < 100; ++i)
+            {
+                simulator[i] = UnityEngine.Object.Instantiate<StarSimulator>(__instance.starPrefab, __instance.transform);
+                simulator[i].universeSimulator = __instance;
+                simulator[i].SetStarData(starData[i]);
+                simulator[i].gameObject.layer = 24;
+                simulator[i].gameObject.name = "Wormhole";
+                // simulator[i].gameObject.SetActive((Configs.nextWaveState == 2 || Configs.nextWaveState == 3) && i < Configs.nextWaveWormCount);
+                simulator[i].gameObject.SetActive(false);
+            }
         }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UniverseSimulator), "GameTick")]
         public static void UniverseSimulator_GameTick(ref UniverseSimulator __instance, double time)
         {
+            if (Configs.nextWaveState != 2 && Configs.nextWaveState != 3)
+            {
+                for (var i = 0; i < 100; ++i) simulator[i].gameObject.SetActive(false);
+                return;
+            }
+
             Vector3 position = GameMain.mainPlayer.position;
             VectorLF3 uPosition = GameMain.mainPlayer.uPosition;
             Vector3 position2 = GameCamera.main.transform.position;
             Quaternion rotation = GameCamera.main.transform.rotation;
-            if (simulator != null)
-            {
-                simulator.UpdateUniversalPosition(position, uPosition, position2, rotation);
-            }
-        }
+            PlanetData planet = GameMain.galaxy.PlanetById(Configs.nextWavePlanetId);
 
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(StarSimulator), "UpdateUniversalPosition")]
-        public static void StarSimulator_UpdateUniversalPosition(ref StarSimulator __instance, Vector3 playerLPos, VectorLF3 playerUPos, Vector3 cameraPos, Quaternion cameraRot)
-        {
-            if (__instance.starData == null || __instance.starData.id != -1)
+            for (var i = 0; i < Configs.nextWaveWormCount; ++i)
             {
-                return;
+                simulator[i].gameObject.SetActive(true);
+
+                int angle1 = Configs.nextWaveAngle1[i];
+                int angle2 = Configs.nextWaveAngle2[i];
+                simulator[i].starData.uPosition = 
+                    planet.uPosition
+                    + new VectorLF3(
+                            Configs.wormholeRange * Math.Cos(angle1 * Math.PI / 360) * Math.Cos(angle2 * Math.PI / 360), // rcosAcosB
+                            Configs.wormholeRange * Math.Cos(angle1 * Math.PI / 360) * Math.Sin(angle2 * Math.PI / 360), // rcosAsinB
+                            Configs.wormholeRange * Math.Sin(angle1 * Math.PI / 360) // rsinA
+                    );
+                simulator[i].UpdateUniversalPosition(position, uPosition, position2, rotation);
             }
-            StarData localStar = GameMain.localStar;
-            if (localStar == null) return;
-            // TODO: Update loc here
-            __instance.starData.uPosition = (localStar.uPosition + localStar.planets[1].uPosition) / 2;
         }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(StarSimulator), "UpdateUniversalPosition")]
-        public static void StarSimulator_UpdateUniversalPosition_Post(ref StarSimulator __instance, Vector3 playerLPos, VectorLF3 playerUPos, Vector3 cameraPos, Quaternion cameraRot)
+        public static void StarSimulator_UpdateUniversalPosition(ref StarSimulator __instance, Vector3 playerLPos, VectorLF3 playerUPos, Vector3 cameraPos, Quaternion cameraRot)
         {
             if (__instance.starData == null || __instance.starData.id != -1)
             {
@@ -147,70 +156,68 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(UIStarmap), "CreateAllStarUIs")]
         public static void UIStarmap_CreateAllStarUIs(ref UIStarmap __instance)
         {
-            if (uiStar != null)
+            for (var i = 0; i < 100; ++i)
             {
-                UnityEngine.Object.DestroyImmediate(uiStar);
-                uiStar = null;
+                if (uiStar[i] != null) UnityEngine.Object.DestroyImmediate(uiStar[i]);
             }
 
             CopyBlackHoleData();
 
-            uiStar = UnityEngine.Object.Instantiate(__instance.starUIPrefab, __instance.starUIPrefab.transform.parent);
-            uiStar._Create();
-            uiStar._Init(starData);
-            uiStar.gameObject.name = "test2";
-            uiStar.gameObject.SetActive(true);
+            for (var i = 0; i < 100; ++i)
+            {
+                uiStar[i] = UnityEngine.Object.Instantiate(__instance.starUIPrefab, __instance.starUIPrefab.transform.parent);
+                uiStar[i]._Create();
+                uiStar[i]._Init(starData[i]);
+                uiStar[i].gameObject.SetActive(false);
+            }
+
         }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UIStarmap), "_OnOpen")]
         public static void UIStarmap_OnOpen(ref UIStarmap __instance)
         {
-            uiStar?._Open();
+            if (Configs.nextWaveState != 2 && Configs.nextWaveState != 3) return;
+            for (var i = 0; i < Configs.nextWaveWormCount; ++i) uiStar[i]._Open();
         }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UIStarmap), "_OnClose")]
         public static void UIStarmap_OnClose(ref UIStarmap __instance)
         {
-            uiStar?._Close();
+            for (var i = 0; i < 100; ++i) uiStar[i]._Close();
         }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UIStarmap), "_OnUpdate")]
         public static void UIStarmap_OnUpdate(ref UIStarmap __instance)
         {
-            uiStar?._Update();
+            if (Configs.nextWaveState != 2 && Configs.nextWaveState != 3) return;
+            for (var i = 0; i < Configs.nextWaveWormCount; ++i) uiStar[i]._Update();
         }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UIStarmap), "_OnLateUpdate")]
         public static void UIStarmap_OnLateUpdate(ref UIStarmap __instance)
         {
-            uiStar?._LateUpdate();
+            if (Configs.nextWaveState != 2 && Configs.nextWaveState != 3) return;
+            for (var i = 0; i < Configs.nextWaveWormCount; ++i) uiStar[i]._LateUpdate();
         }
 
         private static void CopyBlackHoleData()
         {
-            if (starData != null) return;
+            if (starData[0] != null) return;
 
-            StarData[] datas = GameMain.galaxy.stars;
-            foreach (var data in datas)
-            {
-                if (data.type == EStarType.BlackHole)
-                {
-                    starData = data.Copy();
-                    starData.planetCount = 0;
-                    starData.planets = new PlanetData[] { };
-                    starData.id = -1;
-                    starData.index = -1;
-                    starData.radius = 0.2f;
-                    return;
-                }
+            StarData data = GameMain.galaxy.stars.Where(e => e.type == EStarType.BlackHole).First();
+            for (var i = 0; i < 100; ++i) {
+                starData[i] = data.Copy();
+                starData[i].planetCount = 0;
+                starData[i].planets = new PlanetData[] { };
+                starData[i].id = -1;
+                starData[i].index = -1;
+                starData[i].radius = 0.2f;
             }
         }
-
-
 
     }
 }

@@ -100,7 +100,7 @@ namespace DSP_Battle
             }
             catch (Exception)
             {
-                Main.logger.LogWarning("Cannon ReInit ERROR");
+                DspBattlePlugin.logger.LogWarning("Cannon ReInit ERROR");
             }
         }
 
@@ -116,7 +116,7 @@ namespace DSP_Battle
             int gmProtoId = factory.entityPool[__instance.entityId].protoId;
 
             //if (gmProtoId != 9801) return true; // 暂时不要取消注释，下面已经做了普通弹射器的适配。
-            bool newEjector = isNewEjector(gmProtoId);
+            bool cannon = isCannon(gmProtoId);
 
             if (__instance.needs == null)
             {
@@ -153,7 +153,7 @@ namespace DSP_Battle
             //下面是因为 炮需要用orbitId记录索敌模式，而orbitId有可能超出已设定的轨道数，为了避免溢出，炮的orbitalId在参与计算时需要独立指定为1。
             //后续所有的__instance.orbitId都被替换为此
             int calcOrbitId = __instance.orbitId;
-            if(newEjector)
+            if(cannon)
             {
                 if (calcOrbitId <= 0 || calcOrbitId > 4) calcOrbitId = 1;
             } else
@@ -235,7 +235,7 @@ namespace DSP_Battle
                 int loopNum = 1;
                 EnemyShip curTarget = null;
 
-                if (newEjector)
+                if (cannon)
                 {
 
                     loopNum = sortedShips.Count;
@@ -243,9 +243,9 @@ namespace DSP_Battle
                 }
 
                 //子弹需求循环，不知是否可行
-                if(__instance.bulletCount == 0 && testFrameCount == 0)
+                if (cannon && __instance.bulletCount == 0 && testFrameCount == 0)
                 {
-                    __instance.bulletId = (__instance.bulletId - 1100) % 5 + 1101;
+                    __instance.bulletId = nextBulletId(__instance.bulletId);
                 }
 
                 //不该参与循环的部分，换到循环前了
@@ -262,7 +262,7 @@ namespace DSP_Battle
                     flag2 = __instance.bulletCount > 0;
 
                     int shipIdx = 0;//ship总表中的唯一标识：index
-                    if (newEjector)
+                    if (cannon)
                     {
                         vectorLF2 = sortedShips[gm].uPos;
                         shipIdx = sortedShips[gm].shipIndex;
@@ -312,7 +312,7 @@ namespace DSP_Battle
                             }
                         }
                     }
-                    if(newEjector && EnemyShips.ships.ContainsKey(shipIdx) && EnemyShips.ships[shipIdx].state == EnemyShip.State.active && __instance.targetState != EjectorComponent.ETargetState.Blocked && __instance.targetState != EjectorComponent.ETargetState.AngleLimit)
+                    if(cannon && EnemyShips.ships.ContainsKey(shipIdx) && EnemyShips.ships[shipIdx].state == EnemyShip.State.active && __instance.targetState != EjectorComponent.ETargetState.Blocked && __instance.targetState != EjectorComponent.ETargetState.AngleLimit)
                     {
                         curTarget = EnemyShips.ships[shipIdx]; //设定目标
                         if(EjectorUIPatch.needToRefreshTarget) //如果需要刷新目标
@@ -327,11 +327,11 @@ namespace DSP_Battle
                 }
 
                 //如果没有船/船没血了，就不打炮了
-                if (curTarget == null && newEjector)
+                if (curTarget == null && cannon)
                 {
                     flag = false; //本身是由于俯仰限制或路径被阻挡的判断，现在找不到目标而不打炮也算做里面
                 }
-                else if (curTarget != null && curTarget.hp <= 0 && newEjector)
+                else if (curTarget != null && curTarget.hp <= 0 && cannon)
                 {
                     flag = false;
                 }
@@ -376,12 +376,12 @@ namespace DSP_Battle
 
 
                         //将添加的用于攻击的子弹的index存储，便于后续更新其弹道，又能防止影响正常的太阳帆
-                        if (gmProtoId == 2311 && !sailBulletsIndex[swarm.starData.index].ContainsKey(bulletIndex))
+                        if (!cannon && !sailBulletsIndex[swarm.starData.index].ContainsKey(bulletIndex))
                         {
                             sailBulletsIndex[swarm.starData.index].AddOrUpdate(bulletIndex, 0, (x, y)=> 0);
                         }
                         //如果是炮，设定子弹目标
-                        else if (newEjector)
+                        else if (cannon)
                         {
                             try
                             {
@@ -389,7 +389,7 @@ namespace DSP_Battle
                             }
                             catch (Exception)
                             {
-                                Main.logger.LogInfo("bullet info1 set error.");
+                                DspBattlePlugin.logger.LogInfo("bullet info1 set error.");
                             }
 
                             bulletTargets[swarm.starData.index].AddOrUpdate(bulletIndex, curTarget.shipIndex, (x, y) => curTarget.shipIndex);
@@ -404,7 +404,7 @@ namespace DSP_Battle
                             }
                             catch (Exception)
                             {
-                                Main.logger.LogInfo("bullet info3 set error.");
+                                DspBattlePlugin.logger.LogInfo("bullet info3 set error.");
                             }
 
                         }
@@ -424,7 +424,7 @@ namespace DSP_Battle
 
                     }
                 }
-                else if (gmProtoId == 2311)
+                else if (!cannon)
                 {
                     return true; //如果不是炮，又没发射，就返回。这是为了防止return false影响潜在的其他mod的prepatch。 有必要吗？？？？
                 }
@@ -450,9 +450,14 @@ namespace DSP_Battle
             }
         }
 
-        private static bool isNewEjector(int protoId)
+        private static bool isCannon(int protoId)
         {
-            return protoId == 9801;
+            return protoId != 2311;
+        }
+
+        private static int nextBulletId(int id)
+        {
+            return (id - 8000) % 3 + 8001;
         }
 
         /// <summary>

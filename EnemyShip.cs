@@ -15,9 +15,8 @@ namespace DSP_Battle
         public ShipUIRenderingData renderingUIData;
         public int hp;
         public float maxSpeed;
+        public int intensity;
         public int damageRange;
-
-        private static System.Random random = new System.Random();
 
         public enum State
         {
@@ -85,7 +84,7 @@ namespace DSP_Battle
             Import(r);
         }
 
-        public EnemyShip(int gid, int stationGid, VectorLF3 initPos, int initHp, float maxSpeed, int damageRange, int itemId)
+        public EnemyShip(int gid, int stationGid, VectorLF3 initPos, int enemyId)
         {
             shipData = new ShipData();
             shipData.direction = 1;
@@ -99,12 +98,13 @@ namespace DSP_Battle
             shipData.otherGId = stationGid;
             shipData.planetB = GameMain.data.galacticTransport.stationPool[stationGid].planetId;
             shipData.uPos = initPos;
-            shipData.itemId = itemId;
+            shipData.itemId = Configs.enemyItemIds[enemyId];
             shipData.uRot = Quaternion.identity;
             shipData.uSpeed = 0;
-            hp = initHp;
-            this.damageRange = damageRange;
-            this.maxSpeed = maxSpeed;
+            hp = Configs.enemyHp[enemyId];
+            damageRange = Configs.enemyRange[enemyId];
+            maxSpeed = Configs.enemySpeed[enemyId];
+            intensity = Configs.enemyIntensity[enemyId];
             state = State.active;
 
             renderingData = new ShipRenderingData();
@@ -505,8 +505,6 @@ namespace DSP_Battle
 
         public void Export(BinaryWriter w)
         {
-            Main.logger.LogInfo("======> Exporting ship...");
-
             shipData.Export(w);
             w.Write(hp);
             w.Write(maxSpeed);
@@ -516,8 +514,6 @@ namespace DSP_Battle
 
         public void Import(BinaryReader r)
         {
-            Main.logger.LogInfo("======> Importing ship...");
-
             shipData.Import(r);
             hp = r.ReadInt32();
             maxSpeed = r.ReadSingle();

@@ -16,7 +16,6 @@ namespace DSP_Battle
         public static ConcurrentDictionary<int, EnemyShip> ships;
 
         public static System.Random gidRandom = new System.Random();
-        public static bool paused = false;
         public static List<List<EnemyShip>> minTargetDisSortedShips;
         public static List<Dictionary<int, List<EnemyShip>>> minPlanetDisSortedShips;
         public static List<List<EnemyShip>> maxThreatSortedShips;
@@ -31,7 +30,7 @@ namespace DSP_Battle
             SortShips();
         }
 
-        public static void Create(int starIndex, VectorLF3 initPos, int initHp, int damageRange = 50, int itemId = 0)
+        public static void Create(int starIndex, VectorLF3 initPos, int enemyId)
         {
             int nextGid = gidRandom.Next(1 << 27, 1 << 29);
             while (ships.ContainsKey(nextGid)) nextGid = gidRandom.Next(1 << 27, 1 << 29);
@@ -43,11 +42,8 @@ namespace DSP_Battle
                 nextGid,
                 stationId,
                 initPos,
-                initHp,
-                GameMain.history.logisticShipSailSpeedModified,
-                damageRange,
-                itemId);
-            Main.logger.LogInfo("=========> Init ship " + nextGid + " at station " + enemyShip.shipData.otherGId);
+                enemyId);
+            DspBattlePlugin.logger.LogInfo("=========> Init ship " + nextGid + " at station " + enemyShip.shipData.otherGId);
 
             ships.TryAdd(nextGid, enemyShip);
         }
@@ -227,7 +223,7 @@ namespace DSP_Battle
 
         public static void OnShipLanded(EnemyShip ship)
         {
-            Main.logger.LogInfo("=========> Ship landed at station " + ship.shipData.otherGId);
+            DspBattlePlugin.logger.LogInfo("=========> Ship landed at station " + ship.shipData.otherGId);
 
             if (!shouldDistroy) return;
 
@@ -290,7 +286,7 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(GameData), "GameTick")]
         public static void GameData_GameTick(ref GameData __instance, long time)
         {
-            if (paused) return;
+            if (DSPGame.IsMenuDemo) return;
 
             List<EnemyShip> list = ships.Values.ToList();
 
@@ -309,6 +305,131 @@ namespace DSP_Battle
             {
                SortShips();
             }
+
+            UpdateWaveState(time);
+        }
+
+        private static void UpdateWaveState(long time)
+        {
+
+            switch (Configs.nextWaveState)
+            {
+                case 0:
+                    if (time % 1800 != 1) break;
+                    DspBattlePlugin.logger.LogInfo("=====> Initializing next wave");
+                    List<int> indexes = new List<int>();
+                    StationComponent[] stations = GameMain.data.galacticTransport.stationPool;
+                    for (var i = 0; i < stations.Length; ++i)
+                    {
+                        if (stations[i] != null && stations[i].isStellar && stations[i].gid != 0 && stations[i].id != 0)
+                        {
+                            indexes.Add(i);
+                        }
+                    }
+                    DspBattlePlugin.logger.LogInfo("=====> Indexes: " + indexes.Join(s=>""+s, ","));
+                    if (indexes.Count == 0) break;
+                    int index = indexes[gidRandom.Next(0, indexes.Count)];
+                    DspBattlePlugin.logger.LogInfo("=====> Index: " + index);
+                    int planetId = GameMain.data.galacticTransport.stationPool[index].planetId;
+                    int starId = planetId / 100 - 1;
+
+                    // Gen next wave
+                    Configs.nextWaveFrameIndex = time + (Configs.coldTime[Math.Min(Configs.coldTime.Length - 1, Configs.totalWave)] + 1) * 3600;
+                    Configs.nextWaveIntensity = Configs.intensity[Math.Min(Configs.intensity.Length - 1, Configs.wavePerStar[starId])];
+                    Configs.nextWavePlanetId = planetId;
+                    Configs.nextWaveState = 1;
+
+                    DspBattlePlugin.logger.LogInfo("=====> nextWaveFrameIndex: " + Configs.nextWaveFrameIndex);
+                    DspBattlePlugin.logger.LogInfo("=====> nextWaveIntensity: " + Configs.nextWaveIntensity);
+                    DspBattlePlugin.logger.LogInfo("=====> nextWavePlanetId: " + Configs.nextWavePlanetId);
+
+                    int intensity = Configs.nextWaveIntensity;
+                    for (int i = 4; i >= 1; --i)
+                    {
+                        double v = gidRandom.NextDouble() / 2 + 0.25;
+                        Configs.nextWaveEnemy[i] = (int)(intensity * v / Configs.enemyIntensity[i]);
+                        intensity -= Configs.nextWaveEnemy[i] * Configs.enemyIntensity[i];
+                    }
+                    Configs.nextWaveEnemy[0] = intensity / Configs.enemyIntensity[0];
+                    Configs.nextWaveWormCount = Math.Min(gidRandom.Next(1, 20), Configs.nextWaveEnemy.Sum());
+
+                    DspBattlePlugin.logger.LogInfo("=====> nextWaveWormCount: " + Configs.nextWaveWormCount);
+                    DspBattlePlugin.logger.LogInfo("=====> nextWaveWormEnemy: " + Configs.nextWaveEnemy.Select(e=>e+"").Join(null, ","));
+
+                    UIRealtimeTip.Popup("下一波进攻即将到来！".Translate());
+                    break;
+                case 1:
+                    if (time < Configs.nextWaveFrameIndex - 3600) break;
+
+                    PlanetData planet = GameMain.galaxy.PlanetById(Configs.nextWavePlanetId);
+                    StarData star = planet.star;
+                    int distance = Configs.wormholeRange;
+
+                    for (int i = 0; i < Configs.nextWaveWormCount; ++i)
+                    {
+                        while (true)
+                        {
+                            int angle1 = gidRandom.Next(0, 360);
+                            int angle2 = gidRandom.Next(0, 360);
+                            VectorLF3 pos = planet.uPosition + new VectorLF3(
+                                distance * Math.Cos(angle1 * Math.PI / 360) * Math.Cos(angle2 * Math.PI / 360), // rcosAcosB
+                                distance * Math.Cos(angle1 * Math.PI / 360) * Math.Sin(angle2 * Math.PI / 360), // rcosAsinB
+                                distance * Math.Sin(angle1 * Math.PI / 360) // rsinA
+                            );
+                            if ((star.uPosition - pos).magnitude < distance - 10) continue;
+                            bool valid = true;
+                            foreach (PlanetData planetData in star.planets)
+                            {
+                                if ((planetData.uPosition - pos).magnitude < distance - 10) valid = false;
+                            }
+                            if (valid)
+                            {
+                                Configs.nextWaveAngle1[i] = angle1;
+                                Configs.nextWaveAngle2[i] = angle2;
+                                break;
+                            }
+                        }
+                    }
+
+                    Configs.nextWaveState = 2;
+                    UIRealtimeTip.Popup("虫洞已生成！".Translate());
+                    break;
+                case 2:
+                    if (time >= Configs.nextWaveFrameIndex)
+                    {
+                        PlanetData planetData = GameMain.galaxy.PlanetById(Configs.nextWavePlanetId);
+                        int u = 0;
+                        for (int i = 0; i <= 4; ++i)
+                        {
+                            for (int j = 0; j < Configs.nextWaveEnemy[i]; ++j)
+                            {
+                                int angle1 = Configs.nextWaveAngle1[u % Configs.nextWaveWormCount];
+                                int angle2 = Configs.nextWaveAngle2[u % Configs.nextWaveWormCount];
+                                Create(Configs.nextWavePlanetId / 100 - 1,
+                                    planetData.uPosition
+                                    + new VectorLF3(
+                                         Configs.wormholeRange * Math.Cos(angle1 * Math.PI / 360) * Math.Cos(angle2 * Math.PI / 360), // rcosAcosB
+                                         Configs.wormholeRange * Math.Cos(angle1 * Math.PI / 360) * Math.Sin(angle2 * Math.PI / 360), // rcosAsinB
+                                         Configs.wormholeRange * Math.Sin(angle1 * Math.PI / 360) // rsinA
+                                    ), i);
+                                u++;
+                            }
+                        }
+
+                        Configs.nextWaveState = 3;
+                    }
+                    break;
+                case 3:
+                    if (ships.Count == 0)
+                    {
+                        Configs.nextWaveState = 0;
+                        Configs.nextWaveFrameIndex = -1;
+                        Configs.nextWavePlanetId = -1;
+                    }
+                    break;
+
+            }
+
         }
 
         public static void RemoveShip(EnemyShip ship)
