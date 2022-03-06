@@ -13,6 +13,8 @@ namespace DSP_Battle
     {
         public static bool isActive = false;
 
+        public static int lastState = 0;
+
         public static GameObject titleObj = null;
         public static GameObject statisticObj = null;
         public static GameObject titleLeftBar = null;
@@ -78,10 +80,33 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(GameData), "GameTick")]
         public static void GameData_GameTick(ref GameData __instance, long time)
         {
-            if (DSPGame.IsMenuDemo) return;
-            if (Configs.nextWaveState == 0 || Configs.nextWaveFrameIndex < 0 || Configs.nextWavePlanetId < 0)
+            RefreshUIAlert(time, false);
+        }
+
+        public static void RefreshUIAlert(long time, bool forceRefresh = false)
+        {
+            if (DSPGame.IsMenuDemo)
             {
                 ShowAlert(false);
+                return;
+            }
+            if (time % 30 != 1 && !forceRefresh) return;
+
+            if(Configs.nextWaveState == 0 && lastState != 0) //刚刚打完一架，关闭警告
+            {
+                ShowAlert(false);
+            }
+            lastState = Configs.nextWaveState;
+
+            if (Configs.nextWaveState == 0 || Configs.nextWaveFrameIndex < 0 || Configs.nextWavePlanetId < 0)
+            {
+                alertMainText.text = "未探测到威胁".Translate();
+                stat1label.text = "预估数量".Translate();
+                stat2label.text = "预估强度".Translate();
+                stat3label.text = "携带资源".Translate();
+                stat1value.text = "-";
+                stat2value.text = "-";
+                stat3value.text = "-";
                 return;
             }
 
@@ -90,7 +115,6 @@ namespace DSP_Battle
 
             if (showDetails || framesUntilNextWave == 60 * 60 * 30 || framesUntilNextWave == 60 * 60 * 60 || framesUntilNextWave == 36000) ShowAlert(true);
 
-            if (time % 30 != 1) return;
 
             if (framesUntilNextWave < 0)
             {
@@ -108,7 +132,7 @@ namespace DSP_Battle
             }
             else
             {
-                int seconds = (int) framesUntilNextWave / 60;
+                int seconds = (int)framesUntilNextWave / 60;
                 alertMainText.text = "下一次入侵预计于".Translate() + Sec2StrTime(seconds, showDetails) + "后抵达".Translate() + GameMain.galaxy.stars[Configs.nextWavePlanetId / 100 - 1].displayName;
                 stat1label.text = "预估数量".Translate();
                 stat2label.text = "预估强度".Translate();
@@ -119,13 +143,12 @@ namespace DSP_Battle
             }
         }
 
-
-
         public static void OnActiveChange()
         {
             isActive = !isActive;
             titleObj.SetActive(isActive);
             statisticObj.SetActive(isActive);
+            RefreshUIAlert(GameMain.instance.timei, true);
         }
 
         public static void ShowAlert(bool active)
@@ -134,6 +157,7 @@ namespace DSP_Battle
             isActive = active;
             titleObj.SetActive(isActive);
             statisticObj.SetActive(isActive);
+            RefreshUIAlert(GameMain.instance.timei, true);
         }
 
         static string Sec2StrTime(int sec, bool showDetails)
