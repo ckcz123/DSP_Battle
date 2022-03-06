@@ -14,11 +14,8 @@ namespace DSP_Battle
     class MissileSilo
     {
 		public static List<ConcurrentDictionary<int, int>> MissileTargets; //记录导弹的目标
-		public static List<ConcurrentDictionary<int, int>> canDoDamage; //记录导弹还能造成多少伤害
+		public static List<ConcurrentDictionary<int, int>> missileProtoIds; //记录导弹还能造成多少伤害
 
-
-		public static float missileMaxSpeed = 5000;
-		public static float missileSpeedUp = 50;
 
 		//以下数值尽量不要改动
 		//public static double distIntoTrackStage2;
@@ -26,19 +23,20 @@ namespace DSP_Battle
 		public static void ReInitAll()
         {
 			MissileTargets = new List<ConcurrentDictionary<int, int>>();
-			canDoDamage = new List<ConcurrentDictionary<int, int>>();
+			missileProtoIds = new List<ConcurrentDictionary<int, int>>();
 			for (int i = 0; i < GameMain.galaxy.starCount; i++)
 			{
 				MissileTargets.Add(new ConcurrentDictionary<int, int>());
-				canDoDamage.Add(new ConcurrentDictionary<int, int>());
+				missileProtoIds.Add(new ConcurrentDictionary<int, int>());
 			}
 		}
 
-		[HarmonyPostfix]
-		[HarmonyPatch(typeof(GameData), "GameTick")]
-		public static void MissileTrack()
-        {
-        }
+		//[HarmonyPostfix]
+		//[HarmonyPatch(typeof(GameData), "GameTick")]
+		//public static void GameTickPatch()
+        //{
+
+		//}
 
 
 
@@ -51,6 +49,11 @@ namespace DSP_Battle
 			PlanetFactory factory = GameMain.galaxy.stars[starIndex].planets[planetId % 100 - 1].factory;
 			int gmProtoId = factory.entityPool[__instance.entityId].protoId;
 			if (gmProtoId == 2312) return true; //要改的！！！改成原始发射井返回原函数
+
+			if(GameMain.instance.timei % 60 ==0 && __instance.bulletCount == 0)
+            {
+				__instance.bulletId = nextBulletId(__instance.bulletId);
+            }
 
 			if (__instance.needs == null)
 			{
@@ -70,7 +73,7 @@ namespace DSP_Battle
 				animPool[__instance.entityId].time = -(float)__instance.time / (float)__instance.coldSpend;
 			}
 			animPool[__instance.entityId].power = power;
-			float num = (float)Cargo.accTableMilli[__instance.incLevel];
+			float num = (float)Cargo.incTableMilli[__instance.incLevel];
 			num = 4;
 			int num2 = (int)(power * 10000f * (1f + num) + 0.1f);
 			Mutex dysonSphere_mx = sphere.dysonSphere_mx;
@@ -153,7 +156,7 @@ namespace DSP_Battle
 							int rocketIndex = AddDysonRockedGniMaerd(ref sphere, ref dysonRocket, null); //这是添加了一个目标戴森球节点为null的火箭，因此被判定为导弹
 
 							MissileTargets[starIndex][rocketIndex] = targetIndex;
-							canDoDamage[starIndex][rocketIndex] = 1250;
+							missileProtoIds[starIndex][rocketIndex] = __instance.bulletId;
 
 							__instance.autoIndex++;
 							__instance.bulletInc -= __instance.bulletInc / __instance.bulletCount;
@@ -210,8 +213,27 @@ namespace DSP_Battle
 					bool isMissile = dysonRocket.node == null;//只有null是导弹，其他的是正常的戴森火箭
 					int starIndex = __instance.starData.index;
 
-					if (isMissile)
+					if (isMissile && missileProtoIds[starIndex].ContainsKey(i))
 					{
+						int missileId = missileProtoIds[starIndex][i];
+						float missileMaxSpeed = (float)Configs.missile1Speed;
+						int damage = Configs.missile1Atk;
+						int dmgRange = Configs.missile1Range;
+						if (missileId == 8005)
+						{
+							missileMaxSpeed = (float)Configs.missile2Speed;
+							damage = Configs.missile2Atk;
+							dmgRange = Configs.missile2Range;
+						}
+						else if (missileId == 8006)
+						{ 
+							missileMaxSpeed = (float)Configs.missile3Speed;
+							damage = Configs.missile3Atk;
+							dmgRange = Configs.missile3Range;
+						}
+						float missileSpeedUp = (float)missileMaxSpeed / 200f;
+
+
 						//DysonSphereLayer dysonSphereLayer = __instance.layersIdBased[dysonRocket.node.layerId];
 						AstroPose astroPose = astroPoses[dysonRocket.planetId];
 						VectorLF3 vectorLF = astroPose.uPos - dysonRocket.uPos;
@@ -415,13 +437,13 @@ namespace DSP_Battle
 
 								__instance.swarm.bulletPool[bulletIndex].state = 0;
 								//范围伤害
-								var shipsHit = EnemyShips.FindShipsInRange(dysonRocket.uPos, 500);
+								var shipsHit = EnemyShips.FindShipsInRange(dysonRocket.uPos, dmgRange);
 								foreach (var item in shipsHit)
 								{
 									if (EnemyShips.ships.ContainsKey(item))
-										EnemyShips.ships[item].BeAttacked(canDoDamage[starIndex][i]);
+										EnemyShips.ships[item].BeAttacked(damage);
 								}
-								canDoDamage[starIndex][i] = 0;
+								missileProtoIds[starIndex][i] = 0;
 								__instance.RemoveDysonRocket(i);
 								goto IL_BDF;
 							}
@@ -794,10 +816,28 @@ namespace DSP_Battle
 					bool isMissile = dysonRocket.node == null;//只有null是导弹，其他的是正常的戴森火箭
 					int starIndex = __instance.starData.index;
 
-					if (isMissile)
+					if (isMissile && missileProtoIds[starIndex].ContainsKey(i))
 					{
 						try
 						{
+							int missileId = missileProtoIds[starIndex][i];
+							float missileMaxSpeed = (float)Configs.missile1Speed;
+							int damage = Configs.missile1Atk;
+							int dmgRange = Configs.missile1Range;
+							if (missileId == 8005)
+							{
+								missileMaxSpeed = (float)Configs.missile2Speed;
+								damage = Configs.missile2Atk;
+								dmgRange = Configs.missile2Range;
+							}
+							else if (missileId == 8006)
+							{
+								missileMaxSpeed = (float)Configs.missile3Speed;
+								damage = Configs.missile3Atk;
+								dmgRange = Configs.missile3Range;
+							}
+							float missileSpeedUp = (float)missileMaxSpeed / 200f;
+
 							//DysonSphereLayer dysonSphereLayer = __instance.layersIdBased[dysonRocket.node.layerId];
 							AstroPose astroPose = astroPoses[dysonRocket.planetId];
 							VectorLF3 vectorLF = astroPose.uPos - dysonRocket.uPos;
@@ -1001,13 +1041,13 @@ namespace DSP_Battle
 									__instance.swarm.bulletPool[bulletIndex].state = 0;
 
 									//范围伤害
-									var shipsHit = EnemyShips.FindShipsInRange(dysonRocket.uPos, 500);
+									var shipsHit = EnemyShips.FindShipsInRange(dysonRocket.uPos, dmgRange);
                                     foreach (var item in shipsHit)
                                     {
 										if(EnemyShips.ships.ContainsKey(item))
-											EnemyShips.ships[item].BeAttacked(canDoDamage[starIndex][i]);
+											EnemyShips.ships[item].BeAttacked(damage);
 									}
-									canDoDamage[starIndex][i] = 0;
+									missileProtoIds[starIndex][i] = 0;
 									__instance.RemoveDysonRocket(i);
 									goto IL_BDF;
 								}
@@ -1406,6 +1446,10 @@ namespace DSP_Battle
 			return num;
 		}
 
+		private static int nextBulletId(int id)
+		{
+			return (id - 8003) % 3 + 8004;
+		}
 
 		public static void Export(BinaryWriter w)
 		{
@@ -1419,11 +1463,11 @@ namespace DSP_Battle
 					w.Write(item.Value);
                 }
             }
-			w.Write(canDoDamage.Count);
-            for (int i2 = 0; i2 < canDoDamage.Count; i2++)
+			w.Write(missileProtoIds.Count);
+            for (int i2 = 0; i2 < missileProtoIds.Count; i2++)
             {
-				w.Write(canDoDamage[i2].Count);
-                foreach (var item in canDoDamage[i2])
+				w.Write(missileProtoIds[i2].Count);
+                foreach (var item in missileProtoIds[i2])
                 {
 					w.Write(item.Key);
 					w.Write(item.Value);
@@ -1449,16 +1493,16 @@ namespace DSP_Battle
             }
 
 			int total2 = r.ReadInt32();
-            for (int c2 = 0; c2 < total2 - canDoDamage.Count; c2++)
+            for (int c2 = 0; c2 < total2 - missileProtoIds.Count; c2++)
             {
-				canDoDamage.Add(new ConcurrentDictionary<int, int>());
+				missileProtoIds.Add(new ConcurrentDictionary<int, int>());
             }
 			for (int i2 = 0; i2 < total2; i2++)
 			{
 				int num2 = r.ReadInt32();
 				for (int j2 = 0; j2 < num2; j2++)
 				{
-					canDoDamage[i2].TryAdd(r.ReadInt32(), r.ReadInt32());
+					missileProtoIds[i2].TryAdd(r.ReadInt32(), r.ReadInt32());
 				}
 			}
 		}

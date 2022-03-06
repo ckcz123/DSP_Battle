@@ -34,6 +34,8 @@ namespace DSP_Battle
         public static int destroyedCount;
         public static bool preparingNextWave = false;
 
+        public static int pageBias;
+
 
         public void Awake()
         {
