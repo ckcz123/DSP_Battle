@@ -43,6 +43,8 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(UniverseSimulator), "GameTick")]
         public static void UniverseSimulator_GameTick(ref UniverseSimulator __instance, double time)
         {
+            if (time % 60 != 1)
+                return;
             if (Configs.nextWaveState != 2 && Configs.nextWaveState != 3)
             {
                 for (var i = 0; i < 100; ++i) simulator[i].gameObject.SetActive(false);
@@ -142,6 +144,9 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(UIStarmap), "_OnUpdate")]
         public static void UIStarmap_OnUpdate(ref UIStarmap __instance)
         {
+            if (GameMain.instance.timei % 60 != 0)
+                return;
+
             for (var i = 0; i < 100; ++i)
             {
                 if ((Configs.nextWaveState != 2 && Configs.nextWaveState != 3) || i >= Configs.nextWaveWormCount)
@@ -175,6 +180,8 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(UIStarmap), "_OnLateUpdate")]
         public static void UIStarmap_OnLateUpdate(ref UIStarmap __instance)
         {
+            if (GameMain.instance.timei % 60 != 0)
+                return;
             if (Configs.nextWaveState != 2 && Configs.nextWaveState != 3) return;
             for (var i = 0; i < Configs.nextWaveWormCount; ++i) uiStar[i]._LateUpdate();
         }

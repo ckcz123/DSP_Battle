@@ -21,7 +21,7 @@ namespace DSP_Battle
         public static List<List<EnemyShip>> maxThreatSortedShips;
         public static List<List<EnemyShip>> minHpSortedShips;
 
-        public static bool shouldDistroy = false;
+        public static bool shouldDistroy = true;
         private static bool removingComponets = false;
 
         public static void Init()
