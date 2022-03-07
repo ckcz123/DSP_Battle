@@ -223,26 +223,36 @@ namespace DSP_Battle
 
         public static void OnShipLanded(EnemyShip ship)
         {
-            DspBattlePlugin.logger.LogInfo("=========> Ship landed at station " + ship.shipData.otherGId);
+            DspBattlePlugin.logger.LogInfo("=========> Ship " + ship.shipIndex + " landed at station " + ship.shipData.otherGId);
 
-            if (!shouldDistroy) return;
-
-            StationComponent station = ship.targetStation;
-            if (station == null || station.entityId <= 0) return;
-
-            PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
-            removingComponets = true;
-            Vector3 stationPos = planetFactory.entityPool[station.entityId].pos;
-            RemoveEntity(planetFactory, station.entityId);
-            // Find all entities in damageRange
-            for (int i = 0; i < planetFactory.entityPool.Length; ++i)
+            if (shouldDistroy)
             {
-                if (planetFactory.entityPool[i].notNull && (planetFactory.entityPool[i].pos - stationPos).magnitude <= ship.damageRange)
+                StationComponent station = ship.targetStation;
+                if (station != null && station.entityId > 0)
                 {
-                    RemoveEntity(planetFactory, i);
+                    PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
+                    removingComponets = true;
+                    Vector3 stationPos = planetFactory.entityPool[station.entityId].pos;
+                    RemoveEntity(planetFactory, station.entityId);
+                    // Find all entities in damageRange
+                    for (int i = 0; i < planetFactory.entityPool.Length; ++i)
+                    {
+                        if (planetFactory.entityPool[i].notNull && (planetFactory.entityPool[i].pos - stationPos).magnitude <= ship.damageRange)
+                        {
+                            RemoveEntity(planetFactory, i);
+                        }
+                    }
+                    removingComponets = false;
                 }
             }
-            removingComponets = false;
+
+            ship.shipData.inc--;
+            if (ship.shipData.inc > 0)
+            {
+                ship.state = EnemyShip.State.active;
+            }
+
+
         }
         private static void RemoveEntity(PlanetFactory factory, int entityId)
         {
@@ -293,11 +303,8 @@ namespace DSP_Battle
             list.Do(ship =>
             {
                 ship.Update();
-                if (ship.state != EnemyShip.State.active)
-                {
-                    if (ship.state == EnemyShip.State.landed) OnShipLanded(ship);
-                    RemoveShip(ship);
-                }
+                if (ship.state == EnemyShip.State.landed) OnShipLanded(ship);
+                if (ship.state != EnemyShip.State.active) RemoveShip(ship);
             });
 
             // time is the frame since start

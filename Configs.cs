@@ -56,6 +56,8 @@ namespace DSP_Battle
 
         public static int[] enemyItemIds = new int[] { 6001, 6002, 6003, 6004, 6005, 6006 };
 
+        public static int[] enemyLandCnt = new int[] { 1, 3, 5, 5, 10000 };
+
         // --- 虫洞信息
         public static int _wormholeRange;
 
@@ -116,11 +118,11 @@ namespace DSP_Battle
         }
         public static int bullet4Atk //激光炮从伤害的循环科技中获得双倍加成
         {
-            get { return (int)(_bullet4Atk * (bulletAtkScale * 2 - 1.0)); }
+            get { return (int)(_bullet4Atk * (1.0 + (Configs.bulletAtkScale - 1.0) * 5 / 3)); }
         }
         public static double missile1Speed
         {
-            get { return _missile1Speed * (1.0 + (bulletSpeedScale - 1.0) * 0.2); }
+            get { return _missile1Speed * (1.0 + (bulletSpeedScale - 1.0) * 0.5); }
         }
         public static int missile1Atk
         {
@@ -128,7 +130,7 @@ namespace DSP_Battle
         }
         public static double missile2Speed
         {
-            get { return _missile2Speed * (1.0 + (bulletSpeedScale - 1.0) * 0.2); }
+            get { return _missile2Speed * (1.0 + (bulletSpeedScale - 1.0) * 0.5); }
         }
         public static int missile2Atk
         {
@@ -136,7 +138,7 @@ namespace DSP_Battle
         }
         public static double missile3Speed
         {
-            get { return _missile3Speed * (1.0 + (bulletSpeedScale - 1.0) * 0.2); }
+            get { return _missile3Speed * (1.0 + (bulletSpeedScale - 1.0) * 0.5); }
         }
         public static int missile3Atk
         {
@@ -196,7 +198,7 @@ namespace DSP_Battle
             enemySpeed[4] = config.Bind("config", "enemy5Speed", defaultValue: 3000f, "敌方飞船5速度（米每秒）").Value;
             enemyRange[4] = config.Bind("config", "enemy5Range", defaultValue: 100, "敌方飞船5破坏范围").Value;
 
-            _wormholeRange = config.Bind("config", "wormholeRange", defaultValue: 40000, "初始虫洞刷新范围，米为单位").Value;
+            _wormholeRange = config.Bind("config", "wormholeRange", defaultValue: 20000, "初始虫洞刷新范围，米为单位").Value;
 
             intensity = config.Bind("config", "intensity", defaultValue: "2,5,10,15,20,30,50,80,100,150,250,300,400,500,600,800,1000,1100,1500,1800,2000,2500,3000,4000", "每波总强度（以逗号分隔）")
                 .Value.Split(',').Select(e=>int.Parse(e)).ToArray();
