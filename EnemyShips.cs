@@ -23,6 +23,8 @@ namespace DSP_Battle
         public static bool shouldDistroy = true;
         private static bool removingComponets = false;
 
+        public static int disBias = 0;
+
         public static void Init()
         {
             ships = new ConcurrentDictionary<int, EnemyShip>();
@@ -223,7 +225,36 @@ namespace DSP_Battle
                         }
                     }
                     removingComponets = false;
+
+                    ////爆炸效果， 此方案已被转移到飞船发射子弹轰击
+                    //int starIndex = planetFactory.planetId / 100 - 1;
+                    //if (GameMain.data.dysonSpheres.Length > starIndex && GameMain.data.dysonSpheres[starIndex] != null && GameMain.data.dysonSpheres[starIndex].swarm != null)
+                    //{
+                    //    DysonSwarm swarm = GameMain.data.dysonSpheres[starIndex].swarm;
+                    //    AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
+                    //    VectorLF3 stationUpos = astroPoses[planetFactory.planetId].uPos + Maths.QRotateLF(astroPoses[planetFactory.planetId].uRot, stationPos);
+
+                    //    for (int t = 0; t < 3; t++)
+                    //    {
+                    //        for (int i = 0; i < (ship.damageRange / 10); i++) //爆炸范围越大，叠加的越多，爆炸效果越亮
+                    //        {
+                    //            VectorLF3 explodePoint = ship.uPos + new VectorLF3((DspBattlePlugin.randSeed.NextDouble() - 0.5) * 20, (DspBattlePlugin.randSeed.NextDouble() - 0.5) * 20, (DspBattlePlugin.randSeed.NextDouble() - 0.5) * 20);
+                    //            int bulletIndex = swarm.AddBullet(new SailBullet
+                    //            {
+                    //                maxt = 0f + 0.016666667f * t, //间隔时间爆炸
+                    //                lBegin = swarm.starData.uPosition, //好像得设置到一个看不见的地方，防止地面光束渲染
+                    //                uEndVel = new Vector3(0,0,0),
+                    //                uBegin = ship.uPos,
+                    //                uEnd = explodePoint,
+                    //            }, 1);
+
+                    //            swarm.bulletPool[bulletIndex].state = 0;
+                    //        }
+                    //    }
+                        
+                    //}
                 }
+
             }
 
             ship.shipData.inc--;
@@ -441,6 +472,42 @@ namespace DSP_Battle
             foreach (var ship in ships.Values)
             {
                 __instance.shipsArr[__instance.shipCount++] = ship.renderingData;
+                //if (ship.shipData.stage != 1)
+                //    continue;
+                if (ship.distanceToTarget > 250)
+                    continue;
+                //飞船发射子弹轰击
+                try
+                {
+                    PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
+                    Vector3 stationPos = planetFactory.entityPool[ship.targetStation.entityId].pos;
+                    int starIndex = planetFactory.planetId / 100 - 1;
+                    if (GameMain.data.dysonSpheres.Length > starIndex && GameMain.data.dysonSpheres[starIndex] != null && GameMain.data.dysonSpheres[starIndex].swarm != null && (GameMain.instance.timei + ship.shipIndex) % 20 == 0) 
+                    {
+                        int planetId = planetFactory.planetId;
+                        DysonSwarm swarm = GameMain.data.dysonSpheres[starIndex].swarm;
+                        AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
+                        VectorLF3 stationUpos = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, stationPos);
+                        VectorLF3 shipLocalPos = Maths.QInvRotateLF(astroPoses[planetId].uRot, ship.uPos - astroPoses[planetId].uPos);
+
+
+                        int bulletIndex = swarm.AddBullet(new SailBullet
+                        {
+                            maxt = 0.08f,
+                            lBegin = shipLocalPos,
+                            uEndVel = stationUpos - ship.uPos,
+                            uBegin = ship.uPos,
+                            uEnd = stationUpos + new VectorLF3((DspBattlePlugin.randSeed.NextDouble() - 0.5) * disBias, (DspBattlePlugin.randSeed.NextDouble() - 0.5) * disBias, (DspBattlePlugin.randSeed.NextDouble() - 0.5) * disBias) + (astroPoses[planetId].uPos - stationUpos).normalized * disBias / 2
+                        }, 1); ;
+
+                        swarm.bulletPool[bulletIndex].state = 0;
+
+                    }
+                }
+                catch (Exception)
+                {
+                }
+                
             }
 
             if (!logisticShipRendererComputeBuffer.ContainsKey(__instance))
@@ -462,7 +529,7 @@ namespace DSP_Battle
         private static bool logisticShipUIRendererExpanded = false;
         
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(LogisticShipUIRenderer), "SetCapacity")
+        [HarmonyPatch(typeof(LogisticShipUIRenderer), "SetCapacity")]
         public static void LogisticShipUIRenderer_SetCapacity()
         {
             logisticShipUIRendererExpanded = true;
@@ -506,6 +573,8 @@ namespace DSP_Battle
                 shipsArr[shipCount] = ship.renderingUIData;
                 shipsArr[shipCount].rpos = (shipsArr[shipCount].upos - uiStarMap.viewTargetUPos) * 0.00025;
                 shipCount++;
+
+                
             }
 
             logisticShipUIRendererShipCount.SetValue(__instance, shipCount);

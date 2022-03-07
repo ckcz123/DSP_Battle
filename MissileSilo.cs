@@ -417,7 +417,7 @@ namespace DSP_Battle
                             if (num28 < 100.0)
                             {
                                 //借助太阳帆弹射的效果触发爆炸动画
-                                int bulletIndex = __instance.swarm.AddBullet(new SailBullet
+                                int bulletIndex0 = __instance.swarm.AddBullet(new SailBullet
                                 {
                                     maxt = 0.000f,
                                     lBegin = dysonRocket.uPos,
@@ -426,7 +426,44 @@ namespace DSP_Battle
                                     uEnd = vectorLF5 + dysonRocket.uPos
                                 }, 1);
 
-                                __instance.swarm.bulletPool[bulletIndex].state = 0;
+                                __instance.swarm.bulletPool[bulletIndex0].state = 0;
+
+                                ////其他随机爆炸点，此方案已被废弃
+                                //for (int s = 0; s < dmgRange / 50; s++)
+                                //{
+                                //    VectorLF3 explodePoint = dysonRocket.uPos + new VectorLF3((DspBattlePlugin.randSeed.NextDouble() - 0.5) * dmgRange * 2, (DspBattlePlugin.randSeed.NextDouble() - 0.5) * dmgRange * 2, (DspBattlePlugin.randSeed.NextDouble() - 0.5) * dmgRange * 2);
+                                //    int bulletIndex = __instance.swarm.AddBullet(new SailBullet
+                                //    {
+                                //        maxt = 25f / dmgRange * s,
+                                //        lBegin = dysonRocket.uPos,
+                                //        uEndVel = dysonRocket.uPos,
+                                //        uBegin = explodePoint,
+                                //        uEnd = explodePoint
+                                //    }, 1);
+
+                                //    __instance.swarm.bulletPool[bulletIndex].state = 0;
+                                //}
+
+                                //持续爆炸，以及根据子弹爆炸范围决定爆炸效果
+                                for (int s = 0; s < 10; s++)
+                                {
+                                    for (int ss = 0; ss < dmgRange / 25 - 15; ss++)
+                                    {
+                                        VectorLF3 explodePoint = dysonRocket.uPos;
+                                        int bulletIndex = __instance.swarm.AddBullet(new SailBullet
+                                        {
+                                            maxt = 0.016666667f * s,
+                                            lBegin = dysonRocket.uPos,
+                                            uEndVel = dysonRocket.uPos,
+                                            uBegin = explodePoint,
+                                            uEnd = explodePoint
+                                        }, 1);
+
+                                        __instance.swarm.bulletPool[bulletIndex].state = 0;
+
+                                    }
+                                }
+
                                 //范围伤害
                                 var shipsHit = EnemyShips.FindShipsInRange(dysonRocket.uPos, dmgRange);
                                 foreach (var item in shipsHit)
@@ -1018,7 +1055,7 @@ namespace DSP_Battle
                                 if (num28 < 100.0)
                                 {
                                     //借助太阳帆弹射的效果触发爆炸动画
-                                    int bulletIndex = __instance.swarm.AddBullet(new SailBullet
+                                    int bulletIndex0 = __instance.swarm.AddBullet(new SailBullet
                                     {
                                         maxt = 0.000f,
                                         lBegin = dysonRocket.uPos,
@@ -1027,7 +1064,43 @@ namespace DSP_Battle
                                         uEnd = vectorLF5 + dysonRocket.uPos
                                     }, 1);
 
-                                    __instance.swarm.bulletPool[bulletIndex].state = 0;
+                                    __instance.swarm.bulletPool[bulletIndex0].state = 0;
+
+                                    ////其他随机爆炸点，此方案已被废弃
+                                    //for (int s = 0; s < dmgRange / 50; s++)
+                                    //{
+                                    //    VectorLF3 explodePoint = dysonRocket.uPos + new VectorLF3((DspBattlePlugin.randSeed.NextDouble() - 0.5) * dmgRange * 2, (DspBattlePlugin.randSeed.NextDouble() - 0.5) * dmgRange * 2, (DspBattlePlugin.randSeed.NextDouble() - 0.5) * dmgRange * 2);
+                                    //    int bulletIndex = __instance.swarm.AddBullet(new SailBullet
+                                    //    {
+                                    //        maxt = 25f / dmgRange * s,
+                                    //        lBegin = dysonRocket.uPos,
+                                    //        uEndVel = dysonRocket.uPos,
+                                    //        uBegin = explodePoint,
+                                    //        uEnd = explodePoint
+                                    //    }, 1);
+
+                                    //    __instance.swarm.bulletPool[bulletIndex].state = 0;
+                                    //}
+
+                                    //持续爆炸，以及根据子弹爆炸范围决定爆炸效果
+                                    for (int s = 0; s < 10; s++)
+                                    {
+                                        for (int ss = 0; ss < dmgRange / 25 - 15; ss++)
+                                        {
+                                            VectorLF3 explodePoint = dysonRocket.uPos;
+                                            int bulletIndex = __instance.swarm.AddBullet(new SailBullet
+                                            {
+                                                maxt = 0.016666667f * s,
+                                                lBegin = dysonRocket.uPos,
+                                                uEndVel = dysonRocket.uPos,
+                                                uBegin = explodePoint,
+                                                uEnd = explodePoint
+                                            }, 1);
+
+                                            __instance.swarm.bulletPool[bulletIndex].state = 0;
+
+                                        }
+                                    }
 
                                     //范围伤害
                                     var shipsHit = EnemyShips.FindShipsInRange(dysonRocket.uPos, dmgRange);
