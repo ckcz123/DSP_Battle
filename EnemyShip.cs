@@ -99,6 +99,7 @@ namespace DSP_Battle
             shipData.planetB = GameMain.data.galacticTransport.stationPool[stationGid].planetId;
             shipData.uPos = initPos;
             shipData.itemId = Configs.enemyItemIds[enemyId];
+            shipData.inc = Configs.enemyLandCnt[enemyId];
             shipData.uRot = new Quaternion((float)DspBattlePlugin.randSeed.NextDouble(), (float)DspBattlePlugin.randSeed.NextDouble(), (float)DspBattlePlugin.randSeed.NextDouble(), (float)DspBattlePlugin.randSeed.NextDouble());
             shipData.uRot.Normalize();
             shipData.uSpeed = 0;

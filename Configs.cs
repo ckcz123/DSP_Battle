@@ -56,6 +56,8 @@ namespace DSP_Battle
 
         public static int[] enemyItemIds = new int[] { 6001, 6002, 6003, 6004, 6005, 6006 };
 
+        public static int[] enemyLandCnt = new int[] { 1, 3, 5, 5, 10000 };
+
         // --- 虫洞信息
         public static int _wormholeRange;
 
@@ -116,11 +118,11 @@ namespace DSP_Battle
         }
         public static int bullet4Atk //激光炮从伤害的循环科技中获得双倍加成
         {
-            get { return (int)(_bullet4Atk * (bulletAtkScale * 2 - 1.0)); }
+            get { return (int)(_bullet4Atk * (1.0 + (Configs.bulletAtkScale - 1.0) * 5 / 3)); }
         }
         public static double missile1Speed
         {
-            get { return _missile1Speed * (1.0 + (bulletSpeedScale - 1.0) * 0.2); }
+            get { return _missile1Speed * (1.0 + (bulletSpeedScale - 1.0) * 0.5); }
         }
         public static int missile1Atk
         {
@@ -128,7 +130,7 @@ namespace DSP_Battle
         }
         public static double missile2Speed
         {
-            get { return _missile2Speed * (1.0 + (bulletSpeedScale - 1.0) * 0.2); }
+            get { return _missile2Speed * (1.0 + (bulletSpeedScale - 1.0) * 0.5); }
         }
         public static int missile2Atk
         {
@@ -136,7 +138,7 @@ namespace DSP_Battle
         }
         public static double missile3Speed
         {
-            get { return _missile3Speed * (1.0 + (bulletSpeedScale - 1.0) * 0.2); }
+            get { return _missile3Speed * (1.0 + (bulletSpeedScale - 1.0) * 0.5); }
         }
         public static int missile3Atk
         {
@@ -150,11 +152,11 @@ namespace DSP_Battle
 
         public static void Init(ConfigFile config)
         {
-            _bullet1Speed = config.Bind("config", "bullet1Speed", defaultValue: 20.0, "穿甲磁轨弹速度（默认太阳帆速度视为100）").Value;
+            _bullet1Speed = config.Bind("config", "bullet1Speed", defaultValue: 100.0, "穿甲磁轨弹速度（默认太阳帆速度视为100）").Value;
             _bullet1Atk = config.Bind("config", "bullet1Atk", defaultValue: 100, "穿甲磁轨弹攻击力").Value;
-            _bullet2Speed = config.Bind("config", "bullet2Speed", defaultValue: 20.0, "强酸磁轨弹速度（默认太阳帆速度视为100）").Value;
+            _bullet2Speed = config.Bind("config", "bullet2Speed", defaultValue: 100.0, "强酸磁轨弹速度（默认太阳帆速度视为100）").Value;
             _bullet2Atk = config.Bind("config", "bullet2Atk", defaultValue: 180, "强酸磁轨弹攻击力").Value;
-            _bullet3Speed = config.Bind("config", "bullet3Speed", defaultValue: 20.0, "氘核爆破弹速度（默认太阳帆速度视为100）").Value;
+            _bullet3Speed = config.Bind("config", "bullet3Speed", defaultValue: 100.0, "氘核爆破弹速度（默认太阳帆速度视为100）").Value;
             _bullet3Atk = config.Bind("config", "bullet3Atk", defaultValue: 400, "氘核爆破弹攻击力").Value;
             _bullet4Speed = config.Bind("config", "bullet4Speed", defaultValue: 5000.0, "中子脉冲束速度（默认太阳帆速度视为100）").Value;
             _bullet4Atk = config.Bind("config", "bullet4Atk", defaultValue: 10, "中子脉冲束攻击力").Value;
@@ -196,7 +198,7 @@ namespace DSP_Battle
             enemySpeed[4] = config.Bind("config", "enemy5Speed", defaultValue: 3000f, "敌方飞船5速度（米每秒）").Value;
             enemyRange[4] = config.Bind("config", "enemy5Range", defaultValue: 100, "敌方飞船5破坏范围").Value;
 
-            _wormholeRange = config.Bind("config", "wormholeRange", defaultValue: 40000, "初始虫洞刷新范围，米为单位").Value;
+            _wormholeRange = config.Bind("config", "wormholeRange", defaultValue: 20000, "初始虫洞刷新范围，米为单位").Value;
 
             intensity = config.Bind("config", "intensity", defaultValue: "2,5,10,15,20,30,50,80,100,150,250,300,400,500,600,800,1000,1100,1500,1800,2000,2500,3000,4000", "每波总强度（以逗号分隔）")
                 .Value.Split(',').Select(e=>int.Parse(e)).ToArray();

@@ -13,6 +13,7 @@ using crecheng.DSPModSave;
 using System.IO;
 using CommonAPI.Systems;
 using System.Reflection;
+using BepInEx.Configuration;
 
 namespace DSP_Battle
 {
@@ -36,10 +37,12 @@ namespace DSP_Battle
 
         public static int pageBias;
 
+        private static ConfigFile config;
 
         public void Awake()
         {
             logger = Logger;
+            config = Config;
             Configs.Init(Config);
 
             var pluginfolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -48,6 +51,7 @@ namespace DSP_Battle
             ProtoRegistry.AddResource(resources);
 
             EnemyShips.Init();
+            Harmony.CreateAndPatchAll(typeof(DspBattlePlugin));
             Harmony.CreateAndPatchAll(typeof(EnemyShips));
             Harmony.CreateAndPatchAll(typeof(Cannon));
             Harmony.CreateAndPatchAll(typeof(BattleProtos));
@@ -109,6 +113,19 @@ namespace DSP_Battle
                 framesUntilNextWave -= 1;
                 UIAlert.CountDownRefresh(preparingNextWave, framesUntilNextWave, 0, nextWaveShipCount, nextWaveStrength, nextWaveAward, 0, false); //第二个0应该传入已经摧毁的建筑数
             } */
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameMain), "OnDestroy")]
+        public static void GameMain_onDestroy()
+        {
+            if (config == null) return;
+            string configFile = config.ConfigFilePath;
+            string path = Path.Combine(Path.GetDirectoryName(configFile), "LDBTool");
+            if (Directory.Exists(path))
+            {
+                Directory.Delete(path, true);
+            }
         }
 
         public void Export(BinaryWriter w)
