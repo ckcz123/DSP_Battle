@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace DSP_Battle
 {
@@ -106,19 +107,19 @@ namespace DSP_Battle
 
         public static int bullet1Atk
         {
-            get { return (int)(_bullet1Atk * bulletAtkScale); }
+            get { return Mathf.RoundToInt((float)(_bullet1Atk * bulletAtkScale)); }
         }
         public static int bullet2Atk
         {
-            get { return (int)(_bullet2Atk * bulletAtkScale); }
+            get { return Mathf.RoundToInt((float)(_bullet2Atk * bulletAtkScale)); }
         }
         public static int bullet3Atk
         {
-            get { return (int)(_bullet3Atk * bulletAtkScale); }
+            get { return Mathf.RoundToInt((float)(_bullet3Atk * bulletAtkScale)); }
         }
         public static int bullet4Atk //激光炮从伤害的循环科技中获得双倍加成
         {
-            get { return (int)(_bullet4Atk * (1.0 + (Configs.bulletAtkScale - 1.0) * 5 / 3)); }
+            get { return Mathf.RoundToInt((float)(_bullet4Atk * (1.0 + (Configs.bulletAtkScale - 1.0) * 5 / 3))); }
         }
         public static double missile1Speed
         {
@@ -126,7 +127,7 @@ namespace DSP_Battle
         }
         public static int missile1Atk
         {
-            get { return (int)(_missile1Atk * bulletAtkScale); }
+            get { return Mathf.RoundToInt((float)(_missile1Atk * bulletAtkScale)); }
         }
         public static double missile2Speed
         {
@@ -134,7 +135,7 @@ namespace DSP_Battle
         }
         public static int missile2Atk
         {
-            get { return (int)(_missile2Atk * bulletAtkScale); }
+            get { return Mathf.RoundToInt((float)(_missile2Atk * bulletAtkScale)); }
         }
         public static double missile3Speed
         {
@@ -142,7 +143,7 @@ namespace DSP_Battle
         }
         public static int missile3Atk
         {
-            get { return (int)(_missile3Atk * bulletAtkScale); }
+            get { return Mathf.RoundToInt((float)(_missile3Atk * bulletAtkScale)); }
         }
         public static int wormholeRange
         {

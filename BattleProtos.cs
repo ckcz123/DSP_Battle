@@ -132,13 +132,13 @@ namespace DSP_Battle
             ProtoRegistry.RegisterRecipe(814, ERecipeType.Assemble, 900, new int[] { 1107, 1125, 1209, 1305 }, new int[] { 40, 15, 10, 5 }, new int[] { 8014 }, new int[] { 1 }, "脉冲炮描述",
                 1915, 2604 + pageBias, "Assets/DSPBattle/cannon3");
 
-            ProtoRegistry.RegisterTech(1901, "子弹1", "子弹1描述", "子弹1结论", "Assets/DSPBattle/bullet1tech", new int[] { 1711 }, new int[] { 6001, 6002 }, new int[] { 20, 20 },
+            ProtoRegistry.RegisterTech(1901, "近地防卫系统", "近地防卫系统描述", "近地防卫系统结论", "Assets/DSPBattle/bullet1tech", new int[] { 1711 }, new int[] { 6001, 6002 }, new int[] { 20, 20 },
                 72000, new int[] { 801, 811 }, new Vector2(29, -43));
             ProtoRegistry.RegisterTech(1902, "子弹2", "子弹2描述", "子弹2结论", "Assets/DSPBattle/bullet2tech", new int[] { 1901 }, new int[] { 6001, 6002, 6003 }, new int[] { 12, 12, 12 },
                 150000, new int[] { 802 }, new Vector2(33, -43));
             ProtoRegistry.RegisterTech(1903, "子弹3", "子弹3描述", "子弹3结论", "Assets/DSPBattle/bullet3tech", new int[] { 1902 }, new int[] { 6001, 6002, 6003, 6004 },
                 new int[] { 12, 48, 24, 24 }, 150000, new int[] { 803 }, new Vector2(37, -43));
-            ProtoRegistry.RegisterTech(1911, "导弹1", "导弹1描述", "导弹1结论", "Assets/DSPBattle/missile1tech", new int[] { 1114 }, new int[] { 6001, 6002, 6003, 6004 },
+            ProtoRegistry.RegisterTech(1911, "深空防卫系统", "深空防卫系统描述", "深空防卫系统结论", "Assets/DSPBattle/missile1tech", new int[] { 1114 }, new int[] { 6001, 6002, 6003, 6004 },
                 new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 804, 813 }, new Vector2(37, -31));
             ProtoRegistry.RegisterTech(1912, "导弹2", "导弹2描述", "导弹2结论", "Assets/DSPBattle/missile2tech", new int[] { 1911 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
                 new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 805 }, new Vector2(41, -31));
@@ -545,19 +545,19 @@ namespace DSP_Battle
             switch (protoId)
             {
                 case 8001:
-                    return new int[] { Configs.bullet1Atk, (int)Configs.bullet1Speed * 50, 0 };
+                    return new int[] { Configs.bullet1Atk, Mathf.RoundToInt((float)Configs.bullet1Speed * 50), 0 };
                 case 8002:
-                    return new int[] { Configs.bullet2Atk, (int)Configs.bullet2Speed * 50, 0 };
+                    return new int[] { Configs.bullet2Atk, Mathf.RoundToInt((float)Configs.bullet2Speed * 50), 0 };
                 case 8003:
-                    return new int[] { Configs.bullet3Atk, (int)Configs.bullet3Speed * 50, 0 };
+                    return new int[] { Configs.bullet3Atk, Mathf.RoundToInt((float)Configs.bullet3Speed * 50), 0 };
                 case 8004:
-                    return new int[] { Configs.missile1Atk, (int)Configs.missile1Speed, Configs.missile1Range };
+                    return new int[] { Configs.missile1Atk, Mathf.RoundToInt((float)Configs.missile1Speed), Configs.missile1Range };
                 case 8005:
-                    return new int[] { Configs.missile2Atk, (int)Configs.missile2Speed, Configs.missile2Range };
+                    return new int[] { Configs.missile2Atk, Mathf.RoundToInt((float)Configs.missile2Speed), Configs.missile2Range };
                 case 8006:
-                    return new int[] { Configs.missile3Atk, (int)Configs.missile3Speed, Configs.missile3Range };
+                    return new int[] { Configs.missile3Atk, Mathf.RoundToInt((float)Configs.missile3Speed), Configs.missile3Range };
                 case 8007:
-                    return new int[] { Configs.bullet4Atk, (int)Configs.bullet4Speed, 0 };
+                    return new int[] { Configs.bullet4Atk, Mathf.RoundToInt((float)Configs.bullet4Speed), 0 };
 
                 default:
                     return new int[] { 0, 0, 0 };
