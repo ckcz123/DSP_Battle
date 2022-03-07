@@ -1,10 +1,6 @@
 ﻿using BepInEx.Configuration;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace DSP_Battle
@@ -202,7 +198,7 @@ namespace DSP_Battle
             _wormholeRange = config.Bind("config", "wormholeRange", defaultValue: 20000, "初始虫洞刷新范围，米为单位").Value;
 
             intensity = config.Bind("config", "intensity", defaultValue: "2,5,10,15,20,30,50,80,100,150,250,300,400,500,600,800,1000,1100,1500,1800,2000,2500,3000,4000", "每波总强度（以逗号分隔）")
-                .Value.Split(',').Select(e=>int.Parse(e)).ToArray();
+                .Value.Split(',').Select(e => int.Parse(e)).ToArray();
 
             coldTime = config.Bind("config", "coldTime", defaultValue: "60,50,50,45,45,45,40,40,40,40,30,30,30,30,30,20,20,20,20,20,15,15,15,15,15,10", "相邻两波间隔时间").Value.Split(',').Select(e => int.Parse(e)).ToArray();
         }

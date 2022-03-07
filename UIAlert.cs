@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using HarmonyLib;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -137,7 +133,7 @@ namespace DSP_Battle
             }
             if (time % 30 != 1 && !forceRefresh) return;
 
-            if(Configs.nextWaveState == 0 && lastState != 0) //刚刚打完一架，关闭警告
+            if (Configs.nextWaveState == 0 && lastState != 0) //刚刚打完一架，关闭警告
             {
                 ShowAlert(false);
             }
@@ -213,20 +209,20 @@ namespace DSP_Battle
             if (sec > 3600)
             {
                 res += (sec / 3600).ToString() + "小时".Translate();
-                if(!showDetails)
+                if (!showDetails)
                 {
                     return "约".Translate() + res;
                 }
             }
-            if(sec > 60)
+            if (sec > 60)
             {
                 res += ((sec % 3600) / 60).ToString() + "分".Translate();
-                if(sec < 300)
+                if (sec < 300)
                 {
                     left = txtColorWarn1;
                     right = txtColorRight;
                 }
-                if(!showDetails)
+                if (!showDetails)
                 {
                     return "约".Translate() + left + res + right;
                 }
@@ -235,7 +231,7 @@ namespace DSP_Battle
                 res += "60" + "秒".Translate();
             else
                 res += (sec % 60).ToString() + "秒".Translate();
-            if(sec <= 60)
+            if (sec <= 60)
             {
                 left = txtColorAlert1;
                 right = txtColorRight;

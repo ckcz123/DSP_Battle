@@ -4,8 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 using UnityEngine;
 
 namespace DSP_Battle
@@ -57,7 +56,7 @@ namespace DSP_Battle
             double distance = 1e99;
             for (int i = 0; i < stations.Length; ++i)
             {
-                if (stations[i] != null && stations[i].id != 0 && stations[i].gid != 0 && stations[i].isStellar && 
+                if (stations[i] != null && stations[i].id != 0 && stations[i].gid != 0 && stations[i].isStellar &&
                     !stations[i].isCollector && !stations[i].isVeinCollector && stations[i].planetId / 100 - 1 == starData.index)
                 {
                     AstroPose astroPose = astroPoses[stations[i].planetId];
@@ -202,25 +201,6 @@ namespace DSP_Battle
             minHpSortedShips = sortedShips;
         }
 
-
-
-        /*
-        public static EnemyShip FindNearestShip(VectorLF3 uPos)
-        {
-            if (ships.Count == 0) return null;
-            EnemyShip ship = ships[0];
-            for (var i = 1; i < ships.Count; ++i)
-            {
-                if ((ship.uPos - uPos).magnitude > (ships[i].uPos - uPos).magnitude)
-                {
-                    ship = ships[i];
-                }
-            }
-
-            return ship;
-        }
-        */
-
         public static void OnShipLanded(EnemyShip ship)
         {
             DspBattlePlugin.logger.LogInfo("=========> Ship " + ship.shipIndex + " landed at station " + ship.shipData.otherGId);
@@ -283,7 +263,7 @@ namespace DSP_Battle
                 factory.RemoveEntityWithComponents(entityId);
             }
             catch
-            { 
+            {
             }
 
         }
@@ -312,7 +292,7 @@ namespace DSP_Battle
             // time is the frame since start
             if (time % 60 == 1)
             {
-               SortShips();
+                SortShips();
             }
 
             UpdateWaveState(time);
@@ -326,7 +306,7 @@ namespace DSP_Battle
                 case 0:
                     if (time % 1800 != 1) break;
                     DspBattlePlugin.logger.LogInfo("=====> Initializing next wave");
-                    StationComponent[] stations = GameMain.data.galacticTransport.stationPool.Where(e => e!=null && e.isStellar && e.gid != 0 && e.id != 0).ToArray();
+                    StationComponent[] stations = GameMain.data.galacticTransport.stationPool.Where(e => e != null && e.isStellar && e.gid != 0 && e.id != 0).ToArray();
                     if (stations.Length == 0) break;
                     int planetId = stations[gidRandom.Next(0, stations.Length)].planetId;
                     int starId = planetId / 100 - 1;
@@ -354,7 +334,7 @@ namespace DSP_Battle
                     Configs.nextWaveWormCount = gidRandom.Next(0, Math.Min(20, Configs.nextWaveEnemy.Sum())) + 1;
 
                     DspBattlePlugin.logger.LogInfo("=====> nextWaveWormCount: " + Configs.nextWaveWormCount);
-                    DspBattlePlugin.logger.LogInfo("=====> nextWaveWormEnemy: " + Configs.nextWaveEnemy.Select(e=>e+"").Join(null, ","));
+                    DspBattlePlugin.logger.LogInfo("=====> nextWaveWormEnemy: " + Configs.nextWaveEnemy.Select(e => e + "").Join(null, ","));
 
                     UIRealtimeTip.Popup("下一波进攻即将到来！".Translate());
                     UIAlert.ShowAlert(true);
@@ -445,6 +425,8 @@ namespace DSP_Battle
             }
         }
 
+        private static Dictionary<LogisticShipRenderer, ComputeBuffer> logisticShipRendererComputeBuffer = new Dictionary<LogisticShipRenderer, ComputeBuffer>();
+
         [HarmonyPostfix]
         [HarmonyPatch(typeof(LogisticShipRenderer), "Update")]
         public static void LogisticShipRenderer_Update(ref LogisticShipRenderer __instance)
@@ -458,32 +440,58 @@ namespace DSP_Battle
 
             foreach (var ship in ships.Values)
             {
-                __instance.shipsArr[__instance.shipCount ++] = ship.renderingData;
+                __instance.shipsArr[__instance.shipCount++] = ship.renderingData;
             }
 
-            ref ComputeBuffer shipsBuffer = ref AccessTools.FieldRefAccess<LogisticShipRenderer, ComputeBuffer>(__instance, "shipsBuffer");
-            if (shipsBuffer != null)
+            if (!logisticShipRendererComputeBuffer.ContainsKey(__instance))
             {
-                shipsBuffer.SetData(__instance.shipsArr, 0, 0, __instance.shipCount);
+                logisticShipRendererComputeBuffer.Add(__instance, AccessTools.FieldRefAccess<LogisticShipRenderer, ComputeBuffer>(__instance, "shipsBuffer"));
+            }
+
+            if (logisticShipRendererComputeBuffer[__instance] != null)
+            {
+                logisticShipRendererComputeBuffer[__instance].SetData(__instance.shipsArr, 0, 0, __instance.shipCount);
             }
         }
 
+        private static Dictionary<LogisticShipUIRenderer, UIStarmap> logisticShipUIRendererUIStarmap = new Dictionary<LogisticShipUIRenderer, UIStarmap>();
+        private static Dictionary<LogisticShipUIRenderer, ComputeBuffer> logisticShipUIRendererComputeBuffer = new Dictionary<LogisticShipUIRenderer, ComputeBuffer>();
+        private static Dictionary<LogisticShipUIRenderer, ShipUIRenderingData[]> logisticShipUIRendererShipUIRenderingData = new Dictionary<LogisticShipUIRenderer, ShipUIRenderingData[]>();
+        private static FieldInfo logisticShipUIRendererShipCount = null;
+
         [HarmonyPostfix]
         [HarmonyPatch(typeof(LogisticShipUIRenderer), "Update")]
-        public static void LogisticShipUIRenderer_Update(ref LogisticShipUIRenderer __instance)
+        unsafe public static void LogisticShipUIRenderer_Update(ref LogisticShipUIRenderer __instance)
         {
             if (ships.Count == 0) return;
 
-            ref UIStarmap uiStarMap = ref AccessTools.FieldRefAccess<LogisticShipUIRenderer, UIStarmap>(__instance, "uiStarmap");
-            ref ComputeBuffer shipsBuffer = ref AccessTools.FieldRefAccess<LogisticShipUIRenderer, ComputeBuffer>(__instance, "shipsBuffer");
-            ref ShipUIRenderingData[] shipsArr = ref AccessTools.FieldRefAccess<LogisticShipUIRenderer, ShipUIRenderingData[]>(__instance, "shipsArr");
-            ref int shipCount = ref AccessTools.FieldRefAccess<LogisticShipUIRenderer, int>(__instance, "shipCount");
+            if (!logisticShipUIRendererUIStarmap.ContainsKey(__instance))
+            {
+                logisticShipUIRendererUIStarmap.Add(__instance, AccessTools.FieldRefAccess<LogisticShipUIRenderer, UIStarmap>(__instance, "uiStarmap"));
+                logisticShipUIRendererShipCount = AccessTools.Field(typeof(LogisticShipUIRenderer), "shipCount");
+            }
+
+            UIStarmap uiStarMap = logisticShipUIRendererUIStarmap[__instance];
+
             if (__instance.transport == null || uiStarMap == null || !uiStarMap.active) return;
 
+            int shipCount = (int)logisticShipUIRendererShipCount.GetValue(__instance);
+
+            bool expanded = false;
             while (__instance.capacity < shipCount + ships.Count)
             {
                 __instance.Expand2x();
+                expanded = true;
             }
+
+            if (!logisticShipUIRendererComputeBuffer.ContainsKey(__instance) || expanded)
+            {
+                logisticShipUIRendererComputeBuffer[__instance] = AccessTools.FieldRefAccess<LogisticShipUIRenderer, ComputeBuffer>(__instance, "shipsBuffer");
+                logisticShipUIRendererShipUIRenderingData[__instance] = AccessTools.FieldRefAccess<LogisticShipUIRenderer, ShipUIRenderingData[]>(__instance, "shipsArr");
+            }
+
+            ComputeBuffer shipsBuffer = logisticShipUIRendererComputeBuffer[__instance];
+            ShipUIRenderingData[] shipsArr = logisticShipUIRendererShipUIRenderingData[__instance];
 
             foreach (var ship in ships.Values)
             {
@@ -491,6 +499,8 @@ namespace DSP_Battle
                 shipsArr[shipCount].rpos = (shipsArr[shipCount].upos - uiStarMap.viewTargetUPos) * 0.00025;
                 shipCount++;
             }
+
+            logisticShipUIRendererShipCount.SetValue(__instance, shipCount);
 
             if (shipsBuffer != null)
             {
@@ -519,13 +529,13 @@ namespace DSP_Battle
             }
             return true;
         }
-        
+
         [HarmonyPrefix]
         [HarmonyPatch(typeof(UIItemup), "Up")]
         public static bool UIItemup_Up(int itemId, int upCount)
         {
             return !removingComponets;
-        } 
+        }
 
         public static void Export(BinaryWriter w)
         {
@@ -548,11 +558,11 @@ namespace DSP_Battle
 
         public static void IntoOtherSave()
         {
-            
-            
+
+
             ships.Clear();
             SortShips();
-            
+
         }
     }
 }

@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using xiaoye97;
-using System.Reflection;
+﻿using CommonAPI.Systems;
 using HarmonyLib;
+using System;
+using System.Text;
 using UnityEngine;
-using CommonAPI;
-using CommonAPI.Systems;
 using UnityEngine.UI;
+using xiaoye97;
 
 namespace DSP_Battle
 {
@@ -39,7 +34,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("导弹3", "", "引力塌陷导弹");
             ProtoRegistry.RegisterString("导弹3描述", "", "能自动追踪敌人的导弹");
             ProtoRegistry.RegisterString("导弹3结论", "", "你解锁了热核导弹，可以自动追踪敌人");
-            
+
             ProtoRegistry.RegisterString("弹射器1", "", "电磁轨道炮");
             ProtoRegistry.RegisterString("弹射器1描述", "", "可以发射子弹攻击敌方的弹射器");
             ProtoRegistry.RegisterString("弹射器1结论", "", "你解锁了子弹弹射器，可以发射子弹攻击敌方");
@@ -83,7 +78,7 @@ namespace DSP_Battle
             Cannon.isRaw = false;
             Cannon.CanBuild = true;
             Cannon.Upgrades = new int[] { };
-            Cannon.DescFields = new int[] { 53,11,12,1,40};
+            Cannon.DescFields = new int[] { 53, 11, 12, 1, 40 };
             var Cannon2 = ProtoRegistry.RegisterItem(8012, "弹射器2", "弹射器2描述", "Assets/DSPBattle/cannon2", 2602 + pageBias, 50, EItemType.Production);
             Cannon2.BuildIndex = 608;
             Cannon2.BuildMode = 1;
@@ -109,7 +104,7 @@ namespace DSP_Battle
             Silo.isRaw = false;
             Silo.CanBuild = true;
             Silo.Upgrades = new int[] { };
-            Silo.DescFields = new int[] {35,11,12,1,40 };
+            Silo.DescFields = new int[] { 35, 11, 12, 1, 40 };
 
             ProtoRegistry.RegisterRecipe(801, ERecipeType.Assemble, 60, new int[] { 1112, 1103 }, new int[] { 1, 1 }, new int[] { 8001 }, new int[] { 1 }, "子弹1描述",
                 1901, 2701 + pageBias, "Assets/DSPBattle/bullet1");
@@ -151,7 +146,7 @@ namespace DSP_Battle
                 new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 814 }, new Vector2(53, -43));
 
             //循环科技 分别是+20%子弹伤害  +10%子弹速度和2%导弹速度  以及扩充虫洞安全区
-            TechProto techBulletDamage1 = ProtoRegistry.RegisterTech(4901, "定向爆破1", "定向爆破描述", "定向爆破结论", "Icons/Tech/1112", new int[] {}, new int[] { 6001, 6002, 6003 },
+            TechProto techBulletDamage1 = ProtoRegistry.RegisterTech(4901, "定向爆破1", "定向爆破描述", "定向爆破结论", "Icons/Tech/1112", new int[] { }, new int[] { 6001, 6002, 6003 },
                 new int[] { 20, 20, 20 }, 180000, new int[] { }, new Vector2(9, -47));
             techBulletDamage1.PreTechsImplicit = new int[] { 1911 };
             techBulletDamage1.UnlockFunctions = new int[] { 50 };
@@ -168,7 +163,7 @@ namespace DSP_Battle
             techBulletDamage2.MaxLevel = 2;
             techBulletDamage2.LevelCoef1 = 0;
             techBulletDamage2.LevelCoef2 = 0;
-            TechProto techBulletDamage3 = ProtoRegistry.RegisterTech(4903, "定向爆破3", "定向爆破描述", "定向爆破结论", "Icons/Tech/1112", new int[] { 4902 }, new int[] { 6001, 6002, 6003, 6004},
+            TechProto techBulletDamage3 = ProtoRegistry.RegisterTech(4903, "定向爆破3", "定向爆破描述", "定向爆破结论", "Icons/Tech/1112", new int[] { 4902 }, new int[] { 6001, 6002, 6003, 6004 },
                 new int[] { 12, 12, 12, 12 }, 480000, new int[] { }, new Vector2(17, -47));
             techBulletDamage3.UnlockFunctions = new int[] { 50 };
             techBulletDamage3.UnlockValues = new double[] { 0.15 };
@@ -219,7 +214,7 @@ namespace DSP_Battle
             techBulletSpeed2.MaxLevel = 2;
             techBulletSpeed2.LevelCoef1 = 0;
             techBulletSpeed2.LevelCoef2 = 0;
-            TechProto techBulletSpeed3 = ProtoRegistry.RegisterTech(4913, "引力波引导3", "引力波引导描述", "引力波引导结论", "Icons/Tech/1112", new int[] { 4912 }, new int[] { 6001, 6002, 6003, 6004},
+            TechProto techBulletSpeed3 = ProtoRegistry.RegisterTech(4913, "引力波引导3", "引力波引导描述", "引力波引导结论", "Icons/Tech/1112", new int[] { 4912 }, new int[] { 6001, 6002, 6003, 6004 },
                 new int[] { 12, 12, 12, 12 }, 480000, new int[] { }, new Vector2(17, -51));
             techBulletSpeed3.UnlockFunctions = new int[] { 51 };
             techBulletSpeed3.UnlockValues = new double[] { 0.1 };
@@ -256,7 +251,7 @@ namespace DSP_Battle
                 new int[] { 20, 20, 20 }, 144000, new int[] { }, new Vector2(9, -55));
             techWormDistance1.PreTechsImplicit = new int[] { 1911 };
             techWormDistance1.UnlockFunctions = new int[] { 52 };
-            techWormDistance1.UnlockValues = new double[] { 10000 }; 
+            techWormDistance1.UnlockValues = new double[] { 10000 };
             techWormDistance1.Level = 1;
             techWormDistance1.MaxLevel = 1;
             techWormDistance1.LevelCoef1 = 0;
@@ -264,7 +259,7 @@ namespace DSP_Battle
             TechProto techWormDistance2 = ProtoRegistry.RegisterTech(4922, "相位干扰技术2", "相位干扰技术描述", "相位干扰技术结论", "Icons/Tech/1112", new int[] { 4921 }, new int[] { 6001, 6002, 6003, 6004 },
                 new int[] { 12, 12, 12, 12 }, 300000, new int[] { }, new Vector2(13, -55));
             techWormDistance2.UnlockFunctions = new int[] { 52 };
-            techWormDistance2.UnlockValues = new double[] { 10000 }; 
+            techWormDistance2.UnlockValues = new double[] { 10000 };
             techWormDistance2.Level = 2;
             techWormDistance2.MaxLevel = 2;
             techWormDistance2.LevelCoef1 = 0;
@@ -280,7 +275,7 @@ namespace DSP_Battle
             TechProto techWormDistance4 = ProtoRegistry.RegisterTech(4924, "相位干扰技术4", "相位干扰技术描述", "相位干扰技术结论", "Icons/Tech/1112", new int[] { 4923 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
                  new int[] { 12, 12, 12, 12, 12 }, 360000, new int[] { }, new Vector2(21, -55));
             techWormDistance4.UnlockFunctions = new int[] { 52 };
-            techWormDistance4.UnlockValues = new double[] { 10000 }; 
+            techWormDistance4.UnlockValues = new double[] { 10000 };
             techWormDistance4.Level = 4;
             techWormDistance4.MaxLevel = 4;
             techWormDistance4.LevelCoef1 = 0;
@@ -288,7 +283,7 @@ namespace DSP_Battle
             TechProto techWormDistance5 = ProtoRegistry.RegisterTech(4925, "相位干扰技术5", "相位干扰技术描述", "相位干扰技术结论", "Icons/Tech/1112", new int[] { 4924 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
                  new int[] { 4, 4, 4, 4, 4 }, 1440000, new int[] { }, new Vector2(25, -55));
             techWormDistance5.UnlockFunctions = new int[] { 52 };
-            techWormDistance5.UnlockValues = new double[] { 10000 }; 
+            techWormDistance5.UnlockValues = new double[] { 10000 };
             techWormDistance5.Level = 5;
             techWormDistance5.MaxLevel = 5;
             techWormDistance5.LevelCoef1 = 0;
@@ -296,7 +291,7 @@ namespace DSP_Battle
             TechProto techWormDistanceInf = ProtoRegistry.RegisterTech(4926, "相位干扰技术6", "相位干扰技术描述", "相位干扰技术结论", "Icons/Tech/1112", new int[] { 4925 }, new int[] { 6006 },
                  new int[] { 4 }, 45000000, new int[] { }, new Vector2(29, -55));
             techWormDistanceInf.UnlockFunctions = new int[] { 52 };
-            techWormDistanceInf.UnlockValues = new double[] { 10000 }; 
+            techWormDistanceInf.UnlockValues = new double[] { 10000 };
             techWormDistanceInf.Level = 6;
             techWormDistanceInf.MaxLevel = 60;
             techWormDistanceInf.LevelCoef1 = -18000000;
@@ -312,7 +307,7 @@ namespace DSP_Battle
 
             var CannonModel2 = CopyModelProto(72, 312, Color.green);
             CannonModel2.prefabDesc.ejectorBulletId = 8001; //子弹的Id
-            CannonModel2.prefabDesc.ejectorChargeFrame = 20; 
+            CannonModel2.prefabDesc.ejectorChargeFrame = 20;
             CannonModel2.prefabDesc.ejectorColdFrame = 10;
             CannonModel2.prefabDesc.workEnergyPerTick = 80000;
             CannonModel2.prefabDesc.idleEnergyPerTick = 2000;
@@ -320,7 +315,7 @@ namespace DSP_Battle
 
             var CannonModel3 = CopyModelProto(72, 314, Color.yellow);
             CannonModel3.prefabDesc.ejectorBulletId = 8007; //子弹的Id
-            CannonModel3.prefabDesc.ejectorChargeFrame = 1; 
+            CannonModel3.prefabDesc.ejectorChargeFrame = 1;
             CannonModel3.prefabDesc.ejectorColdFrame = 1;
             CannonModel3.prefabDesc.workEnergyPerTick = 300000;
             CannonModel3.prefabDesc.idleEnergyPerTick = 2000;
@@ -435,9 +430,9 @@ namespace DSP_Battle
         public static void UnlockFunctionTextPatch(ref TechProto __instance, ref string __result, StringBuilder sb)
         {
             if (__instance.ID >= 4901 && __instance.ID <= 4906)
-                __result = "子弹伤害和导弹伤害+15%".Translate() + "\n" + "脉冲中子束伤害+25%".Translate() ;
-            else if(__instance.ID >= 4911 && __instance.ID <= 4916)
-                __result = "子弹飞行速度+10%".Translate()+"\n"+"导弹飞行速度+5%".Translate();
+                __result = "子弹伤害和导弹伤害+15%".Translate() + "\n" + "脉冲中子束伤害+25%".Translate();
+            else if (__instance.ID >= 4911 && __instance.ID <= 4916)
+                __result = "子弹飞行速度+10%".Translate() + "\n" + "导弹飞行速度+5%".Translate();
             //else if (__instance.ID == 4921)
             //    __result = "虫洞生成最近范围向10AU推进3%".Translate();
             //else if (__instance.ID == 4922)
@@ -477,7 +472,7 @@ namespace DSP_Battle
             }
             __instance.dataValueText.text = __instance.dataValueText.text + "\r\n\r\n" + Configs.bulletAtkScale.ToString("0%") + "\r\n"
                 + (1 + (Configs.bulletAtkScale - 1) * 5 / 3).ToString("0%") + "\r\n" + Configs.bulletAtkScale.ToString("0%")
-                + "\r\n" + Configs.bulletSpeedScale.ToString("0%") + "\r\n" + (1 + (Configs.bulletSpeedScale - 1) * 0.5).ToString("0%")+ "\r\n" + (Configs.wormholeRange / 40000.0).ToString() + "AU";
+                + "\r\n" + Configs.bulletSpeedScale.ToString("0%") + "\r\n" + (1 + (Configs.bulletSpeedScale - 1) * 0.5).ToString("0%") + "\r\n" + (Configs.wormholeRange / 40000.0).ToString() + "AU";
 
         }
 
@@ -543,8 +538,8 @@ namespace DSP_Battle
                     return;
             }
         }
-  
-  
+
+
         public static int[] GetBulletInfos(int protoId)
         {
             switch (protoId)

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace DSP_Battle
@@ -76,7 +72,8 @@ namespace DSP_Battle
             get { return shipData.planetB / 100 - 1; }
         }
 
-        public EnemyShip(BinaryReader r) {
+        public EnemyShip(BinaryReader r)
+        {
             shipData = new ShipData();
             renderingData = new ShipRenderingData();
             renderingUIData = new ShipUIRenderingData();
@@ -154,7 +151,8 @@ namespace DSP_Battle
             if (state != State.active) return;
 
             StationComponent station = targetStation;
-            if (station == null || station.id == 0) {
+            if (station == null || station.id == 0)
+            {
                 FindAnotherStation();
                 if (state != State.active) return;
             }

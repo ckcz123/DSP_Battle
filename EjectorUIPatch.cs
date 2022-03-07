@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HarmonyLib;
+﻿using HarmonyLib;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -130,7 +126,7 @@ namespace DSP_Battle
 
         public static void ShareUICurEjectorInfos(UIEjectorWindow __instance)
         {
-            if(SolarSailAmoutLabel == null)
+            if (SolarSailAmoutLabel == null)
             {
                 InitGameObjects();
             }
@@ -151,13 +147,13 @@ namespace DSP_Battle
                 curEjectorEntityId = ejectorComponent.entityId; //二者均相符时，代表是同一个建筑
                 needToRefreshTarget = true;//在ejector选择目标时，如果needToRefreshTarget，则将选择的目标刷新传递过来，供UI显示所需属性，同时将此项设置为false，不重复刷新
                 RefreshEjectorUIOnce();
-                
+
             }
             catch (Exception)
             {
                 curEjectorIsCannon = false;
             }
-            
+
         }
 
 
@@ -184,7 +180,7 @@ namespace DSP_Battle
                 setModeButton1Obj.transform.Find("Text").GetComponent<Text>().text = "最接近物流塔".Translate();
                 setModeButton2Obj.transform.Find("Text").GetComponent<Text>().text = "最大威胁".Translate();
                 setModeButton3Obj.transform.Find("Text").GetComponent<Text>().text = "距自己最近".Translate();
-                setModeButton4Obj.transform.Find("Text").GetComponent<Text>().text = "最低生命".Translate(); 
+                setModeButton4Obj.transform.Find("Text").GetComponent<Text>().text = "最低生命".Translate();
 
             }
             else
@@ -203,7 +199,7 @@ namespace DSP_Battle
             }
         }
 
-        
+
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UIEjectorWindow), "_OnUpdate")]
@@ -233,7 +229,7 @@ namespace DSP_Battle
 
         public static void SetAimingMode(int modenum)
         {
-            if(curEjectorIsCannon)
+            if (curEjectorIsCannon)
             {
                 try
                 {

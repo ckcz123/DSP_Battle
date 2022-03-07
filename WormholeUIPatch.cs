@@ -1,12 +1,9 @@
-﻿using xiaoye97;
-using HarmonyLib;
-using UnityEngine;
+﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using UnityEngine;
+using xiaoye97;
 
 namespace DSP_Battle
 {
@@ -16,6 +13,8 @@ namespace DSP_Battle
         public static StarData[] starData = new StarData[100];
         public static StarSimulator[] simulator = new StarSimulator[100];
         public static UIStarmapStar[] uiStar = new UIStarmapStar[100];
+
+        private static Dictionary<StarSimulator, Material> bodyMaterialMap = new Dictionary<StarSimulator, Material>();
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UniverseSimulator), "OnGameLoaded")]
@@ -37,17 +36,22 @@ namespace DSP_Battle
                 // simulator[i].gameObject.SetActive((Configs.nextWaveState == 2 || Configs.nextWaveState == 3) && i < Configs.nextWaveWormCount);
                 simulator[i].gameObject.SetActive(false);
             }
+            lastWaveState = -1;
         }
+
+        private static int lastWaveState = -1;
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UniverseSimulator), "GameTick")]
         public static void UniverseSimulator_GameTick(ref UniverseSimulator __instance, double time)
         {
-            if (time % 60 != 1)
-                return;
             if (Configs.nextWaveState != 2 && Configs.nextWaveState != 3)
             {
-                for (var i = 0; i < 100; ++i) simulator[i].gameObject.SetActive(false);
+                if (lastWaveState != Configs.nextWaveState)
+                {
+                    for (var i = 0; i < 100; ++i) simulator[i].gameObject.SetActive(false);
+                    lastWaveState = Configs.nextWaveState;
+                }
                 return;
             }
 
@@ -59,11 +63,14 @@ namespace DSP_Battle
 
             for (var i = 0; i < Configs.nextWaveWormCount; ++i)
             {
-                simulator[i].gameObject.SetActive(true);
+                if (lastWaveState != Configs.nextWaveState)
+                {
+                    simulator[i].gameObject.SetActive(true);
+                }
 
                 int angle1 = Configs.nextWaveAngle1[i];
                 int angle2 = Configs.nextWaveAngle2[i];
-                simulator[i].starData.uPosition = 
+                simulator[i].starData.uPosition =
                     planet.uPosition
                     + new VectorLF3(
                             (Configs.wormholeRange + planet.radius) * Math.Cos(angle1 * Math.PI / 360) * Math.Cos(angle2 * Math.PI / 360), // rcosAcosB
@@ -72,6 +79,8 @@ namespace DSP_Battle
                     );
                 simulator[i].UpdateUniversalPosition(position, uPosition, position2, rotation);
             }
+
+            lastWaveState = Configs.nextWaveState;
         }
 
         [HarmonyPostfix]
@@ -102,22 +111,27 @@ namespace DSP_Battle
             }
 
             float num11 = __instance.visualScale * 6000f * __instance.starData.radius;
-			float a = num11 * 100f;
+            float a = num11 * 100f;
             float b2 = num11 * 50f;
-			float num15 = Mathf.InverseLerp(a, b2, (float)__instance.runtimeDist);
-            ref Material bodyMaterial = ref AccessTools.FieldRefAccess<StarSimulator, Material>(__instance, "bodyMaterial");
-			bodyMaterial.SetFloat("_Multiplier", 1f - num15);
-			__instance.massRenderer.gameObject.SetActive(false);
+            float num15 = Mathf.InverseLerp(a, b2, (float)__instance.runtimeDist);
+
+            if (!bodyMaterialMap.ContainsKey(__instance))
+            {
+                bodyMaterialMap.Add(__instance, AccessTools.FieldRefAccess<StarSimulator, Material>(__instance, "bodyMaterial"));
+            }
+            bodyMaterialMap[__instance].SetFloat("_Multiplier", 1f - num15);
+
+            __instance.massRenderer.gameObject.SetActive(false);
             __instance.atmosRenderer.gameObject.SetActive(false);
             __instance.effect.gameObject.SetActive(false);
             __instance.sunFlare.brightness *= num9;
-			if (__instance.sunFlare.enabled != num9 > 0.001f)
-			{
+            if (__instance.sunFlare.enabled != num9 > 0.001f)
+            {
                 __instance.sunFlare.enabled = (num9 > 0.001f);
-			}
+            }
 
             __instance.blackRenderer.transform.localScale = Vector3.one * (__instance.solidRadius * 2f);
-		}
+        }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UIStarmap), "CreateAllStarUIs")]
@@ -138,15 +152,14 @@ namespace DSP_Battle
                 uiStar[i].gameObject.SetActive(false);
             }
 
+            lastWaveState = -1;
+
         }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UIStarmap), "_OnUpdate")]
         public static void UIStarmap_OnUpdate(ref UIStarmap __instance)
         {
-            if (GameMain.instance.timei % 60 != 0)
-                return;
-
             for (var i = 0; i < 100; ++i)
             {
                 if ((Configs.nextWaveState != 2 && Configs.nextWaveState != 3) || i >= Configs.nextWaveWormCount)
@@ -155,7 +168,7 @@ namespace DSP_Battle
                     {
                         uiStar[i]._Close();
                     }
-                    if (uiStar[i].starObject.gameObject.activeSelf) 
+                    if (uiStar[i].starObject.gameObject.activeSelf)
                     {
                         uiStar[i].starObject.gameObject.SetActive(false);
                     }
@@ -180,8 +193,6 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(UIStarmap), "_OnLateUpdate")]
         public static void UIStarmap_OnLateUpdate(ref UIStarmap __instance)
         {
-            if (GameMain.instance.timei % 60 != 0)
-                return;
             if (Configs.nextWaveState != 2 && Configs.nextWaveState != 3) return;
             for (var i = 0; i < Configs.nextWaveWormCount; ++i) uiStar[i]._LateUpdate();
         }
@@ -191,7 +202,8 @@ namespace DSP_Battle
             if (starData[0] != null) return;
 
             StarData data = GameMain.galaxy.stars.Where(e => e.type == EStarType.BlackHole).First();
-            for (var i = 0; i < 100; ++i) {
+            for (var i = 0; i < 100; ++i)
+            {
                 starData[i] = data.Copy();
                 starData[i].planetCount = 0;
                 starData[i].planets = new PlanetData[] { };

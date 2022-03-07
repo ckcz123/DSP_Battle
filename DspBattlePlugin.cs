@@ -1,19 +1,15 @@
 ﻿using BepInEx;
-using UnityEngine;
+using BepInEx.Configuration;
+using BepInEx.Logging;
+using CommonAPI;
+using CommonAPI.Systems;
+using crecheng.DSPModSave;
 using HarmonyLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BepInEx.Logging;
-using xiaoye97;
-using CommonAPI;
-using crecheng.DSPModSave;
 using System.IO;
-using CommonAPI.Systems;
 using System.Reflection;
-using BepInEx.Configuration;
+using UnityEngine;
+using xiaoye97;
 
 namespace DSP_Battle
 {
@@ -93,42 +89,6 @@ namespace DSP_Battle
             {
                 UIAlert.OnActiveChange();
             }
-
-            /*
-            if (Input.GetKeyDown(KeyCode.Minus))
-            {
-                InitNew();
-            }
-            if (Input.GetKeyDown(KeyCode.BackQuote))
-            {
-                EnemyShips.paused = !EnemyShips.paused;
-            }
-            if(Input.GetKeyDown(KeyCode.Backspace))
-            {
-                UIAlert.OnActiveChange();
-            }
-            if (Input.GetKeyDown(KeyCode.J))
-            {
-                framesUntilNextWave = 3700 * 60;
-                nextWaveShipCount = 12;
-                nextWaveStrength = 240;
-                nextWaveAward = 3724;
-                preparingNextWave = true;
-            }
-            if (Input.GetKeyDown(KeyCode.K))
-            {
-                framesUntilNextWave -= 3600;
-            }
-            if (Input.GetKeyDown(KeyCode.L))
-            {
-                preparingNextWave = false;
-            }
-            //Cannon.BulletTrack();
-            if (preparingNextWave)
-            {
-                framesUntilNextWave -= 1;
-                UIAlert.CountDownRefresh(preparingNextWave, framesUntilNextWave, 0, nextWaveShipCount, nextWaveStrength, nextWaveAward, 0, false); //第二个0应该传入已经摧毁的建筑数
-            } */
         }
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameMain), "OnDestroy")]
@@ -171,7 +131,7 @@ namespace DSP_Battle
         }
 
         public static ManualLogSource logger;
-       
+
     }
 }
 

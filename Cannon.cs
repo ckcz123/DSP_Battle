@@ -3,9 +3,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace DSP_Battle
@@ -13,19 +10,18 @@ namespace DSP_Battle
     class Cannon
     {
         public static DysonSwarm curSwarm;
-        public static DysonSwarm[] swarms;
 
         //需要存读档
         // 这里应该是HashSet，为了线程安全还是用ConcurrentDictionary
-        public static List<ConcurrentDictionary<int,int>> sailBulletsIndex; //记录应该变成太阳帆的子弹，原本是记录攻击用子弹，但是总有漏网之鱼变成太阳帆，找不到原因，所以反过来记录应该变成太阳帆的子弹，这可能导致0.1%（目测，或许远低于此）的太阳帆无法生成
-        public static List<ConcurrentDictionary<int,int>> bulletTargets; //记录子弹的目标
-        public static List<ConcurrentDictionary<int,int>> canDoDamage; //记录子弹还能造成多少伤害
+        public static List<ConcurrentDictionary<int, int>> sailBulletsIndex; //记录应该变成太阳帆的子弹，原本是记录攻击用子弹，但是总有漏网之鱼变成太阳帆，找不到原因，所以反过来记录应该变成太阳帆的子弹，这可能导致0.1%（目测，或许远低于此）的太阳帆无法生成
+        public static List<ConcurrentDictionary<int, int>> bulletTargets; //记录子弹的目标
+        public static List<ConcurrentDictionary<int, int>> canDoDamage; //记录子弹还能造成多少伤害
         //
 
         public static int testFrameCount = 0;
         public static double BulletMaxtDivisor = 7000.0; // 原本5000.0
         public static float numMinus = 0.0f;
-        public static VectorLF3 endPos = new VectorLF3(2000,2000,2000);
+        public static VectorLF3 endPos = new VectorLF3(2000, 2000, 2000);
         public static bool doTrack = true;
         public static System.Random rand = new System.Random();
 
@@ -80,7 +76,7 @@ namespace DSP_Battle
                     }
 
                 }
-                
+
             }
             catch (Exception)
             {
@@ -95,7 +91,7 @@ namespace DSP_Battle
         {
             try
             {
-                sailBulletsIndex = new List<ConcurrentDictionary<int,int>>();
+                sailBulletsIndex = new List<ConcurrentDictionary<int, int>>();
                 bulletTargets = new List<ConcurrentDictionary<int, int>>();
                 canDoDamage = new List<ConcurrentDictionary<int, int>>();
 
@@ -173,10 +169,10 @@ namespace DSP_Battle
             //下面是因为 炮需要用orbitId记录索敌模式，而orbitId有可能超出已设定的轨道数，为了避免溢出，炮的orbitalId在参与计算时需要独立指定为1。
             //后续所有的__instance.orbitId都被替换为此
             int calcOrbitId = __instance.orbitId;
-            if(cannon)
+            if (cannon)
             {
                 if (calcOrbitId <= 0 || calcOrbitId > 4) calcOrbitId = 1;
-            } 
+            }
             else
             {
                 if (calcOrbitId < 0 || calcOrbitId >= swarm.orbitCursor || swarm.orbits[calcOrbitId].id != calcOrbitId || !swarm.orbits[calcOrbitId].enabled)
@@ -187,10 +183,10 @@ namespace DSP_Battle
                 }
 
             }
-            
+
             float num2 = (float)Cargo.accTableMilli[__instance.incLevel];
 
-            if(cannon)
+            if (cannon)
                 num2 = (float)Cargo.incTableMilli[__instance.incLevel];
 
             int num3 = (int)(power * 10000f * (1f + num2) + 0.1f);
@@ -288,7 +284,7 @@ namespace DSP_Battle
                     }
                 }
 
-                
+
 
                 //不该参与循环的部分，换到循环前了
 
@@ -358,12 +354,12 @@ namespace DSP_Battle
                             }
                         }
                     }
-                    if(cannon && EnemyShips.ships.ContainsKey(shipIdx) && EnemyShips.ships[shipIdx].state == EnemyShip.State.active && __instance.targetState != EjectorComponent.ETargetState.Blocked && __instance.targetState != EjectorComponent.ETargetState.AngleLimit)
+                    if (cannon && EnemyShips.ships.ContainsKey(shipIdx) && EnemyShips.ships[shipIdx].state == EnemyShip.State.active && __instance.targetState != EjectorComponent.ETargetState.Blocked && __instance.targetState != EjectorComponent.ETargetState.AngleLimit)
                     {
                         curTarget = EnemyShips.ships[shipIdx]; //设定目标
-                        if(EjectorUIPatch.needToRefreshTarget) //如果需要刷新目标
+                        if (EjectorUIPatch.needToRefreshTarget) //如果需要刷新目标
                         {
-                            if(EjectorUIPatch.curEjectorPlanetId == __instance.planetId &&  EjectorUIPatch.curEjectorEntityId == __instance.entityId)
+                            if (EjectorUIPatch.curEjectorPlanetId == __instance.planetId && EjectorUIPatch.curEjectorEntityId == __instance.entityId)
                             {
                                 EjectorUIPatch.curTarget = curTarget;
                             }
@@ -397,7 +393,7 @@ namespace DSP_Battle
                     __instance.direction = 1;
                 }
 
-                
+
                 if (__instance.direction == 1)
                 {
                     __instance.time += num3;
@@ -424,7 +420,7 @@ namespace DSP_Battle
                         //将添加的用于攻击的子弹的index存储，便于后续更新其弹道，又能防止影响正常的太阳帆
                         if (!cannon && !sailBulletsIndex[swarm.starData.index].ContainsKey(bulletIndex))
                         {
-                            sailBulletsIndex[swarm.starData.index].AddOrUpdate(bulletIndex, 0, (x, y)=> 0);
+                            sailBulletsIndex[swarm.starData.index].AddOrUpdate(bulletIndex, 0, (x, y) => 0);
                         }
                         //如果是炮，设定子弹目标以及伤害
                         else if (cannon)
@@ -439,10 +435,10 @@ namespace DSP_Battle
                             }
 
                             bulletTargets[swarm.starData.index].AddOrUpdate(bulletIndex, curTarget.shipIndex, (x, y) => curTarget.shipIndex);
-                            
+
                             //Main.logger.LogInfo("bullet info2 set error.");
-                            
-                            
+
+
                             try
                             {
                                 canDoDamage[swarm.starData.index].AddOrUpdate(bulletIndex, damage, (x, y) => 1);
@@ -534,7 +530,7 @@ namespace DSP_Battle
                     if (__instance.bulletPool[i].t >= __instance.bulletPool[i].maxt - 0.02f) //
                     {
                         __instance.bulletPool[i].state = 0; //这就阻止了后续创建太阳帆的可能，但也可能带来其他影响，但无所谓，只有最多2帧的异常帧
-                        
+
                     }
                     if (__instance.bulletPool[i].t >= __instance.bulletPool[i].maxt && bulletTargets[starIndex].ContainsKey(i) && canDoDamage[starIndex].ContainsKey(i))
                     {
@@ -543,10 +539,10 @@ namespace DSP_Battle
                             EnemyShips.ships[bulletTargets[starIndex][i]].BeAttacked(canDoDamage[starIndex][i]); //击中造成伤害  //如果在RemoveBullet的postpatch写这个，可以不用每帧循环检测，但是伤害将在爆炸动画后结算，感觉不太合理
                         }
                         int v;
-                        canDoDamage[starIndex].TryRemove(i,out v); //该子弹已造成过伤害，或者因为飞船已经不存在了，这两种情况都要将子弹的未来还可造成的伤害设置成0
+                        canDoDamage[starIndex].TryRemove(i, out v); //该子弹已造成过伤害，或者因为飞船已经不存在了，这两种情况都要将子弹的未来还可造成的伤害设置成0
                     }
                 }
-                
+
             }
         }
 
@@ -627,7 +623,7 @@ namespace DSP_Battle
             }
             for (int i2 = 0; i2 < total2; i2++)
             {
-                int num2 =  r.ReadInt32();
+                int num2 = r.ReadInt32();
                 for (int j2 = 0; j2 < num2; j2++)
                 {
                     bulletTargets[i2].TryAdd(r.ReadInt32(), r.ReadInt32());
@@ -653,239 +649,6 @@ namespace DSP_Battle
         {
             ReInitAll();
         }
-
-
-
-
-
-        //    /// <summary>
-        //    /// 创建太阳帆后立即删除。即将被弃用。
-        //    /// </summary>
-        //    /// <param name="__instance"></param>
-        //    /// <param name="__result"></param>
-        //    [HarmonyPostfix]
-        //    [HarmonyPatch(typeof(DysonSwarm), "AddSolarSail")]
-        //    public static void GetSailIndexWhenAdd(ref DysonSwarm __instance, int __result)
-        //    {
-        //        try
-        //        {
-        //            __instance.RemoveSolarSail(__result);
-        //Ship.CurHp += 2;
-        //if(Ship.CurHp <= 0)
-        //            {
-        //    Ship.shipData.shipIndex = 0;
-        //            }
-        //        }
-        //        catch (Exception)
-        //        {
-
-        //        }
-        //    }
-
-
-        /// <summary>
-        /// 每帧/特定情况下创建子弹
-        /// </summary>
-        /// <param name="__instance"></param>
-        /// <param name="power"></param>
-        /// <param name="swarm"></param>
-        /// <param name="astroPoses"></param>
-        /// <param name="animPool"></param>
-        /// <param name="consumeRegister"></param>
-        //[HarmonyPostfix]
-        //[HarmonyPatch(typeof(EjectorComponent), "InternalUpdate")]
-        //public static void EjectorPatch(ref EjectorComponent __instance, float power, DysonSwarm swarm, AstroPose[] astroPoses, AnimData[] animPool, int[] consumeRegister)
-        //{
-        //    curSwarm = swarm;
-        //    if (testFrameCount % 20 != 0)
-        //        return;
-        //    try
-        //    {
-        //        int num4 = __instance.planetId / 100 * 100;
-        //        float num5 = __instance.localAlt + __instance.pivotY + (__instance.muzzleY - __instance.pivotY) / Mathf.Max(0.1f, Mathf.Sqrt(1f - __instance.localDir.y * __instance.localDir.y));
-        //        //Vector3 vector = new Vector3(__instance.localPosN.x * num5, __instance.localPosN.y * num5, __instance.localPosN.z * num5);
-
-        //        //VectorLF3 vectorLF = astroPoses[__instance.planetId].uPos + Maths.QRotateLF(astroPoses[__instance.planetId].uRot, vector);
-        //        //VectorLF3 uPos = astroPoses[num4].uPos;
-        //        ////uPos = new VectorLF3(500, 700, 900);
-        //        //VectorLF3 b = uPos - vectorLF;
-        //        //VectorLF3 vectorLF2 = uPos;
-
-        //        Vector3 vector = new Vector3(__instance.localPosN.x * num5, __instance.localPosN.y * num5, __instance.localPosN.z * num5);
-        //        VectorLF3 vectorLF = astroPoses[__instance.planetId].uPos + Maths.QRotateLF(astroPoses[__instance.planetId].uRot, vector);
-        //        Quaternion q = astroPoses[__instance.planetId].uRot * __instance.localRot;
-        //        VectorLF3 uPos = astroPoses[num4].uPos;
-        //        VectorLF3 b = uPos - vectorLF;
-        //        VectorLF3 vectorLF2 = uPos + VectorLF3.Cross(swarm.orbits[__instance.orbitId].up, b).normalized * (double)swarm.orbits[__instance.orbitId].radius;
-        //        try
-        //        {
-        //            vectorLF2 = Ship.shipData.uPos;
-        //        }
-        //        catch (Exception)
-        //        {
-        //        }
-        //        VectorLF3 vectorLF3 = vectorLF2 - vectorLF;
-        //        __instance.targetDist = vectorLF3.magnitude;
-
-
-
-        //        swarm.AddBullet(new SailBullet
-        //        {
-        //            maxt = (float)(__instance.targetDist / BulletMaxtDivisor),//子弹飞行到终点的时间，可能即使后续更改终点，时间到了也会到达（或消失？），然后创建太阳帆
-        //            lBegin = vector,
-        //            uEndVel = VectorLF3.Cross(vectorLF2 - uPos, swarm.orbits[__instance.orbitId].up).normalized * Math.Sqrt((double)(swarm.dysonSphere.gravity / swarm.orbits[__instance.orbitId].radius)),
-        //            //uEndVel = vectorLF2,
-        //            uBegin = vectorLF,
-        //            uEnd = vectorLF2
-        //        }, __instance.orbitId);
-        //    }
-        //    catch (Exception)
-        //    {
-        //        Main.logger.LogWarning("new bullet err");
-        //    }
-
-        //}
-
-
-        /*
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(DysonSwarm), "GameTick")]
-        public static bool GameTickPrePatch(ref DysonSwarm __instance, long time)
-        {
-            int propGravityId = (int)Traverse.Create(__instance).Field("propGravityId").GetValue();
-            int kernelUpdatePosId = (int)Traverse.Create(__instance).Field("kernelUpdatePosId").GetValue();
-            int propBufferId = (int)Traverse.Create(__instance).Field("propBufferId").GetValue();
-            int propInfoBufferId = (int)Traverse.Create(__instance).Field("propInfoBufferId").GetValue();
-            int propNodeBufferId = (int)Traverse.Create(__instance).Field("propNodeBufferId").GetValue();
-            int kernelUpdateVelId = (int)Traverse.Create(__instance).Field("kernelUpdateVelId").GetValue();
-            int propNewBufferId = (int)Traverse.Create(__instance).Field("propNewBufferId").GetValue();
-            int propGameTickId = (int)Traverse.Create(__instance).Field("propGameTickId").GetValue();
-            ComputeBuffer swarmBuffer = (ComputeBuffer)Traverse.Create(__instance).Field("swarmBuffer").GetValue();
-            ComputeBuffer swarmInfoBuffer = (ComputeBuffer)Traverse.Create(__instance).Field("swarmInfoBuffer").GetValue();
-            ((ComputeShader)Traverse.Create(__instance).Field("computeShader").GetValue()).SetFloat(propGravityId, __instance.dysonSphere.gravity);
-            ((ComputeShader)Traverse.Create(__instance).Field("computeShader").GetValue()).SetBuffer(kernelUpdatePosId, propBufferId, swarmBuffer);
-            ((ComputeShader)Traverse.Create(__instance).Field("computeShader").GetValue()).SetBuffer(kernelUpdatePosId, propNewBufferId, swarmBuffer);
-            ((ComputeShader)Traverse.Create(__instance).Field("computeShader").GetValue()).SetBuffer(kernelUpdatePosId, propInfoBufferId, swarmInfoBuffer);
-            ((ComputeShader)Traverse.Create(__instance).Field("computeShader").GetValue()).SetBuffer(kernelUpdatePosId, propNodeBufferId, __instance.dysonSphere.nrdBuffer);
-            ((ComputeShader)Traverse.Create(__instance).Field("computeShader").GetValue()).SetBuffer(kernelUpdateVelId, propBufferId, swarmBuffer);
-            ((ComputeShader)Traverse.Create(__instance).Field("computeShader").GetValue()).SetBuffer(kernelUpdateVelId, propNewBufferId, swarmBuffer);
-            ((ComputeShader)Traverse.Create(__instance).Field("computeShader").GetValue()).SetBuffer(kernelUpdateVelId, propInfoBufferId, swarmInfoBuffer);
-            ((ComputeShader)Traverse.Create(__instance).Field("computeShader").GetValue()).SetBuffer(kernelUpdateVelId, propNodeBufferId, __instance.dysonSphere.nrdBuffer);
-            ((ComputeShader)Traverse.Create(__instance).Field("computeShader").GetValue()).SetInt(propGameTickId, (int)((uint)(time)));
-            __instance.Dispatch_UpdateVel();
-            __instance.Dispatch_UpdatePos();
-            while (__instance.expiryCursor != __instance.expiryEnding)
-            {
-                if (time < __instance.expiryOrder[__instance.expiryCursor].time)
-                {
-                    break;
-                }
-                __instance.RemoveSolarSail(__instance.expiryOrder[__instance.expiryCursor].index);
-                __instance.expiryOrder[__instance.expiryCursor].time = 0L;
-                __instance.expiryOrder[__instance.expiryCursor].index = 0;
-                __instance.expiryCursor++;
-                if (__instance.expiryCursor == __instance.sailCapacity)
-                {
-                    __instance.expiryCursor = 0;
-                }
-            }
-            while (__instance.absorbCursor != __instance.absorbEnding && time >= __instance.absorbOrder[__instance.absorbCursor].time)
-            {
-                DysonNode dysonNode = __instance.dysonSphere.FindNode(__instance.absorbOrder[__instance.absorbCursor].layer, __instance.absorbOrder[__instance.absorbCursor].node);
-                if (dysonNode != null && dysonNode.ConstructCp() != null)
-                {
-                    __instance.dysonSphere.productRegister[11903]++;
-                }
-                __instance.RemoveSolarSail(__instance.absorbOrder[__instance.absorbCursor].index);
-                __instance.absorbOrder[__instance.absorbCursor].time = 0L;
-                __instance.absorbOrder[__instance.absorbCursor].index = 0;
-                __instance.absorbOrder[__instance.absorbCursor].layer = 0;
-                __instance.absorbOrder[__instance.absorbCursor].node = 0;
-                __instance.absorbCursor++;
-                if (__instance.absorbCursor == __instance.sailCapacity)
-                {
-                    __instance.absorbCursor = 0;
-                }
-            }
-            PerformanceMonitor.BeginSample(ECpuWorkEntry.DysonBullet);
-            float num = 0.016666668f;
-            int num2 = (int)(GameMain.history.solarSailLife * 60f + 0.1f);
-            VectorLF3 relativePos = __instance.gameData.relativePos;
-            Quaternion relativeRot = __instance.gameData.relativeRot;
-            for (int i = 1; i < __instance.bulletCursor; i++)
-            {
-                if (__instance.bulletPool[i].id == i)
-                {
-                    SailBullet[] array = __instance.bulletPool;
-                    int num3 = i;
-                    array[num3].t = array[num3].t + num;
-                    if (__instance.bulletPool[i].t >= __instance.bulletPool[i].maxt)
-                    {
-                        if (__instance.bulletPool[i].state > 0)
-                        {
-                            if (__instance.bulletPool[i].state < __instance.orbitCursor && __instance.orbits[__instance.bulletPool[i].state].id == __instance.bulletPool[i].state && !sailBulletsIndex[__instance.starData.index].Contains(i))
-                            {
-                                DysonSail ss = default(DysonSail);
-                                VectorLF3 vectorLF = __instance.bulletPool[i].uEnd - __instance.starData.uPosition;
-                                ss.px = (float)vectorLF.x;
-                                ss.py = (float)vectorLF.y;
-                                ss.pz = (float)vectorLF.z;
-                                vectorLF = __instance.bulletPool[i].uEndVel;
-                                vectorLF += RandomTable.SphericNormal(ref __instance.randSeed, 0.5);
-                                ss.vx = (float)vectorLF.x;
-                                ss.vy = (float)vectorLF.y;
-                                ss.vz = (float)vectorLF.z;
-                                ss.gs = 1f;
-                                __instance.AddSolarSail(ss, __instance.bulletPool[i].state, time + (long)num2);
-                            }
-                        }
-                        else if (__instance.bulletPool[i].t > __instance.bulletPool[i].maxt + 0.7f)
-                        {
-                            __instance.RemoveBullet(i);
-                            sailBulletsIndex[__instance.starData.index].Remove(i); //删除，i不再被记为攻击用子弹。子弹实体会在后续自动被游戏原本逻辑移除
-                        }
-                        __instance.bulletPool[i].state = 0;
-                    }
-                    if (DysonSphere.renderPlace == ERenderPlace.Universe)
-                    {
-                        __instance.bulletPool[i].rBegin = Maths.QInvRotateLF(relativeRot, __instance.bulletPool[i].uBegin - relativePos);
-                        __instance.bulletPool[i].rEnd = Maths.QInvRotateLF(relativeRot, __instance.bulletPool[i].uEnd - relativePos);
-                    }
-                    else if (DysonSphere.renderPlace == ERenderPlace.Starmap)
-                    {
-                        __instance.bulletPool[i].rBegin = (__instance.bulletPool[i].uBegin - UIStarmap.viewTargetStatic) * 0.00025;
-                        __instance.bulletPool[i].rEnd = (__instance.bulletPool[i].uEnd - UIStarmap.viewTargetStatic) * 0.00025;
-                    }
-                    else if (DysonSphere.renderPlace == ERenderPlace.Dysonmap)
-                    {
-                        __instance.bulletPool[i].rBegin = (__instance.bulletPool[i].uBegin - __instance.starData.uPosition) * 0.00025;
-                        __instance.bulletPool[i].rEnd = (__instance.bulletPool[i].uEnd - __instance.starData.uPosition) * 0.00025;
-                    }
-                }
-            }
-            for (int j = 1; j < __instance.orbitCursor; j++)
-            {
-                if (__instance.orbits[j].id == j && __instance.orbits[j].count == 0 && !__instance.orbits[j].enabled)
-                {
-                    __instance.RemoveOrbit(j);
-                }
-            }
-            if (Traverse.Create(__instance).Field("bulletBuffer").GetValue() == null)
-            {
-                Traverse.Create(__instance).Field("bulletBuffer").SetValue(new ComputeBuffer(__instance.bulletCapacity, 112, ComputeBufferType.Default));
-            }
-            if (((ComputeBuffer)Traverse.Create(__instance).Field("bulletBuffer").GetValue()).count != __instance.bulletCapacity)
-            {
-                Traverse.Create(__instance).Field("bulletBuffer").Method("Release").GetValue();
-                Traverse.Create(__instance).Field("bulletBuffer").SetValue(new ComputeBuffer(__instance.bulletCapacity, 112, ComputeBufferType.Default));
-            }
-            ((ComputeBuffer)Traverse.Create(__instance).Field("bulletBuffer").GetValue()).SetData(__instance.bulletPool);
-            PerformanceMonitor.EndSample(ECpuWorkEntry.DysonBullet);
-            return false;
-        }
-        */
-
-
     }
 
 
