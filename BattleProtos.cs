@@ -15,6 +15,7 @@ namespace DSP_Battle
 {
     class BattleProtos
     {
+        public static int pageBias = 0;
         public static void AddProtos()
         {
             ProtoRegistry.RegisterString("子弹1", "", "穿甲磁轨弹");
@@ -59,85 +60,97 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("定向爆破描述", "", "通过精确计算子弹和导弹的索敌路径，预测撞击前的最佳起爆点，以尽可能对敌舰造成更大的破坏。");
             ProtoRegistry.RegisterString("定向爆破结论", "", "");
 
-            ProtoRegistry.RegisterItem(8001, "子弹1", "子弹1描述", "Assets/texpack/硅晶圆", 2701, 100, EItemType.Material);
-            ProtoRegistry.RegisterItem(8002, "子弹2", "子弹2描述", "Assets/texpack/钛掺杂的硅晶圆", 2702, 100, EItemType.Material);
-            ProtoRegistry.RegisterItem(8003, "子弹3", "子弹3描述", "Assets/texpack/钨掺杂的硅晶圆", 2703, 100, EItemType.Material);
-            ProtoRegistry.RegisterItem(8004, "导弹1", "导弹1描述", "Assets/texpack/超级机械组件", 2705, 100, EItemType.Material);
-            ProtoRegistry.RegisterItem(8005, "导弹2", "导弹2描述", "Assets/texpack/超级机械组件", 2706, 100, EItemType.Material);
-            ProtoRegistry.RegisterItem(8006, "导弹3", "导弹3描述", "Assets/texpack/超级机械组件", 2707, 100, EItemType.Material);
-            ProtoRegistry.RegisterItem(8007, "脉冲", "脉冲描述", "Icons/ItemRecipe/em-rail-ejector", 9999, 100, EItemType.Material);
+            ItemProto bullet1 = ProtoRegistry.RegisterItem(8001, "子弹1", "子弹1描述", "Assets/DSPBattle/bullet1", 2701 + pageBias, 100, EItemType.Material);
+            ItemProto bullet2 = ProtoRegistry.RegisterItem(8002, "子弹2", "子弹2描述", "Assets/DSPBattle/bullet2", 2702 + pageBias, 100, EItemType.Material);
+            ItemProto bullet3 = ProtoRegistry.RegisterItem(8003, "子弹3", "子弹3描述", "Assets/DSPBattle/bullet3", 2703 + pageBias, 100, EItemType.Material);
+            ItemProto missile1 = ProtoRegistry.RegisterItem(8004, "导弹1", "导弹1描述", "Assets/DSPBattle/missile1", 2705 + pageBias, 100, EItemType.Material);
+            ItemProto missile2 = ProtoRegistry.RegisterItem(8005, "导弹2", "导弹2描述", "Assets/DSPBattle/missile2", 2706 + pageBias, 100, EItemType.Material);
+            ItemProto missile3 = ProtoRegistry.RegisterItem(8006, "导弹3", "导弹3描述", "Assets/DSPBattle/missile3", 2707 + pageBias, 100, EItemType.Material);
+            ItemProto bullet4 = ProtoRegistry.RegisterItem(8007, "脉冲", "脉冲描述", "Assets/DSPBattle/bullet4", 9999, 100, EItemType.Material);
 
-            var Cannon = ProtoRegistry.RegisterItem(8011, "弹射器1", "弹射器1描述", "Icons/ItemRecipe/em-rail-ejector", 2601, 50, EItemType.Production);
+            bullet1.DescFields = new int[] { 50, 51, 1 };
+            bullet2.DescFields = new int[] { 50, 51, 1 };
+            bullet3.DescFields = new int[] { 50, 51, 1 };
+            bullet4.DescFields = new int[] { 50, 51 };
+            missile1.DescFields = new int[] { 50, 51, 52, 1 };
+            missile2.DescFields = new int[] { 50, 51, 52, 1 };
+            missile3.DescFields = new int[] { 50, 51, 52, 1 };
+
+            var Cannon = ProtoRegistry.RegisterItem(8011, "弹射器1", "弹射器1描述", "Assets/DSPBattle/cannon1", 2601 + pageBias, 50, EItemType.Production);
             Cannon.BuildIndex = 607;
             Cannon.BuildMode = 1;
             Cannon.IsEntity = true;
             Cannon.isRaw = false;
             Cannon.CanBuild = true;
             Cannon.Upgrades = new int[] { };
-            var Cannon2 = ProtoRegistry.RegisterItem(8012, "弹射器2", "弹射器2描述", "Icons/ItemRecipe/em-rail-ejector", 2602, 50, EItemType.Production);
+            Cannon.DescFields = new int[] { 53,11,12,1,40};
+            var Cannon2 = ProtoRegistry.RegisterItem(8012, "弹射器2", "弹射器2描述", "Assets/DSPBattle/cannon2", 2602 + pageBias, 50, EItemType.Production);
             Cannon2.BuildIndex = 608;
             Cannon2.BuildMode = 1;
             Cannon2.IsEntity = true;
             Cannon2.isRaw = false;
             Cannon2.CanBuild = true;
             Cannon2.Upgrades = new int[] { };
-            var Cannon3 = ProtoRegistry.RegisterItem(8014, "脉冲炮", "脉冲炮描述", "Icons/ItemRecipe/em-rail-ejector", 2604, 50, EItemType.Production);
+            Cannon2.DescFields = new int[] { 53, 11, 12, 1, 40 };
+            var Cannon3 = ProtoRegistry.RegisterItem(8014, "脉冲炮", "脉冲炮描述", "Assets/DSPBattle/cannon3", 2604 + pageBias, 50, EItemType.Production);
             Cannon3.BuildIndex = 609;
             Cannon3.BuildMode = 1;
             Cannon3.IsEntity = true;
             Cannon3.isRaw = false;
             Cannon3.CanBuild = true;
             Cannon3.Upgrades = new int[] { };
+            Cannon3.DescFields = new int[] { 53, 11, 12, 1, 40 };
 
 
-            var Silo = ProtoRegistry.RegisterItem(8013, "发射器1", "发射器1描述", "Icons/ItemRecipe/vertical-launching-silo", 2603, 50, EItemType.Production);
+            var Silo = ProtoRegistry.RegisterItem(8013, "发射器1", "发射器1描述", "Assets/DSPBattle/missilesilo", 2603 + pageBias, 50, EItemType.Production);
             Silo.BuildIndex = 610;
             Silo.BuildMode = 1;
             Silo.IsEntity = true;
             Silo.isRaw = false;
             Silo.CanBuild = true;
             Silo.Upgrades = new int[] { };
+            Silo.DescFields = new int[] {35,11,12,1,40 };
 
             ProtoRegistry.RegisterRecipe(801, ERecipeType.Assemble, 60, new int[] { 1112, 1103 }, new int[] { 2, 2 }, new int[] { 8001 }, new int[] { 1 }, "子弹1描述",
-                1901, 2701, "Assets/texpack/硅晶圆");
+                1901, 2701 + pageBias, "Assets/DSPBattle/bullet1");
             ProtoRegistry.RegisterRecipe(802, ERecipeType.Assemble, 90, new int[] { 1118, 1110, 1116 }, new int[] { 1, 1, 1 }, new int[] { 8002 }, new int[] { 1 }, "子弹2描述",
-                1902, 2702, "Assets/texpack/钛掺杂的硅晶圆");
+                1902, 2702 + pageBias, "Assets/DSPBattle/bullet2");
             ProtoRegistry.RegisterRecipe(803, ERecipeType.Assemble, 120, new int[] { 1118, 1121, 1016 }, new int[] { 1, 4, 2 }, new int[] { 8003 }, new int[] { 1 }, "子弹3描述",
-                1903, 2703, "Assets/texpack/钨掺杂的硅晶圆");
+                1903, 2703 + pageBias, "Assets/DSPBattle/bullet3");
             ProtoRegistry.RegisterRecipe(804, ERecipeType.Assemble, 120, new int[] { 1802, 1303, 1406 }, new int[] { 1, 1, 1 }, new int[] { 8004 }, new int[] { 1 }, "导弹1描述",
-                1904, 2704, "Assets/texpack/超级机械组件");
+                1911, 2704 + pageBias, "Assets/DSPBattle/missile1");
             ProtoRegistry.RegisterRecipe(805, ERecipeType.Assemble, 120, new int[] { 1803, 1303, 1406 }, new int[] { 1, 1, 1 }, new int[] { 8005 }, new int[] { 1 }, "导弹2描述",
-                1904, 2705, "Assets/texpack/超级机械组件");
+                1912, 2705 + pageBias, "Assets/DSPBattle/missile2");
             ProtoRegistry.RegisterRecipe(806, ERecipeType.Assemble, 120, new int[] { 1209, 1303, 1406 }, new int[] { 1, 1, 1 }, new int[] { 8006 }, new int[] { 1 }, "导弹3描述",
-                1904, 2706, "Assets/texpack/超级机械组件");
+                1914, 2706 + pageBias, "Assets/DSPBattle/missile3");
             ProtoRegistry.RegisterRecipe(811, ERecipeType.Assemble, 360, new int[] { 1103, 1201, 1303, 1205 }, new int[] { 10, 10, 3, 5 }, new int[] { 8011 }, new int[] { 1 }, "弹射器1描述",
-                1901, 2601, "Icons/ItemRecipe/em-rail-ejector");
+                1901, 2601 + pageBias, "Assets/DSPBattle/cannon1");
             ProtoRegistry.RegisterRecipe(812, ERecipeType.Assemble, 360, new int[] { 1103, 1201, 1303, 1205 }, new int[] { 10, 10, 3, 5 }, new int[] { 8012 }, new int[] { 1 }, "弹射器2描述",
-                1901, 2602, "Icons/ItemRecipe/em-rail-ejector");
+                1914, 2602 + pageBias, "Assets/DSPBattle/cannon2");
             ProtoRegistry.RegisterRecipe(813, ERecipeType.Assemble, 900, new int[] { 1107, 1125, 1209, 1305 }, new int[] { 40, 15, 10, 5 }, new int[] { 8013 }, new int[] { 1 }, "发射器1描述",
-                1913, 2603, "Icons/ItemRecipe/vertical-launching-silo");
+                1911, 2603 + pageBias, "Assets/DSPBattle/missilesilo");
             ProtoRegistry.RegisterRecipe(814, ERecipeType.Assemble, 900, new int[] { 1107, 1125, 1209, 1305 }, new int[] { 40, 15, 10, 5 }, new int[] { 8014 }, new int[] { 1 }, "脉冲炮描述",
-                1913, 2604, "Icons/ItemRecipe/em-rail-ejector");
+                1915, 2604 + pageBias, "Assets/DSPBattle/cannon3");
 
-            ProtoRegistry.RegisterTech(1901, "子弹1", "子弹1描述", "子弹1结论", "Icons/Tech/1112", new int[] { 1711 }, new int[] { 6001, 6002 }, new int[] { 20, 20 },
+            ProtoRegistry.RegisterTech(1901, "子弹1", "子弹1描述", "子弹1结论", "Assets/DSPBattle/bullet1tech", new int[] { 1711 }, new int[] { 6001, 6002 }, new int[] { 20, 20 },
                 72000, new int[] { 801, 811 }, new Vector2(29, -43));
-            ProtoRegistry.RegisterTech(1902, "子弹2", "子弹2描述", "子弹2结论", "Icons/Tech/1112", new int[] { 1901 }, new int[] { 6001, 6002, 6003 }, new int[] { 12, 12, 12 },
+            ProtoRegistry.RegisterTech(1902, "子弹2", "子弹2描述", "子弹2结论", "Assets/DSPBattle/bullet2tech", new int[] { 1901 }, new int[] { 6001, 6002, 6003 }, new int[] { 12, 12, 12 },
                 150000, new int[] { 802 }, new Vector2(33, -43));
-            ProtoRegistry.RegisterTech(1903, "子弹3", "子弹3描述", "子弹3结论", "Icons/Tech/1112", new int[] { 1902 }, new int[] { 6001, 6002, 6003, 6004 },
+            ProtoRegistry.RegisterTech(1903, "子弹3", "子弹3描述", "子弹3结论", "Assets/DSPBattle/bullet3tech", new int[] { 1902 }, new int[] { 6001, 6002, 6003, 6004 },
                 new int[] { 12, 48, 24, 24 }, 150000, new int[] { 803 }, new Vector2(37, -43));
-            ProtoRegistry.RegisterTech(1911, "导弹1", "导弹1描述", "导弹1结论", "Icons/Tech/1112", new int[] { 1114 }, new int[] { 6001, 6002, 6003, 6004 },
+            ProtoRegistry.RegisterTech(1911, "导弹1", "导弹1描述", "导弹1结论", "Assets/DSPBattle/missile1tech", new int[] { 1114 }, new int[] { 6001, 6002, 6003, 6004 },
                 new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 804, 813 }, new Vector2(37, -31));
-            ProtoRegistry.RegisterTech(1912, "导弹2", "导弹2描述", "导弹2结论", "Icons/Tech/1112", new int[] { 1911 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 804, 813 }, new Vector2(41, -31));
+            ProtoRegistry.RegisterTech(1912, "导弹2", "导弹2描述", "导弹2结论", "Assets/DSPBattle/missile2tech", new int[] { 1911 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 805 }, new Vector2(41, -31));
             //ProtoRegistry.RegisterTech(1913, "导弹3", "导弹3描述", "导弹3结论", "Icons/Tech/1112", new int[] { 1914 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
             //    new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 804, 813 }, new Vector2(49, -41));
 
-            ProtoRegistry.RegisterTech(1914, "引力脉冲技术", "引力脉冲技术描述", "引力脉冲技术结论", "Icons/Tech/1112", new int[] { 1704 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+            ProtoRegistry.RegisterTech(1914, "引力脉冲技术", "引力脉冲技术描述", "引力脉冲技术结论", "Assets/DSPBattle/missile3tech", new int[] { 1704 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
                 new int[] { 12, 48, 24, 24, 24 }, 150000, new int[] { 812, 806 }, new Vector2(49, -43));
             ProtoRegistry.RegisterTech(1915, "相位脉冲技术", "相位脉冲技术描述", "相位脉冲技术结论", "Icons/Tech/1112", new int[] { 1914 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
                 new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 814 }, new Vector2(53, -43));
 
-            //循环科技 分别是+20%子弹伤害  +10%子弹速度和2%导弹速度  以及扩充虫洞安全区，最大20万码，每级向最大值扩充x%
+            //循环科技 分别是+20%子弹伤害  +10%子弹速度和2%导弹速度  以及扩充虫洞安全区
             TechProto techBulletDamage1 = ProtoRegistry.RegisterTech(4901, "定向爆破1", "定向爆破描述", "定向爆破结论", "Icons/Tech/1112", new int[] {}, new int[] { 6001, 6002, 6003 },
                 new int[] { 20, 20, 20 }, 180000, new int[] { }, new Vector2(9, -47));
             techBulletDamage1.PreTechsImplicit = new int[] { 1911 };
@@ -461,6 +474,94 @@ namespace DSP_Battle
                 + (1 + (Configs.bulletAtkScale - 1) * 5 / 3).ToString("0%") + "\r\n" + Configs.bulletAtkScale.ToString("0%")
                 + "\r\n" + Configs.bulletSpeedScale.ToString("0%") + "\r\n" + (1 + (Configs.bulletSpeedScale - 1) * 0.5).ToString("0%")+ "\r\n" + (Configs.wormholeRange / 40000.0).ToString() + "AU";
 
+        }
+
+
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(ItemProto), "GetPropName")]
+        public static void GetPropNamePatch(ref ItemProto __instance, int index, ref string __result)
+        {
+            if ((ulong)index >= (ulong)((long)__instance.DescFields.Length))
+            {
+                __result = "";
+                return;
+            }
+            switch (__instance.DescFields[index])
+            {
+                case 50:
+                    __result = "伤害".Translate();
+                    return;
+                case 51:
+                    __result = "弹道速度".Translate();
+                    return;
+                case 52:
+                    __result = "伤害半径".Translate();
+                    return;
+                case 53:
+                    __result = "射速".Translate();
+                    return;
+            }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(ItemProto), "GetPropValue")]
+        public static void GetPropValuePatch(ref ItemProto __instance, int index, ref string __result)
+        {
+            if ((ulong)index >= (ulong)((long)__instance.DescFields.Length))
+            {
+                __result = "";
+                return;
+            }
+            switch (__instance.DescFields[index])
+            {
+                case 50:
+                    __result = GetBulletInfos(__instance.ID)[0].ToString();
+                    return;
+                case 51:
+                    __result = GetBulletInfos(__instance.ID)[1].ToString() + " m/s";
+                    return;
+                case 52:
+                    __result = GetBulletInfos(__instance.ID)[2].ToString() + " m";
+                    return;
+                case 53:
+                    if (__instance.prefabDesc.isEjector)
+                    {
+                        __result = (3600.0 / (double)(__instance.prefabDesc.ejectorChargeFrame + __instance.prefabDesc.ejectorColdFrame)).ToString("0.##") + "/min";
+                        return;
+                    }
+                    if (__instance.prefabDesc.isSilo)
+                    {
+                        __result = (3600.0 / (double)(__instance.prefabDesc.siloChargeFrame + __instance.prefabDesc.siloColdFrame)).ToString("0.##") + "/min";
+                        return;
+                    }
+                    return;
+            }
+        }
+  
+  
+        public static int[] GetBulletInfos(int protoId)
+        {
+            switch (protoId)
+            {
+                case 8001:
+                    return new int[] { Configs.bullet1Atk, (int)Configs.bullet1Speed * 50, 0 };
+                case 8002:
+                    return new int[] { Configs.bullet2Atk, (int)Configs.bullet2Speed * 50, 0 };
+                case 8003:
+                    return new int[] { Configs.bullet3Atk, (int)Configs.bullet3Speed * 50, 0 };
+                case 8004:
+                    return new int[] { Configs.missile1Atk, (int)Configs.missile1Speed, Configs.missile1Range };
+                case 8005:
+                    return new int[] { Configs.missile2Atk, (int)Configs.missile2Speed, Configs.missile2Range };
+                case 8006:
+                    return new int[] { Configs.missile3Atk, (int)Configs.missile3Speed, Configs.missile3Range };
+                case 8007:
+                    return new int[] { Configs.bullet4Atk, (int)Configs.bullet4Speed, 0 };
+
+                default:
+                    return new int[] { 0, 0, 0 };
+            }
         }
 
     }

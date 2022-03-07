@@ -44,14 +44,15 @@ namespace DSP_Battle
                 {
                     DysonSphere sphere = GameMain.data.dysonSpheres[i];
                     if (sphere == null)
+                    {
                         continue;
+                    }
                     DysonSwarm swarm = GameMain.data.dysonSpheres[i].swarm;
                     int starIndex = GameMain.data.dysonSpheres[i].starData.index;
                     if (swarm != null)
                     {
                         if (bulletTargets[starIndex] == null)
                         {
-                            DspBattlePlugin.logger.LogWarning($"null bullettargets index{starIndex}");
                             continue;
                         }
                         foreach (var j in bulletTargets[starIndex].Keys)
