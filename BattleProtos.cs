@@ -332,6 +332,11 @@ namespace DSP_Battle
             SiloModel.prefabDesc.siloColdFrame = 120;
             LDBTool.PreAddProto(SiloModel);
 
+
+            LDBTool.SetBuildBar(6, 7, 8011);
+            LDBTool.SetBuildBar(6, 8, 8012);
+            LDBTool.SetBuildBar(6, 9, 8014);
+            LDBTool.SetBuildBar(6, 10, 8013);
         }
 
         private static ModelProto CopyModelProto(int oriId, int id, Color color)
