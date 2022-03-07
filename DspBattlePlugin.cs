@@ -24,6 +24,9 @@ namespace DSP_Battle
     public class DspBattlePlugin : BaseUnityPlugin, IModCanSave
     {
         public static string GUID = "com.ckcz123.DSP_Battle";
+        public static string MODID_tab = "DSPBattle";
+
+        public static bool developerMode = true;
 
         public static System.Random randSeed = new System.Random();
         public static int minShowDetaisSecond; //取决于科技
@@ -34,7 +37,7 @@ namespace DSP_Battle
         public static int destroyedCount;
         public static bool preparingNextWave = false;
 
-        public static int pageBias;
+        public static int pagenum;
 
 
         public void Awake()
@@ -43,9 +46,21 @@ namespace DSP_Battle
             Configs.Init(Config);
 
             var pluginfolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var resources = new ResourceData(GUID, "texpack", pluginfolder);
-            resources.LoadAssetBundle("texpack");
+            var resources = new ResourceData(GUID, "DSPBattle", pluginfolder);
+            resources.LoadAssetBundle("dspbattletex");
             ProtoRegistry.AddResource(resources);
+            try
+            {
+                using (ProtoRegistry.StartModLoad(GUID))
+                {
+                    pagenum = TabSystem.RegisterTab($"{MODID_tab}:{MODID_tab}Tab", new TabData("轨道防御", "Assets/DSPBattle/dspbattletabicon"));
+                }
+            }
+            catch (Exception)
+            {
+                pagenum = 0;
+            }
+            BattleProtos.pageBias = (pagenum-2) * 1000 - 500;
 
             EnemyShips.Init();
             Harmony.CreateAndPatchAll(typeof(EnemyShips));

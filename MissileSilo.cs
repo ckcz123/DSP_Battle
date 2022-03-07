@@ -53,7 +53,7 @@ namespace DSP_Battle
 			if(GameMain.instance.timei % 60 ==0 && __instance.bulletCount == 0)
             {
 				__instance.bulletId = nextBulletId(__instance.bulletId);
-            }
+			}
 
 			if (__instance.needs == null)
 			{

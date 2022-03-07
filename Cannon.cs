@@ -44,14 +44,15 @@ namespace DSP_Battle
                 {
                     DysonSphere sphere = GameMain.data.dysonSpheres[i];
                     if (sphere == null)
+                    {
                         continue;
+                    }
                     DysonSwarm swarm = GameMain.data.dysonSpheres[i].swarm;
                     int starIndex = GameMain.data.dysonSpheres[i].starData.index;
                     if (swarm != null)
                     {
                         if (bulletTargets[starIndex] == null)
                         {
-                            DspBattlePlugin.logger.LogWarning($"null bullettargets index{starIndex}");
                             continue;
                         }
                         foreach (var j in bulletTargets[starIndex].Keys)
@@ -542,7 +543,7 @@ namespace DSP_Battle
                             EnemyShips.ships[bulletTargets[starIndex][i]].BeAttacked(canDoDamage[starIndex][i]); //击中造成伤害  //如果在RemoveBullet的postpatch写这个，可以不用每帧循环检测，但是伤害将在爆炸动画后结算，感觉不太合理
                         }
                         int v;
-                        //canDoDamage[starIndex].TryRemove(i,out v); //该子弹已造成过伤害，或者因为飞船已经不存在了，这两种情况都要将子弹的未来还可造成的伤害设置成0
+                        canDoDamage[starIndex].TryRemove(i,out v); //该子弹已造成过伤害，或者因为飞船已经不存在了，这两种情况都要将子弹的未来还可造成的伤害设置成0
                     }
                 }
                 
