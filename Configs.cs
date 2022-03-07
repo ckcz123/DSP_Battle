@@ -153,13 +153,13 @@ namespace DSP_Battle
 
         public static void Init(ConfigFile config)
         {
-            _bullet1Speed = config.Bind("config", "bullet1Speed", defaultValue: 100.0, "穿甲磁轨弹速度（默认太阳帆速度视为100）").Value;
+            _bullet1Speed = config.Bind("config", "bullet1Speed", defaultValue: 5000.0, "穿甲磁轨弹速度").Value;
             _bullet1Atk = config.Bind("config", "bullet1Atk", defaultValue: 100, "穿甲磁轨弹攻击力").Value;
-            _bullet2Speed = config.Bind("config", "bullet2Speed", defaultValue: 100.0, "强酸磁轨弹速度（默认太阳帆速度视为100）").Value;
+            _bullet2Speed = config.Bind("config", "bullet2Speed", defaultValue: 5000.0, "强酸磁轨弹速度").Value;
             _bullet2Atk = config.Bind("config", "bullet2Atk", defaultValue: 180, "强酸磁轨弹攻击力").Value;
-            _bullet3Speed = config.Bind("config", "bullet3Speed", defaultValue: 100.0, "氘核爆破弹速度（默认太阳帆速度视为100）").Value;
+            _bullet3Speed = config.Bind("config", "bullet3Speed", defaultValue: 5000.0, "氘核爆破弹速度").Value;
             _bullet3Atk = config.Bind("config", "bullet3Atk", defaultValue: 400, "氘核爆破弹攻击力").Value;
-            _bullet4Speed = config.Bind("config", "bullet4Speed", defaultValue: 5000.0, "中子脉冲束速度（默认太阳帆速度视为100）").Value;
+            _bullet4Speed = config.Bind("config", "bullet4Speed", defaultValue: 250000.0, "中子脉冲束速度").Value;
             _bullet4Atk = config.Bind("config", "bullet4Atk", defaultValue: 10, "中子脉冲束攻击力").Value;
 
             _missile1Speed = config.Bind("config", "missile1Speed", defaultValue: 5000.0, "热核导弹速度（米每秒）").Value;

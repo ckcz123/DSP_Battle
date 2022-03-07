@@ -282,7 +282,9 @@ namespace DSP_Battle
 
                 factory.RemoveEntityWithComponents(entityId);
             }
-            catch (Exception e) { }
+            catch
+            { 
+            }
 
         }
 

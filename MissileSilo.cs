@@ -492,7 +492,6 @@ namespace DSP_Battle
 
 
 						VectorLF3 vectorLF6 = Vector3.zero;
-						bool flag2 = false;
 						double num30 = (double)(2f - (float)num8 / 200f);
 						if (num30 > 1.0)
 						{
@@ -512,7 +511,6 @@ namespace DSP_Battle
 							num30 = (3.0 - num30 - num30) * num30 * num30;
 							vectorLF6 = (lhs - dysonRocket.uPos) * num30;
 							dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b2, (float)num30);
-							flag2 = true;
 						}
 						
 						double num33 = (double)dysonRocket.uSpeed * num;
@@ -1095,7 +1093,6 @@ namespace DSP_Battle
 
 
 							VectorLF3 vectorLF6 = Vector3.zero;
-							bool flag2 = false;
 							double num30 = (double)(2f - (float)num8 / 200f);
 							if (num30 > 1.0)
 							{
@@ -1115,7 +1112,6 @@ namespace DSP_Battle
 								num30 = (3.0 - num30 - num30) * num30 * num30;
 								vectorLF6 = (lhs - dysonRocket.uPos) * num30;
 								dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b2, (float)num30);
-								flag2 = true;
 							}
 							double num33 = (double)dysonRocket.uSpeed * num; //这里是乘了1/60
 							VectorLF3 distanceCheck = new VectorLF3(999, 999, 999);
