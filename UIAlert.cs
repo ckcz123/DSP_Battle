@@ -102,7 +102,6 @@ namespace DSP_Battle
             isActive = false;
             titleObj.SetActive(false);
             statisticObj.SetActive(false);
-
         }
 
         [HarmonyPostfix]

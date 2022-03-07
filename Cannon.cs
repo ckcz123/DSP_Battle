@@ -268,22 +268,22 @@ namespace DSP_Battle
                     loopNum = sortedShips.Count;
                     if (__instance.bulletId == 8001)
                     {
-                        maxtDivisor = 50 * Configs.bullet1Speed * cannonSpeedScale;
+                        maxtDivisor = Configs.bullet1Speed * cannonSpeedScale;
                         damage = (int)(Configs.bullet1Atk * cannonSpeedScale); //只有这个子弹能够因为引力弹射器而强化伤害
                     }
                     else if (__instance.bulletId == 8002)
                     {
-                        maxtDivisor = 50 * Configs.bullet2Speed * cannonSpeedScale;
+                        maxtDivisor = Configs.bullet2Speed * cannonSpeedScale;
                         damage = Configs.bullet2Atk;
                     }
                     else if (__instance.bulletId == 8003)
                     {
-                        maxtDivisor = 50 * Configs.bullet3Speed * cannonSpeedScale;
+                        maxtDivisor = Configs.bullet3Speed * cannonSpeedScale;
                         damage = Configs.bullet3Atk;
                     }
                     else if (__instance.bulletId == 8007)
                     {
-                        maxtDivisor = 50 * Configs.bullet4Speed; //没有速度加成
+                        maxtDivisor = Configs.bullet4Speed; //没有速度加成
                         damage = Configs.bullet4Atk;
                     }
                 }
