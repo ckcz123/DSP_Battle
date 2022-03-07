@@ -469,7 +469,15 @@ namespace DSP_Battle
                                 foreach (var item in shipsHit)
                                 {
                                     if (EnemyShips.ships.ContainsKey(item))
-                                        EnemyShips.ships[item].BeAttacked(damage);
+                                    {
+                                        double distance = (dysonRocket.uPos - EnemyShips.ships[item].uPos).magnitude;
+                                        int realDamage = damage;
+                                        if(distance > dmgRange*0.5)
+                                        {
+                                            realDamage = (int)(damage * (1.0 - (2 * distance - dmgRange) / dmgRange));
+                                        }
+                                        EnemyShips.ships[item].BeAttacked(realDamage);
+                                    }
                                 }
                                 missileProtoIds[starIndex][i] = 0;
                                 __instance.RemoveDysonRocket(i);
@@ -1107,7 +1115,15 @@ namespace DSP_Battle
                                     foreach (var item in shipsHit)
                                     {
                                         if (EnemyShips.ships.ContainsKey(item))
-                                            EnemyShips.ships[item].BeAttacked(damage);
+                                        {
+                                            double distance = (dysonRocket.uPos - EnemyShips.ships[item].uPos).magnitude;
+                                            int realDamage = damage;
+                                            if (distance > dmgRange * 0.5)
+                                            {
+                                                realDamage = (int)(damage * (1.0 - (2 * distance - dmgRange) / dmgRange));
+                                            }
+                                            EnemyShips.ships[item].BeAttacked(realDamage);
+                                        }
                                     }
                                     missileProtoIds[starIndex][i] = 0;
                                     __instance.RemoveDysonRocket(i);

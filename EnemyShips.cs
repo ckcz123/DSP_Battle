@@ -23,7 +23,6 @@ namespace DSP_Battle
         public static bool shouldDistroy = true;
         private static bool removingComponets = false;
 
-        public static int disBias = 0;
 
         public static void Init()
         {
@@ -489,7 +488,15 @@ namespace DSP_Battle
                         AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
                         VectorLF3 stationUpos = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, stationPos);
                         VectorLF3 shipLocalPos = Maths.QInvRotateLF(astroPoses[planetId].uRot, ship.uPos - astroPoses[planetId].uPos);
-
+                        //我不会再星球表面生成目标点，就用下面这种近似方法
+                        VectorLF3 direc2Center = astroPoses[planetId].uPos - stationUpos; //物流塔到星球球心连线
+                        VectorLF3 vert = new VectorLF3(0, 0, 1);
+                        if (direc2Center.z != 0)
+                        {
+                            double randX = DspBattlePlugin.randSeed.NextDouble() - 0.5;
+                            double randY = DspBattlePlugin.randSeed.NextDouble() - 0.5;
+                            vert = new VectorLF3(randX, randY, ((-direc2Center.x) * randX - direc2Center.y * randY) / direc2Center.z); //这是一个与星球表面相切的随机方向，模拟地表
+                        }
 
                         int bulletIndex = swarm.AddBullet(new SailBullet
                         {
@@ -497,8 +504,8 @@ namespace DSP_Battle
                             lBegin = shipLocalPos,
                             uEndVel = stationUpos - ship.uPos,
                             uBegin = ship.uPos,
-                            uEnd = stationUpos + new VectorLF3((DspBattlePlugin.randSeed.NextDouble() - 0.5) * disBias, (DspBattlePlugin.randSeed.NextDouble() - 0.5) * disBias, (DspBattlePlugin.randSeed.NextDouble() - 0.5) * disBias) + (astroPoses[planetId].uPos - stationUpos).normalized * disBias / 2
-                        }, 1); ;
+                            uEnd = stationUpos + vert.normalized * ship.damageRange * DspBattlePlugin.randSeed.NextDouble() + direc2Center.normalized * DspBattlePlugin.randSeed.NextDouble() * ship.damageRange * 0.4
+                        }, 1);
 
                         swarm.bulletPool[bulletIndex].state = 0;
 
