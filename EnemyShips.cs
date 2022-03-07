@@ -459,9 +459,18 @@ namespace DSP_Battle
         private static Dictionary<LogisticShipUIRenderer, ShipUIRenderingData[]> logisticShipUIRendererShipUIRenderingData = new Dictionary<LogisticShipUIRenderer, ShipUIRenderingData[]>();
         private static FieldInfo logisticShipUIRendererShipCount = null;
 
+        private static bool logisticShipUIRendererExpanded = false;
+        
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(LogisticShipUIRenderer), "SetCapacity")
+        public static void LogisticShipUIRenderer_SetCapacity()
+        {
+            logisticShipUIRendererExpanded = true;
+        }
+        
         [HarmonyPostfix]
         [HarmonyPatch(typeof(LogisticShipUIRenderer), "Update")]
-        unsafe public static void LogisticShipUIRenderer_Update(ref LogisticShipUIRenderer __instance)
+        public static void LogisticShipUIRenderer_Update(ref LogisticShipUIRenderer __instance)
         {
             if (ships.Count == 0) return;
 
@@ -477,17 +486,16 @@ namespace DSP_Battle
 
             int shipCount = (int)logisticShipUIRendererShipCount.GetValue(__instance);
 
-            bool expanded = false;
             while (__instance.capacity < shipCount + ships.Count)
             {
                 __instance.Expand2x();
-                expanded = true;
             }
 
-            if (!logisticShipUIRendererComputeBuffer.ContainsKey(__instance) || expanded)
+            if (!logisticShipUIRendererComputeBuffer.ContainsKey(__instance) || logisticShipUIRendererExpanded)
             {
                 logisticShipUIRendererComputeBuffer[__instance] = AccessTools.FieldRefAccess<LogisticShipUIRenderer, ComputeBuffer>(__instance, "shipsBuffer");
                 logisticShipUIRendererShipUIRenderingData[__instance] = AccessTools.FieldRefAccess<LogisticShipUIRenderer, ShipUIRenderingData[]>(__instance, "shipsArr");
+                logisticShipUIRendererExpanded = false;
             }
 
             ComputeBuffer shipsBuffer = logisticShipUIRendererComputeBuffer[__instance];
