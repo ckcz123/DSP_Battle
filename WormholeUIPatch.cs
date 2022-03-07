@@ -132,7 +132,9 @@ namespace DSP_Battle
 
             __instance.blackRenderer.transform.localScale = Vector3.one * (__instance.solidRadius * 2f);
         }
-
+        
+        private static int lastWaveState2 = -1;
+        
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UIStarmap), "CreateAllStarUIs")]
         public static void UIStarmap_CreateAllStarUIs(ref UIStarmap __instance)
@@ -152,7 +154,7 @@ namespace DSP_Battle
                 uiStar[i].gameObject.SetActive(false);
             }
 
-            lastWaveState = -1;
+            lastWaveState2 = -1;
 
         }
 
@@ -164,29 +166,24 @@ namespace DSP_Battle
             {
                 if ((Configs.nextWaveState != 2 && Configs.nextWaveState != 3) || i >= Configs.nextWaveWormCount)
                 {
-                    if (uiStar[i].active)
+                    if (lastWaveState2 != Configs.nextWaveState)
                     {
                         uiStar[i]._Close();
-                    }
-                    if (uiStar[i].starObject.gameObject.activeSelf)
-                    {
                         uiStar[i].starObject.gameObject.SetActive(false);
                     }
                 }
                 else
                 {
-                    if (!uiStar[i].active)
+                    if (lastWaveState2 != Configs.nextWaveState)
                     {
                         uiStar[i]._Open();
-                    }
-                    if (!uiStar[i].starObject.gameObject.activeSelf)
-                    {
                         uiStar[i].gameObject.SetActive(true);
                     }
 
                     uiStar[i]._Update();
                 }
             }
+            lastWaveState2 = Configs.nextWaveState;
         }
 
         [HarmonyPostfix]
