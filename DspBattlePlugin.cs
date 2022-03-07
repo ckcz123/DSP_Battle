@@ -13,6 +13,7 @@ using crecheng.DSPModSave;
 using System.IO;
 using CommonAPI.Systems;
 using System.Reflection;
+using BepInEx.Configuration;
 
 namespace DSP_Battle
 {
@@ -39,10 +40,13 @@ namespace DSP_Battle
 
         public static int pagenum;
 
+        private static ConfigFile config;
+
 
         public void Awake()
         {
             logger = Logger;
+            config = Config;
             Configs.Init(Config);
 
             var pluginfolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
