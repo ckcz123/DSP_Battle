@@ -23,10 +23,12 @@ namespace DSP_Battle
         public static bool shouldDistroy = true;
         private static bool removingComponets = false;
 
+        public static int timeDelay = 0;
 
         public static void Init()
         {
             ships = new ConcurrentDictionary<int, EnemyShip>();
+            timeDelay = 0;
             SortShips();
         }
 
@@ -224,6 +226,8 @@ namespace DSP_Battle
                         }
                     }
                     removingComponets = false;
+                    timeDelay += 5 * 3600;
+                    if (timeDelay > 30 * 3600) timeDelay = 30 * 3600;
 
                     ////爆炸效果， 此方案已被转移到飞船发射子弹轰击
                     //int starIndex = planetFactory.planetId / 100 - 1;
@@ -343,7 +347,8 @@ namespace DSP_Battle
 
                     // Gen next wave
                     int deltaFrames = (Configs.coldTime[Math.Min(Configs.coldTime.Length - 1, Configs.totalWave)] + 1) * 3600;
-                    Configs.nextWaveFrameIndex = time + deltaFrames;
+                    Configs.nextWaveFrameIndex = time + deltaFrames + timeDelay;
+                    timeDelay = 0;
                     DspBattlePlugin.logger.LogInfo("=====> DeltaFrames: " + deltaFrames);
                     Configs.nextWaveIntensity = Configs.intensity[Math.Min(Configs.intensity.Length - 1, Configs.wavePerStar[starId])];
                     Configs.nextWavePlanetId = planetId;

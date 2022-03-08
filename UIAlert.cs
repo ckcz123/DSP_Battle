@@ -23,6 +23,7 @@ namespace DSP_Battle
         public static Text stat2value;
         public static Text stat3label;
         public static Text stat3value;
+        public static Text helpInfo;
 
         public static string txtColorWarn1 = "<color=#ffa800>";
         public static string txtColorWarn2 = "<color=#ff7000>";
@@ -95,6 +96,13 @@ namespace DSP_Battle
             stat3label = sons.Find("sail-cnt-label").GetComponent<Text>();
             stat3value = sons.Find("sail-cnt-text").GetComponent<Text>();
 
+            GameObject myStat1LabelObj = sons.Find("dyson-cnt-label").gameObject;
+            GameObject addHelpObj = GameObject.Instantiate(myStat1LabelObj);
+            addHelpObj.transform.SetParent(titleObj.transform, false);
+            addHelpObj.transform.localPosition = new Vector3(500, -60, 0);
+            addHelpObj.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 70);
+            helpInfo = addHelpObj.GetComponent<Text>();
+
             isActive = false;
             titleObj.SetActive(false);
             statisticObj.SetActive(false);
@@ -126,13 +134,14 @@ namespace DSP_Battle
 
         public static void RefreshUIAlert(long time, bool forceRefresh = false)
         {
+            
             if (DSPGame.IsMenuDemo)
             {
                 ShowAlert(false);
                 return;
             }
             if (time % 30 != 1 && !forceRefresh) return;
-
+            helpInfo.text = "按下退格键开启或关闭此窗口，按下减号键使敌军进攻时间提前1分钟。";
             if (Configs.nextWaveState == 0 && lastState != 0) //刚刚打完一架，关闭警告
             {
                 ShowAlert(false);
