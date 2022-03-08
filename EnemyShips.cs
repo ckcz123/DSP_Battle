@@ -461,6 +461,15 @@ namespace DSP_Battle
         }
 
         private static Dictionary<LogisticShipRenderer, ComputeBuffer> logisticShipRendererComputeBuffer = new Dictionary<LogisticShipRenderer, ComputeBuffer>();
+        private static bool logisticShipRendererExpanded = false;
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(LogisticShipRenderer), "SetCapacity")]
+        public static void LogisticShipRenderer_SetCapacity()
+        {
+            logisticShipRendererExpanded = true;
+        }
+
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(LogisticShipRenderer), "Update")]
@@ -522,9 +531,9 @@ namespace DSP_Battle
                 
             }
 
-            if (!logisticShipRendererComputeBuffer.ContainsKey(__instance))
+            if (!logisticShipRendererComputeBuffer.ContainsKey(__instance) || logisticShipRendererExpanded)
             {
-                logisticShipRendererComputeBuffer.Add(__instance, AccessTools.FieldRefAccess<LogisticShipRenderer, ComputeBuffer>(__instance, "shipsBuffer"));
+                logisticShipRendererComputeBuffer[__instance] = AccessTools.FieldRefAccess<LogisticShipRenderer, ComputeBuffer>(__instance, "shipsBuffer");
             }
 
             if (logisticShipRendererComputeBuffer[__instance] != null)
@@ -585,8 +594,6 @@ namespace DSP_Battle
                 shipsArr[shipCount] = ship.renderingUIData;
                 shipsArr[shipCount].rpos = (shipsArr[shipCount].upos - uiStarMap.viewTargetUPos) * 0.00025;
                 shipCount++;
-
-                
             }
 
             logisticShipUIRendererShipCount.SetValue(__instance, shipCount);
