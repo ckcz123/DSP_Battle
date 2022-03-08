@@ -308,6 +308,7 @@ namespace DSP_Battle
                     {
                         vectorLF2 = sortedShips[gm].uPos;
                         shipIdx = sortedShips[gm].shipIndex;
+                        if (!EnemyShips.ships.ContainsKey(shipIdx)) continue;
                     }
                     else
                     {

@@ -452,12 +452,12 @@ namespace DSP_Battle
         public static void RemoveShip(EnemyShip ship)
         {
             ships.TryRemove(ship.shipIndex, out EnemyShip _);
-            minTargetDisSortedShips[ship.starIndex].Remove(ship);
-            minHpSortedShips[ship.starIndex].Remove(ship);
-            foreach (var entry in minPlanetDisSortedShips[ship.starIndex])
-            {
-                entry.Value.Remove(ship);
-            }
+            // minTargetDisSortedShips[ship.starIndex].Remove(ship);
+            // minHpSortedShips[ship.starIndex].Remove(ship);
+            // foreach (var entry in minPlanetDisSortedShips[ship.starIndex])
+            // {
+            //     entry.Value.Remove(ship);
+            // }
         }
 
         private static Dictionary<LogisticShipRenderer, ComputeBuffer> logisticShipRendererComputeBuffer = new Dictionary<LogisticShipRenderer, ComputeBuffer>();
