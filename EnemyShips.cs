@@ -381,7 +381,7 @@ namespace DSP_Battle
                         intensity -= Configs.nextWaveEnemy[i] * Configs.enemyIntensity[i];
                     }
                     Configs.nextWaveEnemy[0] = intensity / Configs.enemyIntensity[0];
-                    Configs.nextWaveWormCount = gidRandom.Next(0, Math.Min(20, Configs.nextWaveEnemy.Sum())) + 1;
+                    Configs.nextWaveWormCount = gidRandom.Next(0, Math.Min(50, Configs.nextWaveEnemy.Sum())) + 1;
 
                     UIRealtimeTip.Popup("下一波进攻即将到来！".Translate());
                     UIAlert.ShowAlert(true);
