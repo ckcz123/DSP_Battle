@@ -59,8 +59,7 @@ namespace DSP_Battle
             double distance = 1e99;
             for (int i = 0; i < stations.Length; ++i)
             {
-                if (stations[i] != null && stations[i].id != 0 && stations[i].gid != 0 && stations[i].isStellar &&
-                    !stations[i].isCollector && !stations[i].isVeinCollector && stations[i].planetId / 100 - 1 == starData.index)
+                if (stations[i] != null && stations[i].id != 0 && stations[i].gid != 0 && stations[i].isStellar && stations[i].planetId / 100 - 1 == starData.index)
                 {
                     AstroPose astroPose = astroPoses[stations[i].planetId];
                     VectorLF3 stationPos = astroPose.uPos + Maths.QRotateLF(astroPose.uRot, stations[i].shipDockPos + stations[i].shipDockPos.normalized * 25f);
@@ -349,14 +348,30 @@ namespace DSP_Battle
                     int deltaFrames = (Configs.coldTime[Math.Min(Configs.coldTime.Length - 1, Configs.totalWave)] + 1) * 3600;
                     Configs.nextWaveFrameIndex = time + deltaFrames + timeDelay;
                     timeDelay = 0;
-                    DspBattlePlugin.logger.LogInfo("=====> DeltaFrames: " + deltaFrames);
                     Configs.nextWaveIntensity = Configs.intensity[Math.Min(Configs.intensity.Length - 1, Configs.wavePerStar[starId])];
+                    // Extra intensity
+                    long cube = (long)(GameMain.history.universeMatrixPointUploaded * 0.0002777777777777778);
+                    if (cube > 100000) Configs.nextWaveIntensity += (int)((cube - 100000) / 1000);
+
+                    ulong energy = 0;
+                    DysonSphere[] dysonSpheres = GameMain.data.dysonSpheres;
+                    int num3 = dysonSpheres.Length;
+                    for (int i = 0; i < num3; i++)
+                    {
+                        if (dysonSpheres[i] != null)
+                        {
+                            energy += (ulong)dysonSpheres[i].energyGenCurrentTick;
+                        }
+                    }
+                    energy *= 60;
+                    energy /= (1024 * 1024 * 1024L);
+
+                    if (energy > 300) // 300G
+                        Configs.nextWaveIntensity += (int)(energy - 300) * 5;
+                    if (Configs.nextWaveIntensity > 30000) Configs.nextWaveIntensity = 30000;
+
                     Configs.nextWavePlanetId = planetId;
                     Configs.nextWaveState = 1;
-
-                    DspBattlePlugin.logger.LogInfo("=====> nextWaveFrameIndex: " + Configs.nextWaveFrameIndex);
-                    DspBattlePlugin.logger.LogInfo("=====> nextWaveIntensity: " + Configs.nextWaveIntensity);
-                    DspBattlePlugin.logger.LogInfo("=====> nextWavePlanetId: " + Configs.nextWavePlanetId);
 
                     int intensity = Configs.nextWaveIntensity;
                     for (int i = 4; i >= 1; --i)
@@ -367,9 +382,6 @@ namespace DSP_Battle
                     }
                     Configs.nextWaveEnemy[0] = intensity / Configs.enemyIntensity[0];
                     Configs.nextWaveWormCount = gidRandom.Next(0, Math.Min(20, Configs.nextWaveEnemy.Sum())) + 1;
-
-                    DspBattlePlugin.logger.LogInfo("=====> nextWaveWormCount: " + Configs.nextWaveWormCount);
-                    DspBattlePlugin.logger.LogInfo("=====> nextWaveWormEnemy: " + Configs.nextWaveEnemy.Select(e => e + "").Join(null, ","));
 
                     UIRealtimeTip.Popup("下一波进攻即将到来！".Translate());
                     UIAlert.ShowAlert(true);
