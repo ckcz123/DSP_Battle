@@ -534,6 +534,7 @@ namespace DSP_Battle
             if (!logisticShipRendererComputeBuffer.ContainsKey(__instance) || logisticShipRendererExpanded)
             {
                 logisticShipRendererComputeBuffer[__instance] = AccessTools.FieldRefAccess<LogisticShipRenderer, ComputeBuffer>(__instance, "shipsBuffer");
+                logisticShipRendererExpanded = false;
             }
 
             if (logisticShipRendererComputeBuffer[__instance] != null)
