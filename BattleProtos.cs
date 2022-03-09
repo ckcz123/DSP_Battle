@@ -32,7 +32,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("导弹1结论", "", "你解锁了热核导弹，可以自动追踪敌人");
 
             ProtoRegistry.RegisterString("导弹2", "", "反物质导弹");
-            ProtoRegistry.RegisterString("导弹2描述", "", "先驱者在一次搬运货物时不慎手滑造成微量<color=#c2853d>反物质</color>泄露，这导致他辛辛苦苦拉好的产线毁于一旦。“为什么不让敌人常常这种痛苦呢？”他想到。于是这种将<color=#c2853d>湮灭约束球</color>封装入导弹的武器被制造了出来，命中敌人后会发生湮灭，将敌人彻底抹杀。");
+            ProtoRegistry.RegisterString("导弹2描述", "", "先驱者在一次搬运货物时不慎手滑造成微量<color=#c2853d>反物质</color>泄露，这导致他辛辛苦苦拉好的产线毁于一旦。“为什么不让敌人尝尝这种痛苦呢？”他想到。于是这种将<color=#c2853d>湮灭约束球</color>封装入导弹的武器被制造了出来，命中敌人后会发生湮灭，将敌人彻底抹杀。");
             ProtoRegistry.RegisterString("导弹2结论", "", "你解锁了反物质导弹，可以自动追踪敌人");
 
             ProtoRegistry.RegisterString("导弹3", "", "引力塌陷导弹");
@@ -65,7 +65,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("引力操控技术描述", "", "制造<color=#c2853d>引力弹射炮</color>升级近地防卫系统，生产<color=#c2853d>引力塌陷导弹</color>进一步加强深空防御。");
             ProtoRegistry.RegisterString("引力操控技术结论", "", "你解锁了引力操控技术");
             ProtoRegistry.RegisterString("相位裂解技术", "", "相位裂解技术");
-            ProtoRegistry.RegisterString("相位裂解技术描述", "", "制造强力武器<color=#c2853d>相位裂解炮</color>获得终极近地防御能力。");
+            ProtoRegistry.RegisterString("相位裂解技术描述", "", "<color=#c2853d>相位裂解炮</color>来全杀了。");
             ProtoRegistry.RegisterString("相位裂解技术结论", "", "你解锁了相位裂解技术");
 
 
