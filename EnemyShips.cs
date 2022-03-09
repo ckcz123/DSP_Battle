@@ -224,6 +224,7 @@ namespace DSP_Battle
                             RemoveEntity(planetFactory, i);
                         }
                     }
+                    UIAlert.elimPointRatio *= 0.5f;
                     removingComponets = false;
                     timeDelay += 5 * 3600;
                     if (timeDelay > 30 * 3600) timeDelay = 30 * 3600;
