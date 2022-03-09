@@ -13,93 +13,97 @@ namespace DSP_Battle
         public static int pageBias = 0;
         public static void AddProtos()
         {
-            //bc7e35
+            //bc7e35 no
             //c2853d
-            ProtoRegistry.RegisterString("子弹1", "Armour-piercing bullet", "穿甲磁轨弹");
-            ProtoRegistry.RegisterString("子弹1描述", "", "从来没见过敌人的先驱者把老祖宗的数据库翻了114514遍，东拼西凑出来一个穿甲弹设计图。由于没找到火药配方，只好照着炮弹的样子铸造成实心炮弹并加强其结构。仅能进行单体打击，杀伤力有限。");
+            ProtoRegistry.RegisterString("子弹1", "Armour piercing", "穿甲磁轨弹");
+            ProtoRegistry.RegisterString("子弹1描述", "A cheap bullet, attack single enemy.", "从来没见过敌人的先驱者把老祖宗的数据库翻了114514遍，东拼西凑出来一个穿甲弹设计图。由于没找到火药配方，只好照着炮弹的样子铸造成实心炮弹并加强其结构。仅能进行单体打击，杀伤力有限。");
             ProtoRegistry.RegisterString("子弹1结论", "", "你解锁了穿甲磁轨弹，可以利用动能进行攻击");
             ProtoRegistry.RegisterString("子弹2", "Acid bullet", "强酸磁轨弹");
-            ProtoRegistry.RegisterString("子弹2描述", "", "在对敌人进行分析和研究后，先驱者大胆将<color=#c2853d>硫酸</color>封装后制成了一种新的炮弹。爆破后可以对范围内敌人产生酸蚀，更加高效地杀伤敌人。“果然AOE才是王道！”先驱者自言自语道。");
+            ProtoRegistry.RegisterString("子弹2描述", "Acid attack，powerful.", "在对敌人进行分析和研究后，先驱者大胆将<color=#c2853d>硫酸</color>封装后制成了一种新的炮弹。爆破后可以对范围内敌人产生酸蚀，更加高效地杀伤敌人。“果然AOE才是王道！”先驱者自言自语道。");
             ProtoRegistry.RegisterString("子弹2结论", "", "你解锁了强酸磁轨弹，可以利用硫酸腐蚀外壳");
-            ProtoRegistry.RegisterString("子弹3", "", "氘核爆破弹");
-            ProtoRegistry.RegisterString("子弹3描述", "", "制造出<color=#c2853d>热核导弹</color>的先驱者想要让他更小更快，便试着把核弹微缩化封装进了子弹里。这种强力的炮弹被制造出来的同时，先驱者将敌人命名为了“ ”。该武器可以在命中后发生爆炸造成大范围杀伤。");
+            ProtoRegistry.RegisterString("子弹3", "Deuterium nucleus", "氘核爆破弹");
+            ProtoRegistry.RegisterString("子弹3描述", "A bullet with a micro-thermonuclear-boom in it, more powerful attack.", "制造出<color=#c2853d>热核导弹</color>的先驱者想要让他更小更快，便试着把核弹微缩化封装进了子弹里。这种强力的炮弹被制造出来的同时，先驱者将敌人命名为了“ ”。该武器可以在命中后发生爆炸造成大范围杀伤。");
             ProtoRegistry.RegisterString("子弹3结论", "", "你解锁了氘核爆破弹，可以利用核聚变进行破坏");
-            ProtoRegistry.RegisterString("脉冲", "", "相位裂解光束");
+            ProtoRegistry.RegisterString("脉冲", "Phase-cracking beam", "相位裂解光束");
             ProtoRegistry.RegisterString("脉冲描述", "", "-");
 
-            ProtoRegistry.RegisterString("导弹1", "", "热核导弹");
-            ProtoRegistry.RegisterString("导弹1描述", "", "这天，百无聊赖的先驱者正在刷哔哩哔哩，突然刷到了一条《如何在卧室制造核弹》的视频，于是这种导弹便被制造了出来。这是一种重型武器，发射升空并命中敌人后产生核爆，造成大范围伤害。");
+            ProtoRegistry.RegisterString("导弹1", "Thermonuclear missile", "热核导弹");
+            ProtoRegistry.RegisterString("导弹1描述", "A powerful nuclear missile", "这天，百无聊赖的先驱者正在刷哔哩哔哩，突然刷到了一条《如何在卧室制造核弹》的视频，于是这种导弹便被制造了出来。这是一种重型武器，发射升空并命中敌人后产生核爆，造成大范围伤害。");
             ProtoRegistry.RegisterString("导弹1结论", "", "你解锁了热核导弹，可以自动追踪敌人");
 
-            ProtoRegistry.RegisterString("导弹2", "", "反物质导弹");
-            ProtoRegistry.RegisterString("导弹2描述", "", "先驱者在一次搬运货物时不慎手滑造成微量<color=#c2853d>反物质</color>泄露，这导致他辛辛苦苦拉好的产线毁于一旦。“为什么不让敌人尝尝这种痛苦呢？”他想到。于是这种将<color=#c2853d>湮灭约束球</color>封装入导弹的武器被制造了出来，命中敌人后会发生湮灭，将敌人彻底抹杀。");
+            ProtoRegistry.RegisterString("导弹2", "Anti-matter missile", "反物质导弹");
+            ProtoRegistry.RegisterString("导弹2描述", "A missile has a bit of anti-matter in it, turning anything into oblivion after explosion.", "先驱者在一次搬运货物时不慎手滑造成微量<color=#c2853d>反物质</color>泄露，这导致他辛辛苦苦拉好的产线毁于一旦。“为什么不让敌人尝尝这种痛苦呢？”他想到。于是这种将<color=#c2853d>反物质</color>封装入导弹的武器被制造了出来，命中敌人后会发生湮灭，将敌人彻底抹杀。");
             ProtoRegistry.RegisterString("导弹2结论", "", "你解锁了反物质导弹，可以自动追踪敌人");
 
-            ProtoRegistry.RegisterString("导弹3", "", "引力塌陷导弹");
-            ProtoRegistry.RegisterString("导弹3描述", "", "发明出<color=#c2853d>引力弹射炮</color>的先驱者一鼓作气，将微型黑洞封装进导弹，制成了这种超级武器。它能在爆炸后短暂生成一个微型黑洞将范围内的敌人吸入其中，简单高效。");
+
+            ProtoRegistry.RegisterString("导弹3", "Gravitational collapse missile", "引力塌陷导弹");
+            ProtoRegistry.RegisterString("导弹3描述", "A missile can creates a micro-black-hole instantaneously after exposion.", "发明出<color=#c2853d>引力弹射炮</color>的先驱者一鼓作气，将微型黑洞封装进导弹，制成了这种超级武器。它能在爆炸后短暂生成一个微型黑洞将范围内的敌人吸入其中，简单高效。");
             ProtoRegistry.RegisterString("导弹3结论", "", "你解锁了引力塌陷导弹，可以自动追踪敌人");
 
-            ProtoRegistry.RegisterString("弹射器1", "", "电磁轨道炮");
-            ProtoRegistry.RegisterString("弹射器1描述", "", "制造出<color=#c2853d>穿甲磁轨弹</color>的先驱者不知道该如何把他们扔上天，直到他不小心把<color=#c2853d>太阳帆</color>误装成了炮弹。“好极了，现在我‘创造’了一种武器。”先驱者这样想着，“但是怎么区分他们呢？”。随后，先驱者默念着：“你指尖闪动的电光，是我此生不变的信仰……”给它装上了橙色氛围灯。该武器打击范围受到仰角限制。");
+            ProtoRegistry.RegisterString("弹射器1", "Super railgun", "电磁轨道炮");
+            ProtoRegistry.RegisterString("弹射器1描述", "An giant railgun based on electromagnetic-ejection technology, ejecting any physical ammunition.", "制造出<color=#c2853d>穿甲磁轨弹</color>的先驱者不知道该如何把他们扔上天，直到他不小心把<color=#c2853d>太阳帆</color>误装成了炮弹。“好极了，现在我‘创造’了一种武器。”先驱者这样想着，“但是怎么区分他们呢？”。随后，先驱者默念着：“你指尖闪动的电光，是我此生不变的信仰……”给它装上了橙色氛围灯。该武器打击范围受到仰角限制。");
             ProtoRegistry.RegisterString("弹射器1结论", "", "你解锁了电磁轨道炮，可以发射子弹攻击敌方");
 
-            ProtoRegistry.RegisterString("弹射器2", "", "引力弹射炮");
-            ProtoRegistry.RegisterString("弹射器2描述", "", "在黑洞杀了个七进七出之后，先驱者对引力操控有了深入见解，他终于决定自己开发一种武器。于是他拆除了<color=#c2853d>电磁轨道炮</color>的加速磁场，制造了一种利用微型黑洞制造引力弹弓的发生器，这使得发射炮弹获得了数倍于之前的动能。“这回可不是换个氛围灯那么简单了！”先驱者自我陶醉着。");
+            ProtoRegistry.RegisterString("弹射器2", "Gravitaion Slingshot ejector", "引力弹射炮");
+            ProtoRegistry.RegisterString("弹射器2描述", "An giant ejector, speed up any physical ammunition by two micro-black-hole inside it.", "在黑洞杀了个七进七出之后，先驱者对引力操控有了深入见解，他终于决定自己开发一种武器。于是他拆除了<color=#c2853d>电磁轨道炮</color>的加速磁场，制造了一种利用微型黑洞制造引力弹弓的发生器，这使得发射炮弹获得了数倍于之前的动能。“这回可不是换个氛围灯那么简单了！”先驱者自我陶醉着。");
             ProtoRegistry.RegisterString("弹射器2结论", "", "你解锁了引力弹射炮，可以发射子弹攻击敌方");
 
-            ProtoRegistry.RegisterString("脉冲炮", "", "相位裂解炮");
-            ProtoRegistry.RegisterString("脉冲炮描述", "", "开发出超级武器的先驱者百般无聊，整日靠着当P社战犯度日，但是他灭绝寰宇的大业总是因为弹药短缺被打断，于是他一气之下依照《群星》的舰载武器开发了这种武器。利用发射的高能粒子流产生相位裂解链式反应，大范围杀伤敌人，最大的优点是，无需弹药！从此，先驱者在成为战犯的道路上越走越远。");
+            ProtoRegistry.RegisterString("脉冲炮", "Phaser emitter", "相位裂解炮");
+            ProtoRegistry.RegisterString("脉冲炮描述", "Aust like any same weapons in sifi-movies or sifi-games, ejecting powerful-radiation to break down enemy. Physical ejection needless.", "开发出超级武器的先驱者百般无聊，整日靠着当P社战犯度日，但是他灭绝寰宇的大业总是因为弹药短缺被打断，于是他一气之下依照《群星》的舰载武器开发了这种武器。利用发射的高能粒子流产生相位裂解链式反应，大范围杀伤敌人，最大的优点是，无需弹药！从此，先驱者在成为战犯的道路上越走越远。");
             ProtoRegistry.RegisterString("脉冲炮结论", "", "你解锁了相位裂解炮，可以仅使用电力攻击敌方");
 
-            ProtoRegistry.RegisterString("发射器1", "", "深空导弹发射井");
-            ProtoRegistry.RegisterString("发射器1描述", "", "制造出<color=#c2853d>热核导弹</color>的先驱者并不知道如何把他们扔上天去，直到他看到了<color=#c2853d>垂直发射井</color>。“只要把它刷成红色我不就发明了一种武器吗？”先驱者这样想到。该武器可以对敌人进行全方位打击。");
+            ProtoRegistry.RegisterString("发射器1", "Void missile launching silo", "深空导弹发射井");
+            ProtoRegistry.RegisterString("发射器1描述", "Just a launching-silo.", "制造出<color=#c2853d>热核导弹</color>的先驱者并不知道如何把他们扔上天去，直到他看到了<color=#c2853d>垂直发射井</color>。“只要把它刷成红色我不就发明了一种武器吗？”先驱者这样想到。该武器可以对敌人进行全方位打击。");
             ProtoRegistry.RegisterString("发射器1结论", "", "你解锁了深空导弹发射井，可以发射导弹攻击敌方");
 
-            ProtoRegistry.RegisterString("近地防卫系统", "", "近地防卫系统");
-            ProtoRegistry.RegisterString("近地防卫系统描述", "", "制造<color=#c2853d>电磁轨道炮</color>发射<color=#c2853d>穿甲磁轨弹</color>进行基础防御。");
+            ProtoRegistry.RegisterString("近地防卫系统", "Near Earth Def-system", "近地防卫系统");
+            ProtoRegistry.RegisterString("近地防卫系统描述", "Manufacturing <color=#c2853d>super-railgun</color> to eject <color=#c2853d>armour-piercing</color> to bulid basal defensive system.", "制造<color=#c2853d>电磁轨道炮</color>发射<color=#c2853d>穿甲磁轨弹</color>进行基础防御。");
             ProtoRegistry.RegisterString("近地防卫系统结论", "", "你解锁了近地防卫系统");
-            ProtoRegistry.RegisterString("深空防卫系统", "", "深空防卫系统");
-            ProtoRegistry.RegisterString("深空防卫系统描述", "", "制造<color=#c2853d>深空导弹发射井</color>部署<color=#c2853d>热核导弹</color>实现更大范围覆盖打击，填补近地防卫的空白。");
+            ProtoRegistry.RegisterString("深空防卫系统", "Void Def-system", "深空防卫系统");
+            ProtoRegistry.RegisterString("深空防卫系统描述", "Manufacturing <color=#c2853d>void-missile-launching-silo</color> to deploy <color=#c2853d>thermonuclear-missile</color> to bulid broader strike, Filling the gap in near-earth-defense.", "制造<color=#c2853d>深空导弹发射井</color>部署<color=#c2853d>热核导弹</color>实现更大范围覆盖打击，填补近地防卫的空白。");
             ProtoRegistry.RegisterString("深空防卫系统结论", "", "你解锁了深空防卫系统");
-            ProtoRegistry.RegisterString("引力操控技术", "", "引力操控技术");
-            ProtoRegistry.RegisterString("引力操控技术描述", "", "制造<color=#c2853d>引力弹射炮</color>升级近地防卫系统，生产<color=#c2853d>引力塌陷导弹</color>进一步加强深空防御。");
+            ProtoRegistry.RegisterString("引力操控技术", "Gravitation control", "引力操控技术");
+            ProtoRegistry.RegisterString("引力操控技术描述", "Manufacturing <color=#c2853d>gravitaion-slingshot-ejector</color> to level up near-earth-defense and <color=#c2853d>gravitational-collapse-missile</color> to further strengthen void-defense.", "制造<color=#c2853d>引力弹射炮</color>升级近地防卫系统，生产<color=#c2853d>引力塌陷导弹</color>进一步加强深空防御。");
             ProtoRegistry.RegisterString("引力操控技术结论", "", "你解锁了引力操控技术");
-            ProtoRegistry.RegisterString("相位裂解技术", "", "相位裂解技术");
-            ProtoRegistry.RegisterString("相位裂解技术描述", "", "<color=#c2853d>相位裂解炮</color>来全杀了。");
+            ProtoRegistry.RegisterString("相位裂解技术", "Phaser fission", "相位裂解技术");
+            ProtoRegistry.RegisterString("相位裂解技术描述", "Manufacturing super weapon <color=#c2853d>phaser-fission</color> to bulid ultimate near-earth-defense.", "这波<color=#c2853d>相位裂解炮</color>来全杀了。");
             ProtoRegistry.RegisterString("相位裂解技术结论", "", "你解锁了相位裂解技术");
-
 
             ProtoRegistry.RegisterString("子弹2tech描述", "", "制造<color=#c2853d>强酸磁轨弹</color>加强近地防御力。");
             ProtoRegistry.RegisterString("子弹3tech描述", "", "制造<color=#c2853d>氘核爆破弹</color>进一步加强近地防御力。");
             ProtoRegistry.RegisterString("导弹2tech描述", "", "制造<color=#c2853d>反物质导弹</color>加强深空防御力。");
 
-
-            ProtoRegistry.RegisterString("定向爆破1", "", "定向爆破");
-            ProtoRegistry.RegisterString("定向爆破2", "", "定向爆破");
-            ProtoRegistry.RegisterString("定向爆破3", "", "定向爆破");
-            ProtoRegistry.RegisterString("定向爆破4", "", "定向爆破");
-            ProtoRegistry.RegisterString("定向爆破5", "", "定向爆破");
-            ProtoRegistry.RegisterString("定向爆破6", "", "定向爆破");
+            ProtoRegistry.RegisterString("定向爆破1", "Directional blasting", "定向爆破");
+            ProtoRegistry.RegisterString("定向爆破2", "Directional blasting", "定向爆破");
+            ProtoRegistry.RegisterString("定向爆破3", "Directional blasting", "定向爆破");
+            ProtoRegistry.RegisterString("定向爆破4", "Directional blasting", "定向爆破");
+            ProtoRegistry.RegisterString("定向爆破5", "Directional blasting", "定向爆破");
+            ProtoRegistry.RegisterString("定向爆破6", "Directional blasting", "定向爆破");
             ProtoRegistry.RegisterString("定向爆破描述", "", "通过精确计算子弹和导弹的索敌路径，预测撞击前的最佳起爆点，以尽可能对敌舰造成更大的破坏。");
             ProtoRegistry.RegisterString("定向爆破结论", "", "子弹、导弹伤害增加");
+            ProtoRegistry.RegisterString("子弹伤害和导弹伤害+15%", "Damage of bullets and missiles +15%", "子弹伤害和导弹伤害+15%");
+            ProtoRegistry.RegisterString("相位裂解光束伤害+25%", "Damage of Phaser-emitter beam +25%", "相位裂解光束伤害+25%");
 
-            ProtoRegistry.RegisterString("引力波引导1", "", "引力波引导");
-            ProtoRegistry.RegisterString("引力波引导2", "", "引力波引导");
-            ProtoRegistry.RegisterString("引力波引导3", "", "引力波引导");
-            ProtoRegistry.RegisterString("引力波引导4", "", "引力波引导");
-            ProtoRegistry.RegisterString("引力波引导5", "", "引力波引导");
-            ProtoRegistry.RegisterString("引力波引导6", "", "引力波引导");
+            ProtoRegistry.RegisterString("引力波引导1", "Gravitational wave guidance", "引力波引导");
+            ProtoRegistry.RegisterString("引力波引导2", "Gravitational wave guidance", "引力波引导");
+            ProtoRegistry.RegisterString("引力波引导3", "Gravitational wave guidance", "引力波引导");
+            ProtoRegistry.RegisterString("引力波引导4", "Gravitational wave guidance", "引力波引导");
+            ProtoRegistry.RegisterString("引力波引导5", "Gravitational wave guidance", "引力波引导");
+            ProtoRegistry.RegisterString("引力波引导6", "Gravitational wave guidance", "引力波引导");
             ProtoRegistry.RegisterString("引力波引导描述", "", "弹道速度。");
             ProtoRegistry.RegisterString("引力波引导结论", "", "弹道速度增加");
+            ProtoRegistry.RegisterString("子弹飞行速度+10%", "Bullet speed +10%", "子弹飞行速度+10%");
+            ProtoRegistry.RegisterString("导弹飞行速度+5%", "Missile speed +5%", "导弹飞行速度+5%");
 
-            ProtoRegistry.RegisterString("相位干扰技术1", "", "相位干扰技术");
-            ProtoRegistry.RegisterString("相位干扰技术2", "", "相位干扰技术");
-            ProtoRegistry.RegisterString("相位干扰技术3", "", "相位干扰技术");
-            ProtoRegistry.RegisterString("相位干扰技术4", "", "相位干扰技术");
-            ProtoRegistry.RegisterString("相位干扰技术5", "", "相位干扰技术");
-            ProtoRegistry.RegisterString("相位干扰技术6", "", "相位干扰技术");
-            ProtoRegistry.RegisterString("相位干扰技术描述", "", "冲动刷新距离。");
+            ProtoRegistry.RegisterString("相位干扰技术1", "Phase disturbance", "相位干扰技术");
+            ProtoRegistry.RegisterString("相位干扰技术2", "Phase disturbance", "相位干扰技术");
+            ProtoRegistry.RegisterString("相位干扰技术3", "Phase disturbance", "相位干扰技术");
+            ProtoRegistry.RegisterString("相位干扰技术4", "Phase disturbance", "相位干扰技术");
+            ProtoRegistry.RegisterString("相位干扰技术5", "Phase disturbance", "相位干扰技术");
+            ProtoRegistry.RegisterString("相位干扰技术6", "Phase disturbance", "相位干扰技术");
+            ProtoRegistry.RegisterString("相位干扰技术描述", "", "虫洞刷新距离。");
             ProtoRegistry.RegisterString("相位干扰技术结论", "", "虫洞生成距离增加");
+            ProtoRegistry.RegisterString("虫洞生成最近范围扩大0.25AU", "Wormhole spawns radius expanded by 0.25AU", "虫洞生成最近范围扩大0.25AU");
 
 
             ProtoRegistry.RegisterString("彩蛋1", "", "先驱者日记#1");
@@ -122,6 +126,35 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("彩蛋7描述", "", "先驱者果然只要我出手没什么办不到的，之前还是太局限了，戴森球都能造出来了为什么武器还需要弹药？直接相位裂解就完事了，要不是降维技术不可逆我都有心想丢二向箔过去。这下好啦，不用专门分心去造子弹了，我要继续去当第四天灾了。顺便说一句，这些虫子可比索林原虫差远了，虽然索林原虫也是渣渣~~日记");
             ProtoRegistry.RegisterString("彩蛋8描述", "", "年轻的伊卡洛斯，不管你是用什么方法走到了这一步，都足以证明你的聪颖和强大。即使是面对未知的风险，你依旧为主脑点亮了繁星。现在，你可以骄傲的说：“我见过你们绝对无法置信的事物，我目睹了虫洞在星系内诞生，我看着裂解射线在虫群之中闪烁，所有这些时刻，终将随时间消逝，一如眼泪消失在雨中。”现在继续你的征途吧！无论遇到什么困难，都不要怕，微笑着面对他！因为，你是一个一个一个勇敢的伊卡洛斯哼哼，啊啊啊啊啊啊啊啊啊啊啊！");
             ProtoRegistry.RegisterString("彩蛋9描述", "", "<color=#c2853d>42</color>");
+
+
+            ProtoRegistry.RegisterString("按下退格键开启或关闭此窗口，按下减号键使敌军进攻时间提前1分钟。", "Press Backspace to hide/open this window. Press \"-\" key to advance the attack time by one minute.", "按下退格键开启或关闭此窗口，按下减号键使敌军进攻时间提前1分钟。");
+            ProtoRegistry.RegisterString("未探测到威胁", "No threat detected", "未探测到威胁");
+            ProtoRegistry.RegisterString("预估数量", "Estimated quantity", "预估数量");
+            ProtoRegistry.RegisterString("预估强度", "Estimated strength", "预估强度");
+            ProtoRegistry.RegisterString("携带资源", "Resource carrying", "携带资源");
+            ProtoRegistry.RegisterString("敌舰正在入侵", "The enemies are invading ", "敌舰正在入侵");
+            ProtoRegistry.RegisterString("剩余敌舰", "Remaining enemies", "剩余敌舰");
+            ProtoRegistry.RegisterString("剩余强度", "Remaining strength", "剩余强度");
+            ProtoRegistry.RegisterString("虫洞数量", "Wormhole quantity", "虫洞数量");
+            ProtoRegistry.RegisterString("下一次入侵预计于", "The next wave will be arrived in ", "下一次入侵预计于");
+            ProtoRegistry.RegisterString("后抵达", " to attack ", "后抵达");
+            ProtoRegistry.RegisterString("约gm", "about ", "约");
+            ProtoRegistry.RegisterString("小时gm", "hour ", "小时");
+            ProtoRegistry.RegisterString("分gm", "min ", "分");
+            ProtoRegistry.RegisterString("秒gm", "sec ", "秒");
+
+
+            ProtoRegistry.RegisterString("伤害", "Damage", "伤害");
+            ProtoRegistry.RegisterString("弹道速度", "Speed", "弹道速度");
+            ProtoRegistry.RegisterString("伤害半径", "Damage range", "伤害半径");
+            ProtoRegistry.RegisterString("射速", "Fire rate", "射速");
+            ProtoRegistry.RegisterString("子弹伤害", "Bullet damage", "子弹伤害");
+            ProtoRegistry.RegisterString("导弹伤害", "Missile damage", "导弹伤害");
+            ProtoRegistry.RegisterString("相位裂解光束伤害", "Phase-cracking beam damage", "相位裂解光束伤害");
+            ProtoRegistry.RegisterString("子弹速度", "Bullet speed", "子弹速度");
+            ProtoRegistry.RegisterString("导弹速度", "Missile speed", "导弹速度");
+            ProtoRegistry.RegisterString("虫洞干扰半径", "Wormhole interference radius", "虫洞干扰半径");
 
 
             ItemProto bullet1 = ProtoRegistry.RegisterItem(8001, "子弹1", "子弹1描述", "Assets/DSPBattle/bullet1", 2701 + pageBias, 100, EItemType.Material);
@@ -531,7 +564,7 @@ namespace DSP_Battle
         public static void UnlockFunctionTextPatch(ref TechProto __instance, ref string __result, StringBuilder sb)
         {
             if (__instance.ID >= 4901 && __instance.ID <= 4906)
-                __result = "子弹伤害和导弹伤害+15%".Translate() + "\n" + "脉冲中子束伤害+25%".Translate();
+                __result = "子弹伤害和导弹伤害+15%".Translate() + "\n" + "相位裂解光束伤害+25%".Translate();
             else if (__instance.ID >= 4911 && __instance.ID <= 4916)
                 __result = "子弹飞行速度+10%".Translate() + "\n" + "导弹飞行速度+5%".Translate();
             //else if (__instance.ID == 4921)
@@ -566,7 +599,7 @@ namespace DSP_Battle
                 InitTechInfoUIs();
             if (infoLabel.text.Split('\n').Length < 35)
             {
-                infoLabel.text = infoLabel.text + "\r\n\r\n" + "子弹伤害".Translate() + "\r\n" + "脉冲中子束伤害".Translate() + "\r\n"
+                infoLabel.text = infoLabel.text + "\r\n\r\n" + "子弹伤害".Translate() + "\r\n" + "相位裂解光束伤害".Translate() + "\r\n"
                     + "导弹伤害".Translate() + "\r\n" + "子弹飞行速度".Translate() + "\r\n" + "导弹飞行速度".Translate() + "\r\n" + "虫洞干扰半径".Translate();
             }
         }
