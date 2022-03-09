@@ -8,7 +8,12 @@ namespace DSP_Battle
 {
     class UIAlert
     {
+        //存档内容
         public static bool isActive = false;
+
+        public static long totalDistance = 1;
+        public static long totalStrength = 1;
+        public static float elimPointRatio = 1.0f;
 
         public static int lastState = 0;
 
@@ -16,6 +21,8 @@ namespace DSP_Battle
         public static GameObject statisticObj = null;
         public static GameObject titleLeftBar = null;
         public static GameObject titleRightBar = null;
+        public static GameObject eliminateProgressBar = null;
+        public static GameObject invasionProgressBar = null;
         public static Text alertMainText;
         public static Text stat1label;
         public static Text stat1value;
@@ -24,6 +31,8 @@ namespace DSP_Battle
         public static Text stat3label;
         public static Text stat3value;
         public static Text helpInfo;
+        public static RectTransform elimProgRT;
+        public static RectTransform invaProgRT;
 
         public static string txtColorWarn1 = "<color=#ffa800>";
         public static string txtColorWarn2 = "<color=#ff7000>";
@@ -86,6 +95,22 @@ namespace DSP_Battle
             titleLeftBar.GetComponent<RectTransform>().sizeDelta = new Vector2(472, 12);
             titleRightBar.GetComponent<RectTransform>().sizeDelta = new Vector2(472, 12);
 
+            eliminateProgressBar = GameObject.Instantiate(titleLeftBar);
+            invasionProgressBar = GameObject.Instantiate(titleRightBar);
+            eliminateProgressBar.transform.SetParent(titleObj.transform, false);
+            invasionProgressBar.transform.SetParent(titleObj.transform, false);
+            eliminateProgressBar.transform.localPosition = new Vector3(-500, -50, 0);
+            invasionProgressBar.transform.localPosition = new Vector3(500, -50, 0);
+            eliminateProgressBar.GetComponent<Image>().color = new Color(0.26f, 1f, 0.46f, 1f);
+            invasionProgressBar.GetComponent<Image>().color = new Color(1f, 0.08f, 0.08f, 1f);
+            elimProgRT = eliminateProgressBar.GetComponent<RectTransform>();
+            invaProgRT = invasionProgressBar.GetComponent<RectTransform>();
+            elimProgRT.sizeDelta = new Vector2(0, 12);
+            invaProgRT.sizeDelta = new Vector2(0, 12);
+            elimProgRT.localScale = new Vector3(1, 2, 1);
+            invaProgRT.localScale = new Vector3(1, 2, 1);
+
+
             alertMainText = titleObj.GetComponent<Text>();
             alertMainText.supportRichText = true;
             Transform sons = statisticObj.transform.Find("desc-mask/desc");
@@ -106,6 +131,7 @@ namespace DSP_Battle
             isActive = false;
             titleObj.SetActive(false);
             statisticObj.SetActive(false);
+
         }
 
         [HarmonyPostfix]
@@ -113,6 +139,7 @@ namespace DSP_Battle
         public static void GameData_GameTick(ref GameData __instance, long time)
         {
             RefreshUIAlert(time, false);
+            RefreshBattleProgress(time);
         }
 
         [HarmonyPostfix]
@@ -193,6 +220,79 @@ namespace DSP_Battle
             }
         }
 
+        public static void RefreshBattleProgress(long time)
+        {
+            int curState = Configs.nextWaveState;
+            try
+            {
+
+                if ((lastState != 3 && curState == 3) || (curState == 3 && totalDistance == 1 && totalStrength == 1))
+                {
+                    totalStrength = 0;
+                    foreach (var shipIndex in EnemyShips.ships.Keys)
+                    {
+                        var ship = EnemyShips.ships[shipIndex];
+                        PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
+                        Vector3 stationPos = planetFactory.entityPool[ship.targetStation.entityId].pos;
+                        int planetId = planetFactory.planetId;
+                        AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
+                        VectorLF3 stationUpos = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, stationPos);
+
+                        totalDistance += (long)(stationUpos - ship.uPos).magnitude;
+                        totalStrength += ship.hp;
+                    }
+                }
+                if (curState != 3 || totalStrength < 1) totalStrength = 1;
+                if (curState != 3 || totalDistance <= 0) totalDistance = 1;
+                if (lastState == 3 && curState != 3)
+                {
+                    totalDistance = 1;
+                    totalStrength = 1;
+                    elimPointRatio = 1.0f;
+                    elimProgRT.sizeDelta = new Vector2(0, 12);
+                    invaProgRT.sizeDelta = new Vector2(0, 12);
+                }
+                if (curState == 3) //要刷新进度条
+                {
+                    long curTotalDistance = 0;
+                    long curTotalStrength = 0;
+                    foreach (var shipIndex in EnemyShips.ships.Keys)
+                    {
+                        var ship = EnemyShips.ships[shipIndex];
+                        PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
+                        Vector3 stationPos = planetFactory.entityPool[ship.targetStation.entityId].pos;
+                        int planetId = planetFactory.planetId;
+                        AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
+                        VectorLF3 stationUpos = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, stationPos);
+
+                        curTotalDistance += (long)(stationUpos - ship.uPos).magnitude;
+                        curTotalStrength += ship.hp;
+                    }
+                    double elimPoint = (totalStrength - curTotalStrength) * 1.0 / totalStrength;
+                    double invaPoint = (totalDistance - curTotalDistance) * 1.0 / totalDistance;
+                    if (invaPoint < 0) invaPoint = 0;
+
+                    double totalPoint = elimPoint + invaPoint;
+                    if (totalPoint <= 0)
+                    {
+                        elimProgRT.sizeDelta = new Vector2(500, 12);
+                        invaProgRT.sizeDelta = new Vector2(500, 12);
+                    }
+                    else
+                    {
+                        double leftProp = elimPoint / totalPoint;
+                        elimProgRT.sizeDelta = new Vector2(1000 * (float)leftProp * elimPointRatio + 2, 12);
+                        invaProgRT.sizeDelta = new Vector2(1000 * (1 - (float)leftProp * elimPointRatio) + 2, 12);
+                    }
+                }
+            }
+            catch (System.Exception)
+            {
+
+            }
+
+            lastState = curState;
+        }
         public static void OnActiveChange()
         {
             isActive = !isActive;
@@ -217,15 +317,15 @@ namespace DSP_Battle
             string right = "";
             if (sec > 3600)
             {
-                res += (sec / 3600).ToString() + "小时".Translate();
+                res += (sec / 3600).ToString() + "小时gm".Translate();
                 if (!showDetails)
                 {
-                    return "约".Translate() + res;
+                    return "约gm".Translate() + res;
                 }
             }
             if (sec > 60)
             {
-                res += ((sec % 3600) / 60).ToString() + "分".Translate();
+                res += ((sec % 3600) / 60).ToString() + "分gm".Translate();
                 if (sec < 300)
                 {
                     left = txtColorWarn1;
@@ -233,13 +333,13 @@ namespace DSP_Battle
                 }
                 if (!showDetails)
                 {
-                    return "约".Translate() + left + res + right;
+                    return "约gm".Translate() + left + res + right;
                 }
             }
             if (sec == 60)
-                res += "60" + "秒".Translate();
+                res += "60" + "秒gm".Translate();
             else
-                res += (sec % 60).ToString() + "秒".Translate();
+                res += (sec % 60).ToString() + "秒gm".Translate();
             if (sec <= 60)
             {
                 left = txtColorAlert1;
@@ -255,11 +355,21 @@ namespace DSP_Battle
 
         public static void Import(BinaryReader r)
         {
+            totalStrength = 1;
+            totalDistance = 1;
+            elimPointRatio = 1.0f;
+            elimProgRT.sizeDelta = new Vector2(0, 12);
+            invaProgRT.sizeDelta = new Vector2(0, 12);
             isActive = r.ReadBoolean();
         }
 
         public static void IntoOtherSave()
         {
+            totalStrength = 1;
+            totalDistance = 1;
+            elimPointRatio = 1.0f;
+            elimProgRT.sizeDelta = new Vector2(0, 12);
+            invaProgRT.sizeDelta = new Vector2(0, 12);
             isActive = false;
         }
     }
