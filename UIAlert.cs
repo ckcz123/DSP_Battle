@@ -269,7 +269,7 @@ namespace DSP_Battle
                         curTotalStrength += ship.hp;
                     }
                     double elimPoint = (totalStrength - curTotalStrength) * 1.0 / totalStrength;
-                    double invaPoint = (totalDistance - curTotalDistance) * 1.0 / totalDistance;
+                    double invaPoint = Mathf.Min((float)((totalDistance - curTotalDistance) * 1.0 / totalDistance), (float)(1-elimPoint));
                     if (invaPoint < 0) invaPoint = 0;
 
                     double totalPoint = elimPoint + invaPoint;
@@ -280,9 +280,14 @@ namespace DSP_Battle
                     }
                     else
                     {
-                        double leftProp = elimPoint / totalPoint;
-                        elimProgRT.sizeDelta = new Vector2(1000 * (float)leftProp * elimPointRatio + 2, 12);
-                        invaProgRT.sizeDelta = new Vector2(1000 * (1 - (float)leftProp * elimPointRatio) + 2, 12);
+                        float leftProp = (float)(elimPoint / totalPoint);
+                        float deRatio = 1.0f;
+                        if(elimPoint > 0.99)//快消灭干净了，让绿条多填充，弥补一半之前建筑炸掉的比例减成
+                        {
+                            deRatio = 0.5f / elimPointRatio;
+                        }
+                        elimProgRT.sizeDelta = new Vector2(1000 * leftProp * elimPointRatio * deRatio + 2, 12);
+                        invaProgRT.sizeDelta = new Vector2(1000 * (1 - leftProp * elimPointRatio * deRatio) + 2, 12);
                     }
                 }
             }
