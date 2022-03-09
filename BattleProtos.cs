@@ -71,7 +71,7 @@ namespace DSP_Battle
 
             ProtoRegistry.RegisterString("子弹2tech描述", "", "制造<color=#c2853d>强酸磁轨弹</color>加强近地防御力。");
             ProtoRegistry.RegisterString("子弹3tech描述", "", "制造<color=#c2853d>氘核爆破弹</color>进一步加强近地防御力。");
-            ProtoRegistry.RegisterString("导弹2tech描述", "", "制造<color=#c2853d>反物质弹</color>加强深空防御力。");
+            ProtoRegistry.RegisterString("导弹2tech描述", "", "制造<color=#c2853d>反物质导弹</color>加强深空防御力。");
 
 
             ProtoRegistry.RegisterString("定向爆破1", "", "定向爆破");
@@ -242,7 +242,9 @@ namespace DSP_Battle
             techBullet4.AddItems = new int[] { 8027 };
             techBullet4.AddItemCounts = new int[] { 1 };
 
-            TechProto winGame = LDB.techs.Select(0);
+            TechProto winGame = LDB.techs.Select(1508);
+            winGame.AddItems = new int[] { 8028, 8029 };
+            winGame.AddItemCounts = new int[] { 1, 1 };
 
             //循环科技 分别是+20%子弹伤害  +10%子弹速度和2%导弹速度  以及扩充虫洞安全区
             TechProto techBulletDamage1 = ProtoRegistry.RegisterTech(4901, "定向爆破1", "定向爆破描述", "定向爆破结论", "Assets/DSPBattle/attack-level1_tech", new int[] { }, new int[] { 6001, 6002, 6003 },
@@ -553,14 +555,12 @@ namespace DSP_Battle
             GameObject infoValueObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Fullscreen UIs/Tech Tree/info-panel/value");
             infoValue = infoValueObj.GetComponent<Text>();
 
-
         }
 
 
-
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(UITechTree), "RefreshDataValueText")]
-        public static void UnlockFuncTextPatch(ref UITechTree __instance)
+        [HarmonyPatch(typeof(UITechTree), "OnPageChanged")]
+        public static void OnPageChangedPatch(ref UITechTree __instance)
         {
             if (infoLabel == null)
                 InitTechInfoUIs();
@@ -569,6 +569,15 @@ namespace DSP_Battle
                 infoLabel.text = infoLabel.text + "\r\n\r\n" + "子弹伤害".Translate() + "\r\n" + "脉冲中子束伤害".Translate() + "\r\n"
                     + "导弹伤害".Translate() + "\r\n" + "子弹飞行速度".Translate() + "\r\n" + "导弹飞行速度".Translate() + "\r\n" + "虫洞干扰半径".Translate();
             }
+        }
+
+
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UITechTree), "RefreshDataValueText")]
+        public static void UnlockFuncTextPatch(ref UITechTree __instance)
+        {
+            
             __instance.dataValueText.text = __instance.dataValueText.text + "\r\n\r\n" + Configs.bulletAtkScale.ToString("0%") + "\r\n"
                 + (1 + (Configs.bulletAtkScale - 1) * 5 / 3).ToString("0%") + "\r\n" + Configs.bulletAtkScale.ToString("0%")
                 + "\r\n" + Configs.bulletSpeedScale.ToString("0%") + "\r\n" + (1 + (Configs.bulletSpeedScale - 1) * 0.5).ToString("0%") + "\r\n" + (Configs.wormholeRange / 40000.0).ToString() + "AU";
@@ -644,11 +653,11 @@ namespace DSP_Battle
             switch (protoId)
             {
                 case 8001:
-                    return new int[] { Configs.bullet1Atk, Mathf.RoundToInt((float)Configs.bullet1Speed * 50), 0 };
+                    return new int[] { Configs.bullet1Atk, Mathf.RoundToInt((float)Configs.bullet1Speed), 0 };
                 case 8002:
-                    return new int[] { Configs.bullet2Atk, Mathf.RoundToInt((float)Configs.bullet2Speed * 50), 0 };
+                    return new int[] { Configs.bullet2Atk, Mathf.RoundToInt((float)Configs.bullet2Speed), 0 };
                 case 8003:
-                    return new int[] { Configs.bullet3Atk, Mathf.RoundToInt((float)Configs.bullet3Speed * 50), 0 };
+                    return new int[] { Configs.bullet3Atk, Mathf.RoundToInt((float)Configs.bullet3Speed), 0 };
                 case 8004:
                     return new int[] { Configs.missile1Atk, Mathf.RoundToInt((float)Configs.missile1Speed), Configs.missile1Range };
                 case 8005:
