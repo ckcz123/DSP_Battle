@@ -32,47 +32,45 @@ namespace DSP_Battle
             SortShips();
         }
 
-        public static void Create(int starIndex, VectorLF3 initPos, int enemyId)
+        public static void Create(int starIndex, int wormholeIndex, int enemyId, int countDown)
         {
             int nextGid = gidRandom.Next(1 << 27, 1 << 29);
             while (ships.ContainsKey(nextGid)) nextGid = gidRandom.Next(1 << 27, 1 << 29);
 
-            int stationId = FindNearestStation(GameMain.galaxy.stars[starIndex], initPos);
+            int stationId = FindNearestPlanetStation(GameMain.galaxy.stars[starIndex], Configs.nextWaveWormholes[wormholeIndex].uPos);
             if (stationId < 0) return;
 
             EnemyShip enemyShip = new EnemyShip(
                 nextGid,
                 stationId,
-                initPos,
-                enemyId);
+                wormholeIndex,
+                enemyId,
+                countDown);
             DspBattlePlugin.logger.LogInfo("=========> Init ship " + nextGid + " at station " + enemyShip.shipData.otherGId);
 
             ships.TryAdd(nextGid, enemyShip);
         }
 
-        public static int FindNearestStation(StarData starData, VectorLF3 pos)
+        private static bool ValidStellarStation(StationComponent s)
         {
-            StationComponent[] stations = GameMain.data.galacticTransport.stationPool;
-            AstroPose[] astroPoses = GameMain.data.galaxy.astroPoses;
+            return s != null && s.id != 0 && s.gid != 0 && s.isStellar && !s.isCollector;
+        }
 
-            int index = -1;
+        public static int FindNearestPlanetStation(StarData starData, VectorLF3 pos)
+        {
+            int gid = -1;
             double distance = 1e99;
-            for (int i = 0; i < stations.Length; ++i)
-            {
-                if (stations[i] != null && stations[i].id != 0 && stations[i].gid != 0 && stations[i].isStellar && stations[i].planetId / 100 - 1 == starData.index)
-                {
-                    AstroPose astroPose = astroPoses[stations[i].planetId];
-                    VectorLF3 stationPos = astroPose.uPos + Maths.QRotateLF(astroPose.uRot, stations[i].shipDockPos + stations[i].shipDockPos.normalized * 25f);
 
-                    double dis = (pos - stationPos).magnitude;
-                    if (dis < distance)
-                    {
-                        distance = dis;
-                        index = i;
-                    }
-                }
+            foreach (var planet in starData.planets)
+            {
+                double dis = (planet.uPosition - pos).magnitude;
+                if (dis > distance || planet.factory?.transport?.stationPool == null) continue;
+                StationComponent[] stations = planet.factory.transport.stationPool.Where(ValidStellarStation).ToArray();
+                if (stations.Length == 0) continue;
+                gid = stations[gidRandom.Next(0, stations.Length)].gid;
+                distance = dis;
             }
-            return index;
+            return gid;
         }
 
         public static List<int> FindShipsInRange(VectorLF3 pos, double range)
@@ -221,40 +219,14 @@ namespace DSP_Battle
                     {
                         if (planetFactory.entityPool[i].notNull && (planetFactory.entityPool[i].pos - stationPos).magnitude <= ship.damageRange)
                         {
+                            if (planetFactory.entityPool[i].beltId != 0 && gidRandom.NextDouble() < 0.5) continue;
+
                             RemoveEntity(planetFactory, i);
                         }
                     }
                     removingComponets = false;
                     timeDelay += 5 * 3600;
                     if (timeDelay > 30 * 3600) timeDelay = 30 * 3600;
-
-                    ////爆炸效果， 此方案已被转移到飞船发射子弹轰击
-                    //int starIndex = planetFactory.planetId / 100 - 1;
-                    //if (GameMain.data.dysonSpheres.Length > starIndex && GameMain.data.dysonSpheres[starIndex] != null && GameMain.data.dysonSpheres[starIndex].swarm != null)
-                    //{
-                    //    DysonSwarm swarm = GameMain.data.dysonSpheres[starIndex].swarm;
-                    //    AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
-                    //    VectorLF3 stationUpos = astroPoses[planetFactory.planetId].uPos + Maths.QRotateLF(astroPoses[planetFactory.planetId].uRot, stationPos);
-
-                    //    for (int t = 0; t < 3; t++)
-                    //    {
-                    //        for (int i = 0; i < (ship.damageRange / 10); i++) //爆炸范围越大，叠加的越多，爆炸效果越亮
-                    //        {
-                    //            VectorLF3 explodePoint = ship.uPos + new VectorLF3((DspBattlePlugin.randSeed.NextDouble() - 0.5) * 20, (DspBattlePlugin.randSeed.NextDouble() - 0.5) * 20, (DspBattlePlugin.randSeed.NextDouble() - 0.5) * 20);
-                    //            int bulletIndex = swarm.AddBullet(new SailBullet
-                    //            {
-                    //                maxt = 0f + 0.016666667f * t, //间隔时间爆炸
-                    //                lBegin = swarm.starData.uPosition, //好像得设置到一个看不见的地方，防止地面光束渲染
-                    //                uEndVel = new Vector3(0,0,0),
-                    //                uBegin = ship.uPos,
-                    //                uEnd = explodePoint,
-                    //            }, 1);
-
-                    //            swarm.bulletPool[bulletIndex].state = 0;
-                    //        }
-                    //    }
-                        
-                    //}
                 }
 
             }
@@ -317,9 +289,9 @@ namespace DSP_Battle
 
             list.Do(ship =>
             {
-                ship.Update();
+                ship.Update(time);
                 if (ship.state == EnemyShip.State.landed) OnShipLanded(ship);
-                if (ship.state != EnemyShip.State.active) RemoveShip(ship);
+                if (ship.state != EnemyShip.State.active && ship.state != EnemyShip.State.uninitialized) RemoveShip(ship);
             });
 
             // time is the frame since start
@@ -328,148 +300,127 @@ namespace DSP_Battle
                 SortShips();
             }
 
-            UpdateWaveState(time);
-        }
-
-        private static void UpdateWaveState(long time)
-        {
-
             switch (Configs.nextWaveState)
             {
-                case 0:
-                    if (time % 1800 != 1) break;
-                    DspBattlePlugin.logger.LogInfo("=====> Initializing next wave");
-                    StationComponent[] stations = GameMain.data.galacticTransport.stationPool.Where(e => e != null && e.isStellar && e.gid != 0 && e.id != 0).ToArray();
-                    if (stations.Length == 0) break;
-                    int planetId = stations[gidRandom.Next(0, stations.Length)].planetId;
-                    int starId = planetId / 100 - 1;
+                case 0: UpdateWaveStage0(time); break;
+                case 1: UpdateWaveStage1(time); break;
+                case 2: UpdateWaveStage2(time); break;
+                case 3: UpdateWaveStage3(time); break;
+            }
+        }
 
-                    // Gen next wave
-                    int deltaFrames = (Configs.coldTime[Math.Min(Configs.coldTime.Length - 1, Configs.totalWave)] + 1) * 3600;
-                    Configs.nextWaveFrameIndex = time + deltaFrames + timeDelay;
-                    timeDelay = 0;
-                    Configs.nextWaveIntensity = Configs.intensity[Math.Min(Configs.intensity.Length - 1, Configs.wavePerStar[starId])];
-                    // Extra intensity
-                    long cube = (long)(GameMain.history.universeMatrixPointUploaded * 0.0002777777777777778);
-                    if (cube > 100000) Configs.nextWaveIntensity += (int)((cube - 100000) / 1000);
+        private static void UpdateWaveStage0(long time)
+        {
+            if (time % 1800 != 1) return;
+            DspBattlePlugin.logger.LogInfo("=====> Initializing next wave");
+            StationComponent[] stations = GameMain.data.galacticTransport.stationPool.Where(ValidStellarStation).ToArray();
+            if (stations.Length == 0) return;
+            int starId = stations[gidRandom.Next(0, stations.Length)].planetId / 100 - 1;
 
-                    ulong energy = 0;
-                    DysonSphere[] dysonSpheres = GameMain.data.dysonSpheres;
-                    int num3 = dysonSpheres.Length;
-                    for (int i = 0; i < num3; i++)
-                    {
-                        if (dysonSpheres[i] != null)
-                        {
-                            energy += (ulong)dysonSpheres[i].energyGenCurrentTick;
-                        }
-                    }
-                    energy *= 60;
-                    energy /= (1024 * 1024 * 1024L);
+            // Gen next wave
+            int deltaFrames = (Configs.coldTime[Math.Min(Configs.coldTime.Length - 1, Configs.totalWave)] + 1) * 3600;
+            Configs.nextWaveFrameIndex = time + deltaFrames + timeDelay;
+            timeDelay = 0;
+            Configs.nextWaveIntensity = Configs.intensity[Math.Min(Configs.intensity.Length - 1, Configs.wavePerStar[starId])];
+            // Extra intensity
+            long cube = (long)(GameMain.history.universeMatrixPointUploaded * 0.0002777777777777778);
+            if (cube > 100000) Configs.nextWaveIntensity += (int)((cube - 100000) / 1000);
 
-                    if (energy > 300) // 300G
-                        Configs.nextWaveIntensity += (int)(energy - 300) * 5;
-                    if (Configs.nextWaveIntensity > 30000) Configs.nextWaveIntensity = 30000;
+            ulong energy = 0;
+            DysonSphere[] dysonSpheres = GameMain.data.dysonSpheres;
+            int num3 = dysonSpheres.Length;
+            for (int i = 0; i < num3; i++)
+            {
+                if (dysonSpheres[i] != null)
+                {
+                    energy += (ulong)dysonSpheres[i].energyGenCurrentTick;
+                }
+            }
+            energy *= 60;
+            energy /= (1024 * 1024 * 1024L);
 
-                    Configs.nextWavePlanetId = planetId;
-                    Configs.nextWaveState = 1;
+            if (energy > 300) // 300G
+                Configs.nextWaveIntensity += (int)(energy - 300) * 5;
+            if (Configs.nextWaveIntensity > 30000) Configs.nextWaveIntensity = 30000;
 
-                    int intensity = Configs.nextWaveIntensity;
-                    for (int i = 4; i >= 1; --i)
-                    {
-                        double v = gidRandom.NextDouble() / 2 + 0.25;
-                        Configs.nextWaveEnemy[i] = (int)(intensity * v / Configs.enemyIntensity[i]);
-                        intensity -= Configs.nextWaveEnemy[i] * Configs.enemyIntensity[i];
-                    }
-                    Configs.nextWaveEnemy[0] = intensity / Configs.enemyIntensity[0];
-                    Configs.nextWaveWormCount = gidRandom.Next(0, Math.Min(50, Configs.nextWaveEnemy.Sum())) + 1;
+            Configs.nextWaveStarIndex = starId;
+            Configs.nextWaveState = 1;
 
-                    UIRealtimeTip.Popup("下一波进攻即将到来！".Translate());
-                    UIAlert.ShowAlert(true);
+            int intensity = Configs.nextWaveIntensity;
+            for (int i = 4; i >= 1; --i)
+            {
+                double v = gidRandom.NextDouble() / 2 + 0.25;
+                Configs.nextWaveEnemy[i] = (int)(intensity * v / Configs.enemyIntensity[i]);
+                intensity -= Configs.nextWaveEnemy[i] * Configs.enemyIntensity[i];
+            }
+            Configs.nextWaveEnemy[0] = intensity / Configs.enemyIntensity[0];
+            Configs.nextWaveWormCount = gidRandom.Next(Math.Min(Configs.nextWaveIntensity / 100, 40), Math.Min(80, Configs.nextWaveEnemy.Sum())) + 1;
+
+            UIRealtimeTip.Popup("下一波进攻即将到来！".Translate());
+            UIAlert.ShowAlert(true);
+        }
+
+        private static void UpdateWaveStage1(long time)
+        {
+            if (time < Configs.nextWaveFrameIndex - 3600 * 5) return;
+            StarData star = GameMain.galaxy.stars[Configs.nextWaveStarIndex];
+
+            StationComponent[] stations = GameMain.data.galacticTransport.stationPool.Where(e => e != null && e.isStellar && !e.isCollector && e.gid != 0 && e.id != 0 && e.planetId / 100 - 1 == Configs.nextWaveStarIndex).ToArray();
+
+            for (int i = 0; i < Configs.nextWaveWormCount; ++i)
+            {
+                while (true)
+                {
+                    int planetId = 100 * (Configs.nextWaveStarIndex + 1) + 1;
+                    if (stations.Length != 0) planetId = stations[gidRandom.Next(0, stations.Length)].planetId;
+
+                    Wormhole wormhole = new Wormhole(planetId, UnityEngine.Random.onUnitSphere);
+                    VectorLF3 pos = wormhole.uPos;
+
+                    if ((star.uPosition - pos).magnitude < Configs.wormholeRange + star.radius - 10) continue;
+                    if (star.planets.Any(planetData => planetData.type != EPlanetType.Gas && (planetData.uPosition - pos).magnitude < Configs.wormholeRange + planetData.radius - 10)) continue;
+
+                    Configs.nextWaveWormholes[i] = wormhole;
                     break;
-                case 1:
-                    if (time < Configs.nextWaveFrameIndex - 3600 * 5) break;
-
-                    PlanetData planet = GameMain.galaxy.PlanetById(Configs.nextWavePlanetId);
-                    StarData star = planet.star;
-
-                    for (int i = 0; i < Configs.nextWaveWormCount; ++i)
-                    {
-                        while (true)
-                        {
-                            int angle1 = gidRandom.Next(0, 360);
-                            int angle2 = gidRandom.Next(0, 360);
-                            VectorLF3 pos = planet.uPosition + new VectorLF3(
-                                (Configs.wormholeRange + planet.radius) * Math.Cos(angle1 * Math.PI / 360) * Math.Cos(angle2 * Math.PI / 360), // rcosAcosB
-                                (Configs.wormholeRange + planet.radius) * Math.Cos(angle1 * Math.PI / 360) * Math.Sin(angle2 * Math.PI / 360), // rcosAsinB
-                                (Configs.wormholeRange + planet.radius) * Math.Sin(angle1 * Math.PI / 360) // rsinA
-                            );
-                            if ((star.uPosition - pos).magnitude < Configs.wormholeRange + planet.radius - 10) continue;
-                            bool valid = true;
-                            foreach (PlanetData planetData in star.planets)
-                            {
-                                if ((planetData.uPosition - pos).magnitude < Configs.wormholeRange + planetData.radius - 10) valid = false;
-                            }
-                            if (valid)
-                            {
-                                Configs.nextWaveAngle1[i] = angle1;
-                                Configs.nextWaveAngle2[i] = angle2;
-                                break;
-                            }
-                        }
-                    }
-
-                    Configs.nextWaveState = 2;
-                    UIAlert.ShowAlert(true);
-                    UIRealtimeTip.Popup("虫洞已生成！".Translate());
-                    break;
-                case 2:
-                    if (time >= Configs.nextWaveFrameIndex)
-                    {
-                        PlanetData planetData = GameMain.galaxy.PlanetById(Configs.nextWavePlanetId);
-                        int u = 0;
-                        for (int i = 0; i <= 4; ++i)
-                        {
-                            for (int j = 0; j < Configs.nextWaveEnemy[i]; ++j)
-                            {
-                                int angle1 = Configs.nextWaveAngle1[u % Configs.nextWaveWormCount];
-                                int angle2 = Configs.nextWaveAngle2[u % Configs.nextWaveWormCount];
-                                Create(Configs.nextWavePlanetId / 100 - 1,
-                                    planetData.uPosition
-                                    + new VectorLF3(
-                                         (Configs.wormholeRange + planetData.radius) * Math.Cos(angle1 * Math.PI / 360) * Math.Cos(angle2 * Math.PI / 360), // rcosAcosB
-                                         (Configs.wormholeRange + planetData.radius) * Math.Cos(angle1 * Math.PI / 360) * Math.Sin(angle2 * Math.PI / 360), // rcosAsinB
-                                         (Configs.wormholeRange + planetData.radius) * Math.Sin(angle1 * Math.PI / 360) // rsinA
-                                    ), i);
-                                u++;
-                            }
-                        }
-
-                        Configs.nextWaveState = 3;
-                    }
-                    break;
-                case 3:
-                    if (ships.Count == 0)
-                    {
-                        Configs.wavePerStar[Configs.nextWavePlanetId / 100 - 1]++;
-                        Configs.nextWaveState = 0;
-                        Configs.nextWaveFrameIndex = -1;
-                        Configs.nextWavePlanetId = -1;
-                    }
-                    break;
-
+                }
+                UIRealtimeTip.Popup(string.Format("虫洞 {0} 已生成！".Translate(), i + 1));
             }
 
+            Configs.nextWaveState = 2;
+            UIAlert.ShowAlert(true);
+        }
+
+        private static void UpdateWaveStage2(long time)
+        {
+            if (time < Configs.nextWaveFrameIndex) return;
+            int u = 0;
+            for (int i = 0; i <= 4; ++i)
+            {
+                for (int j = 0; j < Configs.nextWaveEnemy[i]; ++j)
+                {
+                    Create(Configs.nextWaveStarIndex, u % Configs.nextWaveWormCount, i, gidRandom.Next(0, Math.Min(u + 1, 30)));
+                    u++;
+                }
+            }
+
+            Configs.nextWaveState = 3;
+        }
+
+        private static void UpdateWaveStage3(long time)
+        {
+            if (ships.Count == 0)
+            {
+                Configs.wavePerStar[Configs.nextWaveStarIndex]++;
+                Configs.nextWaveState = 0;
+                Configs.nextWaveFrameIndex = -1;
+                Configs.nextWaveStarIndex = 0;
+                Configs.nextWaveWormCount = 0;
+            }
         }
 
         public static void RemoveShip(EnemyShip ship)
         {
             ships.TryRemove(ship.shipIndex, out EnemyShip _);
-            // minTargetDisSortedShips[ship.starIndex].Remove(ship);
-            // minHpSortedShips[ship.starIndex].Remove(ship);
-            // foreach (var entry in minPlanetDisSortedShips[ship.starIndex])
-            // {
-            //     entry.Value.Remove(ship);
-            // }
         }
 
         private static Dictionary<LogisticShipRenderer, ComputeBuffer> logisticShipRendererComputeBuffer = new Dictionary<LogisticShipRenderer, ComputeBuffer>();
@@ -496,6 +447,8 @@ namespace DSP_Battle
 
             foreach (var ship in ships.Values)
             {
+                if (ship.state != EnemyShip.State.active) continue;
+
                 __instance.shipsArr[__instance.shipCount++] = ship.renderingData;
                 //if (ship.shipData.stage != 1)
                 //    continue;
@@ -604,6 +557,7 @@ namespace DSP_Battle
 
             foreach (var ship in ships.Values)
             {
+                if (ship.state != EnemyShip.State.active) continue;
                 shipsArr[shipCount] = ship.renderingUIData;
                 shipsArr[shipCount].rpos = (shipsArr[shipCount].upos - uiStarMap.viewTargetUPos) * 0.00025;
                 shipCount++;

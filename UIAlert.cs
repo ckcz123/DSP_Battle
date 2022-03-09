@@ -148,7 +148,7 @@ namespace DSP_Battle
             }
             lastState = Configs.nextWaveState;
 
-            if (Configs.nextWaveState == 0 || Configs.nextWaveFrameIndex < 0 || Configs.nextWavePlanetId < 0)
+            if (Configs.nextWaveState == 0 || Configs.nextWaveFrameIndex < 0 || Configs.nextWaveStarIndex < 0)
             {
                 alertMainText.text = "未探测到威胁".Translate();
                 stat1label.text = "预估数量".Translate();
@@ -169,9 +169,9 @@ namespace DSP_Battle
             if (framesUntilNextWave < 0)
             {
                 if ((-framesUntilNextWave) / 60 % 2 != 0)
-                    alertMainText.text = txtColorAlert1 + "敌舰正在入侵".Translate() + GameMain.galaxy.stars[Configs.nextWavePlanetId / 100 - 1].displayName + "!" + txtColorRight;
+                    alertMainText.text = txtColorAlert1 + "敌舰正在入侵".Translate() + GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName + "!" + txtColorRight;
                 else
-                    alertMainText.text = txtColorAlert2 + "敌舰正在入侵".Translate() + GameMain.galaxy.stars[Configs.nextWavePlanetId / 100 - 1].displayName + "!" + txtColorRight;
+                    alertMainText.text = txtColorAlert2 + "敌舰正在入侵".Translate() + GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName + "!" + txtColorRight;
 
                 stat1label.text = "剩余敌舰".Translate();
                 stat2label.text = "剩余强度".Translate();
@@ -183,7 +183,7 @@ namespace DSP_Battle
             else
             {
                 int seconds = (int)framesUntilNextWave / 60;
-                alertMainText.text = "下一次入侵预计于".Translate() + Sec2StrTime(seconds, showDetails) + "后抵达".Translate() + GameMain.galaxy.stars[Configs.nextWavePlanetId / 100 - 1].displayName;
+                alertMainText.text = "下一次入侵预计于".Translate() + Sec2StrTime(seconds, showDetails) + "后抵达".Translate() + GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName;
                 stat1label.text = "预估数量".Translate();
                 stat2label.text = "预估强度".Translate();
                 stat3label.text = "虫洞数量".Translate();

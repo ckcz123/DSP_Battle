@@ -123,7 +123,7 @@ namespace DSP_Battle
 
         public void IntoOtherSave()
         {
-            Configs.IntoAnotherSave();
+            Configs.IntoOtherSave();
             EnemyShips.IntoOtherSave();
             Cannon.IntoOtherSave();
             MissileSilo.IntoOtherSave();

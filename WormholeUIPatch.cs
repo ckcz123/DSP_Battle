@@ -20,15 +20,17 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(UniverseSimulator), "OnGameLoaded")]
         public static void UniverseSimulator_OnGameLoaded(ref UniverseSimulator __instance)
         {
+            DspBattlePlugin.logger.LogInfo("==========> UniverseSimulator_OnGameLoaded");
             for (int i = 0; i < 100; ++i)
             {
-                if (simulator[i] == null) simulator[i] = UnityEngine.Object.Instantiate<StarSimulator>(__instance.starPrefab, __instance.transform);
+                if (simulator[i] != null) UnityEngine.Object.DestroyImmediate(simulator[i]);
             }
 
             CopyBlackHoleData();
 
             for (int i = 0; i < 100; ++i)
             {
+                simulator[i] = UnityEngine.Object.Instantiate<StarSimulator>(__instance.starPrefab, __instance.transform);
                 simulator[i].universeSimulator = __instance;
                 simulator[i].SetStarData(starData[i]);
                 simulator[i].gameObject.layer = 24;
@@ -59,7 +61,6 @@ namespace DSP_Battle
             VectorLF3 uPosition = GameMain.mainPlayer.uPosition;
             Vector3 position2 = GameCamera.main.transform.position;
             Quaternion rotation = GameCamera.main.transform.rotation;
-            PlanetData planet = GameMain.galaxy.PlanetById(Configs.nextWavePlanetId);
 
             for (var i = 0; i < Configs.nextWaveWormCount; ++i)
             {
@@ -68,15 +69,7 @@ namespace DSP_Battle
                     simulator[i].gameObject.SetActive(true);
                 }
 
-                int angle1 = Configs.nextWaveAngle1[i];
-                int angle2 = Configs.nextWaveAngle2[i];
-                simulator[i].starData.uPosition =
-                    planet.uPosition
-                    + new VectorLF3(
-                            (Configs.wormholeRange + planet.radius) * Math.Cos(angle1 * Math.PI / 360) * Math.Cos(angle2 * Math.PI / 360), // rcosAcosB
-                            (Configs.wormholeRange + planet.radius) * Math.Cos(angle1 * Math.PI / 360) * Math.Sin(angle2 * Math.PI / 360), // rcosAsinB
-                            (Configs.wormholeRange + planet.radius) * Math.Sin(angle1 * Math.PI / 360) // rsinA
-                    );
+                simulator[i].starData.uPosition = Configs.nextWaveWormholes[i].uPos;
                 simulator[i].UpdateUniversalPosition(position, uPosition, position2, rotation);
             }
 
@@ -139,15 +132,18 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(UIStarmap), "CreateAllStarUIs")]
         public static void UIStarmap_CreateAllStarUIs(ref UIStarmap __instance)
         {
+            DspBattlePlugin.logger.LogInfo("==========> _CreateAllStarUIs");
+
             for (var i = 0; i < 100; ++i)
             {
-                if (uiStar[i] == null) uiStar[i] = UnityEngine.Object.Instantiate(__instance.starUIPrefab, __instance.starUIPrefab.transform.parent);
+                if (uiStar[i] != null) UnityEngine.Object.DestroyImmediate(uiStar[i]);
             }
 
             CopyBlackHoleData();
 
             for (var i = 0; i < 100; ++i)
             {
+                uiStar[i] = UnityEngine.Object.Instantiate(__instance.starUIPrefab, __instance.starUIPrefab.transform.parent);
                 uiStar[i]._Create();
                 uiStar[i]._Init(starData[i]);
                 uiStar[i].gameObject.name = "WormholeUI_" + i;
@@ -177,7 +173,7 @@ namespace DSP_Battle
                     if (lastWaveState2 != Configs.nextWaveState)
                     {
                         uiStar[i]._Open();
-                        uiStar[i].gameObject.SetActive(true);
+                        uiStar[i].starObject.gameObject.SetActive(true);
                     }
 
                     uiStar[i]._Update();

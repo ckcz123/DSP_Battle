@@ -13,12 +13,15 @@ namespace DSP_Battle
         public float maxSpeed;
         public int intensity;
         public int damageRange;
+        public int countDown;
+        public int wormholeIndex;
 
         public enum State
         {
             active,
             distroyed,
             landed,
+            uninitialized,
         }
         public State state;
 
@@ -81,7 +84,7 @@ namespace DSP_Battle
             Import(r);
         }
 
-        public EnemyShip(int gid, int stationGid, VectorLF3 initPos, int enemyId)
+        public EnemyShip(int gid, int stationId, int wormholeIndex, int enemyId, int countDown)
         {
             shipData = new ShipData();
             shipData.direction = 1;
@@ -92,19 +95,24 @@ namespace DSP_Battle
             shipData.uAngularVel = Vector3.zero;
             shipData.uAngularSpeed = 0;
             shipData.shipIndex = gid;
-            shipData.otherGId = stationGid;
-            shipData.planetB = GameMain.data.galacticTransport.stationPool[stationGid].planetId;
-            shipData.uPos = initPos;
+            this.wormholeIndex = wormholeIndex;
+
+            shipData.otherGId = stationId;
+            shipData.planetB =  GameMain.data.galacticTransport.stationPool[stationId].planetId;
+            
+            shipData.uPos = Configs.nextWaveWormholes[wormholeIndex].uPos;
             shipData.itemId = Configs.enemyItemIds[enemyId];
             shipData.inc = Configs.enemyLandCnt[enemyId];
             shipData.uRot = new Quaternion((float)DspBattlePlugin.randSeed.NextDouble(), (float)DspBattlePlugin.randSeed.NextDouble(), (float)DspBattlePlugin.randSeed.NextDouble(), (float)DspBattlePlugin.randSeed.NextDouble());
             shipData.uRot.Normalize();
-            shipData.uSpeed = 0;
+            maxSpeed = Configs.enemySpeed[enemyId];
+            shipData.uSpeed = ((float)DspBattlePlugin.randSeed.NextDouble()) * 0.25f * maxSpeed;
             hp = Configs.enemyHp[enemyId];
             damageRange = Configs.enemyRange[enemyId];
-            maxSpeed = Configs.enemySpeed[enemyId];
             intensity = Configs.enemyIntensity[enemyId];
-            state = State.active;
+            this.countDown = countDown;
+
+            state = countDown > 0 ? State.uninitialized : State.active;
 
             renderingData = new ShipRenderingData();
             renderingData.SetEmpty();
@@ -134,7 +142,7 @@ namespace DSP_Battle
 
         public void FindAnotherStation()
         {
-            int nextStationId = EnemyShips.FindNearestStation(GameMain.galaxy.PlanetById(shipData.planetB).star, shipData.uPos);
+            int nextStationId = EnemyShips.FindNearestPlanetStation(GameMain.galaxy.PlanetById(shipData.planetB).star, shipData.uPos);
             if (nextStationId < 0)
             {
                 state = State.distroyed;
@@ -146,8 +154,16 @@ namespace DSP_Battle
             shipData.planetB = GameMain.data.galacticTransport.stationPool[nextStationId].planetId;
         }
 
-        public void Update()
+        public void Update(long time)
         {
+            if (state == State.uninitialized)
+            {
+                shipData.uPos = Configs.nextWaveWormholes[wormholeIndex].uPos;
+                if (time % 60 != 0) return;
+                countDown--;
+                if (countDown <= 0) state = State.active;
+            }
+
             if (state != State.active) return;
 
             StationComponent station = targetStation;
@@ -509,7 +525,9 @@ namespace DSP_Battle
             w.Write(hp);
             w.Write(maxSpeed);
             w.Write((int)state);
+            w.Write(intensity);
             w.Write(damageRange);
+            w.Write(countDown);
         }
 
         public void Import(BinaryReader r)
@@ -518,7 +536,9 @@ namespace DSP_Battle
             hp = r.ReadInt32();
             maxSpeed = r.ReadSingle();
             state = (State)r.ReadInt32();
+            intensity = r.ReadInt32();
             damageRange = r.ReadInt32();
+            countDown = r.ReadInt32();
 
             renderingData.SetEmpty();
             renderingData.gid = shipData.shipIndex;
