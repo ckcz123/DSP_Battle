@@ -15,7 +15,7 @@ namespace DSP_Battle
         // 这里应该是HashSet，为了线程安全还是用ConcurrentDictionary
         public static List<ConcurrentDictionary<int, int>> sailBulletsIndex; //记录应该变成太阳帆的子弹，原本是记录攻击用子弹，但是总有漏网之鱼变成太阳帆，找不到原因，所以反过来记录应该变成太阳帆的子弹，这可能导致0.1%（目测，或许远低于此）的太阳帆无法生成
         public static List<ConcurrentDictionary<int, int>> bulletTargets; //记录子弹的目标
-        public static List<ConcurrentDictionary<int, int>> canDoDamage; //记录子弹还能造成多少伤害
+        public static List<ConcurrentDictionary<int, int>> bulletIds; //记录子弹Id，原本是canDoDamage记录子弹还能造成多少伤害
         //
 
         public static int testFrameCount = 0;
@@ -93,13 +93,13 @@ namespace DSP_Battle
             {
                 sailBulletsIndex = new List<ConcurrentDictionary<int, int>>();
                 bulletTargets = new List<ConcurrentDictionary<int, int>>();
-                canDoDamage = new List<ConcurrentDictionary<int, int>>();
+                bulletIds = new List<ConcurrentDictionary<int, int>>();
 
                 for (int i = 0; i < GameMain.galaxy.starCount; i++)
                 {
                     sailBulletsIndex.Add(new ConcurrentDictionary<int, int>());
                     bulletTargets.Add(new ConcurrentDictionary<int, int>());
-                    canDoDamage.Add(new ConcurrentDictionary<int, int>());
+                    bulletIds.Add(new ConcurrentDictionary<int, int>());
                 }
 
             }
@@ -442,8 +442,9 @@ namespace DSP_Battle
 
                             try
                             {
-                                canDoDamage[swarm.starData.index].AddOrUpdate(bulletIndex, damage, (x, y) => 1);
-                                // canDoDamage[swarm.starData.index][bulletIndex] = 1;//后续可以根据子弹类型/炮类型设定不同数值
+                                int bulletId = __instance.bulletId;
+                                bulletIds[swarm.starData.index].AddOrUpdate(bulletIndex, bulletId, (x, y) => bulletId);
+                                // bulletIds[swarm.starData.index][bulletIndex] = 1;//后续可以根据子弹类型/炮类型设定不同数值
                             }
                             catch (Exception)
                             {
@@ -533,14 +534,26 @@ namespace DSP_Battle
                         __instance.bulletPool[i].state = 0; //这就阻止了后续创建太阳帆的可能，但也可能带来其他影响，但无所谓，只有最多2帧的异常帧
 
                     }
-                    if (__instance.bulletPool[i].t >= __instance.bulletPool[i].maxt && bulletTargets[starIndex].ContainsKey(i) && canDoDamage[starIndex].ContainsKey(i))
+                    if (__instance.bulletPool[i].t >= __instance.bulletPool[i].maxt && bulletTargets[starIndex].ContainsKey(i) && bulletIds[starIndex].ContainsKey(i))
                     {
-                        if (EnemyShips.ships.ContainsKey(bulletTargets[starIndex][i]))
+                        if (EnemyShips.ships.ContainsKey(bulletTargets[starIndex][i]) && bulletIds[starIndex][i] != 0)
                         {
-                            EnemyShips.ships[bulletTargets[starIndex][i]].BeAttacked(canDoDamage[starIndex][i]); //击中造成伤害  //如果在RemoveBullet的postpatch写这个，可以不用每帧循环检测，但是伤害将在爆炸动画后结算，感觉不太合理
+                            int damage = 0;
+                            int bulletId = bulletIds[starIndex][i];
+                            switch (bulletId)
+                            {
+                                case 8001: damage = Configs.bullet1Atk; break;
+                                case 8002: damage = Configs.bullet2Atk; break;
+                                case 8003: damage = Configs.bullet3Atk; break;
+                                case 8007: damage = Configs.bullet4Atk; break;
+                                default:
+                                    break;
+                            }
+
+                            EnemyShips.ships[bulletTargets[starIndex][i]].BeAttacked(damage); //击中造成伤害  //如果在RemoveBullet的postpatch写这个，可以不用每帧循环检测，但是伤害将在爆炸动画后结算，感觉不太合理
                         }
                         int v;
-                        canDoDamage[starIndex].TryRemove(i, out v); //该子弹已造成过伤害，或者因为飞船已经不存在了，这两种情况都要将子弹的未来还可造成的伤害设置成0
+                        bulletIds[starIndex].TryRemove(i, out v); //该子弹已造成过伤害，或者因为飞船已经不存在了，这两种情况都要将子弹的未来还可造成的伤害设置成0
                     }
                 }
 
@@ -587,11 +600,11 @@ namespace DSP_Battle
                     w.Write(item.Value);
                 }
             }
-            w.Write(canDoDamage.Count);
-            for (int i3 = 0; i3 < canDoDamage.Count; i3++)
+            w.Write(bulletIds.Count);
+            for (int i3 = 0; i3 < bulletIds.Count; i3++)
             {
-                w.Write(canDoDamage[i3].Count);
-                foreach (var item in canDoDamage[i3])
+                w.Write(bulletIds[i3].Count);
+                foreach (var item in bulletIds[i3])
                 {
                     w.Write(item.Key);
                     w.Write(item.Value);
@@ -632,16 +645,16 @@ namespace DSP_Battle
             }
 
             int total3 = r.ReadInt32();
-            for (int c3 = 0; c3 < total3 - canDoDamage.Count; c3++)
+            for (int c3 = 0; c3 < total3 - bulletIds.Count; c3++)
             {
-                canDoDamage.Add(new ConcurrentDictionary<int, int>());
+                bulletIds.Add(new ConcurrentDictionary<int, int>());
             }
             for (int i3 = 0; i3 < total3; i3++)
             {
                 int num3 = r.ReadInt32();
                 for (int j3 = 0; j3 < num3; j3++)
                 {
-                    canDoDamage[i3].TryAdd(r.ReadInt32(), r.ReadInt32());
+                    bulletIds[i3].TryAdd(r.ReadInt32(), r.ReadInt32());
                 }
             }
         }

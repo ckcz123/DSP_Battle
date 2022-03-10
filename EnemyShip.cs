@@ -128,9 +128,10 @@ namespace DSP_Battle
             return (pos - uPos).magnitude;
         }
 
-        public void BeAttacked(int atk)
+        public int BeAttacked(int atk)
         {
-            if (state != State.active) return;
+            if (state != State.active) return 0;
+            int result = hp < atk ? hp : atk;
             hp -= atk;
             if (hp <= 0)
             {
@@ -138,6 +139,7 @@ namespace DSP_Battle
                 state = State.distroyed;
                 EnemyShips.OnShipDistroyed(this);
             }
+            return result;
         }
 
         public void FindAnotherStation()

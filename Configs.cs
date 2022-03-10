@@ -188,7 +188,7 @@ namespace DSP_Battle
             enemySpeed[2] = 5000f; // config.Bind("config", "enemy3Speed", defaultValue: 5000f, "敌方飞船3速度（米每秒）").Value;
             enemyRange[2] = 60; // config.Bind("config", "enemy3Range", defaultValue: 60, "敌方飞船3破坏范围").Value;
 
-            enemyIntensity[3] = 8; // config.Bind("config", "enemy4Intensity", defaultValue: 8, "敌方飞船4强度").Value;
+            enemyIntensity[3] = 9; // config.Bind("config", "enemy4Intensity", defaultValue: 8, "敌方飞船4强度").Value;
             enemyHp[3] = 120000; // config.Bind("config", "enemy4Hp", defaultValue: 120000, "敌方飞船4血量").Value;
             enemySpeed[3] = 1000f; // config.Bind("config", "enemy4Speed", defaultValue: 1000f, "敌方飞船4速度（米每秒）").Value;
             enemyRange[3] = 80; // config.Bind("config", "enemy4Range", defaultValue: 80, "敌方飞船4破坏范围").Value;

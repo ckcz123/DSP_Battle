@@ -168,7 +168,7 @@ namespace DSP_Battle
                 return;
             }
             if (time % 30 != 1 && !forceRefresh) return;
-            helpInfo.text = "按下退格键开启或关闭此窗口，按下减号键使敌军进攻时间提前1分钟。";
+            helpInfo.text = "按下退格键开启或关闭此窗口，按下减号键使敌军进攻时间提前1分钟。".Translate();
             if (Configs.nextWaveState == 0 && lastState != 0) //刚刚打完一架，关闭警告
             {
                 ShowAlert(false);
@@ -190,7 +190,7 @@ namespace DSP_Battle
             long framesUntilNextWave = Configs.nextWaveFrameIndex - time;
             bool showDetails = framesUntilNextWave < 18000;
 
-            if (showDetails || framesUntilNextWave == 60 * 60 * 30 || framesUntilNextWave == 60 * 60 * 60 || framesUntilNextWave == 36000) ShowAlert(true);
+            if (framesUntilNextWave == 60 * 60 * 30 || framesUntilNextWave == 60 * 60 * 60 || framesUntilNextWave == 36000) ShowAlert(true);
 
 
             if (framesUntilNextWave < 0)
