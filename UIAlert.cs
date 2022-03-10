@@ -228,6 +228,7 @@ namespace DSP_Battle
 
                 if ((lastState != 3 && curState == 3) || (curState == 3 && totalDistance == 1 && totalStrength == 1))
                 {
+                    UIBattleStatistics.RegisterEnemyGen(); //注册帝人生成信息
                     totalStrength = 0;
                     foreach (var shipIndex in EnemyShips.ships.Keys)
                     {
