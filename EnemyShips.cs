@@ -219,8 +219,21 @@ namespace DSP_Battle
                     {
                         if (planetFactory.entityPool[i].notNull && (planetFactory.entityPool[i].pos - stationPos).magnitude <= ship.damageRange)
                         {
-                            if (planetFactory.entityPool[i].beltId != 0 && gidRandom.NextDouble() < 0.5) continue;
+                            if (planetFactory.entityPool[i].beltId != 0) continue;
 
+                            //下面注册损失
+                            UIBattleStatistics.RegisterBuildingLost();
+                            if(planetFactory.entityPool[i].stationId > 0) //物流站要注册资源损失
+                            {
+                                StationComponent stationLosing = planetFactory.transport.stationPool[planetFactory.entityPool[i].stationId];
+                                for (int slot = 0; slot < stationLosing.storage.Length; slot++)
+                                {
+                                    UIBattleStatistics.RegisterResourceLost(stationLosing.storage[slot].count);
+                                }
+                                UIBattleStatistics.RegisterResourceLost(stationLosing.warperCount + stationLosing.idleShipCount + stationLosing.workShipCount + stationLosing.idleDroneCount + stationLosing.workDroneCount);
+                            }
+
+                            //摧毁
                             RemoveEntity(planetFactory, i);
                         }
                     }

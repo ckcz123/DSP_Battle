@@ -148,6 +148,12 @@ namespace DSP_Battle
 
                             MissileTargets[starIndex][rocketIndex] = targetIndex;
                             missileProtoIds[starIndex][rocketIndex] = __instance.bulletId;
+                            int damage = 0;
+                            if (__instance.bulletId == 8004) damage = Configs.missile1Atk;
+                            else if (__instance.bulletId == 8005) damage = Configs.missile2Atk;
+                            else if (__instance.bulletId == 8006) damage = Configs.missile3Atk;
+                            //注册导弹
+                            UIBattleStatistics.RegisterShootOrLaunch(__instance.bulletId, damage);
 
                             __instance.autoIndex++;
                             __instance.bulletInc -= __instance.bulletInc / __instance.bulletCount;
@@ -466,17 +472,20 @@ namespace DSP_Battle
 
                                 //范围伤害
                                 var shipsHit = EnemyShips.FindShipsInRange(dysonRocket.uPos, dmgRange);
+
+                                if(shipsHit.Count > 0) UIBattleStatistics.RegisterHit(missileId, 0, 1); //首先注册一下该导弹击中，但不注册伤害
                                 foreach (var item in shipsHit)
                                 {
                                     if (EnemyShips.ships.ContainsKey(item))
                                     {
                                         double distance = (dysonRocket.uPos - EnemyShips.ships[item].uPos).magnitude;
-                                        int realDamage = damage;
+                                        int aoeDamage = damage;
                                         if(distance > dmgRange*0.5)
                                         {
-                                            realDamage = (int)(damage * (1.0 - (2 * distance - dmgRange) / dmgRange));
+                                            aoeDamage = (int)(damage * (1.0 - (2 * distance - dmgRange) / dmgRange));
                                         }
-                                        EnemyShips.ships[item].BeAttacked(realDamage);
+                                        int realDamage = EnemyShips.ships[item].BeAttacked(aoeDamage);
+                                        UIBattleStatistics.RegisterHit(missileId, realDamage, 0); //每个目标不再注册新的击中数量，只注册伤害
                                     }
                                 }
                                 missileProtoIds[starIndex][i] = 0;
@@ -1112,17 +1121,19 @@ namespace DSP_Battle
 
                                     //范围伤害
                                     var shipsHit = EnemyShips.FindShipsInRange(dysonRocket.uPos, dmgRange);
+                                    if (shipsHit.Count > 0) UIBattleStatistics.RegisterHit(missileId, 0, 1); //首先注册一下该导弹击中，但不注册伤害
                                     foreach (var item in shipsHit)
                                     {
                                         if (EnemyShips.ships.ContainsKey(item))
                                         {
                                             double distance = (dysonRocket.uPos - EnemyShips.ships[item].uPos).magnitude;
-                                            int realDamage = damage;
+                                            int aoeDamage = damage;
                                             if (distance > dmgRange * 0.5)
                                             {
-                                                realDamage = (int)(damage * (1.0 - (2 * distance - dmgRange) / dmgRange));
+                                                aoeDamage = (int)(damage * (1.0 - (2 * distance - dmgRange) / dmgRange));
                                             }
-                                            EnemyShips.ships[item].BeAttacked(realDamage);
+                                            int realDamage = EnemyShips.ships[item].BeAttacked(aoeDamage);
+                                            UIBattleStatistics.RegisterHit(missileId, realDamage, 0); //每个目标不再注册新的击中数量，只注册伤害
                                         }
                                     }
                                     missileProtoIds[starIndex][i] = 0;
