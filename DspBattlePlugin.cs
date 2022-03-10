@@ -71,6 +71,7 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(UIAlert));
             Harmony.CreateAndPatchAll(typeof(MissileSilo));
             Harmony.CreateAndPatchAll(typeof(WormholeUIPatch));
+            Harmony.CreateAndPatchAll(typeof(UIBattleStatistics));
 
             LDBTool.PreAddDataAction += BattleProtos.AddProtos;
             LDBTool.PostAddDataAction += BattleProtos.CopyPrefabDesc;
@@ -119,6 +120,8 @@ namespace DSP_Battle
             Cannon.Import(r);
             MissileSilo.Import(r);
             UIAlert.Import(r);
+
+            UIBattleStatistics.InitAll();
         }
 
         public void IntoOtherSave()
@@ -128,6 +131,8 @@ namespace DSP_Battle
             Cannon.IntoOtherSave();
             MissileSilo.IntoOtherSave();
             UIAlert.IntoOtherSave();
+
+            UIBattleStatistics.InitAll();
         }
 
         public static ManualLogSource logger;
