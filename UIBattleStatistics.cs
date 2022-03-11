@@ -14,9 +14,10 @@ namespace DSP_Battle
 {
     class UIBattleStatistics
     {
+        static GameObject mainStatisticWindow = null;
         static GameObject statPanelLeftTabObj = null; //左切换面板（水平按钮的那个）
         static GameObject battleStatButtonObj = null; //切换到战斗数据统计面板的按钮的obj
-        static GameObject battleStatTabObj = null; //主面板
+        static GameObject battleStatTabObj = null; //战斗信息统计主面板
 
         static GameObject hideButton1;//这六个需要永久隐藏
         static GameObject hideButton2;
@@ -53,6 +54,8 @@ namespace DSP_Battle
         public static long totalDamage; //已造成的总伤害
         public static long resourceLost; //资源被偷走、销毁量
         public static long buildingLost; //建筑被摧毁量
+        public static double avgInterceptDis; //平均拦截距离
+        public static double minInterceptDis; //最小拦截距离
 
         //除上面的之外其他总和数值
         public static int totalEnemyGen; //生成的敌人总数
@@ -62,6 +65,7 @@ namespace DSP_Battle
         public static ConcurrentDictionary<int,long> ammoDamageHit; //每种子弹、导弹击中总伤害，由于子弹导弹等有飞行时间，在中飞行时科技升级了，那么单个子弹注册的输出伤害会低于击中伤害，但无所谓，这种情况发生概率或者占比较小，不大会影响数据统计。此外，导弹有aoe，其伤害效率超过100%也是正常的
         public static ConcurrentDictionary<int, int> ammoUse; //每种子弹、导弹的发射量
         public static ConcurrentDictionary<int, int> ammoHit; //每种子弹、导弹击中量
+        public static List<double> allInterceptDis; //所有曾经拦截成功的距离
 
         public static void InitAll()
         {
@@ -69,7 +73,9 @@ namespace DSP_Battle
             isBattleStatTab = false;
             if (statPanelLeftTabObj != null)
                 return;
-            
+
+            mainStatisticWindow = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Statistics Window");
+
             //按钮
             statPanelLeftTabObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Statistics Window/panel-bg/horizontal-tab");
             statPanelLeftTabObj.GetComponent<RectTransform>().sizeDelta = new Vector2(105, 416);
@@ -102,7 +108,7 @@ namespace DSP_Battle
             battleStatTabObj.transform.Find("data-panel/Scroll View").localPosition = new Vector3(20, 270, 0);
             //需要改大小
             battleStatTabObj.transform.Find("cpu-panel/Scroll View").GetComponent<RectTransform>().sizeDelta = new Vector2(330,550);
-            battleStatTabObj.transform.Find("gpu-panel/Scroll View").GetComponent<RectTransform>().sizeDelta = new Vector2(330, 550);
+            battleStatTabObj.transform.Find("gpu-panel/Scroll View").GetComponent<RectTransform>().sizeDelta = new Vector2(330, 600);
             battleStatTabObj.transform.Find("data-panel/Scroll View").GetComponent<RectTransform>().sizeDelta = new Vector2(330, 550);
 
 
@@ -132,6 +138,8 @@ namespace DSP_Battle
             enemyValue1 = battleStatTabObj.transform.Find("data-panel/Scroll View/Viewport/Content/value-1").GetComponent<Text>();
             enemyValue2 = battleStatTabObj.transform.Find("data-panel/Scroll View/Viewport/Content/value-2").GetComponent<Text>();
 
+            briefValue2.supportRichText = true;
+
             battleStatTabObj.transform.Find("gpu-panel/Scroll View/Viewport/Content/value-1").localPosition = new Vector3(80, -4, 0); //重新设置一下位置，稍微右移防止数据重叠
 
         }
@@ -157,12 +165,15 @@ namespace DSP_Battle
                 mAmmoDamageOut = 0;
                 mAmmoUse = 0;
                 mAmmoHit = 0;
+                avgInterceptDis = 0;
+                minInterceptDis = 999999999999999999;
                 enemyGen = new ConcurrentDictionary<int, int>();
                 enemyEliminated = new ConcurrentDictionary<int, int>();
                 ammoDamageOutput = new ConcurrentDictionary<int, long>();
                 ammoDamageHit = new ConcurrentDictionary<int, long>();
                 ammoUse = new ConcurrentDictionary<int, int>();
                 ammoHit = new ConcurrentDictionary<int, int>();
+                allInterceptDis = new List<double>();
                 //因为后面需要直接用比较方便，所以直接初始化了，后面就不用判断了
                 for (int i = 8001; i < 8008; i++)
                 {
@@ -292,6 +303,31 @@ namespace DSP_Battle
             catch (Exception) { }
         }
 
+        //敌舰被拦截
+        public static void RegisterIntercept(EnemyShip ship, double forceDis = -1)
+        {
+            try
+            {
+                if (forceDis >= 0)
+                {
+                    minInterceptDis = forceDis < minInterceptDis ? forceDis : minInterceptDis;
+                    allInterceptDis.Add(forceDis);
+                }
+                else
+                {
+                    PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
+                    Vector3 stationPos = planetFactory.entityPool[ship.targetStation.entityId].pos;
+                    int planetId = planetFactory.planetId;
+                    AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
+                    VectorLF3 stationUpos = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, stationPos);
+                    double distance = (stationUpos - ship.uPos).magnitude;
+                    minInterceptDis = distance < minInterceptDis ? distance : minInterceptDis;
+                    allInterceptDis.Add(distance);
+                }
+            }
+            catch (Exception) { }
+        }
+
         public static void OnClickBattleStatButton()
         {
             if (UIStatWindowInstance == null)
@@ -342,7 +378,7 @@ namespace DSP_Battle
         public static void OnUpdatePatch(ref UIStatisticsWindow __instance)
         {
             UIStatWindowInstance = __instance;
-            if (isBattleStatTab)
+            if (isBattleStatTab && mainStatisticWindow.activeSelf)
             {
                 hideButton1.SetActive(false);
                 hideButton2.SetActive(false);
@@ -350,6 +386,29 @@ namespace DSP_Battle
                 hideGraph1.SetActive(false);
                 hideGraph2.SetActive(false);
                 hideGraph3.SetActive(false);
+
+                string avgInterDisStr = "-";
+                string minInterDisStr = "-";
+                if(allInterceptDis.Count > 0)
+                {
+                    try
+                    {
+                        avgInterceptDis = allInterceptDis.Average();
+                        if (avgInterceptDis > 40000) avgInterDisStr = (avgInterceptDis / 40000.0).ToString("N2") + " AU";
+                        else if(avgInterceptDis > 10000) avgInterDisStr = avgInterceptDis.ToString("N0") + " m";
+                        else if (avgInterceptDis > 1000) avgInterDisStr = "<color=#ff7500>" + avgInterceptDis.ToString("N0") + " m</color>";
+                        else if (avgInterceptDis > 300) avgInterDisStr = "<color=#ff1000>" + avgInterceptDis.ToString("N0") + " m</color>";
+                    }
+                    catch (Exception) { }
+                }
+                if(minInterceptDis < 99999999)
+                {
+                    if (minInterceptDis > 40000) minInterDisStr = (minInterceptDis / 40000.0).ToString("N2") + " AU";
+                    else if(minInterceptDis > 10000) minInterDisStr = minInterceptDis.ToString("N0") + " m";
+                    else if(minInterceptDis > 100) minInterDisStr = "<color=#ff7500>" + minInterceptDis.ToString("N0") + " m</color>";
+                    else minInterDisStr = "<color=#ff1000>" + minInterceptDis.ToString("N0") + " m</color>";
+                }
+
 
                 List<double> ammoAmoutProps = new List<double> { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 }; //数量的效率,1=8001,...,7=8007，0是无效的
                 List<double> ammoDamageProps = new List<double> { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 }; //伤害的效率，同上，0是无效的
@@ -382,30 +441,30 @@ namespace DSP_Battle
                     enemyEliminatedProps[0] = totalEnemyEliminated * 1.0 / totalEnemyGen;
 
 
-                briefLabel.text = "歼灭敌舰".Translate() + "\n" + "输出伤害".Translate() + "\n" + "损失建筑".Translate() + "\n" + "损失资源".Translate();
+                briefLabel.text = "歼灭敌舰".Translate() + "\n" + "输出伤害".Translate() + "\n" + "损失建筑".Translate() + "\n" + "损失资源".Translate() + "\n\n" + "平均拦截距离".Translate() + "\n" + "最小拦截距离".Translate();
                 briefValue1.text = "";
-                briefValue2.text = totalEnemyEliminated.ToString("N0") + "\n" + totalDamage.ToString("N0") + "\n" + buildingLost.ToString("N0") + "\n" + resourceLost.ToString("N0");
+                briefValue2.text = totalEnemyEliminated.ToString("N0") + "\n" + totalDamage.ToString("N0") + "\n" + buildingLost.ToString("N0") + "\n" + resourceLost.ToString("N0") + "\n\n" + avgInterDisStr + "\n" + minInterDisStr;
 
                 ammoLabel.text = "\n" + 
-                    "数量总计".Translate() + "\n" + "伤害总计".Translate() + "\n" +
-                    "子弹数量".Translate() + "\n" + "  > " + "子弹1".Translate() + "\n" + "  > " + "子弹2".Translate() + "\n" + "  > " + "子弹3".Translate() + "\n" + "  > " + "脉冲".Translate() + "\n" +
-                    "导弹数量".Translate() + "\n" + "  > " + "导弹1".Translate() + "\n" + "  > " + "导弹2".Translate() + "\n" + "  > " + "导弹3".Translate() + "\n" +
-                    "子弹伤害".Translate() + "\n" + "  > " + "子弹1".Translate() + "\n" + "  > " + "子弹2".Translate() + "\n" + "  > " + "子弹3".Translate() + "\n" + "  > " + "脉冲".Translate() + "\n" +
-                    "导弹伤害".Translate() + "\n" + "  > " + "导弹1".Translate() + "\n" + "  > " + "导弹2".Translate() + "\n" + "  > " + "导弹3".Translate() + "\n";
+                    "数量总计".Translate() + "\n" + "伤害总计".Translate() + "\n\n" +
+                    "子弹数量".Translate() + "\n" + "  > " + "子弹1".Translate() + "\n" + "  > " + "子弹2".Translate() + "\n" + "  > " + "子弹3".Translate() + "\n" + "  > " + "脉冲".Translate() + "\n\n" +
+                    "导弹数量".Translate() + "\n" + "  > " + "导弹1".Translate() + "\n" + "  > " + "导弹2".Translate() + "\n" + "  > " + "导弹3".Translate() + "\n\n" +
+                    "子弹伤害".Translate() + "\n" + "  > " + "子弹1".Translate() + "\n" + "  > " + "子弹2".Translate() + "\n" + "  > " + "子弹3".Translate() + "\n" + "  > " + "脉冲".Translate() + "\n\n" +
+                    "导弹伤害".Translate() + "\n" + "  > " + "导弹1".Translate() + "\n" + "  > " + "导弹2".Translate() + "\n" + "  > " + "导弹3".Translate() + "\n\n";
 
                 ammoValue1.text = "击中".Translate() + "/" + "发射".Translate() + "\n" +
-                    $"{totalAmmoHit}/{totalAmmoUse}\n{totalAmmoDamageHit}/{totalAmmoDamageOut}\n" +
-                    $"{bAmmoHit}/{bAmmoUse}\n{ammoHit[8001]}/{ammoUse[8001]}\n {ammoHit[8002]}/{ammoUse[8002]}\n {ammoHit[8003]}/{ammoUse[8003]}\n {ammoHit[8007]}/{ammoUse[8007]}\n" + 
-                    $"{mAmmoHit}/{mAmmoUse}\n{ammoHit[8004]}/{ammoUse[8004]}\n {ammoHit[8005]}/{ammoUse[8005]}\n {ammoHit[8006]}/{ammoUse[8006]}\n" +
-                    $"{bAmmoDamageHit}/{bAmmoDamageOut}\n{ammoDamageHit[8001]}/{ammoDamageOutput[8001]}\n {ammoDamageHit[8002]}/{ammoDamageOutput[8002]}\n {ammoDamageHit[8003]}/{ammoDamageOutput[8003]}\n {ammoDamageHit[8007]}/{ammoDamageOutput[8007]}\n" +
-                    $"{mAmmoDamageHit}/{mAmmoDamageOut}\n{ammoDamageHit[8004]}/{ammoDamageOutput[8004]}\n {ammoDamageHit[8005]}/{ammoDamageOutput[8005]}\n {ammoDamageHit[8006]}/{ammoDamageOutput[8006]}\n";
+                    $"{totalAmmoHit}/{totalAmmoUse}\n{totalAmmoDamageHit}/{totalAmmoDamageOut}\n\n" +
+                    $"{bAmmoHit}/{bAmmoUse}\n{ammoHit[8001]}/{ammoUse[8001]}\n {ammoHit[8002]}/{ammoUse[8002]}\n {ammoHit[8003]}/{ammoUse[8003]}\n {ammoHit[8007]}/{ammoUse[8007]}\n\n" + 
+                    $"{mAmmoHit}/{mAmmoUse}\n{ammoHit[8004]}/{ammoUse[8004]}\n {ammoHit[8005]}/{ammoUse[8005]}\n {ammoHit[8006]}/{ammoUse[8006]}\n\n" +
+                    $"{bAmmoDamageHit}/{bAmmoDamageOut}\n{ammoDamageHit[8001]}/{ammoDamageOutput[8001]}\n {ammoDamageHit[8002]}/{ammoDamageOutput[8002]}\n {ammoDamageHit[8003]}/{ammoDamageOutput[8003]}\n {ammoDamageHit[8007]}/{ammoDamageOutput[8007]}\n\n" +
+                    $"{mAmmoDamageHit}/{mAmmoDamageOut}\n{ammoDamageHit[8004]}/{ammoDamageOutput[8004]}\n {ammoDamageHit[8005]}/{ammoDamageOutput[8005]}\n {ammoDamageHit[8006]}/{ammoDamageOutput[8006]}\n\n";
 
                 ammoValue2.text = "效率gm".Translate() + "\n" +
-                    totalAmoutProp.ToString("0.00%")+ "\n" + totalDamageProp.ToString("0.00%") + "\n" +
-                    $"{bAmoutProp:0.00%}\n{ammoAmoutProps[1]:0.00%}\n{ammoAmoutProps[2]:0.00%}\n{ammoAmoutProps[3]:0.00%}\n{ammoAmoutProps[7]:0.00%}\n" + 
-                    $"{mAmoutProp:0.00%}\n{ammoAmoutProps[4]:0.00%}\n{ammoAmoutProps[5]:0.00%}\n{ammoAmoutProps[6]:0.00%}\n" +
-                    $"{bDamageProp:0.00%}\n{ammoDamageProps[1]:0.00%}\n{ammoDamageProps[2]:0.00%}\n{ammoDamageProps[3]:0.00%}\n{ammoDamageProps[7]:0.00%}\n" +
-                    $"{mDamageProp:0.00%}\n{ammoDamageProps[4]:0.00%}\n{ammoDamageProps[5]:0.00%}\n{ammoDamageProps[6]:0.00%}\n";
+                    totalAmoutProp.ToString("0.00%")+ "\n" + totalDamageProp.ToString("0.00%") + "\n\n" +
+                    $"{bAmoutProp:0.00%}\n{ammoAmoutProps[1]:0.00%}\n{ammoAmoutProps[2]:0.00%}\n{ammoAmoutProps[3]:0.00%}\n{ammoAmoutProps[7]:0.00%}\n\n" + 
+                    $"{mAmoutProp:0.00%}\n{ammoAmoutProps[4]:0.00%}\n{ammoAmoutProps[5]:0.00%}\n{ammoAmoutProps[6]:0.00%}\n\n" +
+                    $"{bDamageProp:0.00%}\n{ammoDamageProps[1]:0.00%}\n{ammoDamageProps[2]:0.00%}\n{ammoDamageProps[3]:0.00%}\n{ammoDamageProps[7]:0.00%}\n\n" +
+                    $"{mDamageProp:0.00%}\n{ammoDamageProps[4]:0.00%}\n{ammoDamageProps[5]:0.00%}\n{ammoDamageProps[6]:0.00%}\n\n";
 
                 enemyLabel.text = "\n" +
                     "总计".Translate() + "\n" + "  > " + "护卫舰".Translate() + "\n" + "  > " + "驱逐舰".Translate() + "\n" + "  > " + "巡洋舰".Translate() + "\n" + "  > " + "战列舰".Translate() + "\n" + "  > " + "泰坦".Translate();

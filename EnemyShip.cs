@@ -136,6 +136,7 @@ namespace DSP_Battle
             if (hp <= 0)
             {
                 UIBattleStatistics.RegisterEliminate(intensity); //记录某类型的敌舰被摧毁
+                UIBattleStatistics.RegisterIntercept(this); //记录拦截距离
                 hp = 0;
                 state = State.distroyed;
                 EnemyShips.OnShipDistroyed(this);
@@ -148,6 +149,7 @@ namespace DSP_Battle
             int nextStationId = EnemyShips.FindNearestPlanetStation(GameMain.galaxy.PlanetById(shipData.planetB).star, shipData.uPos);
             if (nextStationId < 0)
             {
+                UIBattleStatistics.RegisterIntercept(this, 0); //当找不到目标说明星系内物流塔都被毁了，那么所有剩余船的拦截距离都要被注册为0，即已经冲到脸上了
                 state = State.distroyed;
                 return;
             }

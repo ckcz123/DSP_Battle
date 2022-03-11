@@ -213,6 +213,13 @@ namespace DSP_Battle
                     PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
                     removingComponets = true;
                     Vector3 stationPos = planetFactory.entityPool[station.entityId].pos;
+                    UIBattleStatistics.RegisterIntercept(ship, 0);
+                    UIBattleStatistics.RegisterBuildingLost(); //建筑损失
+                    for (int slot = 0; slot < station.storage.Length; slot++) //资源损失
+                    {
+                        UIBattleStatistics.RegisterResourceLost(station.storage[slot].count);
+                    }
+                    UIBattleStatistics.RegisterResourceLost(station.warperCount + station.idleShipCount + station.workShipCount + station.idleDroneCount + station.workDroneCount);
                     RemoveEntity(planetFactory, station.entityId);
                     // Find all entities in damageRange
                     for (int i = 0; i < planetFactory.entityPool.Length; ++i)
@@ -221,7 +228,6 @@ namespace DSP_Battle
                         {
                             if (planetFactory.entityPool[i].beltId != 0) continue;
 
-                            //下面注册损失
                             UIBattleStatistics.RegisterBuildingLost();
                             if(planetFactory.entityPool[i].stationId > 0) //物流站要注册资源损失
                             {
