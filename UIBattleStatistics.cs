@@ -9,6 +9,7 @@ using xiaoye97;
 using System.IO;
 using System.Collections.Concurrent;
 using HarmonyLib;
+using System.Threading;
 
 namespace DSP_Battle
 {
@@ -67,7 +68,7 @@ namespace DSP_Battle
         public static ConcurrentDictionary<int,long> ammoDamageHit; //每种子弹、导弹击中总伤害，由于子弹导弹等有飞行时间，在中飞行时科技升级了，那么单个子弹注册的输出伤害会低于击中伤害，但无所谓，这种情况发生概率或者占比较小，不大会影响数据统计。此外，导弹有aoe，其伤害效率超过100%也是正常的
         public static ConcurrentDictionary<int, int> ammoUse; //每种子弹、导弹的发射量
         public static ConcurrentDictionary<int, int> ammoHit; //每种子弹、导弹击中量
-        public static List<double> allInterceptDis; //所有曾经拦截成功的距离
+        public static ConcurrentQueue<double> allInterceptDis; //所有曾经拦截成功的距离
 
         public static void InitAll()
         {
@@ -177,7 +178,7 @@ namespace DSP_Battle
                 ammoDamageHit = new ConcurrentDictionary<int, long>();
                 ammoUse = new ConcurrentDictionary<int, int>();
                 ammoHit = new ConcurrentDictionary<int, int>();
-                allInterceptDis = new List<double>();
+                allInterceptDis = new ConcurrentQueue<double>();
                 //因为后面需要直接用比较方便，所以直接初始化了，后面就不用判断了
                 for (int i = 8001; i < 8008; i++)
                 {
@@ -220,7 +221,7 @@ namespace DSP_Battle
         {
             try 
             {
-                totalEnemyEliminated += elminateNum;
+                Interlocked.Add(ref totalEnemyEliminated, elminateNum);
                 enemyEliminated.AddOrUpdate(shipType, elminateNum, (x, y) => y + elminateNum); 
             }
             catch (Exception) { }
@@ -234,18 +235,18 @@ namespace DSP_Battle
         //资源被掠夺
         public static void RegisterResourceLost(int lostnum)
         {
-            resourceLost += lostnum;
+            Interlocked.Add(ref resourceLost, lostnum);
         }
 
         public static void RegisterStationLost(int lostnum = 1)
         {
-            stationLost += lostnum;
+            Interlocked.Add(ref stationLost, lostnum);
         }
 
         //建筑被摧毁
         public static void RegisterOtherBuildingLost(int lostnum = 1)
         {
-            othersLost += lostnum;
+            Interlocked.Add(ref othersLost, lostnum);
         }
 
         //子弹或者火箭发射
@@ -258,24 +259,24 @@ namespace DSP_Battle
                     case 8001:
                     case 8002:
                     case 8003:
-                        bAmmoUse += num;
-                        bAmmoDamageOut += damage;
+                        Interlocked.Add(ref bAmmoUse, num);
+                        Interlocked.Add(ref bAmmoDamageOut, damage);
                         break;
                     case 8007: //总和统计时，不计算激光的子弹用量，只计算伤害，下同
-                        bAmmoDamageOut += damage;
+                        Interlocked.Add(ref bAmmoDamageOut, damage);
                         break;
                     case 8004:
                     case 8005:
                     case 8006:
-                        mAmmoUse += num;
-                        mAmmoDamageOut += damage;
+                        Interlocked.Add(ref mAmmoUse, num);
+                        Interlocked.Add(ref mAmmoDamageOut, damage);
                         break;
                     default:
                         break;
                 }
                 if (bulletId != 8007) 
-                    totalAmmoUse += num;
-                totalAmmoDamageOut += damage;
+                    Interlocked.Add(ref totalAmmoUse, num);
+                Interlocked.Add(ref totalAmmoDamageOut, damage);
                 ammoUse.AddOrUpdate(bulletId, num, (x, y) => y + num);
                 ammoDamageOutput.AddOrUpdate(bulletId, damage, (x, y) => y + damage);
             }
@@ -287,30 +288,30 @@ namespace DSP_Battle
         {
             try
             {
-                totalDamage += damage;
+                Interlocked.Add(ref totalDamage, damage);
                 switch (bulletId)
                 {
                     case 8001:
                     case 8002:
                     case 8003:
-                        bAmmoHit += num;
-                        bAmmoDamageHit += damage;
+                        Interlocked.Add(ref bAmmoHit, num);
+                        Interlocked.Add(ref bAmmoDamageHit, damage);
                         break;
                     case 8007:
-                        bAmmoDamageHit += damage;
+                        Interlocked.Add(ref bAmmoDamageHit, damage);
                         break;
                     case 8004:
                     case 8005:
                     case 8006:
-                        mAmmoHit += num;
-                        mAmmoDamageHit += damage;
+                        Interlocked.Add(ref mAmmoHit, num);
+                        Interlocked.Add(ref mAmmoDamageHit, damage);
                         break;
                     default:
                         break;
                 }
                 if(bulletId != 8007) //不计算激光的子弹用量
-                    totalAmmoHit += num;
-                totalAmmoDamageHit += damage;
+                    Interlocked.Add(ref totalAmmoHit, num);
+                Interlocked.Add(ref totalAmmoDamageHit, damage);
                 ammoHit.AddOrUpdate(bulletId, num, (x, y) => y + num);
                 ammoDamageHit.AddOrUpdate(bulletId, damage, (x, y) => y + damage);
             }
@@ -318,26 +319,21 @@ namespace DSP_Battle
         }
 
         //敌舰被拦截
-        public static void RegisterIntercept(EnemyShip ship, double forceDis = -1)
+        public static void RegisterIntercept(EnemyShip ship, double distance = -1)
         {
             try
             {
-                if (forceDis >= 0)
-                {
-                    minInterceptDis = forceDis < minInterceptDis ? forceDis : minInterceptDis;
-                    allInterceptDis.Add(forceDis);
-                }
-                else
+                if (distance < 0)
                 {
                     PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
                     Vector3 stationPos = planetFactory.entityPool[ship.targetStation.entityId].pos;
                     int planetId = planetFactory.planetId;
                     AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
                     VectorLF3 stationUpos = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, stationPos);
-                    double distance = (stationUpos - ship.uPos).magnitude;
-                    minInterceptDis = distance < minInterceptDis ? distance : minInterceptDis;
-                    allInterceptDis.Add(distance);
+                    distance = (stationUpos - ship.uPos).magnitude;
                 }
+                Interlocked.Exchange(ref minInterceptDis, distance < minInterceptDis ? distance : minInterceptDis);
+                allInterceptDis.AddItem(distance);
             }
             catch (Exception) { }
         }

@@ -7,7 +7,7 @@ namespace DSP_Battle
 {
     class Configs
     {
-        public static int _currentVersion = 20220310;
+        public static int _currentVersion = 20220311;
 
         public static int version = _currentVersion;
 
@@ -76,6 +76,10 @@ namespace DSP_Battle
         public static long nextWaveFrameIndex = -1;
         public static int nextWaveStarIndex = -1;
         public static int nextWaveState = 0; // 0: not generated; 1: wave generated; 2: wormhole generated; 3: in battle
+
+        public static long nextWaveDelay = 0;
+        public static long extraSpeedFrame = -1;
+        public static bool extraSpeedEnabled = false;
 
         public static int nextWaveIntensity = 0;
         public static int nextWaveWormCount = 0;
@@ -227,6 +231,10 @@ namespace DSP_Battle
             w.Write(nextWaveFrameIndex);
             w.Write(nextWaveStarIndex);
             w.Write(nextWaveState);
+            w.Write(nextWaveDelay);
+
+            w.Write(extraSpeedFrame);
+            w.Write(extraSpeedEnabled);
 
             w.Write(nextWaveIntensity);
 
@@ -251,6 +259,10 @@ namespace DSP_Battle
             nextWaveFrameIndex = r.ReadInt64();
             nextWaveStarIndex = r.ReadInt32();
             nextWaveState = r.ReadInt32();
+            nextWaveDelay = version >= 20220311 ? r.ReadInt64() : 0;
+
+            extraSpeedFrame = version >= 20220311 ? r.ReadInt64() : -1;
+            extraSpeedEnabled = version >= 20220311 ? r.ReadBoolean() : false;
 
             nextWaveIntensity = r.ReadInt32();
 
@@ -274,6 +286,10 @@ namespace DSP_Battle
             nextWaveFrameIndex = -1;
             nextWaveStarIndex = -1;
             nextWaveState = 0;
+            nextWaveDelay = 0;
+
+            extraSpeedFrame = -1;
+            extraSpeedEnabled = false;
 
             nextWaveIntensity = 0;
             nextWaveWormCount = 0;

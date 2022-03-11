@@ -108,7 +108,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("简单难度提示", "Difficulty: Easy (Station won't be distroyed)", "当前难度：简单（物流塔不会被破坏，但内部物品会丢失）");
             ProtoRegistry.RegisterString("普通难度提示", "Difficulty: Normal (Station will be distroyed)", "当前难度：普通（物流塔会被正常破坏，敌舰战斗力有所下降）");
             ProtoRegistry.RegisterString("困难难度提示", "Difficulty: Hard (Enemy intensity will increase)", "当前难度：困难（物流塔会被正常破坏，敌舰战斗力有所提升）");
-
+            ProtoRegistry.RegisterString("奖励倒计时：", "Award time left: ", "奖励倒计时：");
 
             ProtoRegistry.RegisterString("彩蛋1", "", "先驱者日记#1");
             ProtoRegistry.RegisterString("彩蛋2", "", "先驱者日记#2");

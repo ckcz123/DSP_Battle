@@ -18,6 +18,7 @@ namespace DSP_Battle
     [BepInDependency(CommonAPIPlugin.GUID)]
     [BepInDependency(LDBToolPlugin.MODGUID)]
     [CommonAPISubmoduleDependency(nameof(ProtoRegistry))]
+    [CommonAPISubmoduleDependency(nameof(TabSystem))]
     public class DspBattlePlugin : BaseUnityPlugin, IModCanSave
     {
         public static string GUID = "com.ckcz123.DSP_Battle";

@@ -23,12 +23,9 @@ namespace DSP_Battle
         public static bool shouldDistroy = true;
         private static bool removingComponets = false;
 
-        public static int timeDelay = 0;
-
         public static void Init()
         {
             ships = new ConcurrentDictionary<int, EnemyShip>();
-            timeDelay = 0;
             SortShips();
         }
 
@@ -249,8 +246,8 @@ namespace DSP_Battle
                     }
                     UIAlert.elimPointRatio *= 0.5f;
                     removingComponets = false;
-                    timeDelay += 5 * 3600;
-                    if (timeDelay > 30 * 3600) timeDelay = 30 * 3600;
+                    Configs.nextWaveDelay += 5 * 3600;
+                    if (Configs.nextWaveDelay > 30 * 3600) Configs.nextWaveDelay = 30 * 3600;
                 }
 
             }
@@ -331,6 +328,14 @@ namespace DSP_Battle
                 case 2: UpdateWaveStage2(time); break;
                 case 3: UpdateWaveStage3(time); break;
             }
+
+            if (time >= Configs.extraSpeedFrame && Configs.extraSpeedEnabled)
+            {
+                Configs.extraSpeedEnabled = false;
+                Configs.extraSpeedFrame = -1;
+                GameMain.history.miningSpeedScale /= 2;
+                GameMain.history.techSpeed /= 2;
+            }
         }
 
         private static void UpdateWaveStage0(long time)
@@ -343,8 +348,8 @@ namespace DSP_Battle
 
             // Gen next wave
             int deltaFrames = (Configs.coldTime[Math.Min(Configs.coldTime.Length - 1, Configs.totalWave)] + 1) * 3600;
-            Configs.nextWaveFrameIndex = time + deltaFrames + timeDelay;
-            timeDelay = 0;
+            Configs.nextWaveFrameIndex = time + deltaFrames + Configs.nextWaveDelay;
+            Configs.nextWaveDelay = 0;
             Configs.nextWaveIntensity = Configs.intensity[Math.Min(Configs.intensity.Length - 1, Configs.wavePerStar[starId])];
             // Extra intensity
             long cube = (long)(GameMain.history.universeMatrixPointUploaded * 0.0002777777777777778);
@@ -381,7 +386,7 @@ namespace DSP_Battle
             Configs.nextWaveWormCount = gidRandom.Next(Math.Min(Configs.nextWaveIntensity / 100, 40), Math.Min(80, Configs.nextWaveEnemy.Sum())) + 1;
 
             UIDialogPatch.ShowUIDialog("下一波攻击即将到来！".Translate(),
-                string.Format("请为 {0} 做好防御准备。", GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName));
+                string.Format("请为<color=#c2853d>{0}</color>做好防御准备。", GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName));
 
             // UIRealtimeTip.Popup("下一波进攻即将到来！".Translate());
             UIAlert.ShowAlert(true);
@@ -416,7 +421,7 @@ namespace DSP_Battle
 
 
             UIDialogPatch.ShowUIDialog("虫洞已生成！".Translate(),
-                string.Format("可通过星图或飞往 {0} 查看具体信息。".Translate(), GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName));
+                string.Format("可通过星图或飞往<color=#c2853d>{0}</color>查看具体信息。".Translate(), GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName));
 
             UIAlert.ShowAlert(true);
         }
@@ -447,6 +452,12 @@ namespace DSP_Battle
                 Configs.nextWaveStarIndex = 0;
                 Configs.nextWaveWormCount = 0;
 
+                long extraSpeedFrame = UIBattleStatistics.totalEnemyEliminated * 5 * 60 * 60 / UIBattleStatistics.totalEnemyGen;
+                Configs.extraSpeedFrame = time + extraSpeedFrame;
+                Configs.extraSpeedEnabled = true;
+                GameMain.history.miningSpeedScale *= 2;
+                GameMain.history.techSpeed *= 2;
+
                 UIDialogPatch.ShowUIDialog("战斗已结束！".Translate(),
                     "战斗时间".Translate() + ": " + string.Format("{0:00}:{1:00}", new object[] { UIBattleStatistics.battleTime / 60 / 60, UIBattleStatistics.battleTime / 60 % 60 }) + "; " +
                     "歼灭敌舰".Translate() + ": " + UIBattleStatistics.totalEnemyEliminated.ToString("N0") + "; " +
@@ -454,8 +465,24 @@ namespace DSP_Battle
                     "损失物流塔".Translate() + ": " + UIBattleStatistics.stationLost.ToString("N0") + "; " +
                     "损失其他建筑".Translate() + ": " + UIBattleStatistics.othersLost.ToString("N0") + "; " +
                     "损失资源".Translate() + ": " + UIBattleStatistics.resourceLost.ToString("N0") + "." +
-                    "\n\n" + "在分析面板-战斗统计中，可以查看更为详细的战斗信息。"
+                    "\n\n<color=#c2853d>" + string.Format("获得奖励：采矿和研究速率翻倍，持续 {0} 秒。".Translate(), extraSpeedFrame / 60) + "</color>\n\n" +
+                    "在分析面板-战斗统计中，可以查看更为详细的战斗信息。".Translate()
                     );
+            }
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(GameHistoryData), "UnlockTechFunction")]
+        public static void GameHistoryData_UnlockTechFunction(ref GameHistoryData __instance, int func, double value, int level)
+        {
+            int num = (int)((value > 0.0) ? (value + 0.5) : (value - 0.5));
+            if (Configs.extraSpeedEnabled && func == 21)
+            {
+                __instance.miningSpeedScale += (float)value;
+            }
+            if (Configs.extraSpeedEnabled && func == 22)
+            {
+                __instance.techSpeed += num;
             }
         }
 
