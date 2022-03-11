@@ -214,7 +214,7 @@ namespace DSP_Battle
                     removingComponets = true;
                     Vector3 stationPos = planetFactory.entityPool[station.entityId].pos;
                     UIBattleStatistics.RegisterIntercept(ship, 0);
-                    UIBattleStatistics.RegisterBuildingLost(); //建筑损失
+                    UIBattleStatistics.RegisterStationLost(); //建筑损失
                     for (int slot = 0; slot < station.storage.Length; slot++) //资源损失
                     {
                         UIBattleStatistics.RegisterResourceLost(station.storage[slot].count);
@@ -228,15 +228,19 @@ namespace DSP_Battle
                         {
                             if (planetFactory.entityPool[i].beltId != 0) continue;
 
-                            UIBattleStatistics.RegisterBuildingLost();
-                            if(planetFactory.entityPool[i].stationId > 0) //物流站要注册资源损失
+                            if (planetFactory.entityPool[i].stationId > 0) //物流站要注册资源损失
                             {
+                                UIBattleStatistics.RegisterStationLost();
                                 StationComponent stationLosing = planetFactory.transport.stationPool[planetFactory.entityPool[i].stationId];
                                 for (int slot = 0; slot < stationLosing.storage.Length; slot++)
                                 {
                                     UIBattleStatistics.RegisterResourceLost(stationLosing.storage[slot].count);
                                 }
                                 UIBattleStatistics.RegisterResourceLost(stationLosing.warperCount + stationLosing.idleShipCount + stationLosing.workShipCount + stationLosing.idleDroneCount + stationLosing.workDroneCount);
+                            }
+                            else
+                            {
+                                UIBattleStatistics.RegisterOtherBuildingLost();
                             }
 
                             //摧毁
@@ -331,7 +335,7 @@ namespace DSP_Battle
 
         private static void UpdateWaveStage0(long time)
         {
-            if (time % 1800 != 1) return;
+            if (time % 1800 != 1 || time < Configs.nextWaveFrameIndex + 60 * 60 * 3) return;
             DspBattlePlugin.logger.LogInfo("=====> Initializing next wave");
             StationComponent[] stations = GameMain.data.galacticTransport.stationPool.Where(ValidStellarStation).ToArray();
             if (stations.Length == 0) return;
@@ -376,7 +380,10 @@ namespace DSP_Battle
             Configs.nextWaveEnemy[0] = intensity / Configs.enemyIntensity[0];
             Configs.nextWaveWormCount = gidRandom.Next(Math.Min(Configs.nextWaveIntensity / 100, 40), Math.Min(80, Configs.nextWaveEnemy.Sum())) + 1;
 
-            UIRealtimeTip.Popup("下一波进攻即将到来！".Translate());
+            UIDialogPatch.ShowUIDialog("下一波攻击即将到来！".Translate(),
+                string.Format("请为 {0} 做好防御准备。", GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName));
+
+            // UIRealtimeTip.Popup("下一波进攻即将到来！".Translate());
             UIAlert.ShowAlert(true);
         }
 
@@ -403,10 +410,14 @@ namespace DSP_Battle
                     Configs.nextWaveWormholes[i] = wormhole;
                     break;
                 }
-                UIRealtimeTip.Popup(string.Format("虫洞 {0} 已生成！".Translate(), i + 1));
             }
 
             Configs.nextWaveState = 2;
+
+
+            UIDialogPatch.ShowUIDialog("虫洞已生成！".Translate(),
+                string.Format("可通过星图或飞往 {0} 查看具体信息。".Translate(), GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName));
+
             UIAlert.ShowAlert(true);
         }
 
@@ -428,13 +439,23 @@ namespace DSP_Battle
 
         private static void UpdateWaveStage3(long time)
         {
+            UIBattleStatistics.RegisterBattleTime(time);
             if (ships.Count == 0)
             {
                 Configs.wavePerStar[Configs.nextWaveStarIndex]++;
                 Configs.nextWaveState = 0;
-                Configs.nextWaveFrameIndex = -1;
                 Configs.nextWaveStarIndex = 0;
                 Configs.nextWaveWormCount = 0;
+
+                UIDialogPatch.ShowUIDialog("战斗已结束！".Translate(),
+                    "战斗时间".Translate() + ": " + string.Format("{0:00}:{1:00}", new object[] { UIBattleStatistics.battleTime / 60 / 60, UIBattleStatistics.battleTime / 60 % 60 }) + "; " +
+                    "歼灭敌舰".Translate() + ": " + UIBattleStatistics.totalEnemyEliminated.ToString("N0") + "; " +
+                    "输出伤害".Translate() + ": " + UIBattleStatistics.totalDamage.ToString("N0") + "; " +
+                    "损失物流塔".Translate() + ": " + UIBattleStatistics.stationLost.ToString("N0") + "; " +
+                    "损失其他建筑".Translate() + ": " + UIBattleStatistics.othersLost.ToString("N0") + "; " +
+                    "损失资源".Translate() + ": " + UIBattleStatistics.resourceLost.ToString("N0") + "." +
+                    "\n\n" + "在分析面板-战斗统计中，可以查看更为详细的战斗信息。"
+                    );
             }
         }
 

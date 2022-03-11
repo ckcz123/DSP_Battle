@@ -53,9 +53,11 @@ namespace DSP_Battle
         public static int totalEnemyEliminated; //已消灭的敌人总数
         public static long totalDamage; //已造成的总伤害
         public static long resourceLost; //资源被偷走、销毁量
-        public static long buildingLost; //建筑被摧毁量
+        public static long stationLost;
+        public static long othersLost; //建筑被摧毁量
         public static double avgInterceptDis; //平均拦截距离
         public static double minInterceptDis; //最小拦截距离
+        public static long battleTime; // 当前战斗时间
 
         //除上面的之外其他总和数值
         public static int totalEnemyGen; //生成的敌人总数
@@ -149,7 +151,9 @@ namespace DSP_Battle
             try
             {
                 resourceLost = 0;
-                buildingLost = 0;
+                stationLost = 0;
+                othersLost = 0;
+                battleTime = 0;
                 totalDamage = 0;
                 totalEnemyEliminated = 0;
                 totalEnemyGen = 0;
@@ -222,16 +226,26 @@ namespace DSP_Battle
             catch (Exception) { }
         }
 
+        public static void RegisterBattleTime(long timei)
+        {
+            battleTime = timei - Configs.nextWaveFrameIndex;
+        }
+
         //资源被掠夺
         public static void RegisterResourceLost(int lostnum)
         {
             resourceLost += lostnum;
         }
 
-        //建筑被摧毁
-        public static void RegisterBuildingLost(int lostnum = 1)
+        public static void RegisterStationLost(int lostnum = 1)
         {
-            buildingLost += lostnum;
+            stationLost += lostnum;
+        }
+
+        //建筑被摧毁
+        public static void RegisterOtherBuildingLost(int lostnum = 1)
+        {
+            othersLost += lostnum;
         }
 
         //子弹或者火箭发射
@@ -351,7 +365,7 @@ namespace DSP_Battle
         public static void UIStateWinOpenPatch(ref UIStatisticsWindow __instance)
         {
             UIStatWindowInstance = __instance;
-            UIAlert.ShowAlert(false); //关闭顶部警告避免遮挡？
+            // UIAlert.ShowAlert(false); //关闭顶部警告避免遮挡？
         }
 
 
@@ -370,7 +384,7 @@ namespace DSP_Battle
             UIStatWindowInstance = __instance;
             battleStatTabObj.SetActive(isBattleStatTab);
             battleStatButtonObj.GetComponent<UIButton>().highlighted = isBattleStatTab;
-            battleStateButtonText.text = "战斗简报".Translate();
+            battleStateButtonText.text = "战斗统计".Translate();
         }
 
         [HarmonyPostfix]
@@ -441,9 +455,13 @@ namespace DSP_Battle
                     enemyEliminatedProps[0] = totalEnemyEliminated * 1.0 / totalEnemyGen;
 
 
-                briefLabel.text = "歼灭敌舰".Translate() + "\n" + "输出伤害".Translate() + "\n" + "损失建筑".Translate() + "\n" + "损失资源".Translate() + "\n\n" + "平均拦截距离".Translate() + "\n" + "最小拦截距离".Translate();
+                briefLabel.text = "战斗时间".Translate() + "\n" + "歼灭敌舰".Translate() + "\n" + "输出伤害".Translate() + "\n" + "损失物流塔".Translate() + "\n" +
+                    "损失其他建筑".Translate() + "\n"
+                    + "损失资源".Translate() + "\n\n" + "平均拦截距离".Translate() + "\n" + "最小拦截距离".Translate();
                 briefValue1.text = "";
-                briefValue2.text = totalEnemyEliminated.ToString("N0") + "\n" + totalDamage.ToString("N0") + "\n" + buildingLost.ToString("N0") + "\n" + resourceLost.ToString("N0") + "\n\n" + avgInterDisStr + "\n" + minInterDisStr;
+                briefValue2.text = 
+                    string.Format("{0:00}:{1:00}", new object[] { battleTime / 60 / 60, battleTime / 60 % 60 }) + "\n" +
+                    totalEnemyEliminated.ToString("N0") + "\n" + totalDamage.ToString("N0") + "\n" + stationLost.ToString("N0") + "\n" + othersLost.ToString("N0") + "\n" + resourceLost.ToString("N0") + "\n\n" + avgInterDisStr + "\n" + minInterDisStr;
 
                 ammoLabel.text = "\n" + 
                     "数量总计".Translate() + "\n" + "伤害总计".Translate() + "\n\n" +

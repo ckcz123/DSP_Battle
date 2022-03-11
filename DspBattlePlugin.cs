@@ -72,6 +72,7 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(MissileSilo));
             Harmony.CreateAndPatchAll(typeof(WormholeUIPatch));
             Harmony.CreateAndPatchAll(typeof(UIBattleStatistics));
+            Harmony.CreateAndPatchAll(typeof(UIDialogPatch));
 
             LDBTool.PreAddDataAction += BattleProtos.AddProtos;
             LDBTool.PostAddDataAction += BattleProtos.CopyPrefabDesc;

@@ -64,6 +64,7 @@ namespace DSP_Battle
         {
             get
             {
+                if (shipData.otherGId < 0) return null;
                 StationComponent[] gStationPool = GameMain.data.galacticTransport.stationPool;
                 if (gStationPool.Length <= shipData.otherGId) return null;
                 return gStationPool[shipData.otherGId];
@@ -149,8 +150,11 @@ namespace DSP_Battle
             int nextStationId = EnemyShips.FindNearestPlanetStation(GameMain.galaxy.PlanetById(shipData.planetB).star, shipData.uPos);
             if (nextStationId < 0)
             {
+                shipData.otherGId = -1;
+                shipData.stage = 0;
+                maxSpeed *= 10;
                 UIBattleStatistics.RegisterIntercept(this, 0); //当找不到目标说明星系内物流塔都被毁了，那么所有剩余船的拦截距离都要被注册为0，即已经冲到脸上了
-                state = State.distroyed;
+                // state = State.distroyed;
                 return;
             }
 
@@ -161,9 +165,10 @@ namespace DSP_Battle
 
         public void Update(long time)
         {
+            VectorLF3 wormholePos = Configs.nextWaveWormholes[wormholeIndex].uPos;
             if (state == State.uninitialized)
             {
-                shipData.uPos = Configs.nextWaveWormholes[wormholeIndex].uPos;
+                shipData.uPos = wormholePos;
                 if (time % 60 != 0) return;
                 countDown--;
                 if (countDown <= 0) state = State.active;
@@ -174,8 +179,8 @@ namespace DSP_Battle
             StationComponent station = targetStation;
             if (station == null || station.id == 0)
             {
-                FindAnotherStation();
-                if (state != State.active) return;
+                if (shipData.otherGId >= 0) FindAnotherStation();
+                // if (state != State.active) return;
             }
 
             Quaternion quaternion = Quaternion.identity;
@@ -185,7 +190,8 @@ namespace DSP_Battle
 
             PlanetData planet = GameMain.galaxy.PlanetById(shipData.planetB);
             renderingData.SetPose(shipData.uPos, flag7 ? quaternion : shipData.uRot, GameMain.data.relativePos, GameMain.data.relativeRot, shipData.uVel * shipData.uSpeed, shipData.itemId);
-            renderingUIData.SetPose(shipData.uPos, flag7 ? quaternion : shipData.uRot, (float)(planet.star.uPosition - planet.uPosition).magnitude, shipData.uSpeed, shipData.itemId);
+            renderingUIData.SetPose(shipData.uPos, flag7 ? quaternion : shipData.uRot, (float)(
+                planet.star.uPosition - (shipData.otherGId < 0 ? wormholePos :planet.uPosition)).magnitude, shipData.uSpeed, shipData.itemId);
             if (renderingData.anim.z < 0) renderingData.anim.z = 0;
         }
 
@@ -209,14 +215,22 @@ namespace DSP_Battle
             quaternion = Quaternion.identity;
             flag7 = false;
             StationComponent station = targetStation;
-            if (station == null) return;
 
             AstroPose astroPose2 = astroPoses[shipData.planetB];
-            VectorLF3 lhs3 = astroPose2.uPos + Maths.QRotateLF(astroPose2.uRot, station.shipDockPos + station.shipDockPos.normalized * 25f);
+            VectorLF3 lhs3 =
+                station == null ? Configs.nextWaveWormholes[wormholeIndex].uPos : 
+                (astroPose2.uPos + Maths.QRotateLF(astroPose2.uRot, station.shipDockPos + station.shipDockPos.normalized * 25f));
             VectorLF3 vectorLF = lhs3 - shipData.uPos;
             double num38 = Math.Sqrt(vectorLF.x * vectorLF.x + vectorLF.y * vectorLF.y + vectorLF.z * vectorLF.z);
             bool flag8 = false;
             bool flag9 = false;
+
+            if (station == null && num38 < 1000.0)
+            {
+                state = State.distroyed;
+                return;
+            }
+
             if (num38 < 6.0)
             {
                 shipData.t = 1f;

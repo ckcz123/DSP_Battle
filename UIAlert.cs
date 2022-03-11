@@ -31,6 +31,7 @@ namespace DSP_Battle
         public static Text stat3label;
         public static Text stat3value;
         public static Text helpInfo;
+        public static Text difficultyInfo;
         public static RectTransform elimProgRT;
         public static RectTransform invaProgRT;
 
@@ -128,6 +129,12 @@ namespace DSP_Battle
             addHelpObj.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 70);
             helpInfo = addHelpObj.GetComponent<Text>();
 
+            GameObject difficultyObject = GameObject.Instantiate(sons.Find("sail-cnt-label").gameObject);
+            difficultyObject.transform.SetParent(titleObj.transform, false);
+            difficultyObject.transform.localPosition = new Vector3(-500, -60, 0);
+            difficultyObject.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 70);
+            difficultyInfo = difficultyObject.GetComponent<Text>();
+
             isActive = false;
             titleObj.SetActive(false);
             statisticObj.SetActive(false);
@@ -169,6 +176,10 @@ namespace DSP_Battle
             }
             if (time % 30 != 1 && !forceRefresh) return;
             helpInfo.text = "按下退格键开启或关闭此窗口，按下减号键使敌军进攻时间提前1分钟。".Translate();
+            difficultyInfo.text = 
+                Configs.difficulty == -1 ? "简单难度提示".Translate()
+                   : Configs.difficulty == 1 ? "困难难度提示".Translate()
+                   : "普通难度提示".Translate();
             if (Configs.nextWaveState == 0 && lastState != 0) //刚刚打完一架，关闭警告
             {
                 ShowAlert(false);
@@ -205,12 +216,12 @@ namespace DSP_Battle
                 stat3label.text = "已被摧毁".Translate();
                 stat1value.text = EnemyShips.ships.Count.ToString();
                 stat2value.text = EnemyShips.ships.Values.ToList().Sum(e => e.intensity).ToString();
-                stat3value.text = (Configs.nextWaveEnemy.Sum() - EnemyShips.ships.Count).ToString();
+                stat3value.text = UIBattleStatistics.totalEnemyEliminated.ToString();
             }
             else
             {
                 int seconds = (int)framesUntilNextWave / 60;
-                alertMainText.text = "下一次入侵预计于".Translate() + Sec2StrTime(seconds, showDetails) + "后抵达".Translate() + GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName;
+                alertMainText.text = "下一次入侵预计于".Translate() + Sec2StrTime(seconds, showDetails) + "后抵达".Translate() + txtColorWarn1 + GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName + txtColorRight;
                 stat1label.text = "预估数量".Translate();
                 stat2label.text = "预估强度".Translate();
                 stat3label.text = "虫洞数量".Translate();
