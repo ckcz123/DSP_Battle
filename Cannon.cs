@@ -265,7 +265,7 @@ namespace DSP_Battle
                     if (__instance.bulletId == 8001)
                     {
                         maxtDivisor = Configs.bullet1Speed * cannonSpeedScale;
-                        damage = (int)(Configs.bullet1Atk * cannonSpeedScale); //只有这个子弹能够因为引力弹射器而强化伤害
+                        damage = (int)Configs.bullet1Atk; //只有这个子弹能够因为引力弹射器而强化伤害
                     }
                     else if (__instance.bulletId == 8002)
                     {

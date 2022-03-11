@@ -11,7 +11,7 @@ namespace DSP_Battle
         //存档内容
         public static bool isActive = false;
 
-        public static long totalDistance = 1;
+        public static double totalDistance = 1;
         public static long totalStrength = 1;
         public static float elimPointRatio = 1.0f;
 
@@ -239,7 +239,7 @@ namespace DSP_Battle
                         AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
                         VectorLF3 stationUpos = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, stationPos);
 
-                        totalDistance += (long)(stationUpos - ship.uPos).magnitude;
+                        totalDistance += (stationUpos - ship.uPos).magnitude;
                         totalStrength += ship.hp;
                     }
                 }
@@ -255,8 +255,8 @@ namespace DSP_Battle
                 }
                 if (curState == 3) //要刷新进度条
                 {
-                    long curTotalDistance = 0;
-                    long curTotalStrength = 0;
+                    double curTotalDistance = 0;
+                    double curTotalStrength = 0;
                     foreach (var shipIndex in EnemyShips.ships.Keys)
                     {
                         var ship = EnemyShips.ships[shipIndex];
@@ -266,7 +266,7 @@ namespace DSP_Battle
                         AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
                         VectorLF3 stationUpos = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, stationPos);
 
-                        curTotalDistance += (long)(stationUpos - ship.uPos).magnitude;
+                        curTotalDistance += (stationUpos - ship.uPos).magnitude;
                         curTotalStrength += ship.hp;
                     }
                     double elimPoint = (totalStrength - curTotalStrength) * 1.0 / totalStrength;

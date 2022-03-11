@@ -65,7 +65,6 @@ namespace DSP_Battle
             }
             animPool[__instance.entityId].power = power;
             float num = (float)Cargo.incTableMilli[__instance.incLevel];
-            num = 4;
             int num2 = (int)(power * 10000f * (1f + num) + 0.1f);
             Mutex dysonSphere_mx = sphere.dysonSphere_mx;
             uint result;
