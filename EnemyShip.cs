@@ -67,7 +67,8 @@ namespace DSP_Battle
                 if (shipData.otherGId < 0) return null;
                 StationComponent[] gStationPool = GameMain.data.galacticTransport.stationPool;
                 if (gStationPool.Length <= shipData.otherGId) return null;
-                return gStationPool[shipData.otherGId];
+                StationComponent station = gStationPool[shipData.otherGId];
+                return EnemyShips.ValidStellarStation(station) ? station : null;
             }
         }
 
@@ -107,8 +108,10 @@ namespace DSP_Battle
             shipData.uRot = new Quaternion((float)DspBattlePlugin.randSeed.NextDouble(), (float)DspBattlePlugin.randSeed.NextDouble(), (float)DspBattlePlugin.randSeed.NextDouble(), (float)DspBattlePlugin.randSeed.NextDouble());
             shipData.uRot.Normalize();
             maxSpeed = Configs.enemySpeed[enemyId];
+            if (Configs.difficulty == 1) maxSpeed += maxSpeed / 2;
             shipData.uSpeed = ((float)DspBattlePlugin.randSeed.NextDouble()) * 0.25f * maxSpeed;
             hp = Configs.enemyHp[enemyId];
+            if (Configs.difficulty == 1) hp *= 2;
             damageRange = Configs.enemyRange[enemyId];
             intensity = Configs.enemyIntensity[enemyId];
             this.countDown = countDown;

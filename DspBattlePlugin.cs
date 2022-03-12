@@ -124,6 +124,7 @@ namespace DSP_Battle
             UIAlert.Import(r);
 
             UIBattleStatistics.InitAll();
+            UIBattleStatistics.InitSelectDifficulty();
         }
 
         public void IntoOtherSave()
@@ -135,6 +136,7 @@ namespace DSP_Battle
             UIAlert.IntoOtherSave();
 
             UIBattleStatistics.InitAll();
+            UIBattleStatistics.InitSelectDifficulty();
         }
 
         public static ManualLogSource logger;

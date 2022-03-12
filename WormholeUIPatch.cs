@@ -23,7 +23,7 @@ namespace DSP_Battle
             DspBattlePlugin.logger.LogInfo("==========> UniverseSimulator_OnGameLoaded");
             for (int i = 0; i < 100; ++i)
             {
-                if (simulator[i] != null) UnityEngine.Object.DestroyImmediate(simulator[i]);
+                if (simulator[i] != null) UnityEngine.Object.DestroyImmediate(simulator[i].gameObject);
             }
 
             CopyBlackHoleData();
@@ -136,7 +136,7 @@ namespace DSP_Battle
 
             for (var i = 0; i < 100; ++i)
             {
-                if (uiStar[i] != null) UnityEngine.Object.DestroyImmediate(uiStar[i]);
+                if (uiStar[i] != null) UnityEngine.Object.DestroyImmediate(uiStar[i].gameObject);
             }
 
             CopyBlackHoleData();

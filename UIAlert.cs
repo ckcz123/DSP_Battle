@@ -31,8 +31,9 @@ namespace DSP_Battle
         public static Text stat3label;
         public static Text stat3value;
         public static Text helpInfo;
-        public static Text awardInfo;
+        public static Text rewardInfo;
         public static Text difficultyInfo;
+        public static Text versionInfo;
         public static RectTransform elimProgRT;
         public static RectTransform invaProgRT;
 
@@ -130,18 +131,24 @@ namespace DSP_Battle
             addHelpObj.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 70);
             helpInfo = addHelpObj.GetComponent<Text>();
 
-            GameObject awardObj = GameObject.Instantiate(myStat1LabelObj);
-            awardObj.transform.SetParent(titleObj.transform, false);
-            awardObj.transform.localPosition = new Vector3(500, -80, 0);
-            awardObj.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 70);
-            awardInfo = awardObj.GetComponent<Text>();
-            awardInfo.color = new Color(194 / 255f, 133 / 255f, 61 / 255f);
+            GameObject rewardObj = GameObject.Instantiate(myStat1LabelObj);
+            rewardObj.transform.SetParent(titleObj.transform, false);
+            rewardObj.transform.localPosition = new Vector3(500, -80, 0);
+            rewardObj.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 70);
+            rewardInfo = rewardObj.GetComponent<Text>();
+            rewardInfo.color = new Color(194 / 255f, 133 / 255f, 61 / 255f);
 
             GameObject difficultyObject = GameObject.Instantiate(sons.Find("sail-cnt-label").gameObject);
             difficultyObject.transform.SetParent(titleObj.transform, false);
             difficultyObject.transform.localPosition = new Vector3(-500, -60, 0);
             difficultyObject.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 70);
             difficultyInfo = difficultyObject.GetComponent<Text>();
+
+            GameObject versionObj = GameObject.Instantiate(sons.Find("sail-cnt-label").gameObject);
+            versionObj.transform.SetParent(titleObj.transform, false);
+            versionObj.transform.localPosition = new Vector3(-500, -80, 0);
+            versionObj.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 70);
+            versionInfo = versionObj.GetComponent<Text>();
 
             isActive = false;
             titleObj.SetActive(false);
@@ -188,9 +195,10 @@ namespace DSP_Battle
                 Configs.difficulty == -1 ? "简单难度提示".Translate()
                    : Configs.difficulty == 1 ? "困难难度提示".Translate()
                    : "普通难度提示".Translate();
-            awardInfo.text = Configs.extraSpeedEnabled && Configs.extraSpeedFrame > time
+            rewardInfo.text = Configs.extraSpeedEnabled && Configs.extraSpeedFrame > time
                 ? ("奖励倒计时：".Translate() + string.Format("{0:00}:{1:00}", new object[] { (Configs.extraSpeedFrame - time) / 60 / 60, (Configs.extraSpeedFrame - time) / 60 % 60 }))
                 : "";
+            versionInfo.text = "mod版本信息".Translate();
             if (Configs.nextWaveState == 0 && lastState != 0) //刚刚打完一架，关闭警告
             {
                 ShowAlert(false);

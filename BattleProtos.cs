@@ -105,10 +105,11 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("相位干扰技术结论", "", "虫洞生成距离增加");
             ProtoRegistry.RegisterString("虫洞生成最近范围扩大0.25AU", "Wormhole spawns radius expanded by 0.25AU", "虫洞生成最近范围扩大0.25AU");
 
-            ProtoRegistry.RegisterString("简单难度提示", "Difficulty: Easy (Station won't be distroyed)", "当前难度：简单（物流塔不会被破坏，但内部物品会丢失）");
-            ProtoRegistry.RegisterString("普通难度提示", "Difficulty: Normal (Station will be distroyed)", "当前难度：普通（物流塔会被正常破坏，敌舰战斗力有所下降）");
-            ProtoRegistry.RegisterString("困难难度提示", "Difficulty: Hard (Enemy intensity will increase)", "当前难度：困难（物流塔会被正常破坏，敌舰战斗力有所提升）");
-            ProtoRegistry.RegisterString("奖励倒计时：", "Award time left: ", "奖励倒计时：");
+            ProtoRegistry.RegisterString("简单难度提示", "Difficulty: Easy (Station won't be distroyed, reward time * 0.75)", "当前难度：简单（物流塔不会被破坏；奖励时间*0.75）");
+            ProtoRegistry.RegisterString("普通难度提示", "Difficulty: Normal (Station will be distroyed, reward time * 1.0)", "当前难度：普通（物流塔会被正常破坏；奖励时间*1.0）");
+            ProtoRegistry.RegisterString("困难难度提示", "Difficulty: Hard (Enemy strength will increase, reward time * 2.0)", "当前难度：困难（敌舰战斗力大幅提升；奖励时间*2.0）");
+            ProtoRegistry.RegisterString("奖励倒计时：", "Reward time left: ", "奖励倒计时：");
+            ProtoRegistry.RegisterString("mod版本信息", "Current version: " + Configs.versionString, "当前版本：" + Configs.versionString + "  欢迎加入mod交流群：" + Configs.qq);
 
             ProtoRegistry.RegisterString("彩蛋1", "", "先驱者日记#1");
             ProtoRegistry.RegisterString("彩蛋2", "", "先驱者日记#2");

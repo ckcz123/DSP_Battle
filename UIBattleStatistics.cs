@@ -20,6 +20,9 @@ namespace DSP_Battle
         static GameObject battleStatButtonObj = null; //切换到战斗数据统计面板的按钮的obj
         static GameObject battleStatTabObj = null; //战斗信息统计主面板
 
+        static GameObject selectDifficultyLabel = null;
+        static GameObject selectDifficultyObj = null;
+
         static GameObject hideButton1;//这六个需要永久隐藏
         static GameObject hideButton2;
         static GameObject hideButton3;
@@ -41,7 +44,7 @@ namespace DSP_Battle
         static Text enemyValue1;
         static Text enemyValue2;
 
-
+        static UIComboBox difficultyComboBox;
 
         static UIStatisticsWindow UIStatWindowInstance = null; //P键整个面板的GameObject
 
@@ -101,7 +104,18 @@ namespace DSP_Battle
             battleStatTabObj.transform.SetParent(GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Statistics Window").transform, false);
             battleStatTabObj.SetActive(false);
 
+            // 难度选择
+            selectDifficultyLabel = GameObject.Instantiate(GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Statistics Window/performance-bg/cpu-panel/Scroll View/Viewport/Content/label"), battleStatTabObj.transform);
+            selectDifficultyLabel.name = "select-difficulty-label";
+            selectDifficultyLabel.SetActive(true);
+            selectDifficultyLabel.transform.localPosition = new Vector3(-517, -273, 0);
+            selectDifficultyLabel.gameObject.GetComponent<Text>().text = "调整难度为：（只可调整一次）".Translate();
 
+            selectDifficultyObj = GameObject.Instantiate(GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Statistics Window/dyson-bg/top/TimeComboBox"), battleStatTabObj.transform);
+            selectDifficultyObj.name = "select-difficulty";
+            selectDifficultyObj.SetActive(true);
+            selectDifficultyObj.transform.localPosition = new Vector3(-368, -300, 0);
+            
             //需要改位置
             battleStatTabObj.transform.Find("cpu-panel/title-text").localPosition = new Vector3(183, 350, 0);
             battleStatTabObj.transform.Find("gpu-panel/title-text").localPosition = new Vector3(183, 350, 0);
@@ -145,6 +159,43 @@ namespace DSP_Battle
 
             battleStatTabObj.transform.Find("gpu-panel/Scroll View/Viewport/Content/value-1").localPosition = new Vector3(80, -4, 0); //重新设置一下位置，稍微右移防止数据重叠
 
+        }
+
+        public static void InitSelectDifficulty()
+        {
+            if (Configs.difficulty == 0)
+            {
+                selectDifficultyObj.gameObject.SetActive(true);
+                selectDifficultyLabel.gameObject.SetActive(true);
+                
+                difficultyComboBox = selectDifficultyObj.gameObject.GetComponentInChildren<UIComboBox>();
+                difficultyComboBox.Items = new string[] { "简单".Translate(), "普通".Translate(), "困难".Translate() }.ToList();
+
+                difficultyComboBox.onItemIndexChange.RemoveAllListeners();
+                difficultyComboBox.itemIndex = Configs.difficulty + 1;
+                difficultyComboBox.enabled = true;
+                difficultyComboBox.text = difficultyComboBox.Items[difficultyComboBox.itemIndex];
+                difficultyComboBox.onItemIndexChange.AddListener(() => OnDifficultyChange());
+            }
+            else
+            {
+                selectDifficultyObj.gameObject.SetActive(false);
+                selectDifficultyLabel.gameObject.SetActive(false);
+            }
+
+        }
+
+        public static void OnDifficultyChange()
+        {
+            int index = difficultyComboBox.itemIndex;
+            if (index - 1 == Configs.difficulty) return;
+            UIMessageBox.Show("你确定想调整难度么？".Translate(), string.Format("你确定想调整难度为{0}吗？难度只能被调整一次！".Translate(), difficultyComboBox.text),
+            "否".Translate(), "是".Translate(), 1, new UIMessageBox.Response(InitSelectDifficulty), new UIMessageBox.Response(() =>
+            {
+                Configs.difficulty = difficultyComboBox.itemIndex - 1;
+                InitSelectDifficulty();
+                UIMessageBox.Show("设置成功！".Translate(), string.Format("成功设置难度为{0}！", difficultyComboBox.text), "确定".Translate(), 1);
+            })); 
         }
 
         public static void ReInitBattleStat()

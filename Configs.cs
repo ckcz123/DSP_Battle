@@ -7,6 +7,9 @@ namespace DSP_Battle
 {
     class Configs
     {
+        public static string versionString = "0.6.0";
+        public static string qq = "待定";
+
         public static int _currentVersion = 20220311;
 
         public static int version = _currentVersion;
