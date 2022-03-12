@@ -593,6 +593,10 @@ namespace DSP_Battle
 
 
                     }
+                    else if (isMissile)
+                    {
+                        __instance.RemoveDysonRocket(i);
+                    }
                     else//普通火箭不要动！！！！！！！！！！！
                     {
 
@@ -1244,6 +1248,10 @@ namespace DSP_Battle
                             __instance.RemoveDysonRocket(i);
                         }
 
+                    }
+                    else if (isMissile)
+                    {
+                        __instance.RemoveDysonRocket(i);
                     }
                     else //普通火箭不要管！！！！！！！！！！！！！！！！！！！！！！！！！！！
                     {
