@@ -16,6 +16,9 @@ namespace DSP_Battle
 
         private static Dictionary<StarSimulator, Material> bodyMaterialMap = new Dictionary<StarSimulator, Material>();
 
+        public static StarData testData;
+        public static StarSimulator testSimulator;
+
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UniverseSimulator), "OnGameLoaded")]
         public static void UniverseSimulator_OnGameLoaded(ref UniverseSimulator __instance)
@@ -38,6 +41,18 @@ namespace DSP_Battle
                 // simulator[i].gameObject.SetActive((Configs.nextWaveState == 2 || Configs.nextWaveState == 3) && i < Configs.nextWaveWormCount);
                 simulator[i].gameObject.SetActive(false);
             }
+
+            if (testSimulator != null) UnityEngine.Object.DestroyImmediate(testSimulator.gameObject);
+
+            testSimulator = UnityEngine.Object.Instantiate<StarSimulator>(__instance.starPrefab, __instance.transform);
+            testSimulator.universeSimulator = __instance;
+            testSimulator.SetStarData(testData);
+            testSimulator.gameObject.layer = 24;
+            testSimulator.gameObject.name = "Test planet";
+            // simulator[i].gameObject.SetActive((Configs.nextWaveState == 2 || Configs.nextWaveState == 3) && i < Configs.nextWaveWormCount);
+            testSimulator.gameObject.SetActive(true);
+
+
             lastWaveState = -1;
         }
 
@@ -47,6 +62,17 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(UniverseSimulator), "GameTick")]
         public static void UniverseSimulator_GameTick(ref UniverseSimulator __instance, double time)
         {
+            Vector3 position = GameMain.mainPlayer.position;
+            VectorLF3 uPosition = GameMain.mainPlayer.uPosition;
+            Vector3 position2 = GameCamera.main.transform.position;
+            Quaternion rotation = GameCamera.main.transform.rotation;
+
+            if (GameMain.localPlanet != null)
+            {
+                testSimulator.starData.uPosition = GameMain.localPlanet.uPosition;
+                testSimulator.UpdateUniversalPosition(position, uPosition, position2, rotation);
+            }
+
             if (Configs.nextWaveState != 2 && Configs.nextWaveState != 3)
             {
                 if (lastWaveState != Configs.nextWaveState)
@@ -56,11 +82,6 @@ namespace DSP_Battle
                 }
                 return;
             }
-
-            Vector3 position = GameMain.mainPlayer.position;
-            VectorLF3 uPosition = GameMain.mainPlayer.uPosition;
-            Vector3 position2 = GameCamera.main.transform.position;
-            Quaternion rotation = GameCamera.main.transform.rotation;
 
             for (var i = 0; i < Configs.nextWaveWormCount; ++i)
             {
@@ -104,8 +125,40 @@ namespace DSP_Battle
             }
 
             float num11 = __instance.visualScale * 6000f * __instance.starData.radius;
-            float a = num11 * 100f;
-            float b2 = num11 * 50f;
+
+            float a;
+            float b2;
+            float num14 = 1f;
+            if (GameMain.data.guideMission != null)
+            {
+                num14 = 8f - 7f * Mathf.Clamp01((GameMain.data.guideMission.elapseTime - 40f) / 20f);
+            }
+            if (__instance.starData.type == EStarType.MainSeqStar)
+            {
+                a = num11 * 0.7f * num14;
+                b2 = num11 * 0.3f * num14;
+            }
+            else if (__instance.starData.type == EStarType.GiantStar)
+            {
+                a = num11 * 6f;
+                b2 = num11 * 3f;
+            }
+            else if (__instance.starData.type == EStarType.WhiteDwarf)
+            {
+                a = num11 * 12f;
+                b2 = num11 * 6f;
+            }
+            else if (__instance.starData.type == EStarType.NeutronStar)
+            {
+                a = num11 * 12f;
+                b2 = num11 * 6f;
+            }
+            else
+            {
+                a = num11 * 100f;
+                b2 = num11 * 50f;
+            }
+
             float num15 = Mathf.InverseLerp(a, b2, (float)__instance.runtimeDist);
 
             if (!bodyMaterialMap.ContainsKey(__instance))
@@ -114,16 +167,62 @@ namespace DSP_Battle
             }
             bodyMaterialMap[__instance].SetFloat("_Multiplier", 1f - num15);
 
-            __instance.massRenderer.gameObject.SetActive(false);
-            __instance.atmosRenderer.gameObject.SetActive(false);
-            __instance.effect.gameObject.SetActive(false);
-            __instance.sunFlare.brightness *= num9;
-            if (__instance.sunFlare.enabled != num9 > 0.001f)
-            {
-                __instance.sunFlare.enabled = (num9 > 0.001f);
-            }
 
+            if (__instance.starData.type == EStarType.BlackHole)
+            {
+                __instance.massRenderer.gameObject.SetActive(false);
+                __instance.atmosRenderer.gameObject.SetActive(false);
+                __instance.effect.gameObject.SetActive(false);
+                __instance.sunFlare.brightness *= num9;
+                if (__instance.sunFlare.enabled != num9 > 0.001f)
+                {
+                    __instance.sunFlare.enabled = (num9 > 0.001f);
+                }
+            }
+            else if (num15 > 0.001f)
+            {
+                ref Material massMaterial = ref AccessTools.FieldRefAccess<StarSimulator, Material>(__instance, "massMaterial");
+                ref Material atmoMaterial = ref AccessTools.FieldRefAccess<StarSimulator, Material>(__instance, "atmoMaterial");
+                ref Material effectMaterial = ref AccessTools.FieldRefAccess<StarSimulator, Material>(__instance, "effectMaterial");
+                ref float _atmo_param = ref AccessTools.FieldRefAccess<StarSimulator, float>(__instance, "_atmo_param");
+                ref float _effect_param = ref AccessTools.FieldRefAccess<StarSimulator, float>(__instance, "_effect_param");
+
+                __instance.massRenderer.gameObject.SetActive(true);
+                __instance.effect.gameObject.SetActive(true);
+                __instance.atmosRenderer.gameObject.SetActive(false);
+                __instance.massRenderer.transform.rotation = Quaternion.Inverse(GameMain.data.relativeRot);
+                __instance.effectRenderer.transform.rotation = Quaternion.Inverse(GameMain.data.relativeRot);
+                massMaterial.SetFloat("_Multiplier", num15 / 2);
+                atmoMaterial.SetFloat("_Multiplier", num15);
+                atmoMaterial.SetVector("_SunPos", __instance.posVector);
+                effectMaterial.SetVector("_SunPos", __instance.posVector);
+                effectMaterial.SetFloat("_Intensity", num15);
+                if (__instance.effect.isStopped)
+                {
+                    __instance.effect.Play();
+                }
+                atmoMaterial.SetFloat("_AtmoThickness", _atmo_param * __instance.solidRadius * 0.04f);
+                effectMaterial.SetFloat("_Radius1", _effect_param * __instance.solidRadius * 0.04f);
+                __instance.massRenderer.transform.localScale = Vector3.one * (__instance.solidRadius * 2f);
+                __instance.atmosRenderer.transform.position = playerLPos;
+                __instance.atmosRenderer.transform.rotation = cameraRot;
+                __instance.atmosRenderer.transform.localScale = Vector3.one * (__instance.solidRadius * 7f);
+                __instance.effect.transform.localScale = Vector3.one * (0.04f * __instance.solidRadius);
+                __instance.sunFlare.brightness *= 1f - num15;
+                if (__instance.sunFlare.enabled != __instance.sunFlare.brightness > 0.001f)
+                {
+                    __instance.sunFlare.enabled = (__instance.sunFlare.brightness > 0.001f);
+                }
+            }
+            else
+            {
+                __instance.massRenderer.gameObject.SetActive(false);
+                __instance.atmosRenderer.gameObject.SetActive(false);
+                __instance.effect.gameObject.SetActive(false);
+            }
             __instance.blackRenderer.transform.localScale = Vector3.one * (__instance.solidRadius * 2f);
+
+
         }
         
         private static int lastWaveState2 = -1;
@@ -204,6 +303,14 @@ namespace DSP_Battle
                 starData[i].index = -1;
                 starData[i].radius = 0.2f;
             }
+
+            testData = GameMain.galaxy.stars.Where(e => e.spectr == ESpectrType.O).First().Copy();
+            testData.planetCount = 0;
+            testData.planets = new PlanetData[] { };
+            testData.id = -1;
+            testData.index = -1;
+            testData.radius = 0.35f;
+
         }
 
     }
