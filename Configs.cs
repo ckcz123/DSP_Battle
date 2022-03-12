@@ -7,12 +7,10 @@ namespace DSP_Battle
 {
     class Configs
     {
-        public static string versionString = "0.6.0";
+        public static string versionString = "0.6.1";
         public static string qq = "待定";
 
-        public static int _currentVersion = 20220311;
-
-        public static int version = _currentVersion;
+        public static int versionCode = 20220312;
 
         public static int difficulty = 0; // -1 easy, 0 normal, 1 hard
 
@@ -223,7 +221,7 @@ namespace DSP_Battle
 
         public static void Export(BinaryWriter w)
         {
-            w.Write(version);
+            w.Write(versionCode);
 
             w.Write(difficulty);
 
@@ -251,9 +249,9 @@ namespace DSP_Battle
 
         public static void Import(BinaryReader r)
         {
-            version = r.ReadInt32();
+            int version = r.ReadInt32();
 
-            difficulty = version >= 20220310 ? r.ReadInt32() : 0;
+            difficulty = r.ReadInt32();
 
             bulletSpeedScale = r.ReadDouble();
             bulletAtkScale = r.ReadDouble();
@@ -278,8 +276,6 @@ namespace DSP_Battle
 
         public static void IntoOtherSave()
         {
-            version = _currentVersion;
-
             difficulty = 0;
 
             bulletSpeedScale = 1.0;

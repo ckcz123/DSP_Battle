@@ -109,7 +109,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("普通难度提示", "Difficulty: Normal (Station will be distroyed, reward time * 1.0)", "当前难度：普通（物流塔会被正常破坏；奖励时间*1.0）");
             ProtoRegistry.RegisterString("困难难度提示", "Difficulty: Hard (Enemy strength will increase, reward time * 2.0)", "当前难度：困难（敌舰战斗力大幅提升；奖励时间*2.0）");
             ProtoRegistry.RegisterString("奖励倒计时：", "Reward time left: ", "奖励倒计时：");
-            ProtoRegistry.RegisterString("mod版本信息", "Current version: " + Configs.versionString, "当前版本：" + Configs.versionString + "  欢迎加入mod交流群：" + Configs.qq);
+            ProtoRegistry.RegisterString("mod版本信息", "Current version: " + Configs.versionString, "当前版本：" + Configs.versionString + "          欢迎加入mod交流群：" + Configs.qq);
 
             ProtoRegistry.RegisterString("彩蛋1", "", "先驱者日记#1");
             ProtoRegistry.RegisterString("彩蛋2", "", "先驱者日记#2");
