@@ -14,7 +14,7 @@ namespace DSP_Battle
 
         public static ConcurrentDictionary<int, EnemyShip> ships;
 
-        public static System.Random gidRandom = new System.Random();
+        public static System.Random random = new System.Random();
         public static List<List<EnemyShip>> minTargetDisSortedShips;
         public static List<Dictionary<int, List<EnemyShip>>> minPlanetDisSortedShips;
         public static List<List<EnemyShip>> maxThreatSortedShips;
@@ -33,8 +33,8 @@ namespace DSP_Battle
 
         public static void Create(int starIndex, int wormholeIndex, int enemyId, int countDown)
         {
-            int nextGid = gidRandom.Next(1 << 27, 1 << 29);
-            while (ships.ContainsKey(nextGid)) nextGid = gidRandom.Next(1 << 27, 1 << 29);
+            int nextGid = random.Next(1 << 27, 1 << 29);
+            while (ships.ContainsKey(nextGid)) nextGid = random.Next(1 << 27, 1 << 29);
 
             int stationId = FindNearestPlanetStation(GameMain.galaxy.stars[starIndex], Configs.nextWaveWormholes[wormholeIndex].uPos);
             if (stationId < 0) return;
@@ -67,7 +67,7 @@ namespace DSP_Battle
                 if (dis > distance || planet.factory?.transport?.stationPool == null) continue;
                 StationComponent[] stations = planet.factory.transport.stationPool.Where(ValidStellarStation).ToArray();
                 if (stations.Length == 0) continue;
-                gid = stations[gidRandom.Next(0, stations.Length)].gid;
+                gid = stations[random.Next(0, stations.Length)].gid;
                 distance = dis;
             }
             return gid;
@@ -419,7 +419,7 @@ namespace DSP_Battle
             DspBattlePlugin.logger.LogInfo("=====> Initializing next wave");
             StationComponent[] stations = GameMain.data.galacticTransport.stationPool.Where(ValidStellarStation).ToArray();
             if (stations.Length == 0) return;
-            int starId = stations[gidRandom.Next(0, stations.Length)].planetId / 100 - 1;
+            int starId = stations[random.Next(0, stations.Length)].planetId / 100 - 1;
 
             // Gen next wave
             int deltaFrames = (Configs.coldTime[Math.Min(Configs.coldTime.Length - 1, Configs.totalWave)] + 1) * 3600;
@@ -453,17 +453,16 @@ namespace DSP_Battle
             int intensity = Configs.nextWaveIntensity;
             for (int i = 4; i >= 1; --i)
             {
-                double v = gidRandom.NextDouble() / 2 + 0.25;
+                double v = random.NextDouble() / 2 + 0.25;
                 Configs.nextWaveEnemy[i] = (int)(intensity * v / Configs.enemyIntensity[i]);
                 intensity -= Configs.nextWaveEnemy[i] * Configs.enemyIntensity[i];
             }
             Configs.nextWaveEnemy[0] = intensity / Configs.enemyIntensity[0];
-            Configs.nextWaveWormCount = gidRandom.Next(Math.Min(Configs.nextWaveIntensity / 100, 40), Math.Min(80, Configs.nextWaveEnemy.Sum())) + 1;
+            Configs.nextWaveWormCount = random.Next(Math.Min(Configs.nextWaveIntensity / 100, 40), Math.Min(80, Configs.nextWaveEnemy.Sum())) + 1;
 
             UIDialogPatch.ShowUIDialog("下一波攻击即将到来！".Translate(),
-                string.Format("请为<color=#c2853d>{0}</color>做好防御准备。", GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName));
+                string.Format("做好防御提示".Translate(), GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName));
 
-            // UIRealtimeTip.Popup("下一波进攻即将到来！".Translate());
             UIAlert.ShowAlert(true);
         }
 
@@ -479,7 +478,7 @@ namespace DSP_Battle
                 while (true)
                 {
                     int planetId = 100 * (Configs.nextWaveStarIndex + 1) + 1;
-                    if (stations.Length != 0) planetId = stations[gidRandom.Next(0, stations.Length)].planetId;
+                    if (stations.Length != 0) planetId = stations[random.Next(0, stations.Length)].planetId;
 
                     Wormhole wormhole = new Wormhole(planetId, UnityEngine.Random.onUnitSphere);
                     VectorLF3 pos = wormhole.uPos;
@@ -496,7 +495,7 @@ namespace DSP_Battle
 
 
             UIDialogPatch.ShowUIDialog("虫洞已生成！".Translate(),
-                string.Format("可通过星图或飞往<color=#c2853d>{0}</color>查看具体信息。".Translate(), GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName));
+                string.Format("虫洞生成提示".Translate(), GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName));
 
             UIAlert.ShowAlert(true);
         }
@@ -509,7 +508,7 @@ namespace DSP_Battle
             {
                 for (int j = 0; j < Configs.nextWaveEnemy[i]; ++j)
                 {
-                    Create(Configs.nextWaveStarIndex, u % Configs.nextWaveWormCount, i, gidRandom.Next(0, Math.Min(u + 1, 30)));
+                    Create(Configs.nextWaveStarIndex, u % Configs.nextWaveWormCount, i, random.Next(0, Math.Min(u + 1, 30)));
                     u++;
                 }
             }
@@ -547,8 +546,8 @@ namespace DSP_Battle
                     "损失物流塔".Translate() + ": " + UIBattleStatistics.stationLost.ToString("N0") + "; " +
                     "损失其他建筑".Translate() + ": " + UIBattleStatistics.othersLost.ToString("N0") + "; " +
                     "损失资源".Translate() + ": " + UIBattleStatistics.resourceLost.ToString("N0") + "." +
-                    "\n\n<color=#c2853d>" + string.Format("获得奖励：采矿速率*2，,研究速率*2，运输船速度*1.5，持续 {0} 秒。".Translate(), extraSpeedFrame / 60) + "</color>\n\n" +
-                    "在分析面板-战斗统计中，可以查看更为详细的战斗信息。".Translate()
+                    "\n\n<color=#c2853d>" + string.Format("奖励提示".Translate(), extraSpeedFrame / 60) + "</color>\n\n" +
+                    "查看更多战斗信息".Translate()
                     );
             }
         }

@@ -260,10 +260,10 @@ namespace DSP_Battle
             nextWaveFrameIndex = r.ReadInt64();
             nextWaveStarIndex = r.ReadInt32();
             nextWaveState = r.ReadInt32();
-            nextWaveDelay = version >= 20220311 ? r.ReadInt64() : 0;
+            nextWaveDelay = r.ReadInt64();
 
-            extraSpeedFrame = version >= 20220311 ? r.ReadInt64() : -1;
-            extraSpeedEnabled = version >= 20220311 ? r.ReadBoolean() : false;
+            extraSpeedFrame = r.ReadInt64();
+            extraSpeedEnabled = r.ReadBoolean();
 
             nextWaveIntensity = r.ReadInt32();
 

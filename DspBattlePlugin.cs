@@ -24,19 +24,9 @@ namespace DSP_Battle
         public static string GUID = "com.ckcz123.DSP_Battle";
         public static string MODID_tab = "DSPBattle";
 
-        public static bool developerMode = true;
-
         public static System.Random randSeed = new System.Random();
-        public static int minShowDetaisSecond; //取决于科技
-        public static int framesUntilNextWave;
-        public static int nextWaveShipCount;
-        public static int nextWaveStrength;
-        public static int nextWaveAward;
-        public static int destroyedCount;
-        public static bool preparingNextWave = false;
-
         public static int pagenum;
-
+        public static ManualLogSource logger;
         private static ConfigFile config;
 
 
@@ -54,7 +44,9 @@ namespace DSP_Battle
             {
                 using (ProtoRegistry.StartModLoad(GUID))
                 {
-                    pagenum = TabSystem.RegisterTab($"{MODID_tab}:{MODID_tab}Tab", new TabData("轨道防御", "Assets/DSPBattle/dspbattletabicon"));
+                    string tabName = "Defense";
+                    if (Localization.language == Language.zhCN) tabName = "轨道防御";
+                    pagenum = TabSystem.RegisterTab($"{MODID_tab}:{MODID_tab}Tab", new TabData(tabName, "Assets/DSPBattle/dspbattletabicon"));
                     BattleProtos.pageBias = (pagenum - 2) * 1000 - 500;
                 }
             }
@@ -77,9 +69,6 @@ namespace DSP_Battle
 
             LDBTool.PreAddDataAction += BattleProtos.AddProtos;
             LDBTool.PostAddDataAction += BattleProtos.CopyPrefabDesc;
-
-            //Cannon.testFrameCount = 0;
-            //Cannon.ReInitAll();
         }
 
         public void Update()
@@ -139,7 +128,6 @@ namespace DSP_Battle
             UIBattleStatistics.InitSelectDifficulty();
         }
 
-        public static ManualLogSource logger;
 
     }
 }

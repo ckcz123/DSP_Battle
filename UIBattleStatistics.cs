@@ -95,7 +95,6 @@ namespace DSP_Battle
             battleStatButtonObj.GetComponent<Button>().onClick.AddListener(() => { OnClickBattleStatButton(); });
 
             battleStateButtonText = battleStatButtonObj.transform.Find("text").GetComponent<Text>();
-            battleStateButtonText.text = "战斗简报".Translate();
 
             //面板
             GameObject oriPerformanceObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Statistics Window/performance-bg");
@@ -109,7 +108,6 @@ namespace DSP_Battle
             selectDifficultyLabel.name = "select-difficulty-label";
             selectDifficultyLabel.SetActive(true);
             selectDifficultyLabel.transform.localPosition = new Vector3(-517, -273, 0);
-            selectDifficultyLabel.gameObject.GetComponent<Text>().text = "调整难度为：（只可调整一次）".Translate();
 
             selectDifficultyObj = GameObject.Instantiate(GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Statistics Window/dyson-bg/top/TimeComboBox"), battleStatTabObj.transform);
             selectDifficultyObj.name = "select-difficulty";
@@ -127,11 +125,6 @@ namespace DSP_Battle
             battleStatTabObj.transform.Find("cpu-panel/Scroll View").GetComponent<RectTransform>().sizeDelta = new Vector2(330,550);
             battleStatTabObj.transform.Find("gpu-panel/Scroll View").GetComponent<RectTransform>().sizeDelta = new Vector2(330, 600);
             battleStatTabObj.transform.Find("data-panel/Scroll View").GetComponent<RectTransform>().sizeDelta = new Vector2(330, 550);
-
-
-            battleStatTabObj.transform.Find("cpu-panel/title-text").GetComponent<Text>().text = "战况概览".Translate();
-            battleStatTabObj.transform.Find("gpu-panel/title-text").GetComponent<Text>().text = "弹药概览".Translate();
-            battleStatTabObj.transform.Find("data-panel/title-text").GetComponent<Text>().text = "敌舰".Translate();
 
             //需要永久隐藏
             hideButton1 = battleStatTabObj.transform.Find("cpu-panel/active-button").gameObject;
@@ -163,6 +156,12 @@ namespace DSP_Battle
 
         public static void InitSelectDifficulty()
         {
+            battleStateButtonText.text = "战斗简报".Translate();
+            selectDifficultyLabel.gameObject.GetComponent<Text>().text = "调整难度提示".Translate();
+            battleStatTabObj.transform.Find("cpu-panel/title-text").GetComponent<Text>().text = "战况概览".Translate();
+            battleStatTabObj.transform.Find("gpu-panel/title-text").GetComponent<Text>().text = "弹药概览".Translate();
+            battleStatTabObj.transform.Find("data-panel/title-text").GetComponent<Text>().text = "敌舰".Translate();
+
             if (Configs.difficulty == 0)
             {
                 selectDifficultyObj.gameObject.SetActive(true);
@@ -189,7 +188,7 @@ namespace DSP_Battle
         {
             int index = difficultyComboBox.itemIndex;
             if (index - 1 == Configs.difficulty) return;
-            UIMessageBox.Show("你确定想调整难度么？".Translate(), string.Format("你确定想调整难度为{0}吗？难度只能被调整一次！".Translate(), difficultyComboBox.text),
+            UIMessageBox.Show("调整难度标题".Translate(), string.Format("调整难度警告".Translate(), difficultyComboBox.text),
             "否".Translate(), "是".Translate(), 1, new UIMessageBox.Response(InitSelectDifficulty), new UIMessageBox.Response(() =>
             {
                 Configs.difficulty = difficultyComboBox.itemIndex - 1;
@@ -431,7 +430,7 @@ namespace DSP_Battle
             UIStatWindowInstance = __instance;
             battleStatTabObj.SetActive(isBattleStatTab);
             battleStatButtonObj.GetComponent<UIButton>().highlighted = isBattleStatTab;
-            battleStateButtonText.text = "战斗统计".Translate();
+            InitSelectDifficulty();
         }
 
         [HarmonyPostfix]
@@ -514,10 +513,10 @@ namespace DSP_Battle
                     "数量总计".Translate() + "\n" + "伤害总计".Translate() + "\n\n" +
                     "子弹数量".Translate() + "\n" + "  > " + "子弹1".Translate() + "\n" + "  > " + "子弹2".Translate() + "\n" + "  > " + "子弹3".Translate() + "\n" + "  > " + "脉冲".Translate() + "\n\n" +
                     "导弹数量".Translate() + "\n" + "  > " + "导弹1".Translate() + "\n" + "  > " + "导弹2".Translate() + "\n" + "  > " + "导弹3".Translate() + "\n\n" +
-                    "子弹伤害".Translate() + "\n" + "  > " + "子弹1".Translate() + "\n" + "  > " + "子弹2".Translate() + "\n" + "  > " + "子弹3".Translate() + "\n" + "  > " + "脉冲".Translate() + "\n\n" +
-                    "导弹伤害".Translate() + "\n" + "  > " + "导弹1".Translate() + "\n" + "  > " + "导弹2".Translate() + "\n" + "  > " + "导弹3".Translate() + "\n\n";
+                    "子弹伤害gm".Translate() + "\n" + "  > " + "子弹1".Translate() + "\n" + "  > " + "子弹2".Translate() + "\n" + "  > " + "子弹3".Translate() + "\n" + "  > " + "脉冲".Translate() + "\n\n" +
+                    "导弹伤害gm".Translate() + "\n" + "  > " + "导弹1".Translate() + "\n" + "  > " + "导弹2".Translate() + "\n" + "  > " + "导弹3".Translate() + "\n\n";
 
-                ammoValue1.text = "击中".Translate() + "/" + "发射".Translate() + "\n" +
+                ammoValue1.text = "击中gm".Translate() + "/" + "发射gm".Translate() + "\n" +
                     $"{totalAmmoHit}/{totalAmmoUse}\n{totalAmmoDamageHit}/{totalAmmoDamageOut}\n\n" +
                     $"{bAmmoHit}/{bAmmoUse}\n{ammoHit[8001]}/{ammoUse[8001]}\n {ammoHit[8002]}/{ammoUse[8002]}\n {ammoHit[8003]}/{ammoUse[8003]}\n {ammoHit[8007]}/{ammoUse[8007]}\n\n" + 
                     $"{mAmmoHit}/{mAmmoUse}\n{ammoHit[8004]}/{ammoUse[8004]}\n {ammoHit[8005]}/{ammoUse[8005]}\n {ammoHit[8006]}/{ammoUse[8006]}\n\n" +
@@ -532,10 +531,10 @@ namespace DSP_Battle
                     $"{mDamageProp:0.00%}\n{ammoDamageProps[4]:0.00%}\n{ammoDamageProps[5]:0.00%}\n{ammoDamageProps[6]:0.00%}\n\n";
 
                 enemyLabel.text = "\n" +
-                    "总计".Translate() + "\n" + "  > " + "护卫舰".Translate() + "\n" + "  > " + "驱逐舰".Translate() + "\n" + "  > " + "巡洋舰".Translate() + "\n" + "  > " + "战列舰".Translate() + "\n" + "  > " + "泰坦".Translate();
-                enemyValue1.text = "已歼灭".Translate() + "/" + "已产生".Translate() + "\n" +
+                    "总计gm".Translate() + "\n" + "  > " + "侦查艇".Translate() + "\n" + "  > " + "护卫舰".Translate() + "\n" + "  > " + "驱逐舰".Translate() + "\n" + "  > " + "巡洋舰".Translate() + "\n" + "  > " + "战列舰".Translate();
+                enemyValue1.text = "已歼灭gm".Translate() + "/" + "已产生gm".Translate() + "\n" +
                     $"{totalEnemyEliminated}/{totalEnemyGen}\n{enemyEliminated[1]}/{enemyGen[1]}\n{enemyEliminated[4]}/{enemyGen[4]}\n{enemyEliminated[8]}/{enemyGen[8]}\n{enemyEliminated[9]}/{enemyGen[9]}\n{enemyEliminated[15]}/{enemyGen[15]}";
-                enemyValue2.text = "歼灭".Translate() + "\n" +
+                enemyValue2.text = "占比gm".Translate() + "\n" +
                     $"{enemyEliminatedProps[0]:0.00%}\n{enemyEliminatedProps[1]:0.00%}\n{enemyEliminatedProps[4]:0.00%}\n{enemyEliminatedProps[8]:0.00%}\n{enemyEliminatedProps[9]:0.00%}\n{enemyEliminatedProps[15]:0.00%}\n";
             }
         }

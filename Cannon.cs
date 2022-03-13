@@ -9,8 +9,6 @@ namespace DSP_Battle
 {
     class Cannon
     {
-        public static DysonSwarm curSwarm;
-
         //需要存读档
         // 这里应该是HashSet，为了线程安全还是用ConcurrentDictionary
         public static List<ConcurrentDictionary<int, int>> sailBulletsIndex; //记录应该变成太阳帆的子弹，原本是记录攻击用子弹，但是总有漏网之鱼变成太阳帆，找不到原因，所以反过来记录应该变成太阳帆的子弹，这可能导致0.1%（目测，或许远低于此）的太阳帆无法生成
@@ -18,10 +16,6 @@ namespace DSP_Battle
         public static List<ConcurrentDictionary<int, int>> bulletIds; //记录子弹Id，原本是canDoDamage记录子弹还能造成多少伤害
         //
 
-        public static int testFrameCount = 0;
-        public static double BulletMaxtDivisor = 7000.0; // 原本5000.0
-        public static float numMinus = 0.0f;
-        public static VectorLF3 endPos = new VectorLF3(2000, 2000, 2000);
         public static bool doTrack = true;
         public static System.Random rand = new System.Random();
 
@@ -32,7 +26,6 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(GameData), "GameTick")]
         public static void BulletTrack()
         {
-            //testFrameCount = (testFrameCount + 1) % 60;
             if (!doTrack) return;
             try
             {
@@ -53,12 +46,6 @@ namespace DSP_Battle
                         }
                         foreach (var j in bulletTargets[starIndex].Keys)
                         {
-                            //if ((curSwarm.bulletPool[i].uEnd - curSwarm.bulletPool[i].uBegin).magnitude > 500)
-                            //{
-                            //    curSwarm.bulletPool[i].uBegin += (curSwarm.bulletPool[i].uEnd - curSwarm.bulletPool[i].uBegin) * curSwarm.bulletPool[i].t / (curSwarm.bulletPool[i].maxt+0.7f);
-                            //    curSwarm.bulletPool[i].maxt = curSwarm.bulletPool[i].maxt - curSwarm.bulletPool[i].t;
-                            //    curSwarm.bulletPool[i].t = 0;
-                            //}
                             if (!sailBulletsIndex[starIndex].ContainsKey(j)) //只有对应swarm的对应位置的bullet不是之前存下来的solarsail的Bullet的时候才改变目标终点
                             {
                                 int targetShipIndex = bulletTargets[starIndex][j];
@@ -66,10 +53,6 @@ namespace DSP_Battle
                                 {
                                     swarm.bulletPool[j].uEnd = EnemyShips.ships[targetShipIndex].uPos;
                                 }
-                                //else
-                                //{
-                                //    bulletTargets[starIndex].Remove(j);
-                                //}
                             }
 
                         }
@@ -81,12 +64,8 @@ namespace DSP_Battle
             catch (Exception)
             {
             }
-
-
         }
 
-        //[HarmonyPostfix]
-        //[HarmonyPatch(typeof(GameSave), "LoadCurrentGame")]
         public static void ReInitAll()
         {
             try
@@ -113,8 +92,6 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(EjectorComponent), "InternalUpdate")]
         public static bool EjectorPatch(ref EjectorComponent __instance, float power, DysonSwarm swarm, AstroPose[] astroPoses, AnimData[] animPool, int[] consumeRegister, ref uint __result)
         {
-            curSwarm = swarm;
-
             int planetId = __instance.planetId;
             int starIndex = planetId / 100 - 1;
             PlanetFactory factory = GameMain.galaxy.stars[starIndex].planets[planetId % 100 - 1].factory;
