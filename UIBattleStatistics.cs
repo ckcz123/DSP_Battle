@@ -193,7 +193,7 @@ namespace DSP_Battle
             {
                 Configs.difficulty = difficultyComboBox.itemIndex - 1;
                 InitSelectDifficulty();
-                UIMessageBox.Show("设置成功！".Translate(), string.Format("成功设置难度为{0}！", difficultyComboBox.text), "确定".Translate(), 1);
+                UIMessageBox.Show("设置成功！".Translate(), string.Format("难度设置成功".Translate(), difficultyComboBox.text), "确定".Translate(), 1);
             })); 
         }
 

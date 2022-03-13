@@ -189,11 +189,11 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("简单", "Easy", "简单");
             ProtoRegistry.RegisterString("普通", "Normal", "普通");
             ProtoRegistry.RegisterString("困难", "Hard", "困难");
-            ProtoRegistry.RegisterString("调整难度提示", "Modify difficulty to: (Only once)", "调整难度为：（只可调整一次）");
-            ProtoRegistry.RegisterString("调整难度标题", "Confirm to modify difficulty?", "你确定想调整难度么？");
-            ProtoRegistry.RegisterString("调整难度警告", "Do you want to modify difficulty to <color=#c2853d>{0}</color>? This can only be done once!", "你确定想调整难度为<color=#c2853d>{0}</color>吗？难度只能被调整一次！");
+            ProtoRegistry.RegisterString("调整难度提示", "Change difficulty to: (Only ONCE)", "调整难度为：（只可调整一次）");
+            ProtoRegistry.RegisterString("调整难度标题", "Confirm to change difficulty?", "你确定想调整难度么？");
+            ProtoRegistry.RegisterString("调整难度警告", "Do you want to change difficulty to <color=#c2853d>{0}</color>? This can only be done ONCE!", "你确定想调整难度为<color=#c2853d>{0}</color>吗？难度只能被调整一次！");
             ProtoRegistry.RegisterString("设置成功！", "Success!", "设置成功！");
-            ProtoRegistry.RegisterString("成功设置难度为{0}！", "Successfully set difficulty to {0}!", "成功设置难度为{0}！");
+            ProtoRegistry.RegisterString("难度设置成功", "Successfully change difficulty to <color=#c2853d>{0}</color>!", "成功设置难度为<color=#c2853d>{0}</color>！");
             ProtoRegistry.RegisterString("平均拦截距离", "Avg Intercept Distance", "平均拦截距离");
             ProtoRegistry.RegisterString("最小拦截距离", "Min Intercept Distance", "最小拦截距离");
             ProtoRegistry.RegisterString("数量总计", "Total Quantity", "数量总计");
