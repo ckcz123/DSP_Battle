@@ -134,9 +134,7 @@ namespace DSP_Battle
             {
                 curEjectorIsCannon = true;
                 EjectorComponent ejectorComponent = __instance.factorySystem.ejectorPool[__instance.ejectorId];
-                int planetId = ejectorComponent.planetId;
-                PlanetFactory factory = GameMain.galaxy.stars[planetId / 100 - 1].planets[planetId % 100 - 1].factory;
-                int gmProtoId = factory.entityPool[ejectorComponent.entityId].protoId;
+                int gmProtoId = __instance.factory.entityPool[ejectorComponent.entityId].protoId;
                 if (gmProtoId == 2311) //原版弹射器不进行修改
                 {
                     curTarget = null;

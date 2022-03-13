@@ -177,8 +177,10 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("损失物流塔", "Station lost", "损失物流塔");
             ProtoRegistry.RegisterString("损失其他建筑", "Other buildings lost", "损失其他建筑");
             ProtoRegistry.RegisterString("损失资源", "Resource lost", "损失资源");
-            ProtoRegistry.RegisterString("奖励提示", "Got reward: mining speed * 2, tech speed * 2, vessile ship speed * 1.5, lasting for {0} seconds.", "获得奖励：采矿速率*2，,研究速率*2，运输船速度*1.5，持续 {0} 秒。");
+            ProtoRegistry.RegisterString("奖励提示", "Got reward: mining speed * 2, tech speed * 2, vessel ship speed * 1.5, lasting for {0} seconds.", "获得奖励：采矿速率*2，研究速率*2，运输船速度*1.5，持续 {0} 秒。");
             ProtoRegistry.RegisterString("查看更多战斗信息", "View more details of this wave in Statistics -> Battle Info", "在分析面板-战斗统计中，可以查看更为详细的战斗信息。");
+            ProtoRegistry.RegisterString("火箭模式提示", "Current Mode: AUTO", "自动寻敌（无需设置）");
+            ProtoRegistry.RegisterString("打开统计面板", "Open Statistics", "打开统计面板");
 
             ProtoRegistry.RegisterString("战斗简报", "Battle Info", "战斗简报");
             ProtoRegistry.RegisterString("战况概览", "Battle Summary", "战况概览");
