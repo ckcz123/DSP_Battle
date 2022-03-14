@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using UnityEngine;
 
 namespace DSP_Battle
@@ -19,6 +20,7 @@ namespace DSP_Battle
         public static List<Dictionary<int, List<EnemyShip>>> minPlanetDisSortedShips;
         public static List<List<EnemyShip>> maxThreatSortedShips;
         public static List<List<EnemyShip>> minHpSortedShips;
+        public static Dictionary<int, List<Tuple<Vector3, int>>> pendingDestroyedEntities; // planet id; upos; range
 
         public static bool shouldDistroy = true;
         private static bool removingComponets = false;
@@ -28,6 +30,7 @@ namespace DSP_Battle
         {
             ships = new ConcurrentDictionary<int, EnemyShip>();
             distroyedStation = new ConcurrentDictionary<int, object>();
+            pendingDestroyedEntities = new Dictionary<int, List<Tuple<Vector3, int>>>();
             SortShips();
         }
 
@@ -210,73 +213,18 @@ namespace DSP_Battle
                 StationComponent station = ship.targetStation;
                 if (ValidStellarStation(station))
                 {
-                    // Easy mode
-                    if (Configs.difficulty == -1)
+                    PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
+                    Vector3 stationPos = planetFactory.entityPool[station.entityId].pos;
+                    removingComponets = true;
+                    UIBattleStatistics.RegisterIntercept(ship, 0);
+                    RemoveStation(planetFactory, station);
+                    removingComponets = false;
+
+                    if (!pendingDestroyedEntities.ContainsKey(ship.shipData.planetB))
                     {
-                        UIBattleStatistics.RegisterIntercept(ship, 0);
-                        PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
-                        removingComponets = true;
-                        Vector3 stationPos = planetFactory.entityPool[station.entityId].pos;
-
-                        ClearStationInEasy(planetFactory, station);
-                        for (int i = 0; i < planetFactory.entityPool.Length; ++i)
-                        {
-                            if (planetFactory.entityPool[i].notNull && (planetFactory.entityPool[i].pos - stationPos).magnitude <= ship.damageRange)
-                            {
-                                if (planetFactory.entityPool[i].stationId > 0)
-                                {
-                                    ClearStationInEasy(planetFactory, planetFactory.transport.stationPool[planetFactory.entityPool[i].stationId]);
-                                }
-                                if (planetFactory.entityPool[i].powerNodeId > 0)
-                                {
-                                    UIBattleStatistics.RegisterOtherBuildingLost();
-                                    RemoveEntity(planetFactory, i);
-                                }
-                            }
-                        }
-                        removingComponets = false;
+                        pendingDestroyedEntities.Add(ship.shipData.planetB, new List<Tuple<Vector3, int>>());
                     }
-                    else
-                    {
-                        PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
-                        removingComponets = true;
-                        Vector3 stationPos = planetFactory.entityPool[station.entityId].pos;
-                        UIBattleStatistics.RegisterIntercept(ship, 0);
-                        UIBattleStatistics.RegisterStationLost(); //建筑损失
-                        for (int slot = 0; slot < station.storage.Length; slot++) //资源损失
-                        {
-                            UIBattleStatistics.RegisterResourceLost(station.storage[slot].count);
-                        }
-                        UIBattleStatistics.RegisterResourceLost(station.warperCount + station.idleShipCount + station.workShipCount + station.idleDroneCount + station.workDroneCount);
-                        RemoveEntity(planetFactory, station.entityId);
-                        // Find all entities in damageRange
-                        for (int i = 0; i < planetFactory.entityPool.Length; ++i)
-                        {
-                            if (planetFactory.entityPool[i].notNull && (planetFactory.entityPool[i].pos - stationPos).magnitude <= ship.damageRange)
-                            {
-                                if (planetFactory.entityPool[i].beltId != 0) continue;
-
-                                if (planetFactory.entityPool[i].stationId > 0) //物流站要注册资源损失
-                                {
-                                    UIBattleStatistics.RegisterStationLost();
-                                    StationComponent stationLosing = planetFactory.transport.stationPool[planetFactory.entityPool[i].stationId];
-                                    for (int slot = 0; slot < stationLosing.storage.Length; slot++)
-                                    {
-                                        UIBattleStatistics.RegisterResourceLost(stationLosing.storage[slot].count);
-                                    }
-                                    UIBattleStatistics.RegisterResourceLost(stationLosing.warperCount + stationLosing.idleShipCount + stationLosing.workShipCount + stationLosing.idleDroneCount + stationLosing.workDroneCount);
-                                }
-                                else
-                                {
-                                    UIBattleStatistics.RegisterOtherBuildingLost();
-                                }
-
-                                //摧毁
-                                RemoveEntity(planetFactory, i);
-                            }
-                        }
-                        removingComponets = false;
-                    }
+                    pendingDestroyedEntities[ship.shipData.planetB].Add(new Tuple<Vector3, int>(stationPos, ship.damageRange));
 
                     UIAlert.elimPointRatio *= 0.5f;
                     Configs.nextWaveDelay += 5 * 3600;
@@ -290,15 +238,46 @@ namespace DSP_Battle
             {
                 ship.state = EnemyShip.State.active;
             }
-
-
         }
 
-        private static void ClearStationInEasy(PlanetFactory factory, StationComponent station)
+        private static void CheckPendingDestroyedEntities()
         {
-            if (!ValidStellarStation(station)) return;
+            foreach (var entry in pendingDestroyedEntities)
+            {
+                removingComponets = true;
+                try
+                {
+                    PlanetFactory planetFactory = GameMain.galaxy.PlanetById(entry.Key).factory;
 
-            distroyedStation[station.gid] = 0;
+                    for (int i = 0; i < planetFactory.entityPool.Length; ++i)
+                    {
+                        if (planetFactory.entityPool[i].isNull ||
+                            planetFactory.entityPool[i].beltId != 0 || 
+                            !entry.Value.Any((e) => (planetFactory.entityPool[i].pos - e.Item1).magnitude <= e.Item2))
+                        {
+                            continue;
+                        }
+
+                        if (planetFactory.entityPool[i].stationId > 0)
+                        {
+                            RemoveStation(planetFactory, planetFactory.transport.stationPool[planetFactory.entityPool[i].stationId]);
+                        } 
+                        else if (Configs.difficulty != -1 || planetFactory.entityPool[i].powerNodeId > 0)
+                        {
+                            UIBattleStatistics.RegisterOtherBuildingLost();
+                            RemoveEntity(planetFactory, i);
+                        }
+                    }
+                }
+                catch (Exception) { }
+                finally { removingComponets = false; }
+            }
+            pendingDestroyedEntities.Clear();
+        }
+
+        private static void RemoveStation(PlanetFactory factory, StationComponent station)
+        {
+            if (!ValidStellarStation(station) || !removingComponets) return;
 
             for (int slot = 0; slot < station.storage.Length; slot++) //资源损失
             {
@@ -306,35 +285,46 @@ namespace DSP_Battle
             }
             UIBattleStatistics.RegisterResourceLost(station.warperCount + station.idleShipCount + station.workShipCount + station.idleDroneCount + station.workDroneCount);
 
-            // 破坏资源但不损毁物流塔
-            for (var i = 0; i < station.storage.Length; ++i)
+            if (Configs.difficulty == -1)
             {
-                station.storage[i].count = 0;
-                station.storage[i].inc = 0;
-                station.storage[i].localOrder = 0;
-                station.storage[i].remoteOrder = 0;
+                distroyedStation[station.gid] = 0;
+
+                // 破坏资源但不损毁物流塔
+                for (var i = 0; i < station.storage.Length; ++i)
+                {
+                    station.storage[i].count = 0;
+                    station.storage[i].inc = 0;
+                    station.storage[i].localOrder = 0;
+                    station.storage[i].remoteOrder = 0;
+                }
+
+                station.idleDroneCount = 0;
+                station.workDroneCount = 0;
+                Array.Clear(station.workDroneDatas, 0, station.workDroneDatas.Length);
+                Array.Clear(station.workDroneOrders, 0, station.workDroneOrders.Length);
+                station.idleShipCount = 0;
+                station.workShipCount = 0;
+                station.workShipIndices = 0;
+                Array.Clear(station.workShipDatas, 0, station.workShipDatas.Length);
+                Array.Clear(station.workShipOrders, 0, station.workShipOrders.Length);
+                station.energy = 0;
+                station.energyPerTick = 0;
+                station.warperCount = 0;
+
+                factory.transport.RefreshTraffic(station.id);
+                GameMain.data.galacticTransport.RefreshTraffic(station.gid);
             }
-
-            station.idleDroneCount = 0;
-            station.workDroneCount = 0;
-            Array.Clear(station.workDroneDatas, 0, station.workDroneDatas.Length);
-            Array.Clear(station.workDroneOrders, 0, station.workDroneOrders.Length);
-            station.idleShipCount = 0;
-            station.workShipCount = 0;
-            station.workShipIndices = 0;
-            Array.Clear(station.workShipDatas, 0, station.workShipDatas.Length);
-            Array.Clear(station.workShipOrders, 0, station.workShipOrders.Length);
-            station.energy = 0;
-            station.energyPerTick = 0;
-            station.warperCount = 0;
-
-            factory.transport.RefreshTraffic(station.id);
-            GameMain.data.galacticTransport.RefreshTraffic(station.gid);
+            else
+            {
+                UIBattleStatistics.RegisterStationLost();
+                RemoveEntity(factory, station.entityId);
+            }
         }
 
 
         private static void RemoveEntity(PlanetFactory factory, int entityId)
         {
+            if (!removingComponets) return;
             try
             {
                 if (entityId >= factory.entityPool.Length || factory.entityPool[entityId].isNull) return;
@@ -388,10 +378,12 @@ namespace DSP_Battle
                 if (ship.state != EnemyShip.State.active && ship.state != EnemyShip.State.uninitialized) RemoveShip(ship);
             });
 
+            if (time % 20 == 1) CheckPendingDestroyedEntities();
+
             // time is the frame since start
             if (time % 60 == 1)
             {
-                SortShips();
+                ThreadPool.QueueUserWorkItem(new WaitCallback((e) => SortShips()));
             }
 
             switch (Configs.nextWaveState)
