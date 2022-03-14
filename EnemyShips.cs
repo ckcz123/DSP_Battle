@@ -588,7 +588,7 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(LogisticShipRenderer), "Update")]
         public static void LogisticShipRenderer_Update(ref LogisticShipRenderer __instance)
         {
-            if (ships.Count == 0) return;
+            if (ships.Count == 0 || UIRoot.instance.uiGame.starmap.active) return;
             if (__instance.transport == null) return;
             while (__instance.capacity < __instance.shipCount + ships.Count)
             {
@@ -602,7 +602,7 @@ namespace DSP_Battle
                 __instance.shipsArr[__instance.shipCount++] = ship.renderingData;
                 //if (ship.shipData.stage != 1)
                 //    continue;
-                if (ship.distanceToTarget > 250)
+                if (ship.distanceToTarget > 250 || ship.shipData.planetB != GameMain.localPlanet?.id)
                     continue;
                 //飞船发射子弹轰击
                 try
@@ -732,7 +732,7 @@ namespace DSP_Battle
         }
 
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(Player), "TryAddItemToPackage")]
+        [HarmonyPatch(typeof(Player), "TryAddItemToPackage", new Type[] { typeof(int), typeof(int), typeof(int), typeof(bool), typeof(int)})]
         public static bool Player_TryAddItemToPackage(ref Player __instance, ref int __result, int itemId, int count, int inc, bool throwTrash, int objId = 0)
         {
             if (removingComponets)
@@ -745,7 +745,7 @@ namespace DSP_Battle
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(UIItemup), "Up")]
-        public static bool UIItemup_Up(int itemId, int upCount)
+        public static bool UIItemup_Up()
         {
             return !removingComponets;
         }
