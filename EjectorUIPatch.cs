@@ -173,7 +173,7 @@ namespace DSP_Battle
                 remainEnemyShipsValueObj.SetActive(true);
                 remainEnemyShipsLabelObj.SetActive(true);
                 EjectCycleLabel.text = "射速".Translate();
-                remainEnemyShipsLabel.text = "剩余敌舰".Translate();
+                remainEnemyShipsLabel.text = "剩余敌人".Translate();
                 setAimingModeLabel.text = "设定索敌最高优先级".Translate();
                 setModeButton1Obj.transform.Find("Text").GetComponent<Text>().text = "最接近物流塔".Translate();
                 setModeButton2Obj.transform.Find("Text").GetComponent<Text>().text = "最大威胁".Translate();

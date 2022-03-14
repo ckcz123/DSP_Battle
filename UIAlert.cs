@@ -226,11 +226,11 @@ namespace DSP_Battle
             if (framesUntilNextWave < 0)
             {
                 if ((-framesUntilNextWave) / 60 % 2 != 0)
-                    alertMainText.text = txtColorAlert1 + "敌舰正在入侵".Translate() + GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName + "!" + txtColorRight;
+                    alertMainText.text = txtColorAlert1 + "敌人正在入侵".Translate() + GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName + "!" + txtColorRight;
                 else
-                    alertMainText.text = txtColorAlert2 + "敌舰正在入侵".Translate() + GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName + "!" + txtColorRight;
+                    alertMainText.text = txtColorAlert2 + "敌人正在入侵".Translate() + GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName + "!" + txtColorRight;
 
-                stat1label.text = "剩余敌舰".Translate();
+                stat1label.text = "剩余敌人".Translate();
                 stat2label.text = "剩余强度".Translate();
                 stat3label.text = "已被摧毁".Translate();
                 stat1value.text = EnemyShips.ships.Count.ToString();

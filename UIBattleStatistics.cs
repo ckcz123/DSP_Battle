@@ -159,8 +159,8 @@ namespace DSP_Battle
             battleStateButtonText.text = "战斗简报".Translate();
             selectDifficultyLabel.gameObject.GetComponent<Text>().text = "调整难度提示".Translate();
             battleStatTabObj.transform.Find("cpu-panel/title-text").GetComponent<Text>().text = "战况概览".Translate();
-            battleStatTabObj.transform.Find("gpu-panel/title-text").GetComponent<Text>().text = "弹药概览".Translate();
-            battleStatTabObj.transform.Find("data-panel/title-text").GetComponent<Text>().text = "敌舰".Translate();
+            battleStatTabObj.transform.Find("gpu-panel/title-text").GetComponent<Text>().text = "弹药信息".Translate();
+            battleStatTabObj.transform.Find("data-panel/title-text").GetComponent<Text>().text = "敌方信息".Translate();
 
             if (Configs.difficulty == 0)
             {
@@ -368,7 +368,7 @@ namespace DSP_Battle
             catch (Exception) { }
         }
 
-        //敌舰被拦截
+        //敌人被拦截
         public static void RegisterIntercept(EnemyShip ship, double distance = -1)
         {
             try
@@ -501,7 +501,7 @@ namespace DSP_Battle
                     enemyEliminatedProps[0] = totalEnemyEliminated * 1.0 / totalEnemyGen;
 
 
-                briefLabel.text = "战斗时间".Translate() + "\n" + "歼灭敌舰".Translate() + "\n" + "输出伤害".Translate() + "\n" + "损失物流塔".Translate() + "\n" +
+                briefLabel.text = "战斗时间".Translate() + "\n" + "歼灭敌人".Translate() + "\n" + "输出伤害".Translate() + "\n" + "损失物流塔".Translate() + "\n" +
                     "损失其他建筑".Translate() + "\n"
                     + "损失资源".Translate() + "\n\n" + "平均拦截距离".Translate() + "\n" + "最小拦截距离".Translate();
                 briefValue1.text = "";

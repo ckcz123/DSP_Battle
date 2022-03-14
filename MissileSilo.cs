@@ -257,7 +257,7 @@ namespace DSP_Battle
 
                                 VectorLF3 vectorLF2 = dysonRocket.uPos;
                                 //根据是导弹还是火箭确定
-                                if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌舰还存在
+                                if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
                                 {
                                     vectorLF2 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
                                 }
@@ -400,7 +400,7 @@ namespace DSP_Battle
 
                             VectorLF3 vectorLF5 = dysonRocket.uPos;
                             //之前的目标是否还存活
-                            if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌舰还存在
+                            if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
                             {
                                 vectorLF5 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
                             }
@@ -911,7 +911,7 @@ namespace DSP_Battle
 
                                     VectorLF3 vectorLF2 = dysonRocket.uPos;
                                     //根据是导弹还是火箭确定
-                                    if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌舰还存在
+                                    if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
                                     {
                                         vectorLF2 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
                                     }
@@ -1053,7 +1053,7 @@ namespace DSP_Battle
 
                                 VectorLF3 vectorLF5 = dysonRocket.uPos;
                                 //之前的目标是否还存活
-                                if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌舰还存在
+                                if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
                                 {
                                     vectorLF5 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
                                 }
@@ -1642,7 +1642,7 @@ namespace DSP_Battle
                 }
                 else
                 {
-                    siloDetailText.text = "剩余敌舰".Translate();
+                    siloDetailText.text = "剩余敌人".Translate();
                     siloPickerTitle.text = "火箭模式提示".Translate();
                     siloEditButtonText.text = "打开统计面板".Translate();
                 }

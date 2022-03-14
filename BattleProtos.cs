@@ -76,7 +76,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("定向爆破4", "Directional blasting", "定向爆破");
             ProtoRegistry.RegisterString("定向爆破5", "Directional blasting", "定向爆破");
             ProtoRegistry.RegisterString("定向爆破6", "Directional blasting", "定向爆破");
-            ProtoRegistry.RegisterString("定向爆破描述", "Increase damage for bullets and missiles.", "通过精确计算子弹和导弹的索敌路径，预测撞击前的最佳起爆点，以尽可能对敌舰造成更大的破坏。");
+            ProtoRegistry.RegisterString("定向爆破描述", "Increase damage for bullets and missiles.", "通过精确计算子弹和导弹的索敌路径，预测撞击前的最佳起爆点，以尽可能对敌人造成更大的破坏。");
             ProtoRegistry.RegisterString("定向爆破结论", "Increase damage for bullets and missiles.", "子弹、导弹伤害增加");
             ProtoRegistry.RegisterString("子弹伤害和导弹伤害+15%", "Damage of bullets and missiles +15%", "子弹伤害和导弹伤害+15%");
             ProtoRegistry.RegisterString("相位裂解光束伤害+25%", "Damage of Phaser-emitter beam +25%", "相位裂解光束伤害+25%");
@@ -114,29 +114,67 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("彩蛋9", "Pioneer Diary #9", "先驱者日记#9");
 
 
-            ProtoRegistry.RegisterString("彩蛋1描述", "This is a diary of pioneer.", "这种生物似乎是一种虫类，靠进食宇宙中的各种能量潮汐为生，同时还具有虫洞制造能力，一旦发现食物就会直接在附近建立虫洞。星际物流塔产生的能量潮汐让它变成了宇宙中的一座灯塔，能被这些生物轻易捕捉并视作食物来源。换言之，<color=#c2853d>它们会随机选择全星区的任意一个星际物流塔，通过虫洞进攻该星系；物流塔越多的星系受到攻击概率越高，而只要不建设星际物流塔，那个星系就不会受到它们的侵扰。</color>但这显然行不通，不用星际物流塔将极大的延缓任务完成的速度，这是主脑不愿意看到的。看来我需要一些防御设施来保护星际物流塔。唉，本来还说抽空思考一下宇宙的终极答案的……");
-            ProtoRegistry.RegisterString("彩蛋2描述", "This is a diary of pioneer.", "穿甲弹的效率还是太低了，我得试试找到强力的替代品，最好是能产生更大的伤害。就目前的情况来看，硫酸是个不错的选择，我可以试着直接把他们投射向敌人。再怎么说他们也是实体生物，酸蚀也够他们喝一壶的。还好它们不是异形，不然就是够我喝一壶的了。\n另外我发现，<color=#c2853d>虫洞永远在预警五分钟时才生成？</color>要是我的磁轨炮打不到入侵的敌人，也许我可以提前做点什么...");
-            ProtoRegistry.RegisterString("彩蛋3描述", "This is a diary of pioneer.", "我还是把他们想的太简单了。随着产线扩张，物流塔的建设，他们的攻势越来越凶猛。大炮的覆盖范围有限，已经无法有效抵挡他们了。好在我这几天在B站上学会了造热核弹，把它发射上去肯定能解燃眉之急。至于怎么发射上去，那还真得研究研究了，炮管子实在是太细了，放不进去。赶快结束这一切吧，我还想去梦里数电子羊呢。\n另外我发现，<color=#c2853d>虫子每破坏一座星际物流塔，下一次进攻就会被推迟！</color>也许可以想想办法获得更多的发展时间呢？");
-            ProtoRegistry.RegisterString("彩蛋4描述", "This is a diary of pioneer.", "热核导弹的杀伤力确实很大，但是发射也太慢了，我得研究研究怎么把热核导弹造成微缩版本塞进炮弹里面去，那不就既有杀伤力又有速度嘛。我可真是个天才！唉，你说我这天才为什么就不得伊卡拉姆妹妹的喜欢呢？我为她专门点亮了一片星系告白，但她居然说：“前天看到了小白兔，昨天是小鹿，今天是你。”这不是嘲讽我像个动物一样蠢吗。算了算了，不提了，女人只会影响我造戴森球的速度。\n另外我发现，<color=#c2853d>这些虫子攻击不同星系的强度是独立的啊，进攻全新星系的虫群似乎会重新从最低强度开始...</color> 看来暂时是不怎么需要担心矿星的安全性问题了。");
-            ProtoRegistry.RegisterString("彩蛋5描述", "This is a diary of pioneer.", "倒霉透了，手滑泄露的那一点反物质差点把产线给扬了，害得我修复了好久。诶等等，能扬了我的产线为什么不能扬了那堆臭虫？思路打开了！死虫子你们给我等着，跟我轻型机甲拼你们有这个实力吗？我这就把反物质打上天，指定没有你们好果汁吃！");
-            ProtoRegistry.RegisterString("彩蛋6描述", "This is a diary of pioneer.", "真是的，我为什么要局限于现有的武器技术啊。我可是伊卡洛斯啊，能穿越黑洞，能超高速硬着陆，能去岩浆里泡澡去硫酸里游泳，我为什么不能大胆开发点离谱的武器？反正也是闲着，不如给虫子看看我的真本事！TNND，杀又杀不完，躲也躲不掉，还一直拖慢我的进度，跟我玩阴的是吧？直接来吧！");
-            ProtoRegistry.RegisterString("彩蛋7描述", "This is a diary of pioneer.", "先驱者果然只要我出手没什么办不到的，之前还是太局限了，戴森球都能造出来了为什么武器还需要弹药？直接相位裂解就完事了，要不是降维技术不可逆我都有心想丢二向箔过去。这下好啦，不用专门分心去造子弹了，我要继续去当第四天灾了。顺便说一句，这些虫子可比索林原虫差远了，虽然索林原虫也是渣渣~~日记。\n另外我发现，<color=#c2853d>强度攻击原来是有上限的啊，我还真以为是无限提升呢...</color> 现在已经游刃有余了嘿嘿... 不知道给主脑上传宇宙矩阵或者建成戴森球后会不会有什么额外影响，等到那一步再看吧。");
-            ProtoRegistry.RegisterString("彩蛋8描述", "This is a diary of pioneer.", "年轻的伊卡洛斯，不管你是用什么方法走到了这一步，都足以证明你的聪颖和强大。即使是面对未知的风险，你依旧为主脑点亮了繁星。现在，你可以骄傲的说：“我见过你们绝对无法置信的事物，我目睹了虫洞在星系内诞生，我看着裂解射线在虫群之中闪烁，所有这些时刻，终将随时间消逝，一如眼泪消失在雨中。”现在继续你的征途吧！无论遇到什么困难，都不要怕，微笑着面对他！因为，你是一个一个一个勇敢的伊卡洛斯哼哼，啊啊啊啊啊啊啊啊啊啊啊！");
+            ProtoRegistry.RegisterString("彩蛋1描述", "Seems like these enemies are a kind of space insects. They live in deep space, feed on the tides of power without vision. " +
+                "The stellar station will create regular ripples in the space, making itself as a beacon in dark universe, can be easily captured and attacked by the insects. " +
+                "In other words, <color=#c2853d>they will randomly choose a stellar station, and attack its solar system by wormholes. Stars with more stellar stations will have higher possibility to be selected, and stars without any stellar stations won't be attacked. </color>" +
+                "Obviously, I can't rely on giving up stellar stations, as the progress will come slowly without transportations. Instead, I have to find a way to defense. Hope I still have time to think about 'The Answer to Life, the Universe, and Everything'.", 
+                "这种生物似乎是一种虫类，靠进食宇宙中的各种能量潮汐为生，同时还具有虫洞制造能力，一旦发现食物就会直接在附近建立虫洞。" +
+                "星际物流塔产生的能量潮汐让它变成了宇宙中的一座灯塔，能被这些生物轻易捕捉并视作食物来源。" +
+                "换言之，<color=#c2853d>它们会随机选择全星区的任意一个星际物流塔，通过虫洞进攻该星系；物流塔越多的星系受到攻击概率越高，而只要不建设星际物流塔，那个星系就不会受到它们的侵扰。</color>" +
+                "但这显然行不通，不用星际物流塔将极大的延缓任务完成的速度，这是主脑不愿意看到的。看来我需要一些防御设施来保护星际物流塔。唉，本来还说抽空思考一下宇宙的终极答案的……");
+            ProtoRegistry.RegisterString("彩蛋2描述", "Armour piercing are still too inefficient, I have to find a better alternative. Anyway, they are real creatures, and acid erosion should have better damages on them.\n" +
+                "Besides, I found that <color=#c2853d>the wormholes will always establish when the warning coming to 5 minutes?</color> If my railgun can't fire the invading enemies, maybe I can do something before that...", 
+                "穿甲弹的效率还是太低了，我得试试找到强力的替代品，最好是能产生更大的伤害。就目前的情况来看，硫酸是个不错的选择，我可以试着直接把他们投射向敌人。" +
+                "再怎么说他们也是实体生物，酸蚀也够他们喝一壶的。还好它们不是异形，不然就是够我喝一壶的了。\n" +
+                "另外我发现，<color=#c2853d>虫洞永远在预警五分钟时才生成？</color>" +
+                "要是我的磁轨炮打不到入侵的敌人，也许我可以提前做点什么...");
+            ProtoRegistry.RegisterString("彩蛋3描述", "They are more powerful than I think. With the expansion of pipelines and stellar stations, their offensive has become more and more ferocious. " +
+                "The Near Earth Def-system had limited coverage and could no longer effectively resist them. Luckily I have learned to build manufacture thermonuclear missiles on YouTube, and launching it will definitely solve the urgent need.\n" +
+                "In addition, I found that <color=#c2853d>every time they destroy an stellar station, the next wave will be delayed! </color>Maybe I can find a way to get more time for development?", 
+                "我还是把他们想的太简单了。随着产线扩张，物流塔的建设，他们的攻势越来越凶猛。大炮的覆盖范围有限，已经无法有效抵挡他们了。好在我这几天在B站上学会了造热核弹，把它发射上去肯定能解燃眉之急。" +
+                "至于怎么发射上去，那还真得研究研究了，炮管子实在是太细了，放不进去。赶快结束这一切吧，我还想去梦里数电子羊呢。\n" +
+                "另外我发现，<color=#c2853d>虫子每破坏一座星际物流塔，下一次进攻就会被推迟！</color>也许可以想想办法获得更多的发展时间呢？");
+            ProtoRegistry.RegisterString("彩蛋4描述", "The thermonuclear missiles are so powerul, but the launch is too slow. How can I create a miniature version of it and integrate with bullets, so they can both have lethality and speed? How genius am I!\n" +
+                "Another thing I found is, <color=#c2853d>the intensity of attacking different stars is independent. Attacking to a new star will start from the lowest intensity...</color> It seems I don't need to worry about the safety of planets only for miners now.", 
+                "热核导弹的杀伤力确实很大，但是发射也太慢了，我得研究研究怎么把热核导弹造成微缩版本塞进炮弹里面去，那不就既有杀伤力又有速度嘛。我可真是个天才！" +
+                "唉，你说我这天才为什么就不得伊卡拉姆妹妹的喜欢呢？我为她专门点亮了一片星系告白，但她居然说：“前天看到了小白兔，昨天是小鹿，今天是你。”这不是嘲讽我像个动物一样蠢吗。算了算了，不提了，女人只会影响我造戴森球的速度。\n" +
+                "另外我发现，<color=#c2853d>这些虫子攻击不同星系的强度是独立的啊，进攻全新星系的虫群似乎会重新从最低强度开始...</color> 看来暂时是不怎么需要担心矿星的安全性问题了。");
+            ProtoRegistry.RegisterString("彩蛋5描述", "Damn it, a bit of anti-matter leakage almost lifted my pipelines, which caused me a lot of time to repair them. " +
+                "Wait, they can destroy my pipelines, why not insects? Good idea! Wait for me, fxxk insects, taste the anit-matter and die!", 
+                "倒霉透了，手滑泄露的那一点反物质差点把产线给扬了，害得我修复了好久。诶等等，能扬了我的产线为什么不能扬了那堆臭虫？思路打开了！" +
+                "死虫子你们给我等着，跟我轻型机甲拼你们有这个实力吗？我这就把反物质打上天，指定没有你们好果子吃！");
+            ProtoRegistry.RegisterString("彩蛋6描述", "Jesus! Why I limited myself to existing technologies? I'm Icarus, who can travel through black holes, hard landing with ultra-high speed, take a shower in lava and swim in sulfuric acid lake. " +
+                "Why can't I develop some outrageous weapons? Damn insects, can't be avoided and keep slowing down my progress, let me teach you a lesson! Come on!", 
+                "真是的，我为什么要局限于现有的武器技术啊。我可是伊卡洛斯啊，能穿越黑洞，能超高速硬着陆，能去岩浆里泡澡去硫酸里游泳，我为什么不能大胆开发点离谱的武器？" +
+                "反正也是闲着，不如给虫子看看我的真本事！TNND，杀又杀不完，躲也躲不掉，还一直拖慢我的进度，跟我玩阴的是吧？直接来吧！");
+            ProtoRegistry.RegisterString("彩蛋7描述", "Sure enough, nothing will stop me if I really want to do. I was too limited before, as I can build a Dyson sphere, why does the cannon need bullets? Just Phaser fission! " +
+                "Everything is good now, I don't need to be distracted by making bullets, so nice!\n" +
+                "By the way, I found <color=#c2853d>the intensity of attack has an upper limit. I really thought it will would infinitely...</color> Now it's so easy for me to defend them! " +
+                "I don't know if uploading universe matrix or building Dyson sphere will change anything, let me find at that time.", 
+                "果然只要我出手没什么办不到的，之前还是太局限了，戴森球都能造出来了为什么武器还需要弹药？直接相位裂解就完事了，要不是降维技术不可逆我都有心想丢二向箔过去。这下好啦，不用专门分心去造子弹了，我要继续去当第四天灾了。" +
+                "顺便说一句，这些虫子可比索林原虫差远了，虽然索林原虫也是渣渣~~日记。\n" +
+                "另外我发现，<color=#c2853d>强度攻击原来是有上限的啊，我还真以为是无限提升呢...</color> 现在已经游刃有余了嘿嘿... 不知道给主脑上传宇宙矩阵或者建成戴森球后会不会有什么额外影响，等到那一步再看吧。");
+            ProtoRegistry.RegisterString("彩蛋8描述", "Young Icarus, no matter how you come here, you have proved your smart and power. Even facing unknown risks, you still light up your stars. " +
+                "Now you can proudly say, \"I've seen things that you absolutely can't believe, I've seen wormholes established in galaxies, I've seen fission rays flickering in swarms. All these moments will eventually fade away with time, like tears disappear in the rain.\" " +
+                "Continue your journey now! No matter what difficulties you encounter, don't be afraid and face them with a smile! Remember, you are a brave Icarus!", 
+                "年轻的伊卡洛斯，不管你是用什么方法走到了这一步，都足以证明你的聪颖和强大。即使是面对未知的风险，你依旧为主脑点亮了繁星。" +
+                "现在，你可以骄傲的说：“我见过你们绝对无法置信的事物，我目睹了虫洞在星系内诞生，我看着裂解射线在虫群之中闪烁，所有这些时刻，终将随时间消逝，一如眼泪消失在雨中。”" +
+                "现在继续你的征途吧！无论遇到什么困难，都不要怕，微笑着面对他！因为，你是一个一个一个勇敢的伊卡洛斯哼哼，啊啊啊啊啊啊啊啊啊啊啊！");
             ProtoRegistry.RegisterString("彩蛋9描述", "<color=#c2853d>42</color>", "<color=#c2853d>42</color>");
 
 
             ProtoRegistry.RegisterString("UI快捷键提示", "Press Backspace to hide/open this window. Press \"-\" key to advance the attack time by one minute.", "按下退格键开启或关闭此窗口，按下减号键使敌军进攻时间提前1分钟。");
             ProtoRegistry.RegisterString("简单难度提示", "Difficulty: Easy (Station won't be distroyed, reward duration * 0.75)", "当前难度：简单（物流塔不会被破坏；奖励持续时间*0.75）");
             ProtoRegistry.RegisterString("普通难度提示", "Difficulty: Normal (Station will be distroyed, reward duration * 1.0)", "当前难度：普通（物流塔会被正常破坏；奖励持续时间*1.0）");
-            ProtoRegistry.RegisterString("困难难度提示", "Difficulty: Hard (Enemy strength will increase, reward duration * 2.0)", "当前难度：困难（敌舰战斗力大幅提升；奖励持续时间*2.0）");
+            ProtoRegistry.RegisterString("困难难度提示", "Difficulty: Hard (Enemy strength will increase, reward duration * 2.0)", "当前难度：困难（敌人战斗力大幅提升；奖励持续时间*2.0）");
             ProtoRegistry.RegisterString("奖励倒计时：", "Reward time left: ", "奖励倒计时：");
             ProtoRegistry.RegisterString("mod版本信息", "Current version: " + Configs.versionString, "当前版本：" + Configs.versionString + "          欢迎加入mod交流群：" + Configs.qq);
             ProtoRegistry.RegisterString("未探测到威胁", "No threat detected", "未探测到威胁");
             ProtoRegistry.RegisterString("预估数量", "Estimated quantity", "预估数量");
             ProtoRegistry.RegisterString("预估强度", "Estimated strength", "预估强度");
             ProtoRegistry.RegisterString("虫洞数量", "Wormhole quantity", "虫洞数量");
-            ProtoRegistry.RegisterString("敌舰正在入侵", "The enemies are invading ", "敌舰正在入侵");
-            ProtoRegistry.RegisterString("剩余敌舰", "Remaining enemies", "剩余敌舰");
+            ProtoRegistry.RegisterString("敌人正在入侵", "The enemies are invading ", "敌人正在入侵");
+            ProtoRegistry.RegisterString("剩余敌人", "Remaining enemies", "剩余敌人");
             ProtoRegistry.RegisterString("剩余强度", "Remaining strength", "剩余强度");
             ProtoRegistry.RegisterString("已被摧毁", "Eliminated enemies", "已被摧毁");
             ProtoRegistry.RegisterString("入侵抵达提示", "The next wave will be arrived in {0} at {1}", "下一次入侵预计于{0}后抵达{1}");
@@ -172,7 +210,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("虫洞生成提示", "Use starmap or fly to <color=#c2853d>{0}</color> to view details.", "可通过星图或飞往<color=#c2853d>{0}</color>查看具体信息。");
             ProtoRegistry.RegisterString("战斗已结束！", "Wave ended!", "战斗已结束！");
             ProtoRegistry.RegisterString("战斗时间", "Battle duration", "战斗时间");
-            ProtoRegistry.RegisterString("歼灭敌舰", "Enemy eliminated", "歼灭敌舰");
+            ProtoRegistry.RegisterString("歼灭敌人", "Enemy eliminated", "歼灭敌人");
             ProtoRegistry.RegisterString("输出伤害", "Total damage", "输出伤害");
             ProtoRegistry.RegisterString("损失物流塔", "Station lost", "损失物流塔");
             ProtoRegistry.RegisterString("损失其他建筑", "Other buildings lost", "损失其他建筑");
@@ -183,9 +221,9 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("打开统计面板", "Open Statistics", "打开统计面板");
 
             ProtoRegistry.RegisterString("战斗简报", "Battle Info", "战斗简报");
-            ProtoRegistry.RegisterString("战况概览", "Battle Summary", "战况概览");
-            ProtoRegistry.RegisterString("弹药概览", "Bullets Summary", "弹药概览");
-            ProtoRegistry.RegisterString("敌舰", "Enemies", "敌舰");
+            ProtoRegistry.RegisterString("战况概览", "Summary", "战况概览");
+            ProtoRegistry.RegisterString("弹药信息", "Bullets", "弹药信息");
+            ProtoRegistry.RegisterString("敌方信息", "Enemies", "敌方信息");
             ProtoRegistry.RegisterString("简单", "Easy", "简单");
             ProtoRegistry.RegisterString("普通", "Normal", "普通");
             ProtoRegistry.RegisterString("困难", "Hard", "困难");
