@@ -13,14 +13,16 @@ namespace DSP_Battle
         public static int pageBias = 0;
         public static void AddProtos()
         {
+            ProtoRegistry.RegisterString("轨道防御", "Defense", "轨道防御");
+
             ProtoRegistry.RegisterString("子弹1", "Armour piercing", "穿甲磁轨弹");
-            ProtoRegistry.RegisterString("子弹1描述", "A cheap bullet, attack single enemy.", "从来没见过敌人的先驱者把老祖宗的数据库翻了114514遍，东拼西凑出来一个穿甲弹设计图。由于没找到火药配方，只好照着炮弹的样子铸造成实心炮弹并加强其结构。仅能进行单体打击，杀伤力有限。");
+            ProtoRegistry.RegisterString("子弹1描述", "A cheap bullet, attack single enemy.", "从来没见过敌人的先驱者把老祖宗的数据库翻了114514遍，东拼西凑出来一个穿甲弹设计图。由于没找到火药配方，只好照着炮弹的样子铸造成实心炮弹并加强其结构。仅能进行单体动能打击，杀伤力有限。");
             ProtoRegistry.RegisterString("子弹1结论", "You have unlocked armour piercing.", "你解锁了穿甲磁轨弹，可以利用动能进行攻击");
             ProtoRegistry.RegisterString("子弹2", "Acid bullet", "强酸磁轨弹");
-            ProtoRegistry.RegisterString("子弹2描述", "A powerful bullet by sulfuric acid.", "在对敌人进行分析和研究后，先驱者大胆将<color=#c2853d>硫酸</color>封装后制成了一种新的炮弹。爆破后可以对范围内敌人产生酸蚀，更加高效地杀伤敌人。“果然AOE才是王道！”先驱者自言自语道。");
+            ProtoRegistry.RegisterString("子弹2描述", "A powerful bullet by sulfuric acid.", "在对敌人进行分析和研究后，先驱者大胆将<color=#c2853d>硫酸</color>封装后制成了一种新的炮弹。爆破后可以对范围内敌人产生酸蚀，更加高效地杀伤敌人。");
             ProtoRegistry.RegisterString("子弹2结论", "You have unlocked acid bullet.", "你解锁了强酸磁轨弹，可以利用硫酸腐蚀外壳");
             ProtoRegistry.RegisterString("子弹3", "Deuterium nucleus", "氘核爆破弹");
-            ProtoRegistry.RegisterString("子弹3描述", "A more powerful bullet with a micro-thermonuclear-boom in it.", "制造出<color=#c2853d>热核导弹</color>的先驱者想要让他更小更快，便试着把核弹微缩化封装进了子弹里。这种强力的炮弹被制造出来的同时，先驱者将敌人命名为了“ ”。该武器可以在命中后发生爆炸造成大范围杀伤。");
+            ProtoRegistry.RegisterString("子弹3描述", "A more powerful bullet with a micro-thermonuclear-boom in it.", "制造出<color=#c2853d>热核导弹</color>的先驱者想要让他更小更快，便试着把核弹微缩化封装进了子弹里。该武器可以在命中后发生聚变爆炸，对敌人造成大量伤害。");
             ProtoRegistry.RegisterString("子弹3结论", "You have unlocked deuterium nucleus", "你解锁了氘核爆破弹，可以利用核聚变进行破坏");
             ProtoRegistry.RegisterString("脉冲", "Phase-cracking beam", "相位裂解光束");
             ProtoRegistry.RegisterString("脉冲描述", "The beam doens't need to be produced, just provide enough energy to <color=#c2853d>Phaser emitter</color> to eject.", "这种光束是不需要制作和提供的，只需给<color=#c2853d>相位裂解炮</color>提供足够电量即可无限发射。");
@@ -101,7 +103,6 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("相位干扰技术描述", "Expand wormhole spawns radius.", "通过空间干扰让虫洞刷新的更远，增加敌人的飞行距离。");
             ProtoRegistry.RegisterString("相位干扰技术结论", "Expand wormhole spawns radius.", "虫洞生成距离增加");
             ProtoRegistry.RegisterString("虫洞生成最近范围扩大0.25AU", "Wormhole spawns radius expanded by 0.25AU", "虫洞生成最近范围扩大0.25AU");
-
            
             ProtoRegistry.RegisterString("彩蛋1", "Pioneer Diary #1", "先驱者日记#1");
             ProtoRegistry.RegisterString("彩蛋2", "Pioneer Diary #2", "先驱者日记#2");
@@ -270,15 +271,15 @@ namespace DSP_Battle
             missile2.DescFields = new int[] { 50, 51, 52, 1 };
             missile3.DescFields = new int[] { 50, 51, 52, 1 };
 
-            ItemProto easterEgg1 = ProtoRegistry.RegisterItem(8021, "彩蛋1", "彩蛋1描述", "Assets/DSPBattle/notes-of-pioneer-01", 9999, 100, EItemType.Material);
-            ItemProto easterEgg2 = ProtoRegistry.RegisterItem(8022, "彩蛋2", "彩蛋2描述", "Assets/DSPBattle/notes-of-pioneer-02", 9999, 100, EItemType.Material);
-            ItemProto easterEgg3 = ProtoRegistry.RegisterItem(8023, "彩蛋3", "彩蛋3描述", "Assets/DSPBattle/notes-of-pioneer-03", 9999, 100, EItemType.Material);
-            ItemProto easterEgg4 = ProtoRegistry.RegisterItem(8024, "彩蛋4", "彩蛋4描述", "Assets/DSPBattle/notes-of-pioneer-04", 9999, 100, EItemType.Material);
-            ItemProto easterEgg5 = ProtoRegistry.RegisterItem(8025, "彩蛋5", "彩蛋5描述", "Assets/DSPBattle/notes-of-pioneer-05", 9999, 100, EItemType.Material);
-            ItemProto easterEgg6 = ProtoRegistry.RegisterItem(8026, "彩蛋6", "彩蛋6描述", "Assets/DSPBattle/notes-of-pioneer-06", 9999, 100, EItemType.Material);
-            ItemProto easterEgg7 = ProtoRegistry.RegisterItem(8027, "彩蛋7", "彩蛋7描述", "Assets/DSPBattle/notes-of-pioneer-07", 9999, 100, EItemType.Material);
-            ItemProto easterEgg8 = ProtoRegistry.RegisterItem(8028, "彩蛋8", "彩蛋8描述", "Assets/DSPBattle/notes-of-pioneer-08", 9999, 100, EItemType.Material);
-            ItemProto easterEgg9 = ProtoRegistry.RegisterItem(8029, "彩蛋9", "彩蛋9描述", "Assets/DSPBattle/notes-of-pioneer-09", 9999, 100, EItemType.Material);
+            ProtoRegistry.RegisterItem(8021, "彩蛋1", "彩蛋1描述", "Assets/DSPBattle/notes-of-pioneer-01", 9999, 100, EItemType.Material);
+            ProtoRegistry.RegisterItem(8022, "彩蛋2", "彩蛋2描述", "Assets/DSPBattle/notes-of-pioneer-02", 9999, 100, EItemType.Material);
+            ProtoRegistry.RegisterItem(8023, "彩蛋3", "彩蛋3描述", "Assets/DSPBattle/notes-of-pioneer-03", 9999, 100, EItemType.Material);
+            ProtoRegistry.RegisterItem(8024, "彩蛋4", "彩蛋4描述", "Assets/DSPBattle/notes-of-pioneer-04", 9999, 100, EItemType.Material);
+            ProtoRegistry.RegisterItem(8025, "彩蛋5", "彩蛋5描述", "Assets/DSPBattle/notes-of-pioneer-05", 9999, 100, EItemType.Material);
+            ProtoRegistry.RegisterItem(8026, "彩蛋6", "彩蛋6描述", "Assets/DSPBattle/notes-of-pioneer-06", 9999, 100, EItemType.Material);
+            ProtoRegistry.RegisterItem(8027, "彩蛋7", "彩蛋7描述", "Assets/DSPBattle/notes-of-pioneer-07", 9999, 100, EItemType.Material);
+            ProtoRegistry.RegisterItem(8028, "彩蛋8", "彩蛋8描述", "Assets/DSPBattle/notes-of-pioneer-08", 9999, 100, EItemType.Material);
+            ProtoRegistry.RegisterItem(8029, "彩蛋9", "彩蛋9描述", "Assets/DSPBattle/notes-of-pioneer-09", 9999, 100, EItemType.Material);
 
 
             var Cannon = ProtoRegistry.RegisterItem(8011, "弹射器1", "弹射器1描述", "Assets/DSPBattle/cannon1", 2601 + pageBias, 50, EItemType.Production);
@@ -602,7 +603,7 @@ namespace DSP_Battle
             return model;
         }
 
-        public static void CopyPrefabDesc()
+        public static void PostDataAction()
         {
             ItemProto.InitFluids();
             ItemProto.InitItemIds();
@@ -612,8 +613,11 @@ namespace DSP_Battle
 
             foreach (var proto in LDB.items.dataArray)
             {
-                StorageComponent.itemIsFuel[proto.ID] = proto.HeatValue > 0L;
-                StorageComponent.itemStackCount[proto.ID] = proto.StackSize;
+                if (proto.ID > 8000) // Keep compability with stack mod 
+                {
+                    StorageComponent.itemIsFuel[proto.ID] = proto.HeatValue > 0L;
+                    StorageComponent.itemStackCount[proto.ID] = proto.StackSize;
+                }
             }
 
             LDB.models.OnAfterDeserialize();

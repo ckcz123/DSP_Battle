@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.UI;
 using xiaoye97;
 
 namespace DSP_Battle
@@ -44,9 +45,7 @@ namespace DSP_Battle
             {
                 using (ProtoRegistry.StartModLoad(GUID))
                 {
-                    string tabName = "Defense";
-                    if (Localization.language == Language.zhCN) tabName = "轨道防御";
-                    pagenum = TabSystem.RegisterTab($"{MODID_tab}:{MODID_tab}Tab", new TabData(tabName, "Assets/DSPBattle/dspbattletabicon"));
+                    pagenum = TabSystem.RegisterTab($"{MODID_tab}:{MODID_tab}Tab", new TabData("轨道防御", "Assets/DSPBattle/dspbattletabicon"));
                     BattleProtos.pageBias = (pagenum - 2) * 1000 - 500;
                 }
             }
@@ -68,7 +67,7 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(UIDialogPatch));
 
             LDBTool.PreAddDataAction += BattleProtos.AddProtos;
-            LDBTool.PostAddDataAction += BattleProtos.CopyPrefabDesc;
+            LDBTool.PostAddDataAction += BattleProtos.PostDataAction;
         }
 
         public void Update()
@@ -93,6 +92,43 @@ namespace DSP_Battle
             {
                 Directory.Delete(path, true);
             }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIMainMenu), "_OnOpen")]
+        public static void UIMainMenu_OnOpen()
+        {
+            UpdateLogo();
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIEscMenu), "_OnOpen")]
+        public static void UIEscMenu_OnOpen()
+        {
+            UpdateLogo();
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameOption), "Apply")]
+        public static void UpdateGameOption_Apply()
+        {
+            UpdateLogo();
+        }
+
+        public static void UpdateLogo()
+        {
+            var mainLogo = GameObject.Find("UI Root/Overlay Canvas/Main Menu/dsp-logo");
+            var escLogo = GameObject.Find("UI Root/Overlay Canvas/In Game/Esc Menu/logo");
+
+            var iconstr = Localization.language == Language.zhCN
+                ? "Assets/DSPBattle/logocn"
+                : "Assets/DSPBattle/logoen";
+            var texture = Resources.Load<Sprite>(iconstr).texture;
+
+            mainLogo.GetComponent<RawImage>().texture = texture;
+            escLogo.GetComponent<RawImage>().texture = texture;
+            mainLogo.GetComponent<RectTransform>().sizeDelta = new Vector2(texture.width, texture.height);
+            escLogo.GetComponent<RectTransform>().sizeDelta = new Vector2(texture.width, texture.height);
         }
 
         public void Export(BinaryWriter w)

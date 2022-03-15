@@ -7,10 +7,10 @@ namespace DSP_Battle
 {
     class Configs
     {
-        public static string versionString = "0.6.1";
-        public static string qq = "待定";
+        public static string versionString = "0.6.3";
+        public static string qq = "694213906";
 
-        public static int versionCode = 20220312;
+        public static int versionCode = 20220315;
 
         public static int difficulty = 0; // -1 easy, 0 normal, 1 hard
 
