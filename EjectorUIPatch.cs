@@ -134,9 +134,7 @@ namespace DSP_Battle
             {
                 curEjectorIsCannon = true;
                 EjectorComponent ejectorComponent = __instance.factorySystem.ejectorPool[__instance.ejectorId];
-                int planetId = ejectorComponent.planetId;
-                PlanetFactory factory = GameMain.galaxy.stars[planetId / 100 - 1].planets[planetId % 100 - 1].factory;
-                int gmProtoId = factory.entityPool[ejectorComponent.entityId].protoId;
+                int gmProtoId = __instance.factory.entityPool[ejectorComponent.entityId].protoId;
                 if (gmProtoId == 2311) //原版弹射器不进行修改
                 {
                     curTarget = null;
@@ -175,7 +173,7 @@ namespace DSP_Battle
                 remainEnemyShipsValueObj.SetActive(true);
                 remainEnemyShipsLabelObj.SetActive(true);
                 EjectCycleLabel.text = "射速".Translate();
-                remainEnemyShipsLabel.text = "剩余敌舰".Translate();
+                remainEnemyShipsLabel.text = "剩余敌人".Translate();
                 setAimingModeLabel.text = "设定索敌最高优先级".Translate();
                 setModeButton1Obj.transform.Find("Text").GetComponent<Text>().text = "最接近物流塔".Translate();
                 setModeButton2Obj.transform.Find("Text").GetComponent<Text>().text = "最大威胁".Translate();

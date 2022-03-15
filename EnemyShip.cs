@@ -139,7 +139,7 @@ namespace DSP_Battle
             hp -= atk;
             if (hp <= 0)
             {
-                UIBattleStatistics.RegisterEliminate(intensity); //记录某类型的敌舰被摧毁
+                UIBattleStatistics.RegisterEliminate(intensity); //记录某类型的敌人被摧毁
                 UIBattleStatistics.RegisterIntercept(this); //记录拦截距离
                 hp = 0;
                 state = State.distroyed;

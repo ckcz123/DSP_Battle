@@ -98,7 +98,7 @@ namespace DSP_Battle
             AccessTools.Field(typeof(UIResearchResultWindow), "windowHeight").SetValue(__instance, (float)num2);
             __instance.windowTrans.sizeDelta = new Vector2(400f, 0f);
             __instance._Open();
-            GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Research Result Window/content/title-text").GetComponent<Text>().text = "游戏提示".Translate();
+            GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Research Result Window/content/title-text").GetComponent<Text>().text = "游戏提示gm".Translate();
 
             return false;
         }

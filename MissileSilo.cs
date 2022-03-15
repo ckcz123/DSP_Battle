@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace DSP_Battle
 {
@@ -256,7 +257,7 @@ namespace DSP_Battle
 
                                 VectorLF3 vectorLF2 = dysonRocket.uPos;
                                 //根据是导弹还是火箭确定
-                                if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌舰还存在
+                                if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
                                 {
                                     vectorLF2 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
                                 }
@@ -399,7 +400,7 @@ namespace DSP_Battle
 
                             VectorLF3 vectorLF5 = dysonRocket.uPos;
                             //之前的目标是否还存活
-                            if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌舰还存在
+                            if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
                             {
                                 vectorLF5 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
                             }
@@ -910,7 +911,7 @@ namespace DSP_Battle
 
                                     VectorLF3 vectorLF2 = dysonRocket.uPos;
                                     //根据是导弹还是火箭确定
-                                    if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌舰还存在
+                                    if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
                                     {
                                         vectorLF2 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
                                     }
@@ -1052,7 +1053,7 @@ namespace DSP_Battle
 
                                 VectorLF3 vectorLF5 = dysonRocket.uPos;
                                 //之前的目标是否还存活
-                                if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌舰还存在
+                                if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
                                 {
                                     vectorLF5 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
                                 }
@@ -1604,5 +1605,78 @@ namespace DSP_Battle
         {
             ReInitAll();
         }
+
+        private static Text siloDetailText;
+        private static Text siloPickerTitle;
+        private static Text siloEditButtonText;
+        private static string originSiloDetailLabel;
+        private static string originSiloPickerTitle;
+        private static string originSiloPickerButtonText;
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UISiloWindow), "OnSiloIdChange")]
+        public static void UISiloWindow_OnSiloIdChange(ref UISiloWindow __instance)
+        {
+            if (siloDetailText == null)
+            {
+                siloDetailText = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Silo Window/detail-texts/label (3)").GetComponent<Text>();
+                siloPickerTitle = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Silo Window/node-picker/title").GetComponent<Text>();
+                siloEditButtonText = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Silo Window/node-picker/button (Edit)/Text").GetComponent<Text>();
+
+                originSiloDetailLabel = siloDetailText.text;
+                originSiloPickerTitle = siloPickerTitle.text;
+                originSiloPickerButtonText = siloEditButtonText.text;
+            }
+
+            try
+            {
+                SiloComponent siloComponent = __instance.factorySystem.siloPool[__instance.siloId];
+                int gmProtoId = __instance.factory.entityPool[siloComponent.entityId].protoId;
+
+                if (gmProtoId == 2312)
+                {
+                    siloDetailText.text = originSiloDetailLabel;
+                    siloPickerTitle.text = originSiloPickerTitle;
+                    siloEditButtonText.text = originSiloPickerButtonText;
+
+                }
+                else
+                {
+                    siloDetailText.text = "剩余敌人".Translate();
+                    siloPickerTitle.text = "火箭模式提示".Translate();
+                    siloEditButtonText.text = "打开统计面板".Translate();
+                }
+            }
+            catch (Exception) { }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UISiloWindow), "_OnUpdate")]
+        public static void UISiloWindow_OnUpdate(ref UISiloWindow __instance)
+        {
+            SiloComponent siloComponent = __instance.factorySystem.siloPool[__instance.siloId];
+            int gmProtoId = __instance.factory.entityPool[siloComponent.entityId].protoId;
+            if (gmProtoId != 2312)
+            {
+                __instance.value3Text.text = EnemyShips.ships.Count.ToString();
+            }
+
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UISiloWindow), "OnEditNodeClick")]
+        public static bool UISiloWindow_OnEditNodeClick(ref UISiloWindow __instance)
+        {
+            SiloComponent siloComponent = __instance.factorySystem.siloPool[__instance.siloId];
+            int gmProtoId = __instance.factory.entityPool[siloComponent.entityId].protoId;
+            if (gmProtoId != 2312)
+            {
+                UIRoot.instance.uiGame.OpenProductionWindow();
+                UIBattleStatistics.OnClickBattleStatButton();
+                return false;
+            }
+            return true;
+        }
+
     }
 }

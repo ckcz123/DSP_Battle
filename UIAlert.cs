@@ -190,7 +190,7 @@ namespace DSP_Battle
                 return;
             }
             if (time % 30 != 1 && !forceRefresh) return;
-            helpInfo.text = "按下退格键开启或关闭此窗口，按下减号键使敌军进攻时间提前1分钟。".Translate();
+            helpInfo.text = "UI快捷键提示".Translate();
             difficultyInfo.text = 
                 Configs.difficulty == -1 ? "简单难度提示".Translate()
                    : Configs.difficulty == 1 ? "困难难度提示".Translate()
@@ -210,7 +210,7 @@ namespace DSP_Battle
                 alertMainText.text = "未探测到威胁".Translate();
                 stat1label.text = "预估数量".Translate();
                 stat2label.text = "预估强度".Translate();
-                stat3label.text = "携带资源".Translate();
+                stat3label.text = "虫洞数量".Translate();
                 stat1value.text = "-";
                 stat2value.text = "-";
                 stat3value.text = "-";
@@ -226,11 +226,11 @@ namespace DSP_Battle
             if (framesUntilNextWave < 0)
             {
                 if ((-framesUntilNextWave) / 60 % 2 != 0)
-                    alertMainText.text = txtColorAlert1 + "敌舰正在入侵".Translate() + GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName + "!" + txtColorRight;
+                    alertMainText.text = txtColorAlert1 + "敌人正在入侵".Translate() + GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName + "!" + txtColorRight;
                 else
-                    alertMainText.text = txtColorAlert2 + "敌舰正在入侵".Translate() + GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName + "!" + txtColorRight;
+                    alertMainText.text = txtColorAlert2 + "敌人正在入侵".Translate() + GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName + "!" + txtColorRight;
 
-                stat1label.text = "剩余敌舰".Translate();
+                stat1label.text = "剩余敌人".Translate();
                 stat2label.text = "剩余强度".Translate();
                 stat3label.text = "已被摧毁".Translate();
                 stat1value.text = EnemyShips.ships.Count.ToString();
@@ -240,7 +240,8 @@ namespace DSP_Battle
             else
             {
                 int seconds = (int)framesUntilNextWave / 60;
-                alertMainText.text = "下一次入侵预计于".Translate() + Sec2StrTime(seconds, showDetails) + "后抵达".Translate() + txtColorWarn1 + GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName + txtColorRight;
+                alertMainText.text =
+                    string.Format("入侵抵达提示".Translate(), new object[] { Sec2StrTime(seconds, showDetails), txtColorWarn1 + GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName + txtColorRight });
                 stat1label.text = "预估数量".Translate();
                 stat2label.text = "预估强度".Translate();
                 stat3label.text = "虫洞数量".Translate();
