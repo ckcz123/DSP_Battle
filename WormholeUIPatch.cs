@@ -12,6 +12,7 @@ namespace DSP_Battle
 
         public static StarData[] starData = new StarData[100];
         public static StarSimulator[] simulator = new StarSimulator[100];
+        public static bool[] simulatorActive = new bool[100];
         public static UIStarmapStar[] uiStar = new UIStarmapStar[100];
 
         private static Dictionary<StarSimulator, Material> bodyMaterialMap = new Dictionary<StarSimulator, Material>();
@@ -23,10 +24,9 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(UniverseSimulator), "OnGameLoaded")]
         public static void UniverseSimulator_OnGameLoaded(ref UniverseSimulator __instance)
         {
-            DspBattlePlugin.logger.LogInfo("==========> UniverseSimulator_OnGameLoaded");
             for (int i = 0; i < 100; ++i)
             {
-                if (simulator[i] != null) UnityEngine.Object.DestroyImmediate(simulator[i].gameObject);
+                if (simulator[i] != null) UnityEngine.Object.Destroy(simulator[i].gameObject);
             }
 
             CopyBlackHoleData();
@@ -40,6 +40,12 @@ namespace DSP_Battle
                 simulator[i].gameObject.name = "Wormhole_" + i;
                 // simulator[i].gameObject.SetActive((Configs.nextWaveState == 2 || Configs.nextWaveState == 3) && i < Configs.nextWaveWormCount);
                 simulator[i].gameObject.SetActive(false);
+                simulator[i].bodyRenderer.gameObject.SetActive(false);
+                simulator[i].massRenderer.gameObject.SetActive(false);
+                simulator[i].atmosRenderer.gameObject.SetActive(false);
+                simulator[i].effect.gameObject.SetActive(false);
+                simulator[i].blackRenderer.gameObject.SetActive(false);
+
             }
 
             if (testSimulator != null) UnityEngine.Object.DestroyImmediate(testSimulator.gameObject);
@@ -77,7 +83,11 @@ namespace DSP_Battle
             {
                 if (lastWaveState != Configs.nextWaveState)
                 {
-                    for (var i = 0; i < 100; ++i) simulator[i].gameObject.SetActive(false);
+                    for (var i = 0; i < 100; ++i)
+                    {
+                        simulator[i].gameObject.SetActive(false);
+                        simulatorActive[i] = false;
+                    }
                     lastWaveState = Configs.nextWaveState;
                 }
                 return;
@@ -88,6 +98,7 @@ namespace DSP_Battle
                 if (lastWaveState != Configs.nextWaveState)
                 {
                     simulator[i].gameObject.SetActive(true);
+                    simulatorActive[i] = true;
                 }
 
                 simulator[i].starData.uPosition = Configs.nextWaveWormholes[i].uPos;
@@ -105,6 +116,16 @@ namespace DSP_Battle
             {
                 return;
             }
+
+            Vector3 viewport = GameCamera.main.WorldToViewportPoint(__instance.transform.position);
+            var distance = (__instance.starData.uPosition - playerUPos).magnitude;
+            bool active = distance <= 2000 || (viewport.z > 0 && viewport.x > -0.1 && viewport.x < 1.1 && viewport.y > -0.1 && viewport.y < 1.1);
+            if (active != simulatorActive[__instance.starData.index])
+            {
+                __instance.gameObject.SetActive(active);
+                simulatorActive[__instance.starData.index] = active;
+            }
+            if (!active) return;
 
             float num4 = (float)(__instance.runtimeDist / 2400000.0);
             float num7 = 20f / (num4 + 3f);
@@ -167,8 +188,13 @@ namespace DSP_Battle
             }
             bodyMaterialMap[__instance].SetFloat("_Multiplier", 1f - num15);
 
+<<<<<<< HEAD
 
             if (__instance.starData.type == EStarType.BlackHole)
+=======
+            __instance.sunFlare.brightness *= num9;
+            if (__instance.sunFlare.enabled != num9 > 0.001f)
+>>>>>>> master
             {
                 __instance.massRenderer.gameObject.SetActive(false);
                 __instance.atmosRenderer.gameObject.SetActive(false);
@@ -224,18 +250,20 @@ namespace DSP_Battle
 
 
         }
-        
+
         private static int lastWaveState2 = -1;
         
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UIStarmap), "CreateAllStarUIs")]
         public static void UIStarmap_CreateAllStarUIs(ref UIStarmap __instance)
         {
-            DspBattlePlugin.logger.LogInfo("==========> _CreateAllStarUIs");
-
             for (var i = 0; i < 100; ++i)
             {
-                if (uiStar[i] != null) UnityEngine.Object.DestroyImmediate(uiStar[i].gameObject);
+                if (uiStar[i] != null)
+                {
+                    uiStar[i]._Destroy();
+                    UnityEngine.Object.Destroy(uiStar[i].gameObject);
+                }
             }
 
             CopyBlackHoleData();
@@ -286,7 +314,7 @@ namespace DSP_Battle
         public static void UIStarmap_OnLateUpdate(ref UIStarmap __instance)
         {
             if (Configs.nextWaveState != 2 && Configs.nextWaveState != 3) return;
-            for (var i = 0; i < Configs.nextWaveWormCount; ++i) uiStar[i]._LateUpdate();
+            for (var i = 0; i < Configs.nextWaveWormCount; ++i) uiStar[i].starObject._LateUpdate();
         }
 
         private static void CopyBlackHoleData()
@@ -300,7 +328,7 @@ namespace DSP_Battle
                 starData[i].planetCount = 0;
                 starData[i].planets = new PlanetData[] { };
                 starData[i].id = -1;
-                starData[i].index = -1;
+                starData[i].index = i;
                 starData[i].radius = 0.2f;
             }
 

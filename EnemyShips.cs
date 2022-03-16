@@ -517,6 +517,7 @@ namespace DSP_Battle
                 Configs.nextWaveState = 0;
                 Configs.nextWaveStarIndex = 0;
                 Configs.nextWaveWormCount = 0;
+                Configs.nextWaveFrameIndex = time;
                 distroyedStation.Clear();
 
                 long rewardBase = 5 * 60 * 60;
@@ -541,6 +542,7 @@ namespace DSP_Battle
                     "\n\n<color=#c2853d>" + string.Format("奖励提示".Translate(), extraSpeedFrame / 60) + "</color>\n\n" +
                     "查看更多战斗信息".Translate()
                     );
+
             }
         }
 
