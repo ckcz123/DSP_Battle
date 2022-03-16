@@ -14,8 +14,6 @@ namespace DSP_Battle
         public static StarSimulator[] simulator = new StarSimulator[100];
         public static UIStarmapStar[] uiStar = new UIStarmapStar[100];
 
-        private static Dictionary<StarSimulator, Material> bodyMaterialMap = new Dictionary<StarSimulator, Material>();
-
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UniverseSimulator), "OnGameLoaded")]
         public static void UniverseSimulator_OnGameLoaded(ref UniverseSimulator __instance)
@@ -36,9 +34,11 @@ namespace DSP_Battle
                 simulator[i].gameObject.name = "Wormhole_" + i;
                 // simulator[i].gameObject.SetActive((Configs.nextWaveState == 2 || Configs.nextWaveState == 3) && i < Configs.nextWaveWormCount);
                 simulator[i].gameObject.SetActive(false);
+                simulator[i].bodyRenderer.gameObject.SetActive(false);
                 simulator[i].massRenderer.gameObject.SetActive(false);
                 simulator[i].atmosRenderer.gameObject.SetActive(false);
                 simulator[i].effect.gameObject.SetActive(false);
+                simulator[i].blackRenderer.gameObject.SetActive(false);
 
             }
             lastWaveState = -1;
@@ -80,52 +80,24 @@ namespace DSP_Battle
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(StarSimulator), "UpdateUniversalPosition")]
-        public static void StarSimulator_UpdateUniversalPosition(ref StarSimulator __instance, Vector3 playerLPos, VectorLF3 playerUPos, Vector3 cameraPos, Quaternion cameraRot)
+        [HarmonyPatch(typeof(BlackHoleHandler), "LateUpdate")]
+        public static void BlackHoleHandler_LateUpdate(ref BlackHoleHandler __instance)
         {
-            if (__instance.starData == null || __instance.starData.id != -1)
+            if (__instance.radius <= 800 * 0.2 + 1)
             {
-                return;
-            }
+                __instance.particle.gameObject.SetActive(false);
+                // __instance.bodyRenderer.gameObject.SetActive(false);
 
-            float num4 = (float)(__instance.runtimeDist / 2400000.0);
-            float num7 = 20f / (num4 + 3f);
-            float num8 = __instance.starData.luminosity;
-            if (num7 > 1f)
-            {
-                num7 = (float)Math.Log((double)num7) + 1f;
-                num7 = (float)Math.Log((double)num7) + 1f;
+                // Only render the wormholes which are on the viewport.
+                Vector3 targetPosition = __instance.transform.parent.position;
+                Vector3 cameraPosition = GameCamera.main.transform.localPosition;
+                Vector3 viewport = GameCamera.main.WorldToViewportPoint(targetPosition);
+                double distance = (targetPosition - cameraPosition).magnitude;
+                __instance.bodyRenderer.gameObject.SetActive(distance < 2000 || (viewport.z > 0 && viewport.x > -0.1 && viewport.x < 1.1 && viewport.y > -0.1 && viewport.y < 1.1));
             }
-            if (num8 > 1f)
-            {
-                num8 = (float)Math.Log((double)num8) + 1f;
-            }
-            float num9 = num7 * num8;
-            if (num9 < 1f)
-            {
-                num9 = num9 * 0.5f + 0.5f;
-            }
-
-            float num11 = __instance.visualScale * 6000f * __instance.starData.radius;
-            float a = num11 * 100f;
-            float b2 = num11 * 50f;
-            float num15 = Mathf.InverseLerp(a, b2, (float)__instance.runtimeDist);
-
-            if (!bodyMaterialMap.ContainsKey(__instance))
-            {
-                bodyMaterialMap.Add(__instance, AccessTools.FieldRefAccess<StarSimulator, Material>(__instance, "bodyMaterial"));
-            }
-            bodyMaterialMap[__instance].SetFloat("_Multiplier", 1f - num15);
-
-            __instance.sunFlare.brightness *= num9;
-            if (__instance.sunFlare.enabled != num9 > 0.001f)
-            {
-                __instance.sunFlare.enabled = (num9 > 0.001f);
-            }
-
-            __instance.blackRenderer.transform.localScale = Vector3.one * (__instance.solidRadius * 2f);
         }
-        
+
+
         private static int lastWaveState2 = -1;
         
         [HarmonyPostfix]
