@@ -17,6 +17,7 @@ namespace DSP_Battle
 
         public static int lastState = 0;
 
+        public static GameObject alertUIObj = null;
         public static GameObject titleObj = null;
         public static GameObject statisticObj = null;
         public static GameObject titleLeftBar = null;
@@ -79,24 +80,30 @@ namespace DSP_Battle
             if (titleObj != null)
                 return;
             GameObject overlayCanvas = GameObject.Find("UI Root/Overlay Canvas");
+            alertUIObj = new GameObject();
+            alertUIObj.name = "AlertUI";
+            alertUIObj.transform.SetParent(overlayCanvas.transform, false);
+            alertUIObj.transform.localPosition = new Vector3(0, 500, 0);
 
             GameObject oriTitleObj = GameObject.Find("UI Root/Overlay Canvas/Milky Way UI/milky-way-screen-ui/top-title");
             titleObj = GameObject.Instantiate(oriTitleObj);
             titleObj.name = "battle-alert-title";
-            titleObj.transform.SetParent(overlayCanvas.transform, false);
-            titleObj.transform.localPosition = new Vector3(0, 480, 0);
+            titleObj.transform.SetParent(alertUIObj.transform, false);
+            titleObj.transform.localPosition = new Vector3(0, 0, 0);
             titleObj.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 70);
 
             GameObject oriStatisticObj = GameObject.Find("UI Root/Overlay Canvas/Milky Way UI/milky-way-screen-ui/statistics");
             statisticObj = GameObject.Instantiate(oriStatisticObj);
             statisticObj.name = "battle-alert-stat";
-            statisticObj.transform.SetParent(overlayCanvas.transform, false);
-            statisticObj.transform.localPosition = new Vector3(0, 330, 0);
+            statisticObj.transform.SetParent(alertUIObj.transform, false);
+            statisticObj.transform.localPosition = new Vector3(0, -140, 0);
 
             titleLeftBar = titleObj.transform.Find("left").gameObject;
             titleRightBar = titleObj.transform.Find("right").gameObject;
             titleLeftBar.GetComponent<RectTransform>().sizeDelta = new Vector2(472, 12);
             titleRightBar.GetComponent<RectTransform>().sizeDelta = new Vector2(472, 12);
+
+            statisticObj.transform.Find("cosmo").GetComponent<UIButton>().enabled = false;
 
             eliminateProgressBar = GameObject.Instantiate(titleLeftBar);
             invasionProgressBar = GameObject.Instantiate(titleRightBar);
@@ -168,6 +175,7 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(GameMain), "Pause")]
         public static void OnPaused()
         {
+            alertUIObj.SetActive(false);
             titleObj.SetActive(false);
             statisticObj.SetActive(false);
         }
@@ -176,6 +184,7 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(GameMain), "Resume")]
         public static void OnResumed()
         {
+            alertUIObj.SetActive(isActive);
             titleObj.SetActive(isActive);
             statisticObj.SetActive(isActive);
             RefreshUIAlert(GameMain.instance.timei, true);
@@ -333,6 +342,7 @@ namespace DSP_Battle
         public static void OnActiveChange()
         {
             isActive = !isActive;
+            alertUIObj.SetActive(isActive);
             titleObj.SetActive(isActive);
             statisticObj.SetActive(isActive);
             RefreshUIAlert(GameMain.instance.timei, true);
@@ -342,9 +352,13 @@ namespace DSP_Battle
         {
             if (isActive == active) return;
             isActive = active;
+            alertUIObj.SetActive(isActive);
             titleObj.SetActive(isActive);
             statisticObj.SetActive(isActive);
-            RefreshUIAlert(GameMain.instance.timei, true);
+            if (isActive)
+            {
+                RefreshUIAlert(GameMain.instance.timei, true);
+            }
         }
 
         static string Sec2StrTime(int sec, bool showDetails)
