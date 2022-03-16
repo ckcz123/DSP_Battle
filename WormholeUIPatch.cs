@@ -20,7 +20,6 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(UniverseSimulator), "OnGameLoaded")]
         public static void UniverseSimulator_OnGameLoaded(ref UniverseSimulator __instance)
         {
-            DspBattlePlugin.logger.LogInfo("==========> UniverseSimulator_OnGameLoaded");
             for (int i = 0; i < 100; ++i)
             {
                 if (simulator[i] != null) UnityEngine.Object.DestroyImmediate(simulator[i].gameObject);
@@ -37,6 +36,10 @@ namespace DSP_Battle
                 simulator[i].gameObject.name = "Wormhole_" + i;
                 // simulator[i].gameObject.SetActive((Configs.nextWaveState == 2 || Configs.nextWaveState == 3) && i < Configs.nextWaveWormCount);
                 simulator[i].gameObject.SetActive(false);
+                simulator[i].massRenderer.gameObject.SetActive(false);
+                simulator[i].atmosRenderer.gameObject.SetActive(false);
+                simulator[i].effect.gameObject.SetActive(false);
+
             }
             lastWaveState = -1;
         }
@@ -114,9 +117,6 @@ namespace DSP_Battle
             }
             bodyMaterialMap[__instance].SetFloat("_Multiplier", 1f - num15);
 
-            __instance.massRenderer.gameObject.SetActive(false);
-            __instance.atmosRenderer.gameObject.SetActive(false);
-            __instance.effect.gameObject.SetActive(false);
             __instance.sunFlare.brightness *= num9;
             if (__instance.sunFlare.enabled != num9 > 0.001f)
             {
@@ -132,8 +132,6 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(UIStarmap), "CreateAllStarUIs")]
         public static void UIStarmap_CreateAllStarUIs(ref UIStarmap __instance)
         {
-            DspBattlePlugin.logger.LogInfo("==========> _CreateAllStarUIs");
-
             for (var i = 0; i < 100; ++i)
             {
                 if (uiStar[i] != null) UnityEngine.Object.DestroyImmediate(uiStar[i].gameObject);
@@ -187,7 +185,7 @@ namespace DSP_Battle
         public static void UIStarmap_OnLateUpdate(ref UIStarmap __instance)
         {
             if (Configs.nextWaveState != 2 && Configs.nextWaveState != 3) return;
-            for (var i = 0; i < Configs.nextWaveWormCount; ++i) uiStar[i]._LateUpdate();
+            for (var i = 0; i < Configs.nextWaveWormCount; ++i) uiStar[i].starObject._LateUpdate();
         }
 
         private static void CopyBlackHoleData()
