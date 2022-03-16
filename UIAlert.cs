@@ -111,7 +111,7 @@ namespace DSP_Battle
             titleLeftBar.GetComponent<RectTransform>().sizeDelta = new Vector2(472, 12);
             titleRightBar.GetComponent<RectTransform>().sizeDelta = new Vector2(472, 12);
 
-            statisticObj.transform.Find("cosmo").GetComponent<UIButton>().enabled = false;
+            // statisticObj.transform.Find("cosmo").GetComponent<UIButton>().enabled = false;
 
             eliminateProgressBar = GameObject.Instantiate(titleLeftBar);
             invasionProgressBar = GameObject.Instantiate(titleRightBar);

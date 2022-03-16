@@ -23,7 +23,7 @@ namespace DSP_Battle
         {
             for (int i = 0; i < 100; ++i)
             {
-                if (simulator[i] != null) UnityEngine.Object.DestroyImmediate(simulator[i].gameObject);
+                if (simulator[i] != null) UnityEngine.Object.Destroy(simulator[i].gameObject);
             }
 
             CopyBlackHoleData();
@@ -152,7 +152,11 @@ namespace DSP_Battle
         {
             for (var i = 0; i < 100; ++i)
             {
-                if (uiStar[i] != null) UnityEngine.Object.DestroyImmediate(uiStar[i].gameObject);
+                if (uiStar[i] != null)
+                {
+                    uiStar[i]._Destroy();
+                    UnityEngine.Object.Destroy(uiStar[i].gameObject);
+                }
             }
 
             CopyBlackHoleData();
