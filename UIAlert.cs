@@ -111,7 +111,7 @@ namespace DSP_Battle
             titleLeftBar.GetComponent<RectTransform>().sizeDelta = new Vector2(472, 12);
             titleRightBar.GetComponent<RectTransform>().sizeDelta = new Vector2(472, 12);
 
-            // statisticObj.transform.Find("cosmo").GetComponent<UIButton>().enabled = false;
+            statisticObj.transform.Find("cosmo").GetComponent<UIButton>().enabled = false;
 
             eliminateProgressBar = GameObject.Instantiate(titleLeftBar);
             invasionProgressBar = GameObject.Instantiate(titleRightBar);
@@ -179,25 +179,6 @@ namespace DSP_Battle
             RefreshUIAlert(time, false);
             RefreshBattleProgress(time);
         }
-
-        //[HarmonyPostfix]
-        //[HarmonyPatch(typeof(GameMain), "Pause")]
-        //public static void OnPaused()
-        //{
-        //    alertUIObj.SetActive(false);
-        //    titleObj.SetActive(false);
-        //    statisticObj.SetActive(false);
-        //}
-
-        //[HarmonyPostfix]
-        //[HarmonyPatch(typeof(GameMain), "Resume")]
-        //public static void OnResumed()
-        //{
-        //    alertUIObj.SetActive(isActive);
-        //    titleObj.SetActive(isActive);
-        //    statisticObj.SetActive(isActive);
-        //    RefreshUIAlert(GameMain.instance.timei, true);
-        //}
 
         public static void RefreshUIAlert(long time, bool forceRefresh = false)
         {
