@@ -117,7 +117,7 @@ namespace DSP_Battle
                 return;
             }
 
-            Vector3 viewport = GameCamera.main.WorldToViewportPoint(__instance.transform.position);
+            /* Vector3 viewport = GameCamera.main.WorldToViewportPoint(__instance.transform.position);
             var distance = (__instance.starData.uPosition - playerUPos).magnitude;
             bool active = distance <= 2000 || (viewport.z > 0 && viewport.x > -0.1 && viewport.x < 1.1 && viewport.y > -0.1 && viewport.y < 1.1);
             if (active != simulatorActive[__instance.starData.index])
@@ -125,7 +125,7 @@ namespace DSP_Battle
                 __instance.gameObject.SetActive(active);
                 simulatorActive[__instance.starData.index] = active;
             }
-            if (!active) return;
+            if (!active) return; */
 
             float num4 = (float)(__instance.runtimeDist / 2400000.0);
             float num7 = 20f / (num4 + 3f);
@@ -146,6 +146,8 @@ namespace DSP_Battle
             }
 
             float num11 = __instance.visualScale * 6000f * __instance.starData.radius;
+
+            Quaternion rotation = Quaternion.Inverse(GameMain.data.relativeRot);
 
             float a;
             float b2;
@@ -188,13 +190,7 @@ namespace DSP_Battle
             }
             bodyMaterialMap[__instance].SetFloat("_Multiplier", 1f - num15);
 
-<<<<<<< HEAD
-
             if (__instance.starData.type == EStarType.BlackHole)
-=======
-            __instance.sunFlare.brightness *= num9;
-            if (__instance.sunFlare.enabled != num9 > 0.001f)
->>>>>>> master
             {
                 __instance.massRenderer.gameObject.SetActive(false);
                 __instance.atmosRenderer.gameObject.SetActive(false);
@@ -216,9 +212,9 @@ namespace DSP_Battle
                 __instance.massRenderer.gameObject.SetActive(true);
                 __instance.effect.gameObject.SetActive(true);
                 __instance.atmosRenderer.gameObject.SetActive(false);
-                __instance.massRenderer.transform.rotation = Quaternion.Inverse(GameMain.data.relativeRot);
-                __instance.effectRenderer.transform.rotation = Quaternion.Inverse(GameMain.data.relativeRot);
-                massMaterial.SetFloat("_Multiplier", num15 / 2);
+                __instance.massRenderer.transform.rotation = rotation;
+                __instance.effectRenderer.transform.rotation = rotation;
+                massMaterial.SetFloat("_Multiplier", num15 * 4f);
                 atmoMaterial.SetFloat("_Multiplier", num15);
                 atmoMaterial.SetVector("_SunPos", __instance.posVector);
                 effectMaterial.SetVector("_SunPos", __instance.posVector);
@@ -247,7 +243,6 @@ namespace DSP_Battle
                 __instance.effect.gameObject.SetActive(false);
             }
             __instance.blackRenderer.transform.localScale = Vector3.one * (__instance.solidRadius * 2f);
-
 
         }
 
