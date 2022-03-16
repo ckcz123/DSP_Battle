@@ -158,6 +158,7 @@ namespace DSP_Battle
             versionInfo = versionObj.GetComponent<Text>();
 
             isActive = false;
+            alertUIObj.SetActive(false);
             titleObj.SetActive(false);
             statisticObj.SetActive(false);
 
