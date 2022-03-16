@@ -52,6 +52,7 @@ namespace DSP_Battle
             {
                 if (titleObj != null)
                 {
+                    alertUIObj.SetActive(false);
                     titleObj.SetActive(false);
                     statisticObj.SetActive(false);
                 }
@@ -66,6 +67,7 @@ namespace DSP_Battle
             {
                 if (titleObj != null)
                 {
+                    alertUIObj.SetActive(isActive);
                     titleObj.SetActive(isActive);
                     statisticObj.SetActive(isActive);
                     RefreshUIAlert(GameMain.instance.timei, true);
