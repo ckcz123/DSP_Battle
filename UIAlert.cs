@@ -81,11 +81,17 @@ namespace DSP_Battle
         {
             if (titleObj != null)
                 return;
-            GameObject overlayCanvas = GameObject.Find("UI Root/Overlay Canvas");
+            //GameObject overlayCanvas = GameObject.Find("UI Root/Overlay Canvas");
+            GameObject inGameCanvas = GameObject.Find("UI Root/Overlay Canvas/In Game");
             alertUIObj = new GameObject();
             alertUIObj.name = "AlertUI";
-            alertUIObj.transform.SetParent(overlayCanvas.transform, false);
+            alertUIObj.transform.SetParent(inGameCanvas.transform, false);
             alertUIObj.transform.localPosition = new Vector3(0, 500, 0);
+
+            GameObject topTipsObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Top Tips");
+            topTipsObj.transform.SetAsLastSibling();
+            GameObject escMenuObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Esc Menu");
+            escMenuObj.transform.SetAsLastSibling();
 
             GameObject oriTitleObj = GameObject.Find("UI Root/Overlay Canvas/Milky Way UI/milky-way-screen-ui/top-title");
             titleObj = GameObject.Instantiate(oriTitleObj);
@@ -174,24 +180,24 @@ namespace DSP_Battle
             RefreshBattleProgress(time);
         }
 
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(GameMain), "Pause")]
-        public static void OnPaused()
-        {
-            alertUIObj.SetActive(false);
-            titleObj.SetActive(false);
-            statisticObj.SetActive(false);
-        }
+        //[HarmonyPostfix]
+        //[HarmonyPatch(typeof(GameMain), "Pause")]
+        //public static void OnPaused()
+        //{
+        //    alertUIObj.SetActive(false);
+        //    titleObj.SetActive(false);
+        //    statisticObj.SetActive(false);
+        //}
 
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(GameMain), "Resume")]
-        public static void OnResumed()
-        {
-            alertUIObj.SetActive(isActive);
-            titleObj.SetActive(isActive);
-            statisticObj.SetActive(isActive);
-            RefreshUIAlert(GameMain.instance.timei, true);
-        }
+        //[HarmonyPostfix]
+        //[HarmonyPatch(typeof(GameMain), "Resume")]
+        //public static void OnResumed()
+        //{
+        //    alertUIObj.SetActive(isActive);
+        //    titleObj.SetActive(isActive);
+        //    statisticObj.SetActive(isActive);
+        //    RefreshUIAlert(GameMain.instance.timei, true);
+        //}
 
         public static void RefreshUIAlert(long time, bool forceRefresh = false)
         {

@@ -115,6 +115,13 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("彩蛋9", "Pioneer Diary #9", "先驱者日记#9");
 
 
+            ProtoRegistry.RegisterString("行星力场护盾", "Planet shield", "行星力场护盾");
+            ProtoRegistry.RegisterString("星际要塞", "Star fortress", "星际要塞");
+            ProtoRegistry.RegisterString("恒星炮", "Star cannon", "恒星炮");
+            ProtoRegistry.RegisterString("水滴gm", "Water-drop", "水滴");
+            ProtoRegistry.RegisterString("即将到来gm", "Coming soon", "即将推出");
+
+
             ProtoRegistry.RegisterString("彩蛋1描述", "Seems like these enemies are a kind of space insects. They live in deep space, feed on the tides of power without vision. " +
                 "The stellar station will create regular ripples in the space, making itself as a beacon in dark universe, can be easily captured and attacked by the insects. " +
                 "In other words, <color=#c2853d>they will randomly choose a stellar station, and attack its solar system by wormholes. Stars with more stellar stations will have higher possibility to be selected, and stars without any stellar stations won't be attacked. </color>" +
@@ -372,6 +379,20 @@ namespace DSP_Battle
                 new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 814 }, new Vector2(53, -43));
             techBullet4.AddItems = new int[] { 8027 };
             techBullet4.AddItemCounts = new int[] { 1 };
+
+
+            TechProto techShield1 = ProtoRegistry.RegisterTech(1916, "行星力场护盾", "即将到来gm", "即将到来gm", "", new int[] { 1705 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { }, new Vector2(53, -31));
+            techShield1.Published = false;
+            TechProto techStellarFortress = ProtoRegistry.RegisterTech(1917, "星际要塞", "即将到来gm", "即将到来gm", "", new int[] { 1903 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { }, new Vector2(41, -43));
+            techStellarFortress.Published = false;
+            TechProto techStarCannon = ProtoRegistry.RegisterTech(1918, "恒星炮", "即将到来gm", "即将到来gm", "", new int[] { 1144 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { }, new Vector2(65, -3));
+            techStarCannon.Published = false;
+            TechProto techDrop = ProtoRegistry.RegisterTech(1919, "水滴gm", "即将到来gm", "即将到来gm", "", new int[] { 1915 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { }, new Vector2(57, -43));
+            techDrop.Published = false;
 
             TechProto winGame = LDB.techs.Select(1508);
             winGame.AddItems = new int[] { 8028, 8029 };
