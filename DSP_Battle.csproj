@@ -112,20 +112,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BattleProtos.cs" />
-    <Compile Include="UIBattleStatistics.cs" />
-    <Compile Include="Cannon.cs" />
-    <Compile Include="Configs.cs" />
-    <Compile Include="EjectorUIPatch.cs" />
-    <Compile Include="EnemyShip.cs" />
-    <Compile Include="EnemyShips.cs" />
-    <Compile Include="DspBattlePlugin.cs" />
-    <Compile Include="MissileSilo.cs" />
+    <Compile Include="src\BattleProtos.cs" />
+    <Compile Include="src\UIBattleStatistics.cs" />
+    <Compile Include="src\Cannon.cs" />
+    <Compile Include="src\Configs.cs" />
+    <Compile Include="src\EjectorUIPatch.cs" />
+    <Compile Include="src\EnemyShip.cs" />
+    <Compile Include="src\EnemyShips.cs" />
+    <Compile Include="src\DspBattlePlugin.cs" />
+    <Compile Include="src\MissileSilo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UIDialogPatch.cs" />
-    <Compile Include="Wormhole.cs" />
-    <Compile Include="WormholeUIPatch.cs" />
-    <Compile Include="UIAlert.cs" />
+    <Compile Include="src\UIDialogPatch.cs" />
+    <Compile Include="src\Wormhole.cs" />
+    <Compile Include="src\WormholeUIPatch.cs" />
+    <Compile Include="src\UIAlert.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

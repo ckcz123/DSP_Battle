@@ -1,0 +1,12 @@
+{
+  "name": "TheyComeFromVoid",
+  "description": "A tower-defense-like combat system for Dyson Sphere Program. Prepare your defense system, build you weapons and bullets, and FIRE!!!!! 一个类塔防的戴森球计划战斗系统。构建你的防御体系，制作武器和子弹，迎击来犯之敌！",
+  "version_number": "1.0.0",
+  "dependencies": [
+    "xiaoye97-BepInEx-5.4.17",
+    "xiaoye97-LDBTool-2.0.1",
+    "CommonAPI-DSPModSave-1.1.2",
+    "CommonAPI-CommonAPI-1.4.5"
+  ],
+  "website_url": "https://github.com/ckcz123/DSP_Battle"
+}
