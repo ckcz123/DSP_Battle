@@ -1,6 +1,6 @@
 ﻿# They Come From Void / 深空来敌
 
-A tower-defense-like combat system for Dyson Sphere Program. Prepare your defense system, build you weapons and bullets, and FIRE!!!!!
+A tower-defense-like combat system for Dyson Sphere Program. Prepare your defense system, build your weapons and bullets, and... FIRE!!!!!
 
 一个类塔防的戴森球计划战斗系统。构建你的防御体系，制作武器和子弹，迎击来犯之敌！
 
@@ -11,6 +11,10 @@ A tower-defense-like combat system for Dyson Sphere Program. Prepare your defens
 ![Previews](https://raw.githubusercontent.com/ckcz123/DSP_Battle/master/previews/3.png)
 
 ![Previews](https://raw.githubusercontent.com/ckcz123/DSP_Battle/master/previews/4.png)
+
+[![They Come From Void](https://raw.githubusercontent.com/ckcz123/DSP_Battle/master/previews/youtube.jpg)](https://www.youtube.com/watch?v=-EKDXbIcm_E "They Come From Void")
+
+或者可以在B站查看宣传视频： https://www.bilibili.com/video/BV1jR4y1F7t5/
 
 ## Installation / 安装方法
 
