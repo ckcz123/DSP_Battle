@@ -86,7 +86,7 @@ namespace DSP_Battle
             alertUIObj = new GameObject();
             alertUIObj.name = "AlertUI";
             alertUIObj.transform.SetParent(inGameCanvas.transform, false);
-            float yPos = DSPGame.globalOption.resolution.height / 1080f * 500f;
+            float yPos = Mathf.Min(DSPGame.globalOption.resolution.height / 1080f * 500f, 500f);
             alertUIObj.transform.localPosition = new Vector3(0, yPos, 0);
 
             GameObject topTipsObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Top Tips");
@@ -405,7 +405,7 @@ namespace DSP_Battle
             isActive = r.ReadBoolean();
             if(alertUIObj != null) //如果游戏中更改了分辨率需要重新加载一次游戏来刷新顶部UI位置
             {
-                float yPos = DSPGame.globalOption.resolution.height / 1080f * 500f;
+                float yPos = Mathf.Min(DSPGame.globalOption.resolution.height / 1080f * 500f, 500f);
                 alertUIObj.transform.localPosition = new Vector3(0, yPos, 0);
             }
         }
@@ -420,7 +420,7 @@ namespace DSP_Battle
             isActive = false;
             if (alertUIObj != null)
             {
-                float yPos = DSPGame.globalOption.resolution.height / 1080f * 500f;
+                float yPos = Mathf.Min(DSPGame.globalOption.resolution.height / 1080f * 500f, 500f);
                 alertUIObj.transform.localPosition = new Vector3(0, yPos, 0);
             }
         }
