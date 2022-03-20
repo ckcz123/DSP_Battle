@@ -7,10 +7,11 @@ namespace DSP_Battle
 {
     class Configs
     {
-        public static string versionString = "1.0.0";
+        public static string versionString = "1.1.0";
         public static string qq = "694213906";
 
-        public static int versionCode = 20220317;
+
+        public static int versionCode = 20220320;
 
         public static int difficulty = 0; // -1 easy, 0 normal, 1 hard
 
@@ -87,7 +88,8 @@ namespace DSP_Battle
         public static int[] nextWaveEnemy = new int[10];
         public static Wormhole[] nextWaveWormholes = new Wormhole[100];
 
-        public static int[] wavePerStar = new int[100];
+        public static int starCount = 100;
+        public static int[] wavePerStar;
 
         public static int totalWave
         {
@@ -125,7 +127,7 @@ namespace DSP_Battle
         }
         public static int bullet4Atk //激光炮从伤害的循环科技中获得双倍加成
         {
-            get { return Mathf.RoundToInt((float)(_bullet4Atk * (1.0 + (Configs.bulletAtkScale - 1.0) * 5 / 3))); }
+            get { return Mathf.RoundToInt((float)(_bullet4Atk * (1.0 + (Configs.bulletAtkScale - 1.0) * 2))); }
         }
         public static double missile1Speed
         {
@@ -166,7 +168,7 @@ namespace DSP_Battle
             _bullet3Speed = 7500.0; // config.Bind("config", "bullet3Speed", defaultValue: 5000.0, "氘核爆破弹速度").Value;
             _bullet3Atk = 500; // config.Bind("config", "bullet3Atk", defaultValue: 400, "氘核爆破弹攻击力").Value;
             _bullet4Speed = 250000.0; //  config.Bind("config", "bullet4Speed", defaultValue: 250000.0, "中子脉冲束速度").Value;
-            _bullet4Atk = 8; //  config.Bind("config", "bullet4Atk", defaultValue: 10, "中子脉冲束攻击力").Value;
+            _bullet4Atk = 12; //  config.Bind("config", "bullet4Atk", defaultValue: 10, "中子脉冲束攻击力").Value;
 
             _missile1Speed = 5000.0; // config.Bind("config", "missile1Speed", defaultValue: 5000.0, "热核导弹速度（米每秒）").Value;
             _missile1Atk = 5000; // config.Bind("config", "missile1Atk", defaultValue: 5000, "热核导弹攻击力").Value;
@@ -243,8 +245,9 @@ namespace DSP_Battle
             for (var i = 0; i < 100; ++i) nextWaveWormholes[i].Export(w);
 
             for (var i = 0; i < 10; ++i) w.Write(nextWaveEnemy[i]);
-            for (var i = 0; i < 100; ++i) w.Write(wavePerStar[i]);
 
+            w.Write(starCount);
+            for (var i = 0; i < starCount; ++i) w.Write(wavePerStar[i]);
         }
 
         public static void Import(BinaryReader r)
@@ -271,7 +274,19 @@ namespace DSP_Battle
             for (var i = 0; i < 100; ++i) nextWaveWormholes[i].Import(r);
 
             for (var i = 0; i < 10; ++i) nextWaveEnemy[i] = r.ReadInt32();
-            for (var i = 0; i < 100; ++i) wavePerStar[i] = r.ReadInt32();
+
+            if (version >= 20220320)
+            {
+                starCount = r.ReadInt32();
+                wavePerStar = new int[starCount];
+                for (var i = 0; i < starCount; ++i) wavePerStar[i] = r.ReadInt32();
+            }
+            else
+            {
+                starCount = Mathf.Max(GameMain.galaxy?.starCount ?? 90, 90) + 10;
+                wavePerStar = new int[starCount];
+                for (var i = 0; i < 100; ++i) wavePerStar[i] = r.ReadInt32();
+            }
         }
 
         public static void IntoOtherSave()
@@ -295,7 +310,9 @@ namespace DSP_Battle
             for (var i = 0; i < 100; ++i) nextWaveWormholes[i] = new Wormhole();
 
             nextWaveEnemy = new int[10];
-            wavePerStar = new int[100];
+
+            starCount = Mathf.Max(GameMain.galaxy?.starCount ?? 90, 90) + 10;
+            wavePerStar = new int[starCount];
         }
 
     }

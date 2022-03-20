@@ -71,12 +71,11 @@ namespace DSP_Battle
             uint result;
             lock (dysonSphere_mx)
             {
-                //下面设定目标，目前是随机设定目标
-                int targetIndex = 0;
-                if (EnemyShips.minTargetDisSortedShips[starIndex].Count > 0) targetIndex = EnemyShips.minTargetDisSortedShips[starIndex][DspBattlePlugin.randSeed.Next(0, EnemyShips.minTargetDisSortedShips[starIndex].Count)].shipIndex;
+                //下面设定目标，发射时是选择最近目标；如果目标丢失则再随机选择目标
+                int targetIndex = FindTarget(starIndex, planetId);
 
                 __instance.hasNode = (sphere.GetAutoNodeCount() > 0);
-                if (targetIndex == 0)  //if (!__instance.hasNode) 原本是没有节点，因此不发射
+                if (targetIndex <= 0)  //if (!__instance.hasNode) 原本是没有节点，因此不发射
                 {
                     __instance.autoIndex = 0;
                     if (__instance.direction == 1)
@@ -261,17 +260,20 @@ namespace DSP_Battle
                                 {
                                     vectorLF2 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
                                 }
-                                else if (EnemyShips.minTargetDisSortedShips[starIndex].Count > 0) //否则，火箭继续寻敌
+                                else
                                 {
-                                    int newTargetId = EnemyShips.minTargetDisSortedShips[starIndex][DspBattlePlugin.randSeed.Next(0, EnemyShips.minTargetDisSortedShips[starIndex].Count)].shipIndex;
-                                    MissileTargets[starIndex][i] = newTargetId;
-                                    vectorLF2 = EnemyShips.ships[newTargetId].uPos - dysonRocket.uPos;
-                                    dysonRocket.t = 0; //让其回到第一阶段，允许避障
-                                }
-                                else //如果一个敌人都没有，火箭就地自毁
-                                {
-                                    __instance.RemoveDysonRocket(i);
-                                    goto IL_BDF;
+                                    int newTargetId = FindTarget(starIndex, dysonRocket.planetId);
+                                    if (newTargetId > 0)
+                                    {
+                                        MissileTargets[starIndex][i] = newTargetId;
+                                        vectorLF2 = EnemyShips.ships[newTargetId].uPos - dysonRocket.uPos;
+                                        dysonRocket.t = 0; //让其回到第一阶段，允许避障
+                                    }
+                                    else
+                                    {
+                                        __instance.RemoveDysonRocket(i);
+                                        goto IL_BDF;
+                                    }
                                 }
 
                                 //根据距离地表的距离设置速度，被我改成一直加速了
@@ -404,20 +406,21 @@ namespace DSP_Battle
                             {
                                 vectorLF5 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
                             }
-                            else if (EnemyShips.minTargetDisSortedShips[starIndex].Count > 0) //否则，火箭继续寻敌
+                            else
                             {
-                                int newTargetId = EnemyShips.minTargetDisSortedShips[starIndex][DspBattlePlugin.randSeed.Next(0, EnemyShips.minTargetDisSortedShips[starIndex].Count)].shipIndex;
-                                MissileTargets[starIndex][i] = newTargetId;
-                                vectorLF5 = EnemyShips.ships[newTargetId].uPos - dysonRocket.uPos;
-                                dysonRocket.t = 0; //让其回到第一阶段，允许避障
+                                int newTargetId = FindTarget(starIndex, dysonRocket.planetId);
+                                if (newTargetId > 0)
+                                {
+                                    MissileTargets[starIndex][i] = newTargetId;
+                                    vectorLF5 = EnemyShips.ships[newTargetId].uPos - dysonRocket.uPos;
+                                    dysonRocket.t = 0; //让其回到第一阶段，允许避障
+                                }
+                                else
+                                {
+                                    __instance.RemoveDysonRocket(i);
+                                    goto IL_BDF;
+                                }
                             }
-                            else //如果一个敌人都没有，火箭就地自毁
-                            {
-                                __instance.RemoveDysonRocket(i);
-                                goto IL_BDF;
-                            }
-
-
 
                             double num28 = Math.Sqrt(vectorLF5.x * vectorLF5.x + vectorLF5.y * vectorLF5.y + vectorLF5.z * vectorLF5.z);
                             if (num28 < 100.0)
@@ -915,17 +918,20 @@ namespace DSP_Battle
                                     {
                                         vectorLF2 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
                                     }
-                                    else if (EnemyShips.minTargetDisSortedShips[starIndex].Count > 0) //否则，火箭继续寻敌
+                                    else
                                     {
-                                        int newTargetId = EnemyShips.minTargetDisSortedShips[starIndex][DspBattlePlugin.randSeed.Next(0, EnemyShips.minTargetDisSortedShips[starIndex].Count)].shipIndex;
-                                        MissileTargets[starIndex][i] = newTargetId;
-                                        vectorLF2 = EnemyShips.ships[newTargetId].uPos - dysonRocket.uPos;
-                                        dysonRocket.t = 0; //让其回到第一阶段，允许避障
-                                    }
-                                    else //如果一个敌人都没有，火箭就地自毁
-                                    {
-                                        __instance.RemoveDysonRocket(i);
-                                        goto IL_BDF;
+                                        int newTargetId = FindTarget(starIndex, dysonRocket.planetId);
+                                        if (newTargetId > 0)
+                                        {
+                                            MissileTargets[starIndex][i] = newTargetId;
+                                            vectorLF2 = EnemyShips.ships[newTargetId].uPos - dysonRocket.uPos;
+                                            dysonRocket.t = 0; //让其回到第一阶段，允许避障
+                                        }
+                                        else
+                                        {
+                                            __instance.RemoveDysonRocket(i);
+                                            goto IL_BDF;
+                                        }
                                     }
 
                                     //根据距离地表的距离设置速度
@@ -1057,17 +1063,20 @@ namespace DSP_Battle
                                 {
                                     vectorLF5 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
                                 }
-                                else if (EnemyShips.minTargetDisSortedShips[starIndex].Count > 0) //否则，火箭继续寻敌
+                                else
                                 {
-                                    int newTargetId = EnemyShips.minTargetDisSortedShips[starIndex][DspBattlePlugin.randSeed.Next(0, EnemyShips.minTargetDisSortedShips[starIndex].Count)].shipIndex;
-                                    MissileTargets[starIndex][i] = newTargetId;
-                                    vectorLF5 = EnemyShips.ships[newTargetId].uPos - dysonRocket.uPos;
-                                    dysonRocket.t = 0; //让其回到第一阶段，允许避障
-                                }
-                                else //如果一个敌人都没有，火箭就地自毁
-                                {
-                                    __instance.RemoveDysonRocket(i);
-                                    goto IL_BDF;
+                                    int newTargetId = FindTarget(starIndex, dysonRocket.planetId);
+                                    if (newTargetId > 0)
+                                    {
+                                        MissileTargets[starIndex][i] = newTargetId;
+                                        vectorLF5 = EnemyShips.ships[newTargetId].uPos - dysonRocket.uPos;
+                                        dysonRocket.t = 0; //让其回到第一阶段，允许避障
+                                    }
+                                    else
+                                    {
+                                        __instance.RemoveDysonRocket(i);
+                                        goto IL_BDF;
+                                    }
                                 }
 
 
@@ -1545,6 +1554,35 @@ namespace DSP_Battle
             return (id - 8003) % 3 + 8004;
         }
 
+        private static int FindTarget(int starIndex, int planetId)
+        {
+            int index;
+            if (DspBattlePlugin.randSeed.NextDouble() < 0.5) {
+                index = FindNearestTarget(EnemyShips.minPlanetDisSortedShips[starIndex][planetId]);
+                if (index > 0) return index;
+            }
+
+            index = FindRandTarget(EnemyShips.targetPlanetShips[starIndex][planetId]);
+            if (index > 0) return index;
+            return FindRandTarget(EnemyShips.minTargetDisSortedShips[starIndex]);
+        }
+
+        private static int FindNearestTarget(List<EnemyShip> ships)
+        {
+            foreach (var ship in ships)
+            {
+                if (ship.state == EnemyShip.State.active && EnemyShips.ships.ContainsKey(ship.shipIndex))
+                    return ship.shipIndex;
+            }
+            return -1;
+        }
+
+        private static int FindRandTarget(List<EnemyShip> ships)
+        {
+            if (ships.Count == 0) return -1;
+            return ships[DspBattlePlugin.randSeed.Next(0, ships.Count)].shipIndex;
+        }
+
         public static void Export(BinaryWriter w)
         {
             w.Write(MissileTargets.Count);
@@ -1659,6 +1697,10 @@ namespace DSP_Battle
             if (gmProtoId != 2312)
             {
                 __instance.value3Text.text = EnemyShips.ships.Count.ToString();
+
+                float num2 = 60f / (float)(siloComponent.chargeSpend + siloComponent.coldSpend) * 600000f;
+                num2 *= (float)(Cargo.incTableMilli[siloComponent.incLevel] + 1.0);
+                __instance.value0Text.text = num2.ToString("0.0") + "每分钟".Translate();
             }
 
         }

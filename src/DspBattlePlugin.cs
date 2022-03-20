@@ -72,11 +72,11 @@ namespace DSP_Battle
 
         public void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Minus) && (Configs.nextWaveState == 1 || Configs.nextWaveState == 2))
+            if (Input.GetKeyDown(KeyCode.Minus) && !GameMain.isPaused && UIRoot.instance?.uiGame?.buildMenu?.currentCategory == 0 && (Configs.nextWaveState == 1 || Configs.nextWaveState == 2))
             {
                 Configs.nextWaveFrameIndex -= 60 * 60;
             }
-            if (Input.GetKeyDown(KeyCode.Backspace) && !GameMain.isPaused)
+            if (Input.GetKeyDown(KeyCode.Backspace) && !GameMain.isPaused && UIRoot.instance?.uiGame?.buildMenu?.currentCategory == 0)
             {
                 UIAlert.OnActiveChange();
             }

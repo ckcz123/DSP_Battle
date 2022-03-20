@@ -81,7 +81,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("定向爆破描述", "Increase damage for bullets and missiles.", "通过精确计算子弹和导弹的索敌路径，预测撞击前的最佳起爆点，以尽可能对敌人造成更大的破坏。");
             ProtoRegistry.RegisterString("定向爆破结论", "Increase damage for bullets and missiles.", "子弹、导弹伤害增加");
             ProtoRegistry.RegisterString("子弹伤害和导弹伤害+15%", "Damage of bullets and missiles +15%", "子弹伤害和导弹伤害+15%");
-            ProtoRegistry.RegisterString("相位裂解光束伤害+25%", "Damage of Phaser-emitter beam +25%", "相位裂解光束伤害+25%");
+            ProtoRegistry.RegisterString("相位裂解光束伤害+30%", "Damage of Phaser-emitter beam +30%", "相位裂解光束伤害+30%");
 
             ProtoRegistry.RegisterString("引力波引导1", "Gravitational wave guidance", "引力波引导");
             ProtoRegistry.RegisterString("引力波引导2", "Gravitational wave guidance", "引力波引导");
@@ -312,7 +312,7 @@ namespace DSP_Battle
             Cannon3.isRaw = false;
             Cannon3.CanBuild = true;
             Cannon3.Upgrades = new int[] { };
-            Cannon3.DescFields = new int[] { 53, 11, 12, 1, 40 };
+            Cannon3.DescFields = new int[] { 50, 51, 53, 11, 12, 1, 40 };
 
 
             var Silo = ProtoRegistry.RegisterItem(8013, "发射器1", "发射器1描述", "Assets/DSPBattle/missilesilo", 2603 + pageBias, 50, EItemType.Production);
@@ -686,7 +686,7 @@ namespace DSP_Battle
         public static void UnlockFunctionTextPatch(ref TechProto __instance, ref string __result, StringBuilder sb)
         {
             if (__instance.ID >= 4901 && __instance.ID <= 4906)
-                __result = "子弹伤害和导弹伤害+15%".Translate() + "\n" + "相位裂解光束伤害+25%".Translate();
+                __result = "子弹伤害和导弹伤害+15%".Translate() + "\n" + "相位裂解光束伤害+30%".Translate();
             else if (__instance.ID >= 4911 && __instance.ID <= 4916)
                 __result = "子弹飞行速度+10%".Translate() + "\n" + "导弹飞行速度+5%".Translate();
             //else if (__instance.ID == 4921)
@@ -734,7 +734,7 @@ namespace DSP_Battle
         {
             
             __instance.dataValueText.text = __instance.dataValueText.text + "\r\n\r\n" + Configs.bulletAtkScale.ToString("0%") + "\r\n"
-                + (1 + (Configs.bulletAtkScale - 1) * 5 / 3).ToString("0%") + "\r\n" + Configs.bulletAtkScale.ToString("0%")
+                + (1 + (Configs.bulletAtkScale - 1) * 2).ToString("0%") + "\r\n" + Configs.bulletAtkScale.ToString("0%")
                 + "\r\n" + Configs.bulletSpeedScale.ToString("0%") + "\r\n" + (1 + (Configs.bulletSpeedScale - 1) * 0.5).ToString("0%") + "\r\n" + (Configs.wormholeRange / 40000.0).ToString() + "AU";
 
         }
@@ -820,6 +820,7 @@ namespace DSP_Battle
                 case 8006:
                     return new int[] { Configs.missile3Atk, Mathf.RoundToInt((float)Configs.missile3Speed), Configs.missile3Range };
                 case 8007:
+                case 8014:
                     return new int[] { Configs.bullet4Atk, Mathf.RoundToInt((float)Configs.bullet4Speed), 0 };
 
                 default:

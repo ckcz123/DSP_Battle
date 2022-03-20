@@ -219,6 +219,11 @@ namespace DSP_Battle
                 }
                 remainEnemyShipsValue.text = EnemyShips.ships.Count.ToString();
                 //Main.logger.LogInfo($"cur orbit id is {curEjector.orbitId}");
+
+                EjectorComponent ejectorComponent = __instance.factorySystem.ejectorPool[__instance.ejectorId];
+                float num2 = 60f / (float)(ejectorComponent.chargeSpend + ejectorComponent.coldSpend) * 600000f;
+                num2 *= (float)(Cargo.incTableMilli[ejectorComponent.incLevel] + 1.0);
+                __instance.valueText5.text = num2.ToString("0.0") + "每分钟".Translate();
             }
             else
             {

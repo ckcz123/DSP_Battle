@@ -134,18 +134,21 @@ namespace DSP_Battle
 
         public int BeAttacked(int atk)
         {
-            if (state != State.active) return 0;
-            int result = hp < atk ? hp : atk;
-            hp -= atk;
-            if (hp <= 0)
+            lock (this)
             {
-                UIBattleStatistics.RegisterEliminate(intensity); //记录某类型的敌人被摧毁
-                UIBattleStatistics.RegisterIntercept(this); //记录拦截距离
-                hp = 0;
-                state = State.distroyed;
-                EnemyShips.OnShipDistroyed(this);
+                if (state != State.active) return 0;
+                int result = hp < atk ? hp : atk;
+                hp -= atk;
+                if (hp <= 0)
+                {
+                    UIBattleStatistics.RegisterEliminate(intensity); //记录某类型的敌人被摧毁
+                    UIBattleStatistics.RegisterIntercept(this); //记录拦截距离
+                    hp = 0;
+                    state = State.distroyed;
+                    EnemyShips.OnShipDistroyed(this);
+                }
+                return result;
             }
-            return result;
         }
 
         public void FindAnotherStation()

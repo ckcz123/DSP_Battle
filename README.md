@@ -51,3 +51,25 @@ Also welcome to anyone who'd like to contribute to the mod, better if you have e
 如果你有任何的意见或建议，可以通过[github](https://github.com/ckcz123/DSP_Battle)发起一个issue，或者加QQ群`694213906`找群主反馈。
 
 欢迎任何向为此mod进行贡献的人，我们尤其需要有Unity经验或者会建模的大佬。
+
+## Update Log
+
+### 2022-03-20 V1.1.0
+
+ - Enhance the damage of Phase-cracking beam
+ - 增强相位裂解光束的伤害
+ - Optimize the algorithm of missiles
+ - 优化火箭的自动寻怪的算法
+ - Fix the minus key on sand / dismantle mode
+ - 修复地基和拆除模式下的减号键冲突问题
+ - Fix crash when star count > 100
+ - 修复当星系数量大于100时的报错
+
+### 2022-03-19 V1.0.2
+
+ - Fix UI on small resolution
+ - 修复低分辨率下的显示问题
+
+### 2022-03-167 V1.0.0
+ - Initial Version
+ - 初始版本

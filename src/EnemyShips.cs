@@ -18,6 +18,7 @@ namespace DSP_Battle
         public static System.Random random = new System.Random();
         public static List<List<EnemyShip>> minTargetDisSortedShips;
         public static List<Dictionary<int, List<EnemyShip>>> minPlanetDisSortedShips;
+        public static List<Dictionary<int, List<EnemyShip>>> targetPlanetShips;
         public static List<List<EnemyShip>> maxThreatSortedShips;
         public static List<List<EnemyShip>> minHpSortedShips;
         public static Dictionary<int, List<Tuple<Vector3, int>>> pendingDestroyedEntities; // planet id; upos; range
@@ -112,8 +113,8 @@ namespace DSP_Battle
 
         public static void SortShipsMinTargetDis()
         {
-            var sortedShips = new List<List<EnemyShip>>(100);
-            for (var i = 0; i < 100; ++i) sortedShips.Add(new List<EnemyShip>());
+            var sortedShips = new List<List<EnemyShip>>(Configs.starCount);
+            for (var i = 0; i < Configs.starCount; ++i) sortedShips.Add(new List<EnemyShip>());
 
             Dictionary<int, double> distances = new Dictionary<int, double>();
             foreach (EnemyShip ship in ships.Values)
@@ -131,15 +132,19 @@ namespace DSP_Battle
 
         public static void SortShipsMinPlanetDis()
         {
-            var sortedShips = new List<Dictionary<int, List<EnemyShip>>>(100);
-            for (var i = 0; i < 100; ++i)
+            var sortedShips = new List<Dictionary<int, List<EnemyShip>>>(Configs.starCount);
+            var targetShips = new List<Dictionary<int, List<EnemyShip>>>(Configs.starCount);
+            for (var i = 0; i < Configs.starCount; ++i)
             {
                 var dictionary = new Dictionary<int, List<EnemyShip>>();
+                var dictionary2 = new Dictionary<int, List<EnemyShip>>();
                 for (var j = 0; j < 10; ++j)
                 {
                     dictionary.Add(100 * (i + 1) + j, new List<EnemyShip>());
+                    dictionary2.Add(100 * (i + 1) + j, new List<EnemyShip>());
                 }
                 sortedShips.Add(dictionary);
+                targetShips.Add(dictionary2);
             }
 
             Dictionary<int, Dictionary<int, double>> distances = new Dictionary<int, Dictionary<int, double>>();
@@ -155,6 +160,8 @@ namespace DSP_Battle
                     distances[planetId].Add(ship.shipIndex, ship.distanceTo(planet.uPosition));
                     sortedShips[starIndex][planetId].Add(ship);
                 }
+                if (targetShips[starIndex].ContainsKey(ship.shipData.planetB))
+                    targetShips[starIndex][ship.shipData.planetB].Add(ship);
             }
 
             foreach (var one in sortedShips)
@@ -166,12 +173,13 @@ namespace DSP_Battle
                 }
             }
             minPlanetDisSortedShips = sortedShips;
+            targetPlanetShips = targetShips;
         }
 
         public static void SortShipsMaxThreat()
         {
-            var sortedShips = new List<List<EnemyShip>>(100);
-            for (var i = 0; i < 100; ++i) sortedShips.Add(new List<EnemyShip>());
+            var sortedShips = new List<List<EnemyShip>>(Configs.starCount);
+            for (var i = 0; i < Configs.starCount; ++i) sortedShips.Add(new List<EnemyShip>());
 
             Dictionary<int, double> distances = new Dictionary<int, double>();
             foreach (EnemyShip ship in ships.Values)
@@ -189,8 +197,8 @@ namespace DSP_Battle
 
         public static void SortShipsMinHp()
         {
-            var sortedShips = new List<List<EnemyShip>>(100);
-            for (var i = 0; i < 100; ++i) sortedShips.Add(new List<EnemyShip>());
+            var sortedShips = new List<List<EnemyShip>>(Configs.starCount);
+            for (var i = 0; i < Configs.starCount; ++i) sortedShips.Add(new List<EnemyShip>());
 
             foreach (EnemyShip ship in ships.Values)
             {
@@ -381,7 +389,7 @@ namespace DSP_Battle
             if (time % 20 == 1) CheckPendingDestroyedEntities();
 
             // time is the frame since start
-            if (time % 60 == 1)
+            if (time % 30 == 1)
             {
                 ThreadPool.QueueUserWorkItem(new WaitCallback((e) => SortShips()));
             }

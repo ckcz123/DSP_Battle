@@ -98,7 +98,7 @@ namespace DSP_Battle
 
             Vector3 viewport = GameCamera.main.WorldToViewportPoint(__instance.transform.position);
             var distance = (__instance.starData.uPosition - playerUPos).magnitude;
-            bool active = distance <= 2000 || (viewport.z > 0 && viewport.x > -0.1 && viewport.x < 1.1 && viewport.y > -0.1 && viewport.y < 1.1);
+            bool active = distance <= 40000 * 8 && (distance <= 2000 || (viewport.z > 0 && viewport.x > -0.1 && viewport.x < 1.1 && viewport.y > -0.1 && viewport.y < 1.1));
             if (active != simulatorActive[__instance.starData.index])
             {
                 __instance.gameObject.SetActive(active);
