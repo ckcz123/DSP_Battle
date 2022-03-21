@@ -249,25 +249,19 @@ namespace DSP_Battle
 
         public static int TryTakeDamage(int damage, int index=-1)
         {
-            DspBattlePlugin.logger.LogInfo($"taking damage");
             if (index == -1) //默认攻击最后一个虫洞，暂时不考虑修改
             {
                 index = Configs.nextWaveWormCount - 1;
             }
             if(initialWormholeCount <= 1 || Configs.nextWaveState >= 3) //只有一个虫洞时，无法对虫洞造成伤害。已经开始刷敌舰后，也无法造成伤害。
             {
-                //DspBattlePlugin.logger.LogInfo($"initialWormholeCount is {initialWormholeCount}");
                 return -1;
             }
-            int realDamage = -1;
             if(index<100 && index > 0)
             {
                 float ratio = (Configs.nextWaveWormCount - 1) * 1f / (initialWormholeCount - 1); //目前是线性减伤，因此消灭所需时间是反比例增长，且最后一个虫洞减伤是100%，不会被消灭
                 damage = Mathf.RoundToInt(damage * ratio);
-                //DspBattlePlugin.logger.LogInfo($"damage after debuff is {damage}");
-                realDamage = Mathf.Min(damage, wormholeHp[index]);
                 wormholeHp[index] -= damage;
-                //DspBattlePlugin.logger.LogInfo($"wormhole {index} hp is {wormholeHp[index]}");
                 if(wormholeHp[index] <= 0)
                 {
                     Configs.nextWaveWormCount -= 1;
@@ -294,9 +288,10 @@ namespace DSP_Battle
                         intensity -= Configs.nextWaveEnemy[i] * Configs.enemyIntensity[i];
                     }
                     Configs.nextWaveEnemy[0] = intensity / Configs.enemyIntensity[0];
+                    return 1; //代表摧毁了一个虫洞
                 }
             }
-            return realDamage;
+            return 0; //造成了伤害，但是还没摧毁
         }
 
 

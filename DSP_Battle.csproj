@@ -58,6 +58,11 @@
       <HintPath>..\..\..\Steam\steamapps\common\Dyson Sphere Program\BepInEx\plugins\LDBTool.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="MoreMegaStructure, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dependencies\MoreMegaStructure.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -113,6 +118,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\BattleProtos.cs" />
+    <Compile Include="src\StarCannon.cs" />
     <Compile Include="src\UIBattleStatistics.cs" />
     <Compile Include="src\Cannon.cs" />
     <Compile Include="src\Configs.cs" />

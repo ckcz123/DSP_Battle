@@ -18,6 +18,7 @@ namespace DSP_Battle
     [BepInDependency(DSPModSavePlugin.MODGUID)]
     [BepInDependency(CommonAPIPlugin.GUID)]
     [BepInDependency(LDBToolPlugin.MODGUID)]
+    [BepInDependency("Gnimaerd.DSP.plugin.MoreMegaStructure")]
     [CommonAPISubmoduleDependency(nameof(ProtoRegistry))]
     [CommonAPISubmoduleDependency(nameof(TabSystem))]
     public class DspBattlePlugin : BaseUnityPlugin, IModCanSave
@@ -65,6 +66,7 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(WormholeUIPatch));
             Harmony.CreateAndPatchAll(typeof(UIBattleStatistics));
             Harmony.CreateAndPatchAll(typeof(UIDialogPatch));
+            Harmony.CreateAndPatchAll(typeof(StarCannon));
 
             LDBTool.PreAddDataAction += BattleProtos.AddProtos;
             LDBTool.PostAddDataAction += BattleProtos.PostDataAction;
@@ -139,6 +141,7 @@ namespace DSP_Battle
             MissileSilo.Export(w);
             UIAlert.Export(w);
             WormholeProperties.Export(w);
+            StarCannon.Export(w);
         }
 
         public void Import(BinaryReader r)
@@ -149,6 +152,7 @@ namespace DSP_Battle
             MissileSilo.Import(r);
             UIAlert.Import(r);
             WormholeProperties.Import(r);
+            StarCannon.Import(r);
 
             UIBattleStatistics.InitAll();
             UIBattleStatistics.InitSelectDifficulty();
@@ -162,6 +166,7 @@ namespace DSP_Battle
             MissileSilo.IntoOtherSave();
             UIAlert.IntoOtherSave();
             WormholeProperties.IntoOtherSave();
+            StarCannon.IntoOtherSave();
 
             UIBattleStatistics.InitAll();
             UIBattleStatistics.InitSelectDifficulty();
