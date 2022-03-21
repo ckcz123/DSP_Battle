@@ -212,6 +212,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("最低生命", "Lowest HP", "最低生命");
             ProtoRegistry.RegisterString("目标生命值", "Target HP", "目标生命值");
             ProtoRegistry.RegisterString("无攻击目标", "No target", "无攻击目标");
+            ProtoRegistry.RegisterString("开火中gm", "Firing", "开火中");
             ProtoRegistry.RegisterString("下一波攻击即将到来！", "Next wave is coming!", "下一波攻击即将到来！");
             ProtoRegistry.RegisterString("做好防御提示", "Please prepare next wave in <color=#c2853d>{0}</color>!", "请为<color=#c2853d>{0}</color>做好防御准备。");
             ProtoRegistry.RegisterString("虫洞已生成！", "Wormhole generated!", "虫洞已生成！");

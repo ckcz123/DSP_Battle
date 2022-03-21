@@ -460,6 +460,8 @@ namespace DSP_Battle
             Configs.nextWaveEnemy[0] = intensity / Configs.enemyIntensity[0];
             Configs.nextWaveWormCount = random.Next(Math.Min(Configs.nextWaveIntensity / 100, 40), Math.Min(80, Configs.nextWaveEnemy.Sum())) + 1;
 
+            WormholeProperties.InitWormholeProperties();
+
             UIDialogPatch.ShowUIDialog("下一波攻击即将到来！".Translate(),
                 string.Format("做好防御提示".Translate(), GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName));
 

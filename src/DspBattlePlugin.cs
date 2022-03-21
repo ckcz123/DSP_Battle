@@ -138,6 +138,7 @@ namespace DSP_Battle
             Cannon.Export(w);
             MissileSilo.Export(w);
             UIAlert.Export(w);
+            WormholeProperties.Export(w);
         }
 
         public void Import(BinaryReader r)
@@ -147,6 +148,7 @@ namespace DSP_Battle
             Cannon.Import(r);
             MissileSilo.Import(r);
             UIAlert.Import(r);
+            WormholeProperties.Import(r);
 
             UIBattleStatistics.InitAll();
             UIBattleStatistics.InitSelectDifficulty();
@@ -159,6 +161,7 @@ namespace DSP_Battle
             Cannon.IntoOtherSave();
             MissileSilo.IntoOtherSave();
             UIAlert.IntoOtherSave();
+            WormholeProperties.IntoOtherSave();
 
             UIBattleStatistics.InitAll();
             UIBattleStatistics.InitSelectDifficulty();

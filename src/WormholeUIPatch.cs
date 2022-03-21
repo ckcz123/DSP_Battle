@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 using xiaoye97;
@@ -226,5 +227,111 @@ namespace DSP_Battle
             }
         }
 
+    }
+
+    class WormholeProperties
+    {
+        //虫洞血量等和恒星炮互动的数据
+        public static int[] wormholeHp = new int[100];
+        public static int initialWormholeCount = -1; //初始的虫洞数量
+        public static int initialIntensity = -1; //初始的强度
+
+        public static void InitWormholeProperties()
+        {
+            DspBattlePlugin.logger.LogInfo("Init wormhole properties");
+            for (int i = 0; i < 100; i++)
+            {
+                wormholeHp[i] = 1000000; //虫洞默认血量
+            }
+            initialWormholeCount = Configs.nextWaveWormCount;
+            initialIntensity = Configs.nextWaveIntensity;
+        }
+
+        public static int TryTakeDamage(int damage, int index=-1)
+        {
+            DspBattlePlugin.logger.LogInfo($"taking damage");
+            if (index == -1) //默认攻击最后一个虫洞，暂时不考虑修改
+            {
+                index = Configs.nextWaveWormCount - 1;
+            }
+            if(initialWormholeCount <= 1 || Configs.nextWaveState >= 3) //只有一个虫洞时，无法对虫洞造成伤害。已经开始刷敌舰后，也无法造成伤害。
+            {
+                //DspBattlePlugin.logger.LogInfo($"initialWormholeCount is {initialWormholeCount}");
+                return -1;
+            }
+            int realDamage = -1;
+            if(index<100 && index > 0)
+            {
+                float ratio = (Configs.nextWaveWormCount - 1) * 1f / (initialWormholeCount - 1); //目前是线性减伤，因此消灭所需时间是反比例增长，且最后一个虫洞减伤是100%，不会被消灭
+                damage = Mathf.RoundToInt(damage * ratio);
+                //DspBattlePlugin.logger.LogInfo($"damage after debuff is {damage}");
+                realDamage = Mathf.Min(damage, wormholeHp[index]);
+                wormholeHp[index] -= damage;
+                //DspBattlePlugin.logger.LogInfo($"wormhole {index} hp is {wormholeHp[index]}");
+                if(wormholeHp[index] <= 0)
+                {
+                    Configs.nextWaveWormCount -= 1;
+                    Configs.nextWaveIntensity = Mathf.RoundToInt(initialIntensity * (Configs.nextWaveWormCount * 1f / initialWormholeCount));
+
+                    //显示更新，星图界面和实际界面
+                    if (WormholeUIPatch.uiStar.Length > index && WormholeUIPatch.uiStar[index] != null)
+                    {
+                        WormholeUIPatch.uiStar[index]._Close();
+                        WormholeUIPatch.uiStar[index].starObject.gameObject.SetActive(false);
+                    }
+                    if (WormholeUIPatch.simulatorActive.Length > index && WormholeUIPatch.simulatorActive[index])
+                    {
+                        WormholeUIPatch.simulator[index].gameObject.SetActive(false);
+                        WormholeUIPatch.simulatorActive[index] = false;
+                    }
+
+                    //重新执行一遍敌舰数量设定
+                    int intensity = Configs.nextWaveIntensity;
+                    for (int i = 4; i >= 1; --i)
+                    {
+                        double v = EnemyShips.random.NextDouble() / 2 + 0.25;
+                        Configs.nextWaveEnemy[i] = (int)(intensity * v / Configs.enemyIntensity[i]);
+                        intensity -= Configs.nextWaveEnemy[i] * Configs.enemyIntensity[i];
+                    }
+                    Configs.nextWaveEnemy[0] = intensity / Configs.enemyIntensity[0];
+                }
+            }
+            return realDamage;
+        }
+
+
+        public static void Export(BinaryWriter w)
+        {
+            w.Write(wormholeHp.Length);
+            for (int i = 0; i < wormholeHp.Length; i++)
+            {
+                w.Write(wormholeHp[i]);
+            }
+            w.Write(initialWormholeCount);
+            w.Write(initialIntensity);
+        }
+
+        public static void Import(BinaryReader r)
+        {
+            if(Configs.versionWhenImporting >= 20220321)
+            {
+                int length = r.ReadInt32();
+                for (int i = 0; i < length; i++)
+                {
+                    wormholeHp[i] = r.ReadInt32();
+                }
+                initialWormholeCount = r.ReadInt32();
+                initialIntensity = r.ReadInt32();
+            }
+            else
+            {
+                InitWormholeProperties();
+            }
+        }
+
+        public static void IntoOtherSave()
+        {
+            InitWormholeProperties();
+        }
     }
 }

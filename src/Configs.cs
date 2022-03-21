@@ -7,11 +7,12 @@ namespace DSP_Battle
 {
     class Configs
     {
-        public static string versionString = "1.1.0";
+        public static string versionString = "1.2.0";
         public static string qq = "694213906";
 
 
-        public static int versionCode = 20220320;
+        public static int versionCode = 20220321;
+        public static int versionWhenImporting = -1;
 
         public static int difficulty = 0; // -1 easy, 0 normal, 1 hard
 
@@ -253,7 +254,7 @@ namespace DSP_Battle
         public static void Import(BinaryReader r)
         {
             int version = r.ReadInt32();
-
+            versionWhenImporting = version;
             difficulty = r.ReadInt32();
 
             bulletSpeedScale = r.ReadDouble();
