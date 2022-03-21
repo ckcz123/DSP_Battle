@@ -25,11 +25,15 @@ namespace DSP_Battle
         static Color cannonAimingColor = new Color(0.973f, 0.359f, 0.170f, 1f);
         static Color cannonFiringColor = new Color(1f, 0.16f, 0.16f, 1f);
 
+        public static int laserBulletNum = 50;
+        public static int laserBulletPosDelta = 150;
+        public static int laserBulletEndPosDelta = 20;
+
         //下面属性可能根据戴森球等级有变化，但并不需要存档        
         public static int starCannonLevel = 1; //恒星炮建造的所属阶段（等级），即完成度
         public static int damagePerTick = 4000; //每tick伤害
         public static double maxRange = 10.0; //恒星炮最大开火距离，以光年计，1ly = 60AU = 60 * 40000m。
-        public static int warmTimeNeed = 600; //阶段2预热加速旋转需要的tick时间
+        public static int warmTimeNeed = 120; //阶段2预热加速旋转需要的tick时间
         public static int cooldownTimeNeed = 600; //阶段5冷却需要的tick时间
         public static int chargingTimeNeed = 75 * 3600; //阶段-1的重新充能需要的tick时间
         public static float reAimAngularSpeed = 50f; //连续瞄准时，所有层以同一个速度旋转瞄准到下一个虫洞
@@ -357,13 +361,13 @@ namespace DSP_Battle
 
                         if (fireStage >= 2)//加速旋转
                         {
-                            if (rotateSpeedScale < 15f)
-                                rotateSpeedScale += 0.01f;
+                            if (rotateSpeedScale < 3f)
+                                rotateSpeedScale += 0.005f;
                         }
                         else if (fireStage < 0) //冷却、停止开火阶段，减速旋转
                         {
                             if (rotateSpeedScale > 0.5f)
-                                rotateSpeedScale -= 0.02f;
+                                rotateSpeedScale -= 0.01f;
                         }
                         
                         //连续开火的再瞄准开始
@@ -404,33 +408,34 @@ namespace DSP_Battle
                 }
 
                 //激光效果
-                for (int i = 0; i < 20; i++)
+                for (int i = 0; i < laserBulletNum; i++)
                 {
                     int bulletIndex = __instance.swarm.AddBullet(new SailBullet
                     {
                         maxt = 0.3f,
                         lBegin = __instance.starData.uPosition,
                         uEndVel = targetUPos,
-                        uBegin = __instance.starData.uPosition + new VectorLF3(DspBattlePlugin.randSeed.NextDouble() * 20, DspBattlePlugin.randSeed.NextDouble() * 20, DspBattlePlugin.randSeed.NextDouble() * 20),
-                        uEnd = targetUPos + new VectorLF3(DspBattlePlugin.randSeed.NextDouble() * 20, DspBattlePlugin.randSeed.NextDouble() * 20, DspBattlePlugin.randSeed.NextDouble() * 20)
+                        uBegin = __instance.starData.uPosition + new VectorLF3(DspBattlePlugin.randSeed.NextDouble() * laserBulletPosDelta, DspBattlePlugin.randSeed.NextDouble() * laserBulletPosDelta, DspBattlePlugin.randSeed.NextDouble() * laserBulletPosDelta),
+                        uEnd = targetUPos + new VectorLF3(DspBattlePlugin.randSeed.NextDouble() * laserBulletEndPosDelta, DspBattlePlugin.randSeed.NextDouble() * laserBulletEndPosDelta, DspBattlePlugin.randSeed.NextDouble() * laserBulletEndPosDelta)
                     }, 0);
                     __instance.swarm.bulletPool[bulletIndex].state = 0;
                 }
+
                 //如果不在同星系，则本星系内光会很细，增加一段短光
                 if (targetSwarm == null || targetSwarm.starData.index != __instance.starData.index)
                 {
                     int nearPoint = 400000;
                     if (__instance.starData.type == EStarType.GiantStar)
                         nearPoint = 1000000;
-                    for (int i = 0; i < 20; i++)
+                    for (int i = 0; i < laserBulletNum; i++)
                     {
                         int bulletIndex = __instance.swarm.AddBullet(new SailBullet
                         {
                             maxt = 0.3f,
                             lBegin = __instance.starData.uPosition,
                             uEndVel = targetUPos,
-                            uBegin = __instance.starData.uPosition + new VectorLF3(DspBattlePlugin.randSeed.NextDouble() * 20, DspBattlePlugin.randSeed.NextDouble() * 20, DspBattlePlugin.randSeed.NextDouble() * 20),
-                            uEnd = (targetUPos - __instance.starData.uPosition).normalized * nearPoint + __instance.starData.uPosition + new VectorLF3(DspBattlePlugin.randSeed.NextDouble() * 20, DspBattlePlugin.randSeed.NextDouble() * 20, DspBattlePlugin.randSeed.NextDouble() * 20)
+                            uBegin = __instance.starData.uPosition + new VectorLF3(DspBattlePlugin.randSeed.NextDouble() * laserBulletPosDelta, DspBattlePlugin.randSeed.NextDouble() * laserBulletPosDelta, DspBattlePlugin.randSeed.NextDouble() * laserBulletPosDelta),
+                            uEnd = (targetUPos - __instance.starData.uPosition).normalized * nearPoint + __instance.starData.uPosition + new VectorLF3(DspBattlePlugin.randSeed.NextDouble() * laserBulletEndPosDelta, DspBattlePlugin.randSeed.NextDouble() * laserBulletEndPosDelta, DspBattlePlugin.randSeed.NextDouble() * laserBulletEndPosDelta)
                         }, 0);
                         __instance.swarm.bulletPool[bulletIndex].state = 0;
                     }
@@ -439,19 +444,93 @@ namespace DSP_Battle
                 if (targetSwarm != null && targetSwarm.starData.index != __instance.starData.index)
                 {
                     //无需改变生成点和终点
-                    for (int i = 0; i < 20; i++)
+                    for (int i = 0; i < laserBulletNum; i++)
                     {
                         int bulletIndex = targetSwarm.AddBullet(new SailBullet
                         {
                             maxt = 0.3f,
                             lBegin = __instance.starData.uPosition,
                             uEndVel = targetUPos,
-                            uBegin = __instance.starData.uPosition + new VectorLF3(DspBattlePlugin.randSeed.NextDouble() * 20, DspBattlePlugin.randSeed.NextDouble() * 20, DspBattlePlugin.randSeed.NextDouble() * 20),
-                            uEnd = targetUPos + new VectorLF3(DspBattlePlugin.randSeed.NextDouble() * 20, DspBattlePlugin.randSeed.NextDouble() * 20, DspBattlePlugin.randSeed.NextDouble() * 20)
+                            uBegin = __instance.starData.uPosition + new VectorLF3(DspBattlePlugin.randSeed.NextDouble() * laserBulletPosDelta, DspBattlePlugin.randSeed.NextDouble() * laserBulletPosDelta, DspBattlePlugin.randSeed.NextDouble() * laserBulletPosDelta),
+                            uEnd = targetUPos + new VectorLF3(DspBattlePlugin.randSeed.NextDouble() * laserBulletEndPosDelta, DspBattlePlugin.randSeed.NextDouble() * laserBulletEndPosDelta, DspBattlePlugin.randSeed.NextDouble() * laserBulletEndPosDelta)
                         }, 0);
                         targetSwarm.bulletPool[bulletIndex].state = 0;
                     }
                 }
+
+                //其他效果
+                VectorLF3 targetDirection = targetUPos - __instance.starData.uPosition;
+                VectorLF3 vertDirection = new VectorLF3(0, 0, 1); float minRadius = 99999999;
+                float maxRadius = 0;
+                for (int i = 0; i < __instance.layersIdBased.Length; i++)
+                {
+                    if (__instance.layersIdBased[i] != null)
+                    {
+                        maxRadius = Mathf.Max(maxRadius, __instance.layersIdBased[i].orbitRadius);
+                        if(__instance.layersIdBased[i].orbitRadius > 10 && __instance.layersIdBased[i].orbitRadius<minRadius)
+                            minRadius =  __instance.layersIdBased[i].orbitRadius;
+                    }
+                }
+                //其他效果1，x条集中射线，起点在最外壳层的，垂直于炮口攻击方向的圆上
+                float initRot = gameTick % 60;
+
+                if (targetDirection.z != 0)
+                {
+                    vertDirection = new VectorLF3(1, 1, (-targetDirection.x - targetDirection.y) / targetDirection.z);
+                }
+                VectorLF3 oriBeginPoint = __instance.starData.uPosition + vertDirection.normalized * maxRadius;//不懂应该乘多少
+                int barNum = 12;
+                VectorLF3 eff1EndPos = targetUPos;
+                if (targetSwarm == null || targetSwarm.starData.index != __instance.starData.index) //如果目标不在本星系，则集火射线的重点不是目标虫洞，而是某个星系内的点
+                {
+                    int nearPoint0 = 400000;
+                    if (__instance.starData.type == EStarType.GiantStar)
+                        nearPoint0 = 1000000;
+                    eff1EndPos = (targetUPos - __instance.starData.uPosition).normalized * nearPoint0 + __instance.starData.uPosition;
+                }
+                for (int i = 0; i < barNum; i++)
+                {
+                    VectorLF3 beginPoint = Quaternion.AngleAxis(initRot + 360 / barNum * i, targetDirection) * oriBeginPoint;
+                    for (int j = 0; j < 10; j++)
+                    {
+                        int bulletIndex = __instance.swarm.AddBullet(new SailBullet
+                        {
+                            maxt = 0.1f,
+                            lBegin = __instance.starData.uPosition,
+                            uEndVel = targetUPos,
+                            uBegin = beginPoint + new VectorLF3(DspBattlePlugin.randSeed.NextDouble() * laserBulletPosDelta, DspBattlePlugin.randSeed.NextDouble() * laserBulletPosDelta, DspBattlePlugin.randSeed.NextDouble() * laserBulletPosDelta),
+                            uEnd = eff1EndPos
+                        }, 0);
+                        __instance.swarm.bulletPool[bulletIndex].state = 0;
+                    }
+                }
+
+                //其他效果2，从戴森壳各个node有概率发射出能量，重点在炮口前方，距离恒星中心的距离相当于最外层壳层的半径的n倍，目前是1.1倍
+                
+                VectorLF3 endPoint = __instance.starData.uPosition + targetDirection.normalized * maxRadius * 1.1;
+                for (int i = 0; i < __instance.layersIdBased.Length; i++)
+                {
+                    if (__instance.layersIdBased[i] != null)
+                    {
+                        DysonSphereLayer layer = __instance.layersIdBased[i];
+                        for (int j = 0; j < layer.nodeCursor; j++)
+                        {
+                            if (layer.nodePool[j] == null || gameTick % 10 != j)
+                                continue;
+                            VectorLF3 beginPByNode = layer.NodeUPos(layer.nodePool[j]);
+                            int bulletIndex = __instance.swarm.AddBullet(new SailBullet
+                            {
+                                maxt = 0.05f,
+                                lBegin = __instance.starData.uPosition,
+                                uEndVel = targetUPos,
+                                uBegin = beginPByNode,
+                                uEnd = endPoint
+                            }, 0);
+                            __instance.swarm.bulletPool[bulletIndex].state = 0;
+                        }
+                    }
+                }
+                
             }
 
             //结算阶段
