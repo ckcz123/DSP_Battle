@@ -11,7 +11,7 @@ namespace DSP_Battle
         public static string qq = "694213906";
 
 
-        public static int versionCode = 20220321;
+        public static int versionCode = 20220323;
         public static int versionWhenImporting = -1;
 
         public static int difficulty = 0; // -1 easy, 0 normal, 1 hard

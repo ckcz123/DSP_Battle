@@ -41,15 +41,14 @@ namespace DSP_Battle
         public static float reAimAngularSpeed = 30f; //连续瞄准时，所有层以同一个速度旋转瞄准到下一个虫洞
         public static int maxAimCount = 100; //连续瞄准次数上限
         public static List<double> layerRotateSpeed; //不需要存档，每次随机生成即可
+        public static ConcurrentDictionary<int, int> noExplodeBullets; //设定很多不需要爆炸特效的子弹，其寿命就不是maxt+0.7而是maxt，这会极大提升帧率
 
         //需要存档的量
-        public static bool Fire = false;
         public static int time = 0; //恒星炮工作流程计时，均以tick记。负值代表冷却/充能过程
         public static int fireStage = 0; //恒星炮开火阶段。1=瞄准；2=预热旋转且瞄准锁定；3=开火；4=刚消灭一个虫洞、准备继续连续瞄准（此阶段只有一帧）；5=连续开火的正在瞄准新虫洞；-2=将各层角度还原到随机的其他角度并减慢旋转速度，冷却中；-1=重新充能中；0=充能完毕、待命、可开火。
         public static int endAimTime = 999; //最慢的轨道所需的瞄准时间，也就是阶段1的总时间
         public static VectorLF3 targetUPos = new VectorLF3(30000, 40000, -50000);
         public static float rotateSpeedScale = 1;
-        public static ConcurrentDictionary<int, int> noExplodeBullets;
 
         //每帧更新不需要存档
         public static DysonSwarm targetSwarm = null; //除了要在恒星炮的星系上发射“太阳帆束”来体现动画效果，还要在受攻击恒星上发射，使在观看目标点时也能够渲染，所以需要受击目标所在恒星系的index
@@ -154,9 +153,30 @@ namespace DSP_Battle
         }
 
 
-        public static void UpdateStarCannonLevel(DysonSphere sphere)
+        public static void UpdateStarCannonProperties(DysonSphere sphere)
         {
-            starCannonLevel = 1;
+            if (GameMain.instance.timei % 60 != 3)
+                return;
+
+            int[] datas = MoreMegaStructure.StarCannon.GetStarCannonProperties(sphere);
+            starCannonLevel = datas[0];
+            damagePerTick = datas[1];
+            maxAimCount = datas[2];
+            if (chargingTimeNeed != datas[3])
+            {
+                if (fireStage == -2)
+                {
+                    int coolingTimeLeft = -time - chargingTimeNeed;
+                    chargingTimeNeed = datas[3];
+                    time = -coolingTimeLeft - chargingTimeNeed;
+                }
+                else if (fireStage == -1) 
+                {
+                    time = (int)(time * 1.0 / chargingTimeNeed * datas[3]);
+                    chargingTimeNeed = datas[3];
+                }
+            }
+            maxRange = datas[4];
         }
 
         public static void RefreshFireButtonUI()
@@ -194,9 +214,13 @@ namespace DSP_Battle
                     fireButtonText.fontSize = 18;
                     break;
                 case 1:
+                    fireButtonImage.color = cannonAimingColor;
+                    fireButtonText.text = "瞄准中".Translate();
+                    fireButtonText.fontSize = 18;
+                    break;
                 case 2:
                     fireButtonImage.color = cannonAimingColor;
-                    fireButtonText.text = "正在瞄准".Translate();
+                    fireButtonText.text = "预热中".Translate();
                     fireButtonText.fontSize = 18;
                     break;
                 case 3:
@@ -208,7 +232,6 @@ namespace DSP_Battle
                     break;
             }
         }
-
 
         public static int TrySetNextTarget()
         {
@@ -313,11 +336,11 @@ namespace DSP_Battle
             if (__instance.energyGenCurrentTick < 10000)
                 return;
 
-            UpdateStarCannonLevel(__instance); //根据恒星炮的能量输出和层级等属性，确定恒星炮的等级
+            UpdateStarCannonProperties(__instance); //根据恒星炮的能量输出和层级等属性，确定恒星炮的等级
             starCannonStarIndex = starIndex;
 
 
-            if ( (Configs.nextWaveState != 2 && Configs.nextWaveState != 3 && fireStage > 0) || fireStage >= 9 || starCannonLevel <= 0)
+            if ( (Configs.nextWaveState != 2 && Configs.nextWaveState != 3 && fireStage > 0) || fireStage >= 9)
             {
                 StopFiring(ref __instance);
                 return;
@@ -533,9 +556,12 @@ namespace DSP_Battle
             RefreshFireButtonUI();
         }
 
+        /// <summary>
+        /// 阻止子弹粒子的爆炸特效，提高帧率
+        /// </summary>
         [HarmonyPostfix]
         [HarmonyPatch(typeof(DysonSwarm), "GameTick")]
-        public static void PreventBulletExplodeEffect() //阻止子弹粒子的爆炸特效，提高帧率
+        public static void PreventBulletExplodeEffect() 
         {
             if (starCannonStarIndex < 0) return;
             DysonSwarm swarm = GameMain.data.dysonSpheres[starCannonStarIndex]?.swarm;
@@ -547,7 +573,8 @@ namespace DSP_Battle
                     if (swarm.bulletPool[item.Key].id != 0 && swarm.bulletPool[item.Key].t >= swarm.bulletPool[item.Key].maxt)
                     {
                         swarm.RemoveBullet(item.Key);
-                        noExplodeBullets.TryUpdate(item.Key, 0, 0);
+                        int rm;
+                        noExplodeBullets.TryRemove(item.Key, out rm);
                     }
                 }
             }
@@ -710,19 +737,38 @@ namespace DSP_Battle
         }
 
 
-        
-
         public static void Export(BinaryWriter w)
         {
-
+            w.Write(time);
+            w.Write(fireStage);
+            w.Write(endAimTime);
+            w.Write(targetUPos.x);
+            w.Write(targetUPos.y);
+            w.Write(targetUPos.z);
+            w.Write((double)rotateSpeedScale);
+            //w.Write(noExplodeBullets.Count); //不再存读档，虽然加载存档时可能会有大量爆炸特效卡一秒，但是却有可能会增大存档体积（游戏中开炮时弹射弹道数量可以飙升3000+甚至更多）
+            //foreach (var item in noExplodeBullets)
+            //{
+            //    w.Write(item.Key);
+            //    w.Write(item.Value);
+            //}
         }
 
         public static void Import(BinaryReader r)
         {
             InitAll();
-            if (Configs.versionWhenImporting >= 20220321)
+            if (Configs.versionWhenImporting >= 20220323)
             {
-
+                time = r.ReadInt32();
+                fireStage = r.ReadInt32();
+                endAimTime = r.ReadInt32();
+                targetUPos = new VectorLF3(r.ReadDouble(),r.ReadDouble(),r.ReadDouble());
+                rotateSpeedScale = (float)r.ReadDouble();
+                //int length = r.ReadInt32();
+                //for (int i = 0; i < length; i++)
+                //{
+                //    noExplodeBullets.AddOrUpdate(r.ReadInt32(),r.ReadInt32(),(x,y)=>0);
+                //}
             }
             else
             {
