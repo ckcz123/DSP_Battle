@@ -117,7 +117,7 @@ namespace DSP_Battle
 
             ProtoRegistry.RegisterString("行星力场护盾", "Planet shield", "行星力场护盾");
             ProtoRegistry.RegisterString("星际要塞", "Star fortress", "星际要塞");
-            ProtoRegistry.RegisterString("恒星炮", "Star cannon", "恒星炮");
+            ProtoRegistry.RegisterString("恒星炮gm2", "Star cannon", "恒星炮");
             ProtoRegistry.RegisterString("水滴gm", "Water-drop", "水滴");
             ProtoRegistry.RegisterString("即将到来gm", "Coming soon", "即将推出");
 
