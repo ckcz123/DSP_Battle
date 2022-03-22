@@ -580,7 +580,7 @@ namespace DSP_Battle
             VectorLF3 oriBeginPoint = __instance.starData.uPosition + vertDirection.normalized * maxRadius;//不懂应该乘多少
             int barNum = 12;
             VectorLF3 eff1EndPos = targetUPos;
-            if (targetSwarm == null || targetSwarm.starData.index != __instance.starData.index) //如果目标不在本星系，则集火射线的重点不是目标虫洞，而是某个星系内的点
+            if (targetSwarm == null || targetSwarm.starData.index != __instance.starData.index) //如果目标不在本星系，则集火射线的终点不是目标虫洞，而是某个星系内的点
             {
                 int nearPoint0 = 400000;
                 if (__instance.starData.type == EStarType.GiantStar)
@@ -674,7 +674,7 @@ namespace DSP_Battle
             {
                 vertDirection = new VectorLF3(1, 1, (-targetDirection.x - targetDirection.y) / targetDirection.z);
             }
-            VectorLF3 eff3EndPos = __instance.starData.uPosition + targetDirection.normalized * maxRadius * 0.95;
+            VectorLF3 eff3EndPos = __instance.starData.uPosition + targetDirection.normalized * maxRadius * 1.05;
             
 
             int activeFrameNum = 0;
