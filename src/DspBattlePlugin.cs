@@ -47,7 +47,8 @@ namespace DSP_Battle
                 using (ProtoRegistry.StartModLoad(GUID))
                 {
                     pagenum = TabSystem.RegisterTab($"{MODID_tab}:{MODID_tab}Tab", new TabData("轨道防御", "Assets/DSPBattle/dspbattletabicon"));
-                    BattleProtos.pageBias = (pagenum - 2) * 1000 - 500;
+                    BattleProtos.pageBias = (pagenum - 2) * 1000;
+                    MoreMegaStructure.MoreMegaStructure.battlePagenum = pagenum;
                 }
             }
             catch (Exception)
