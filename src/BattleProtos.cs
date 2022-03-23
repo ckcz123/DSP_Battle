@@ -339,11 +339,11 @@ namespace DSP_Battle
                 1914, 2706 + pageBias, "Assets/DSPBattle/missile3");
             ProtoRegistry.RegisterRecipe(811, ERecipeType.Assemble, 360, new int[] { 1103, 1201, 1303, 1205 }, new int[] { 10, 10, 10, 5 }, new int[] { 8011 }, new int[] { 1 }, "弹射器1描述",
                 1901, 2601 + pageBias, "Assets/DSPBattle/cannon1");
-            ProtoRegistry.RegisterRecipe(812, ERecipeType.Assemble, 360, new int[] { 1107, 1206, 1303, 1209 }, new int[] { 10, 10, 10, 3 }, new int[] { 8012 }, new int[] { 1 }, "弹射器2描述",
+            ProtoRegistry.RegisterRecipe(812, ERecipeType.Assemble, 360, new int[] { 1107, 9480, 1303, 1209 }, new int[] { 10, 10, 10, 3 }, new int[] { 8012 }, new int[] { 1 }, "弹射器2描述",
                 1914, 2602 + pageBias, "Assets/DSPBattle/cannon2");
             ProtoRegistry.RegisterRecipe(813, ERecipeType.Assemble, 900, new int[] { 1107, 1125, 1209, 1305 }, new int[] { 40, 15, 5, 5 }, new int[] { 8013 }, new int[] { 1 }, "发射器1描述",
                 1911, 2603 + pageBias, "Assets/DSPBattle/missilesilo");
-            ProtoRegistry.RegisterRecipe(814, ERecipeType.Assemble, 900, new int[] { 1125, 1402, 1304, 1305 }, new int[] { 20, 10, 10, 5 }, new int[] { 8014 }, new int[] { 1 }, "脉冲炮描述",
+            ProtoRegistry.RegisterRecipe(814, ERecipeType.Assemble, 900, new int[] { 1125, 9481, 9486 }, new int[] { 20, 5, 2 }, new int[] { 8014 }, new int[] { 1 }, "脉冲炮描述",
                 1915, 2604 + pageBias, "Assets/DSPBattle/cannon3");
 
             TechProto techBullet1 = ProtoRegistry.RegisterTech(1901, "近地防卫系统", "近地防卫系统描述", "近地防卫系统结论", "Assets/DSPBattle/bullet1tech", new int[] { 1711 }, new int[] { 6001, 6002 }, new int[] { 20, 20 },
