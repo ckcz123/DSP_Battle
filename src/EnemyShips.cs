@@ -56,8 +56,7 @@ namespace DSP_Battle
 
         public static bool ValidStellarStation(StationComponent s)
         {
-            return s != null && s.id != 0 && s.gid != 0 && s.isStellar && !s.isCollector
-                && !(Configs.difficulty == -1 && distroyedStation.ContainsKey(s.gid));
+            return s != null && s.id != 0 && s.gid != 0 && s.isStellar && !s.isCollector && !distroyedStation.ContainsKey(s.gid);
         }
 
         public static int FindNearestPlanetStation(StarData starData, VectorLF3 pos)
@@ -223,10 +222,10 @@ namespace DSP_Battle
                 {
                     PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
                     Vector3 stationPos = planetFactory.entityPool[station.entityId].pos;
-                    removingComponets = true;
+                    // removingComponets = true;
                     UIBattleStatistics.RegisterIntercept(ship, 0);
-                    RemoveStation(planetFactory, station);
-                    removingComponets = false;
+                    // RemoveStation(planetFactory, station);
+                    // removingComponets = false;
 
                     if (!pendingDestroyedEntities.ContainsKey(ship.shipData.planetB))
                     {
@@ -260,7 +259,8 @@ namespace DSP_Battle
                     for (int i = 0; i < planetFactory.entityPool.Length; ++i)
                     {
                         if (planetFactory.entityPool[i].isNull ||
-                            planetFactory.entityPool[i].beltId != 0 || 
+                            planetFactory.entityPool[i].beltId != 0 ||
+                            planetFactory.entityPool[i].inserterId != 0 || 
                             !entry.Value.Any((e) => (planetFactory.entityPool[i].pos - e.Item1).magnitude <= e.Item2))
                         {
                             continue;
@@ -270,7 +270,12 @@ namespace DSP_Battle
                         {
                             RemoveStation(planetFactory, planetFactory.transport.stationPool[planetFactory.entityPool[i].stationId]);
                         } 
-                        else if (Configs.difficulty != -1 || planetFactory.entityPool[i].powerNodeId > 0)
+                        else if (Configs.difficulty == 0 || (Configs.difficulty == -1 && planetFactory.entityPool[i].powerNodeId > 0))
+                        {
+                            UIBattleStatistics.RegisterOtherBuildingLost();
+                            EntityToPrebuild(planetFactory, i);
+                        }
+                        else if (Configs.difficulty == 1)
                         {
                             UIBattleStatistics.RegisterOtherBuildingLost();
                             RemoveEntity(planetFactory, i);
@@ -292,10 +297,10 @@ namespace DSP_Battle
                 UIBattleStatistics.RegisterResourceLost(station.storage[slot].count);
             }
             UIBattleStatistics.RegisterResourceLost(station.warperCount + station.idleShipCount + station.workShipCount + station.idleDroneCount + station.workDroneCount);
+            distroyedStation[station.gid] = 0;
 
             if (Configs.difficulty == -1)
             {
-                distroyedStation[station.gid] = 0;
 
                 // 破坏资源但不损毁物流塔
                 for (var i = 0; i < station.storage.Length; ++i)
@@ -322,6 +327,11 @@ namespace DSP_Battle
                 factory.transport.RefreshTraffic(station.id);
                 GameMain.data.galacticTransport.RefreshTraffic(station.gid);
             }
+            else if (Configs.difficulty == 0)
+            {
+                UIBattleStatistics.RegisterStationLost();
+                EntityToPrebuild(factory, station.entityId);
+            }
             else
             {
                 UIBattleStatistics.RegisterStationLost();
@@ -335,7 +345,7 @@ namespace DSP_Battle
             if (!removingComponets) return;
             try
             {
-                if (entityId >= factory.entityPool.Length || factory.entityPool[entityId].isNull) return;
+                if (entityId < 0 || entityId >= factory.entityPool.Length || factory.entityPool[entityId].isNull) return;
 
                 int labId = factory.entityPool[entityId].labId;
                 if (labId != 0 && labId < factory.factorySystem.labPool.Length && factory.factorySystem.labPool[labId].id != 0)
@@ -363,6 +373,50 @@ namespace DSP_Battle
             {
             }
 
+        }
+
+        // Source: https://gist.github.com/starfi5h/2d52f7959892467ae46599317ce84f63
+        private static void EntityToPrebuild(PlanetFactory factory, int entityId)
+        {
+            if (!removingComponets) return;
+            try
+            {
+                if (entityId < 0 || entityId >= factory.entityPool.Length || factory.entityPool[entityId].isNull) return;
+                if (factory.entityPool[entityId].beltId > 0 || factory.entityPool[entityId].inserterId > 0) return;
+
+                PrebuildData prebuildData = default(PrebuildData);
+                prebuildData.protoId = factory.entityPool[entityId].protoId;
+                prebuildData.modelIndex = factory.entityPool[entityId].modelIndex;
+                prebuildData.pos = factory.entityPool[entityId].pos;
+                prebuildData.rot = factory.entityPool[entityId].rot;
+                prebuildData.itemRequired = 1;
+
+                BuildingParameters parameters = default(BuildingParameters);
+                parameters.CopyFromFactoryObject(entityId, factory);
+                if (parameters.parameters != null)
+                {
+                    prebuildData.InitParametersArray(parameters.parameters.Length);
+                    Array.Copy(parameters.parameters, prebuildData.parameters, prebuildData.parameters.Length);
+                }
+
+                bool[] isOutput = new bool[16];
+                int[] otherObjId = new int[16];
+                int[] otherSlot = new int[16];
+                for (int i = 0; i < 16; ++i)
+                {
+                    factory.ReadObjectConn(entityId, i, out isOutput[i], out otherObjId[i], out otherSlot[i]);
+                }
+
+                factory.RemoveEntityWithComponents(entityId);
+
+                int objId = -factory.AddPrebuildDataWithComponents(prebuildData);
+                for (int i =0; i < 16; ++i)
+                {
+                    factory.WriteObjectConn(objId, i, isOutput[i], otherObjId[i], otherSlot[i]);
+                }
+                parameters.PasteToFactoryObject(objId, factory);
+            }
+            catch { }
         }
 
 
