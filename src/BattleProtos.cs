@@ -325,6 +325,15 @@ namespace DSP_Battle
             Silo.Upgrades = new int[] { };
             Silo.DescFields = new int[] { 35, 11, 12, 1, 40 };
 
+
+            var ShieldGenerator = ProtoRegistry.RegisterItem(8030, "护盾生成器", "护盾生成器描述", "Assets/DSPBattle/cannon3", 2605 + pageBias, 50, EItemType.Production);
+            ShieldGenerator.BuildMode = 1;
+            ShieldGenerator.IsEntity = true;
+            ShieldGenerator.isRaw = false;
+            ShieldGenerator.CanBuild = true;
+            ShieldGenerator.Upgrades = new int[] { };
+
+
             ProtoRegistry.RegisterRecipe(801, ERecipeType.Assemble, 60, new int[] { 1112, 1103 }, new int[] { 1, 1 }, new int[] { 8001 }, new int[] { 1 }, "子弹1描述",
                 1901, 2701 + pageBias, "Assets/DSPBattle/bullet1");
             ProtoRegistry.RegisterRecipe(802, ERecipeType.Assemble, 90, new int[] { 1118, 1110, 1116 }, new int[] { 1, 1, 1 }, new int[] { 8002 }, new int[] { 2 }, "子弹2描述",
@@ -345,6 +354,8 @@ namespace DSP_Battle
                 1911, 2603 + pageBias, "Assets/DSPBattle/missilesilo");
             ProtoRegistry.RegisterRecipe(814, ERecipeType.Assemble, 900, new int[] { 1125, 9481, 9486 }, new int[] { 20, 5, 2 }, new int[] { 8014 }, new int[] { 1 }, "脉冲炮描述",
                 1915, 2604 + pageBias, "Assets/DSPBattle/cannon3");
+            ProtoRegistry.RegisterRecipe(815, ERecipeType.Assemble, 900, new int[] { 1101 }, new int[] { 1 }, new int[] { 8030 }, new int[] { 1 }, "护盾生成器描述",
+                1916, 2605 + pageBias, "Assets/DSPBattle/cannon3");
 
             TechProto techBullet1 = ProtoRegistry.RegisterTech(1901, "近地防卫系统", "近地防卫系统描述", "近地防卫系统结论", "Assets/DSPBattle/bullet1tech", new int[] { 1711 }, new int[] { 6001, 6002 }, new int[] { 20, 20 },
                 72000, new int[] { 801, 811 }, new Vector2(29, -43));
@@ -383,7 +394,7 @@ namespace DSP_Battle
 
 
             TechProto techShield1 = ProtoRegistry.RegisterTech(1916, "行星力场护盾", "即将到来gm", "即将到来gm", "Assets/DSPBattle/cannon3tech", new int[] { 1705 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 565 }, new Vector2(53, -31));
+                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 565,815 }, new Vector2(53, -31));
             techShield1.Published = false;
             TechProto techStellarFortress = ProtoRegistry.RegisterTech(1917, "星际要塞", "即将到来gm", "即将到来gm", "Assets/DSPBattle/cannon3tech", new int[] { 1903 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
                 new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { }, new Vector2(41, -43));
@@ -581,6 +592,12 @@ namespace DSP_Battle
             SiloModel.prefabDesc.siloColdFrame = 120;
             LDBTool.PreAddProto(SiloModel);
 
+            var ShieldGenModel = CopyModelProto(45, 315, Color.blue);
+            ShieldGenModel.prefabDesc.emptyId = 1208;
+            ShieldGenModel.prefabDesc.fullId = 1208;
+
+            LDBTool.PreAddProto(ShieldGenModel);
+
 
             LDBTool.SetBuildBar(6, 7, 8011);
             LDBTool.SetBuildBar(6, 8, 8012);
@@ -658,6 +675,11 @@ namespace DSP_Battle
             LDB.models.Select(313).prefabDesc.modelIndex = 313;
             LDB.items.Select(8013).ModelIndex = 313;
             LDB.items.Select(8013).prefabDesc = LDB.models.Select(313).prefabDesc;
+
+
+            LDB.models.Select(315).prefabDesc.modelIndex = 315;
+            LDB.items.Select(8030).ModelIndex = 315;
+            LDB.items.Select(8030).prefabDesc = LDB.models.Select(315).prefabDesc;
 
             GameMain.gpuiManager.Init();
         }

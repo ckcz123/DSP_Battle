@@ -12,7 +12,7 @@ using System.Collections.Concurrent;
 
 namespace DSP_Battle
 {
-    class StarCannon
+    public class StarCannon
     {
 
         public static GameObject fireButtonObj = null;
