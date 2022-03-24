@@ -22,6 +22,7 @@ namespace DSP_Battle
         public static List<List<EnemyShip>> maxThreatSortedShips;
         public static List<List<EnemyShip>> minHpSortedShips;
         public static Dictionary<int, List<Tuple<Vector3, int>>> pendingDestroyedEntities; // planet id; upos; range
+        public static ConcurrentDictionary<int,ConcurrentQueue<RebuildData>> rebuildDictionaryByPlanetId;
 
         public static bool shouldDistroy = true;
         private static bool removingComponets = false;
@@ -32,6 +33,7 @@ namespace DSP_Battle
             ships = new ConcurrentDictionary<int, EnemyShip>();
             distroyedStation = new ConcurrentDictionary<int, object>();
             pendingDestroyedEntities = new Dictionary<int, List<Tuple<Vector3, int>>>();
+            rebuildDictionaryByPlanetId = new ConcurrentDictionary<int, ConcurrentQueue<RebuildData>>();
             SortShips();
         }
 
@@ -408,8 +410,25 @@ namespace DSP_Battle
                 {
                     factory.ReadObjectConn(entityId, i, out isOutput[i], out otherObjId[i], out otherSlot[i]);
                 }
+                
+                if(GameMain.localPlanet == null || GameMain.localPlanet.id != factory.planetId)
+                {
+                    if (!rebuildDictionaryByPlanetId.ContainsKey(factory.planetId)) rebuildDictionaryByPlanetId.TryAdd(factory.planetId, new ConcurrentQueue<RebuildData>());
+                    rebuildDictionaryByPlanetId[factory.planetId].Enqueue(new RebuildData(factory, entityId, prebuildData, parameters));
 
-                factory.RemoveEntityWithComponents(entityId);
+                    try
+                    {
+                        factory.RemoveEntityWithComponents(entityId);
+                    }
+                    catch (Exception) { }
+
+                    return;
+                }
+                try
+                {
+                    factory.RemoveEntityWithComponents(entityId);
+                }
+                catch (Exception) { }
 
                 int objId = -PlanetFactory_AddPrebuildDataWithComponents(factory, prebuildData);
                 for (int i =0; i < 16; ++i)
@@ -419,10 +438,10 @@ namespace DSP_Battle
                 parameters.PasteToFactoryObject(objId, factory);
                 parameters.ToParamsArray(ref factory.prebuildPool[-objId].parameters, ref factory.prebuildPool[-objId].paramCount);
             }
-            catch { }
+            catch(Exception) { }
         }
 
-        private static int PlanetFactory_AddPrebuildDataWithComponents(PlanetFactory factory, PrebuildData prebuild)
+        public static int PlanetFactory_AddPrebuildDataWithComponents(PlanetFactory factory, PrebuildData prebuild)
         {
             ItemProto itemProto = LDB.items.Select((int)prebuild.protoId);
             if (itemProto == null || !itemProto.IsEntity)
@@ -470,7 +489,24 @@ namespace DSP_Battle
             return num;
         }
 
+        public static void CheckAndRebuild()
+        {
+            if (GameMain.localPlanet == null)
+                return;
+            int planetId = GameMain.localPlanet.id;
+            if (!rebuildDictionaryByPlanetId.ContainsKey(planetId))
+                return;
+            if (rebuildDictionaryByPlanetId[planetId] == null || rebuildDictionaryByPlanetId[planetId].IsEmpty)
+                return;
 
+            ConcurrentQueue<RebuildData> queue = rebuildDictionaryByPlanetId[planetId];
+            while (!queue.IsEmpty)
+            {
+                RebuildData data = null;
+                if (queue.TryDequeue(out data) && data!=null)
+                    data.Activate();
+            }
+        }
 
         public static void OnShipDistroyed(EnemyShip ship)
         {
@@ -493,6 +529,7 @@ namespace DSP_Battle
             });
 
             if (time % 20 == 1) CheckPendingDestroyedEntities();
+            if (time % 20 == 5) CheckAndRebuild();
 
             // time is the frame since start
             if (time % 30 == 1)
@@ -876,6 +913,7 @@ namespace DSP_Battle
             }
             distroyedStation.Clear();
             SortShips();
+            rebuildDictionaryByPlanetId.Clear();
         }
 
         public static void IntoOtherSave()
@@ -883,6 +921,44 @@ namespace DSP_Battle
             ships.Clear();
             distroyedStation.Clear();
             SortShips();
+            rebuildDictionaryByPlanetId.Clear();
+        }
+    }
+
+    public class RebuildData
+    {
+        bool[] isOutput;
+        int[] otherObjId;
+        int[] otherSlot;
+        PrebuildData pData;
+        PlanetFactory pFactory;
+        int eId;
+        BuildingParameters param;
+
+        public RebuildData(PlanetFactory factory, int entityId, PrebuildData prebuildData, BuildingParameters parameters)
+        {
+            isOutput = new bool[16];
+            otherObjId = new int[16];
+            otherSlot = new int[16];
+            for (int i = 0; i < 16; ++i)
+            {
+                factory.ReadObjectConn(entityId, i, out isOutput[i], out otherObjId[i], out otherSlot[i]);
+            }
+            pData = prebuildData;
+            pFactory = factory;
+            eId = entityId;
+            param = parameters;
+        }
+
+        public void Activate()
+        {
+            int objId = -EnemyShips.PlanetFactory_AddPrebuildDataWithComponents(pFactory, pData);
+            for (int i = 0; i < 16; ++i)
+            {
+                pFactory.WriteObjectConn(objId, i, isOutput[i], otherObjId[i], otherSlot[i]);
+            }
+            param.PasteToFactoryObject(objId, pFactory);
+            param.ToParamsArray(ref pFactory.prebuildPool[-objId].parameters, ref pFactory.prebuildPool[-objId].paramCount);
 
         }
     }
