@@ -222,10 +222,10 @@ namespace DSP_Battle
                 {
                     PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
                     Vector3 stationPos = planetFactory.entityPool[station.entityId].pos;
-                    // removingComponets = true;
+                    removingComponets = true;
                     UIBattleStatistics.RegisterIntercept(ship, 0);
-                    // RemoveStation(planetFactory, station);
-                    // removingComponets = false;
+                    RemoveStation(planetFactory, station);
+                    removingComponets = false;
 
                     if (!pendingDestroyedEntities.ContainsKey(ship.shipData.planetB))
                     {
@@ -393,11 +393,13 @@ namespace DSP_Battle
 
                 BuildingParameters parameters = default(BuildingParameters);
                 parameters.CopyFromFactoryObject(entityId, factory);
+                parameters.itemId = prebuildData.protoId;
+                /*
                 if (parameters.parameters != null)
                 {
                     prebuildData.InitParametersArray(parameters.parameters.Length);
                     Array.Copy(parameters.parameters, prebuildData.parameters, prebuildData.parameters.Length);
-                }
+                } */
 
                 bool[] isOutput = new bool[16];
                 int[] otherObjId = new int[16];
@@ -409,15 +411,65 @@ namespace DSP_Battle
 
                 factory.RemoveEntityWithComponents(entityId);
 
-                int objId = -factory.AddPrebuildDataWithComponents(prebuildData);
+                int objId = -PlanetFactory_AddPrebuildDataWithComponents(factory, prebuildData);
                 for (int i =0; i < 16; ++i)
                 {
                     factory.WriteObjectConn(objId, i, isOutput[i], otherObjId[i], otherSlot[i]);
                 }
                 parameters.PasteToFactoryObject(objId, factory);
+                parameters.ToParamsArray(ref factory.prebuildPool[-objId].parameters, ref factory.prebuildPool[-objId].paramCount);
             }
             catch { }
         }
+
+        private static int PlanetFactory_AddPrebuildDataWithComponents(PlanetFactory factory, PrebuildData prebuild)
+        {
+            ItemProto itemProto = LDB.items.Select((int)prebuild.protoId);
+            if (itemProto == null || !itemProto.IsEntity)
+            {
+                return 0;
+            }
+            int num = factory.AddPrebuildData(prebuild);
+            PrefabDesc prefabDesc = itemProto.prefabDesc;
+            ModelProto modelProto = LDB.models.Select((int)prebuild.modelIndex);
+            if (modelProto != null)
+            {
+                prefabDesc = modelProto.prefabDesc;
+            }
+            if (prefabDesc == null)
+            {
+                return num;
+            }
+            if (prebuild.itemRequired > 0)
+            {
+                factory.AddPrebuildWarning(num);
+            }
+            factory.prebuildPool[num].modelIndex = (short)prefabDesc.modelIndex;
+            factory.prebuildPool[num].modelId =
+                factory == GameMain.gpuiManager.activeFactory ? 
+                GameMain.gpuiManager.AddPrebuildModel((int)factory.prebuildPool[num].modelIndex, num, factory.prebuildPool[num].pos, factory.prebuildPool[num].rot, true)
+                : 0;
+            if (prefabDesc.colliders != null && prefabDesc.colliders.Length != 0)
+            {
+                for (int i = 0; i < prefabDesc.colliders.Length; i++)
+                {
+                    if (prefabDesc.isInserter)
+                    {
+                        ColliderData colliderData = prefabDesc.colliders[i];
+                        Vector3 wpos = Vector3.Lerp(factory.prebuildPool[num].pos, factory.prebuildPool[num].pos2, 0.5f);
+                        Quaternion wrot = Quaternion.LookRotation(factory.prebuildPool[num].pos2 - factory.prebuildPool[num].pos, wpos.normalized);
+                        colliderData.ext = new Vector3(colliderData.ext.x, colliderData.ext.y, Vector3.Distance(factory.prebuildPool[num].pos2, factory.prebuildPool[num].pos) * 0.5f + colliderData.ext.z);
+                        factory.prebuildPool[num].colliderId = factory.planet.physics.AddColliderData(colliderData.BindToObject(num, factory.prebuildPool[num].colliderId, EObjectType.Prebuild, wpos, wrot));
+                    }
+                    else
+                    {
+                        factory.prebuildPool[num].colliderId = factory.planet.physics.AddColliderData(prefabDesc.colliders[i].BindToObject(num, factory.prebuildPool[num].colliderId, EObjectType.Prebuild, factory.prebuildPool[num].pos, factory.prebuildPool[num].rot));
+                    }
+                }
+            }
+            return num;
+        }
+
 
 
         public static void OnShipDistroyed(EnemyShip ship)
