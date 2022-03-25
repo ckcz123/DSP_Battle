@@ -262,8 +262,22 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("占比gm", "Percentage", "占比");
             ProtoRegistry.RegisterString("游戏提示gm", "Message", "游戏提示");
 
+            ProtoRegistry.RegisterString("护盾容量", "Shield capacity", "护盾容量");
+            ProtoRegistry.RegisterString("护盾容量短", "Max shield", "护盾容量");
+            ProtoRegistry.RegisterString("当前护盾", "Current shield", "当前护盾");
+            ProtoRegistry.RegisterString("护盾恢复", "Recharge speed", "护盾恢复");
+            ProtoRegistry.RegisterString("护盾生成器总数", "Generator amount", "护盾生成器总数");
+            ProtoRegistry.RegisterString("完全充能时间", "Fully recharged in", "完全充能时间");
+            ProtoRegistry.RegisterString("充能gm", "Charged", "已充能");
+            ProtoRegistry.RegisterString("关闭gm", "Shut down", "关闭");
+            ProtoRegistry.RegisterString("启动gm", "Activate", "启动");
+            ProtoRegistry.RegisterString("护盾生成器待机提示", "The Shield Generator will stop consuming energy, and will no longer provide shield capacity or recharge shields.", "护盾生成器将停止消耗能量，并不再提供最大护盾容量，也无法为护盾充能。");
+            ProtoRegistry.RegisterString("护盾生成器启动提示", "Shield generators will provide shield capacity, and speed up shield recharging.", "护盾生成器将提供护盾容量，并加快护盾充能速度。");
+            ProtoRegistry.RegisterString("耗电需求gm", "Consumption demand", "耗电需求");
+            ProtoRegistry.RegisterString("耗电需求短gm", "Consumption", "耗电需求");
+            ProtoRegistry.RegisterString("发电性能短gm", "Generation", "发电性能"); 
 
-            ItemProto bullet1 = ProtoRegistry.RegisterItem(8001, "子弹1", "子弹1描述", "Assets/DSPBattle/bullet1", 2701 + pageBias, 100, EItemType.Material);
+             ItemProto bullet1 = ProtoRegistry.RegisterItem(8001, "子弹1", "子弹1描述", "Assets/DSPBattle/bullet1", 2701 + pageBias, 100, EItemType.Material);
             ItemProto bullet2 = ProtoRegistry.RegisterItem(8002, "子弹2", "子弹2描述", "Assets/DSPBattle/bullet2", 2702 + pageBias, 100, EItemType.Material);
             ItemProto bullet3 = ProtoRegistry.RegisterItem(8003, "子弹3", "子弹3描述", "Assets/DSPBattle/bullet3", 2703 + pageBias, 100, EItemType.Material);
             ItemProto missile1 = ProtoRegistry.RegisterItem(8004, "导弹1", "导弹1描述", "Assets/DSPBattle/missile1", 2705 + pageBias, 100, EItemType.Material);
@@ -593,8 +607,9 @@ namespace DSP_Battle
             LDBTool.PreAddProto(SiloModel);
 
             var ShieldGenModel = CopyModelProto(45, 315, Color.blue);
-            ShieldGenModel.prefabDesc.emptyId = 1208;
+            ShieldGenModel.prefabDesc.emptyId = 9999;
             ShieldGenModel.prefabDesc.fullId = 1208;
+            ShieldGenModel.prefabDesc.exchangeEnergyPerTick = 1500000;
 
             LDBTool.PreAddProto(ShieldGenModel);
 

@@ -144,6 +144,7 @@ namespace DSP_Battle
             UIAlert.Export(w);
             WormholeProperties.Export(w);
             StarCannon.Export(w);
+            ShieldGenerator.Export(w);
         }
 
         public void Import(BinaryReader r)
@@ -155,6 +156,7 @@ namespace DSP_Battle
             UIAlert.Import(r);
             WormholeProperties.Import(r);
             StarCannon.Import(r);
+            ShieldGenerator.Import(r);
 
             UIBattleStatistics.InitAll();
             UIBattleStatistics.InitSelectDifficulty();
@@ -169,6 +171,7 @@ namespace DSP_Battle
             UIAlert.IntoOtherSave();
             WormholeProperties.IntoOtherSave();
             StarCannon.IntoOtherSave();
+            ShieldGenerator.IntoOtherSave();
 
             UIBattleStatistics.InitAll();
             UIBattleStatistics.InitSelectDifficulty();

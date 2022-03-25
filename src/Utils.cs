@@ -19,5 +19,19 @@ namespace DSP_Battle
         {
             DspBattlePlugin.logger.LogInfo(str + num.ToString());
         }
+
+        public static void Log(string str, int isWarning = 0)
+        {
+            if(isWarning>0)
+            {
+                DspBattlePlugin.logger.LogWarning(str);
+            }
+            else
+            {
+                DspBattlePlugin.logger.LogInfo(str);
+            }
+        }
+
+        
     }
 }
