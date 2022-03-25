@@ -218,7 +218,7 @@ namespace DSP_Battle
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameData), "GameTick")]
-        public static void RefreshMaxShieldCapacity()
+        public static void RefreshMaxShieldCapacity(long time)
         {
             //将这一帧刚算好的最大护盾承载量储存，由于计算calcShieldCapacity的过程中必定伴随着设置maxShieldCapacity，所以maxShieldCapacity一定包含了calc的所有键值对，不会漏掉。反之则不然。
             foreach (var item in maxShieldCapacity)
@@ -257,8 +257,8 @@ namespace DSP_Battle
                 calcShieldInc.Clear();
                 calcShieldGenCount.Clear();
             }
-        }
 
+        }
 
 
 
