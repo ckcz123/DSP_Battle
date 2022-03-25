@@ -278,7 +278,7 @@ namespace DSP_Battle
 
                                 //根据距离地表的距离设置速度，被我改成一直加速了
                                 double num11 = Math.Sqrt(vectorLF2.x * vectorLF2.x + vectorLF2.y * vectorLF2.y + vectorLF2.z * vectorLF2.z);
-                                if (num11 < 2000.0)
+                                if (num11 < missileMaxSpeed * 3)
                                 {
                                     dysonRocket.t = 0.0001f;
                                 }
@@ -381,17 +381,17 @@ namespace DSP_Battle
                                 {
                                     b = Quaternion.LookRotation(dysonRocket.uVel);
                                 }
-                                if (vectorLF2.magnitude < 1000) //如果离得很近，则增大转弯速度
+                                if (vectorLF2.magnitude < missileMaxSpeed * 0.5) //如果离得很近，则增大转弯速度
                                 {
-                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.4f);
+                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.6f);
                                 }
-                                else if (vectorLF2.magnitude < 3000)
+                                else if (vectorLF2.magnitude < missileMaxSpeed)
                                 {
-                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.3f);
+                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.5f);
                                 }
                                 else
                                 {
-                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.2f);
+                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.4f);
                                 }
 
                             }
@@ -423,7 +423,7 @@ namespace DSP_Battle
                             }
 
                             double num28 = Math.Sqrt(vectorLF5.x * vectorLF5.x + vectorLF5.y * vectorLF5.y + vectorLF5.z * vectorLF5.z);
-                            if (num28 < 100.0)
+                            if (num28 < dmgRange*0.5 && num28 < 400)
                             {
                                 //借助太阳帆弹射的效果触发爆炸动画
                                 int bulletIndex0 = __instance.swarm.AddBullet(new SailBullet
@@ -500,31 +500,33 @@ namespace DSP_Battle
                             {
                                 num29 = num5;
                             }
-                            if (dysonRocket.uSpeed < missileMaxSpeed)
+                            if (dysonRocket.uSpeed <= missileMaxSpeed)
                             {
-                                dysonRocket.uSpeed += missileSpeedUp;
+                                if (vectorLF5.magnitude > missileMaxSpeed && dysonRocket.uSpeed < missileMaxSpeed)
+                                    dysonRocket.uSpeed += missileSpeedUp;
+                                else if (vectorLF5.magnitude < missileMaxSpeed && dysonRocket.uSpeed > missileMaxSpeed * 0.5 && dysonRocket.uSpeed > 5000)
+                                    dysonRocket.uSpeed -= missileSpeedUp;
                             }
-                            //else if (dysonRocket.uSpeed > num29 + num4)
-                            //{
-                            //	dysonRocket.uSpeed -= num4;
-                            //}
                             else
                             {
                                 dysonRocket.uSpeed = missileMaxSpeed;
                             }
                             dysonRocket.uVel = Vector3.Slerp(dysonRocket.uVel, vectorLF5.normalized, 0.1f);
                             //dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.2f);
-                            if (vectorLF5.magnitude < 1000) //如果离得很近，则增大转弯速度
+                            if (vectorLF5.magnitude < Configs.missile1Speed * 0.5f) //如果离得很近，则增大转弯速度
                             {
-                                dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.4f);
+                                if(Quaternion.Angle(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5))< 60)
+                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 1f);
+                                else
+                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.6f);
                             }
-                            else if (vectorLF5.magnitude < 3000)
+                            else if (vectorLF5.magnitude < missileMaxSpeed)
                             {
-                                dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.3f);
+                                dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.5f);
                             }
                             else
                             {
-                                dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.2f);
+                                dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.4f);
                             }
 
                             dysonRocket.t = (350f - (float)num28) / 330f;
@@ -573,7 +575,7 @@ namespace DSP_Battle
                                 dysonRocket.uPos.y += toTarget.y;
                                 dysonRocket.uPos.z += toTarget.z;
                             }
-                            else if (distance < 1000) //直线过去
+                            else if (distance < missileMaxSpeed * 0.4) //直线过去
                             {
                                 dysonRocket.uPos = dysonRocket.uPos + toTarget.normalized * num33;
                             }
@@ -936,7 +938,7 @@ namespace DSP_Battle
 
                                     //根据距离地表的距离设置速度
                                     double num11 = Math.Sqrt(vectorLF2.x * vectorLF2.x + vectorLF2.y * vectorLF2.y + vectorLF2.z * vectorLF2.z);
-                                    if (num11 < 2000.0) //如果与目标足够近，进入下一阶段
+                                    if (num11 < missileMaxSpeed * 3) //如果与目标足够近，进入下一阶段
                                     {
                                         dysonRocket.t = 0.0001f;
                                     }
@@ -1039,17 +1041,17 @@ namespace DSP_Battle
                                     {
                                         b = Quaternion.LookRotation(dysonRocket.uVel);
                                     }
-                                    if (vectorLF2.magnitude < 1000) //如果离得很近，则增大转弯速度
+                                    if (vectorLF2.magnitude < missileMaxSpeed * 0.5) //如果离得很近，则增大转弯速度
                                     {
-                                        dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.4f);
+                                        dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.6f);
                                     }
-                                    else if (vectorLF2.magnitude < 3000)
+                                    else if (vectorLF2.magnitude < missileMaxSpeed)
                                     {
-                                        dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.3f);
+                                        dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.5f);
                                     }
                                     else
                                     {
-                                        dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.2f);
+                                        dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.4f);
                                     }
 
                                 }
@@ -1082,7 +1084,7 @@ namespace DSP_Battle
 
 
                                 double num28 = Math.Sqrt(vectorLF5.x * vectorLF5.x + vectorLF5.y * vectorLF5.y + vectorLF5.z * vectorLF5.z);
-                                if (num28 < 100.0)
+                                if (num28 < dmgRange*0.5 && num28 < 400)
                                 {
                                     //借助太阳帆弹射的效果触发爆炸动画
                                     int bulletIndex0 = __instance.swarm.AddBullet(new SailBullet
@@ -1158,9 +1160,12 @@ namespace DSP_Battle
                                 {
                                     num29 = num5;
                                 }
-                                if (dysonRocket.uSpeed < missileMaxSpeed)
+                                if (dysonRocket.uSpeed <= missileMaxSpeed)
                                 {
-                                    dysonRocket.uSpeed += missileSpeedUp;
+                                    if (vectorLF5.magnitude > missileMaxSpeed && dysonRocket.uSpeed < missileMaxSpeed)
+                                        dysonRocket.uSpeed += missileSpeedUp;
+                                    else if (vectorLF5.magnitude < missileMaxSpeed && dysonRocket.uSpeed > missileMaxSpeed * 0.5 && dysonRocket.uSpeed > 5000)
+                                        dysonRocket.uSpeed -= missileSpeedUp;
                                 }
                                 //else if (dysonRocket.uSpeed > num29 + num4)
                                 //{
@@ -1172,17 +1177,20 @@ namespace DSP_Battle
                                 }
                                 dysonRocket.uVel = Vector3.Slerp(dysonRocket.uVel, vectorLF5.normalized, 0.1f);
                                 //dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.2f);
-                                if (vectorLF5.magnitude < 1000) //如果离得很近，则增大转弯速度
+                                if (vectorLF5.magnitude < missileMaxSpeed * 0.5f) //如果离得很近，则增大转弯速度
                                 {
-                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.4f);
+                                    if (Quaternion.Angle(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5)) < 60)
+                                        dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 1f);
+                                    else
+                                        dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.6f);
                                 }
-                                else if (vectorLF5.magnitude < 3000)
+                                else if (vectorLF5.magnitude < missileMaxSpeed)
                                 {
-                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.3f);
+                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.5f);
                                 }
                                 else
                                 {
-                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.2f);
+                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.4f);
                                 }
                                 dysonRocket.t = (350f - (float)num28) / 330f;
                                 if (dysonRocket.t > 1f)
@@ -1230,7 +1238,7 @@ namespace DSP_Battle
                                     dysonRocket.uPos.y += toTarget.y;
                                     dysonRocket.uPos.z += toTarget.z;
                                 }
-                                else if (distance < 1000) //直线过去
+                                else if (distance < missileMaxSpeed * 0.4) //直线过去
                                 {
                                     dysonRocket.uPos = dysonRocket.uPos + toTarget.normalized * num33;
                                 }
