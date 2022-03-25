@@ -172,9 +172,9 @@ namespace DSP_Battle
 
 
             ProtoRegistry.RegisterString("UI快捷键提示", "Press Backspace to hide/open this window. Press \"-\" key to advance the attack time by one minute.", "按下退格键开启或关闭此窗口，按下减号键使敌军进攻时间提前1分钟。");
-            ProtoRegistry.RegisterString("简单难度提示", "Difficulty: Easy (Station won't be distroyed, reward duration * 0.75)", "当前难度：简单（物流塔不会被破坏；奖励持续时间*0.75）");
-            ProtoRegistry.RegisterString("普通难度提示", "Difficulty: Normal (Station will be distroyed, reward duration * 1.0)", "当前难度：普通（物流塔会被正常破坏；奖励持续时间*1.0）");
-            ProtoRegistry.RegisterString("困难难度提示", "Difficulty: Hard (Enemy strength will increase, reward duration * 2.0)", "当前难度：困难（敌人战斗力大幅提升；奖励持续时间*2.0）");
+            ProtoRegistry.RegisterString("简单难度提示", "Difficulty: Easy (Station won't be destroyed; Reward duration * 0.75)", "当前难度：简单（物流塔不会被破坏；奖励持续时间*0.75）");
+            ProtoRegistry.RegisterString("普通难度提示", "Difficulty: Normal (Station attacked will turn to blueprint mode; Reward duration * 1.0)", "当前难度：普通（物流塔被破坏会进入蓝图模式；奖励持续时间*1.0）");
+            ProtoRegistry.RegisterString("困难难度提示", "Difficulty: Hard (Station will be dismantled; Enemy strength will increase; Reward duration * 2.0)", "当前难度：困难（物流塔会被破坏拆除，敌人战斗力大幅提升；奖励持续时间*2.0）");
             ProtoRegistry.RegisterString("奖励倒计时：", "Reward time left: ", "奖励倒计时：");
             ProtoRegistry.RegisterString("mod版本信息", "Current version: " + Configs.versionString, "当前版本：" + Configs.versionString + "          欢迎加入mod交流群：" + Configs.qq);
             ProtoRegistry.RegisterString("未探测到威胁", "No threat detected", "未探测到威胁");

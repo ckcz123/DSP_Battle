@@ -65,7 +65,7 @@ namespace DSP_Battle
                 animPool[__instance.entityId].time = -(float)__instance.time / (float)__instance.coldSpend;
             }
             animPool[__instance.entityId].power = power;
-            float num = (float)Cargo.incTableMilli[__instance.incLevel];
+            float num = (float)Cargo.accTableMilli[__instance.incLevel];
             int num2 = (int)(power * 10000f * (1f + num) + 0.1f);
             Mutex dysonSphere_mx = sphere.dysonSphere_mx;
             uint result;
@@ -1705,10 +1705,6 @@ namespace DSP_Battle
             if (gmProtoId != 2312)
             {
                 __instance.value3Text.text = EnemyShips.ships.Count.ToString();
-
-                float num2 = 60f / (float)(siloComponent.chargeSpend + siloComponent.coldSpend) * 600000f;
-                num2 *= (float)(Cargo.incTableMilli[siloComponent.incLevel] + 1.0);
-                __instance.value0Text.text = num2.ToString("0.0") + "每分钟".Translate();
             }
 
         }

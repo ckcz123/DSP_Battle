@@ -22,7 +22,6 @@ namespace DSP_Battle
         public static List<List<EnemyShip>> maxThreatSortedShips;
         public static List<List<EnemyShip>> minHpSortedShips;
         public static Dictionary<int, List<Tuple<Vector3, int>>> pendingDestroyedEntities; // planet id; upos; range
-        public static ConcurrentDictionary<int,ConcurrentQueue<RebuildData>> rebuildDictionaryByPlanetId;
 
         public static bool shouldDistroy = true;
         private static bool removingComponets = false;
@@ -33,7 +32,6 @@ namespace DSP_Battle
             ships = new ConcurrentDictionary<int, EnemyShip>();
             distroyedStation = new ConcurrentDictionary<int, object>();
             pendingDestroyedEntities = new Dictionary<int, List<Tuple<Vector3, int>>>();
-            rebuildDictionaryByPlanetId = new ConcurrentDictionary<int, ConcurrentQueue<RebuildData>>();
             SortShips();
         }
 
@@ -410,20 +408,6 @@ namespace DSP_Battle
                 {
                     factory.ReadObjectConn(entityId, i, out isOutput[i], out otherObjId[i], out otherSlot[i]);
                 }
-                
-                if(GameMain.localPlanet == null || GameMain.localPlanet.id != factory.planetId)
-                {
-                    if (!rebuildDictionaryByPlanetId.ContainsKey(factory.planetId)) rebuildDictionaryByPlanetId.TryAdd(factory.planetId, new ConcurrentQueue<RebuildData>());
-                    rebuildDictionaryByPlanetId[factory.planetId].Enqueue(new RebuildData(factory, entityId, prebuildData, parameters));
-
-                    try
-                    {
-                        factory.RemoveEntityWithComponents(entityId);
-                    }
-                    catch (Exception) { }
-
-                    return;
-                }
                 try
                 {
                     factory.RemoveEntityWithComponents(entityId);
@@ -472,40 +456,25 @@ namespace DSP_Battle
             {
                 for (int i = 0; i < prefabDesc.colliders.Length; i++)
                 {
-                    if (prefabDesc.isInserter)
+                    try
                     {
-                        ColliderData colliderData = prefabDesc.colliders[i];
-                        Vector3 wpos = Vector3.Lerp(factory.prebuildPool[num].pos, factory.prebuildPool[num].pos2, 0.5f);
-                        Quaternion wrot = Quaternion.LookRotation(factory.prebuildPool[num].pos2 - factory.prebuildPool[num].pos, wpos.normalized);
-                        colliderData.ext = new Vector3(colliderData.ext.x, colliderData.ext.y, Vector3.Distance(factory.prebuildPool[num].pos2, factory.prebuildPool[num].pos) * 0.5f + colliderData.ext.z);
-                        factory.prebuildPool[num].colliderId = factory.planet.physics.AddColliderData(colliderData.BindToObject(num, factory.prebuildPool[num].colliderId, EObjectType.Prebuild, wpos, wrot));
+                        if (prefabDesc.isInserter)
+                        {
+                            ColliderData colliderData = prefabDesc.colliders[i];
+                            Vector3 wpos = Vector3.Lerp(factory.prebuildPool[num].pos, factory.prebuildPool[num].pos2, 0.5f);
+                            Quaternion wrot = Quaternion.LookRotation(factory.prebuildPool[num].pos2 - factory.prebuildPool[num].pos, wpos.normalized);
+                            colliderData.ext = new Vector3(colliderData.ext.x, colliderData.ext.y, Vector3.Distance(factory.prebuildPool[num].pos2, factory.prebuildPool[num].pos) * 0.5f + colliderData.ext.z);
+                            factory.prebuildPool[num].colliderId = factory.planet.physics.AddColliderData(colliderData.BindToObject(num, factory.prebuildPool[num].colliderId, EObjectType.Prebuild, wpos, wrot));
+                        }
+                        else
+                        {
+                            factory.prebuildPool[num].colliderId = factory.planet.physics.AddColliderData(prefabDesc.colliders[i].BindToObject(num, factory.prebuildPool[num].colliderId, EObjectType.Prebuild, factory.prebuildPool[num].pos, factory.prebuildPool[num].rot));
+                        }
                     }
-                    else
-                    {
-                        factory.prebuildPool[num].colliderId = factory.planet.physics.AddColliderData(prefabDesc.colliders[i].BindToObject(num, factory.prebuildPool[num].colliderId, EObjectType.Prebuild, factory.prebuildPool[num].pos, factory.prebuildPool[num].rot));
-                    }
+                    catch (Exception) { }
                 }
             }
             return num;
-        }
-
-        public static void CheckAndRebuild()
-        {
-            if (GameMain.localPlanet == null)
-                return;
-            int planetId = GameMain.localPlanet.id;
-            if (!rebuildDictionaryByPlanetId.ContainsKey(planetId))
-                return;
-            if (rebuildDictionaryByPlanetId[planetId] == null || rebuildDictionaryByPlanetId[planetId].IsEmpty)
-                return;
-
-            ConcurrentQueue<RebuildData> queue = rebuildDictionaryByPlanetId[planetId];
-            while (!queue.IsEmpty)
-            {
-                RebuildData data = null;
-                if (queue.TryDequeue(out data) && data!=null)
-                    data.Activate();
-            }
         }
 
         public static void OnShipDistroyed(EnemyShip ship)
@@ -529,7 +498,6 @@ namespace DSP_Battle
             });
 
             if (time % 20 == 1) CheckPendingDestroyedEntities();
-            if (time % 20 == 5) CheckAndRebuild();
 
             // time is the frame since start
             if (time % 30 == 1)
@@ -913,7 +881,6 @@ namespace DSP_Battle
             }
             distroyedStation.Clear();
             SortShips();
-            rebuildDictionaryByPlanetId.Clear();
         }
 
         public static void IntoOtherSave()
@@ -921,45 +888,6 @@ namespace DSP_Battle
             ships.Clear();
             distroyedStation.Clear();
             SortShips();
-            rebuildDictionaryByPlanetId.Clear();
-        }
-    }
-
-    public class RebuildData
-    {
-        bool[] isOutput;
-        int[] otherObjId;
-        int[] otherSlot;
-        PrebuildData pData;
-        PlanetFactory pFactory;
-        int eId;
-        BuildingParameters param;
-
-        public RebuildData(PlanetFactory factory, int entityId, PrebuildData prebuildData, BuildingParameters parameters)
-        {
-            isOutput = new bool[16];
-            otherObjId = new int[16];
-            otherSlot = new int[16];
-            for (int i = 0; i < 16; ++i)
-            {
-                factory.ReadObjectConn(entityId, i, out isOutput[i], out otherObjId[i], out otherSlot[i]);
-            }
-            pData = prebuildData;
-            pFactory = factory;
-            eId = entityId;
-            param = parameters;
-        }
-
-        public void Activate()
-        {
-            int objId = -EnemyShips.PlanetFactory_AddPrebuildDataWithComponents(pFactory, pData);
-            for (int i = 0; i < 16; ++i)
-            {
-                pFactory.WriteObjectConn(objId, i, isOutput[i], otherObjId[i], otherSlot[i]);
-            }
-            param.PasteToFactoryObject(objId, pFactory);
-            param.ToParamsArray(ref pFactory.prebuildPool[-objId].parameters, ref pFactory.prebuildPool[-objId].paramCount);
-
         }
     }
 }
