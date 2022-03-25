@@ -137,8 +137,10 @@ namespace DSP_Battle
                 long rewardBase = 5 * 60 * 60;
                 if (Configs.difficulty == -1) rewardBase = rewardBase * 3 / 4;
                 if (Configs.difficulty == 1) rewardBase *= 2;
+                long extraSpeedFrame = 0;
+                if (UIBattleStatistics.totalEnemyGen > 0)
+                    extraSpeedFrame = UIBattleStatistics.totalEnemyEliminated * rewardBase / UIBattleStatistics.totalEnemyGen;
 
-                long extraSpeedFrame = UIBattleStatistics.totalEnemyEliminated * rewardBase / UIBattleStatistics.totalEnemyGen;
                 Configs.extraSpeedFrame = time + extraSpeedFrame;
                 Configs.extraSpeedEnabled = true;
                 GameMain.history.miningSpeedScale *= 2;

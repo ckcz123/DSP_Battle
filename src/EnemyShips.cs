@@ -273,7 +273,6 @@ namespace DSP_Battle
             }
         }
 
-
         [HarmonyPrefix]
         [HarmonyPatch(typeof(GameHistoryData), "UnlockTechFunction")]
         public static void GameHistoryData_UnlockTechFunction(ref GameHistoryData __instance, int func, double value, int level)

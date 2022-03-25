@@ -89,7 +89,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("引力波引导4", "Gravitational wave guidance", "引力波引导");
             ProtoRegistry.RegisterString("引力波引导5", "Gravitational wave guidance", "引力波引导");
             ProtoRegistry.RegisterString("引力波引导6", "Gravitational wave guidance", "引力波引导");
-            ProtoRegistry.RegisterString("引力波引导描述", "Increase speed for bullets and missiles.", "利用引力波提升子弹的飞行速度，更快的打到敌人。");
+            ProtoRegistry.RegisterString("引力波引导描述", "Increase speed for bullets and missiles.", "利用引力波提升子弹的飞行速度，使子弹能够更快地打到敌人。");
             ProtoRegistry.RegisterString("引力波引导结论", "Increase speed for bullets and missiles.", "子弹、导弹弹道速度增加");
             ProtoRegistry.RegisterString("子弹飞行速度+10%", "Bullet speed +10%", "子弹飞行速度+10%");
             ProtoRegistry.RegisterString("导弹飞行速度+5%", "Missile speed +5%", "导弹飞行速度+5%");

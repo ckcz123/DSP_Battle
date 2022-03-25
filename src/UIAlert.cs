@@ -397,6 +397,7 @@ namespace DSP_Battle
 
         public static void Import(BinaryReader r)
         {
+            lastState = 0;
             totalStrength = 1;
             totalDistance = 1;
             elimPointRatio = 1.0f;
@@ -412,6 +413,7 @@ namespace DSP_Battle
 
         public static void IntoOtherSave()
         {
+            lastState = 0;
             totalStrength = 1;
             totalDistance = 1;
             elimPointRatio = 1.0f;
