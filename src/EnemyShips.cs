@@ -299,40 +299,39 @@ namespace DSP_Battle
             UIBattleStatistics.RegisterResourceLost(station.warperCount + station.idleShipCount + station.workShipCount + station.idleDroneCount + station.workDroneCount);
             distroyedStation[station.gid] = 0;
 
-            if (Configs.difficulty == -1)
+            
+
+            // 破坏资源但不损毁物流塔
+            for (var i = 0; i < station.storage.Length; ++i)
             {
-
-                // 破坏资源但不损毁物流塔
-                for (var i = 0; i < station.storage.Length; ++i)
-                {
-                    station.storage[i].count = 0;
-                    station.storage[i].inc = 0;
-                    station.storage[i].localOrder = 0;
-                    station.storage[i].remoteOrder = 0;
-                }
-
-                station.idleDroneCount = 0;
-                station.workDroneCount = 0;
-                Array.Clear(station.workDroneDatas, 0, station.workDroneDatas.Length);
-                Array.Clear(station.workDroneOrders, 0, station.workDroneOrders.Length);
-                station.idleShipCount = 0;
-                station.workShipCount = 0;
-                station.workShipIndices = 0;
-                Array.Clear(station.workShipDatas, 0, station.workShipDatas.Length);
-                Array.Clear(station.workShipOrders, 0, station.workShipOrders.Length);
-                station.energy = 0;
-                station.energyPerTick = 0;
-                station.warperCount = 0;
-
-                factory.transport.RefreshTraffic(station.id);
-                GameMain.data.galacticTransport.RefreshTraffic(station.gid);
+                station.storage[i].count = 0;
+                station.storage[i].inc = 0;
+                station.storage[i].localOrder = 0;
+                station.storage[i].remoteOrder = 0;
             }
-            else if (Configs.difficulty == 0)
+
+            station.idleDroneCount = 0;
+            station.workDroneCount = 0;
+            Array.Clear(station.workDroneDatas, 0, station.workDroneDatas.Length);
+            Array.Clear(station.workDroneOrders, 0, station.workDroneOrders.Length);
+            station.idleShipCount = 0;
+            station.workShipCount = 0;
+            station.workShipIndices = 0;
+            Array.Clear(station.workShipDatas, 0, station.workShipDatas.Length);
+            Array.Clear(station.workShipOrders, 0, station.workShipOrders.Length);
+            station.energy = 0;
+            station.energyPerTick = 0;
+            station.warperCount = 0;
+
+            factory.transport.RefreshTraffic(station.id);
+            GameMain.data.galacticTransport.RefreshTraffic(station.gid);
+            
+            if (Configs.difficulty == 0)
             {
                 UIBattleStatistics.RegisterStationLost();
                 EntityToPrebuild(factory, station.entityId);
             }
-            else
+            else if (Configs.difficulty == 1)
             {
                 UIBattleStatistics.RegisterStationLost();
                 RemoveEntity(factory, station.entityId);
@@ -408,6 +407,7 @@ namespace DSP_Battle
                 {
                     factory.ReadObjectConn(entityId, i, out isOutput[i], out otherObjId[i], out otherSlot[i]);
                 }
+                
                 try
                 {
                     factory.RemoveEntityWithComponents(entityId);
@@ -422,7 +422,7 @@ namespace DSP_Battle
                 parameters.PasteToFactoryObject(objId, factory);
                 parameters.ToParamsArray(ref factory.prebuildPool[-objId].parameters, ref factory.prebuildPool[-objId].paramCount);
             }
-            catch(Exception) { }
+            catch(Exception e) { DspBattlePlugin.logger.LogError(e); }
         }
 
         public static int PlanetFactory_AddPrebuildDataWithComponents(PlanetFactory factory, PrebuildData prebuild)
@@ -452,8 +452,10 @@ namespace DSP_Battle
                 factory == GameMain.gpuiManager.activeFactory ? 
                 GameMain.gpuiManager.AddPrebuildModel((int)factory.prebuildPool[num].modelIndex, num, factory.prebuildPool[num].pos, factory.prebuildPool[num].rot, true)
                 : 0;
+            
             if (prefabDesc.colliders != null && prefabDesc.colliders.Length != 0)
             {
+                
                 for (int i = 0; i < prefabDesc.colliders.Length; i++)
                 {
                     try
