@@ -9,12 +9,12 @@ namespace DSP_Battle
 {
     class Configs
     {
-        public static string versionString = "1.2.0";
+
+        public static string versionString = "1.3.0";
         public static string qq = "694213906";
 
 
-        public static int versionCode = 20220323;
-        public static int versionWhenImporting = -1;
+        public static int versionCode = 20220325;
 
         public static int difficulty = 0; // -1 easy, 0 normal, 1 hard
 

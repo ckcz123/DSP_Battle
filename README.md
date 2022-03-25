@@ -40,7 +40,7 @@ Install CommonAPI from [here](https://dsp.thunderstore.io/package/CommonAPI/Comm
 
 Then download the mod manully and unzip into `plugins` (including the `dll` and `dspbattletex` file). If you can see the new logo, then the mod is installed successfully.
 
-在上述地址安装框架和几个前置mod，然后将本mod解压到`plugins`目录（包括`ddl`和`dspbattletex`文件）。如果开始游戏后能看到新的logo，那么mod就安装成功了。
+在上述地址安装框架和几个前置mod，然后将本mod解压到`plugins`目录（包括`dll`和`dspbattletex`文件）。如果开始游戏后能看到新的logo，那么mod就安装成功了。
 
 ## Feedback and suggestions / 意见和反馈
 
@@ -53,6 +53,15 @@ Also welcome to anyone who'd like to contribute to the mod, better if you have e
 欢迎任何向为此mod进行贡献的人，我们尤其需要有Unity经验或者会建模的大佬。
 
 ## Update Log
+
+### 2022-03-25 v1.2.0
+
+ - In normal mode, station attacked will turn into blueprint mode.
+ - 普通模式下，被攻击的物流塔会进入蓝图待建筑状态。
+ - Optimize the determination of missiles
+ - 优化火箭的伤害范围判定
+ - Accelerate the missile fire rate with proliferator
+ - 增加喷涂增产剂后火箭的射速
 
 ### 2022-03-20 V1.1.0
 

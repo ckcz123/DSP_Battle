@@ -59,6 +59,7 @@ namespace DSP_Battle
             EnemyShips.Init();
             Harmony.CreateAndPatchAll(typeof(DspBattlePlugin));
             Harmony.CreateAndPatchAll(typeof(EnemyShips));
+            Harmony.CreateAndPatchAll(typeof(RemoveEntities));
             Harmony.CreateAndPatchAll(typeof(Cannon));
             Harmony.CreateAndPatchAll(typeof(BattleProtos));
             Harmony.CreateAndPatchAll(typeof(EjectorUIPatch));
