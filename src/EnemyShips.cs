@@ -331,7 +331,7 @@ namespace DSP_Battle
                 UIBattleStatistics.RegisterStationLost();
                 EntityToPrebuild(factory, station.entityId);
             }
-            else
+            else if (Configs.difficulty == 1)
             {
                 UIBattleStatistics.RegisterStationLost();
                 RemoveEntity(factory, station.entityId);
@@ -648,7 +648,7 @@ namespace DSP_Battle
                 long rewardBase = 5 * 60 * 60;
                 if (Configs.difficulty == -1) rewardBase = rewardBase * 3 / 4;
                 if (Configs.difficulty == 1) rewardBase *= 2;
-
+                
                 long extraSpeedFrame = UIBattleStatistics.totalEnemyEliminated * rewardBase / UIBattleStatistics.totalEnemyGen;
                 Configs.extraSpeedFrame = time + extraSpeedFrame;
                 Configs.extraSpeedEnabled = true;

@@ -30,6 +30,7 @@ namespace DSP_Battle
         public static int laserBulletPosDelta = 1000;
         public static int laserBulletEndPosDelta = 150;
         public static VectorLF3 normDirection = new VectorLF3(0, 1, 0);
+        public static int reverseDirection = -1; //设置成-1使得开炮方向是反向，即相当于戴森球所有层级南北极互换
 
         //下面属性可能根据戴森球等级有变化，但并不需要存档        
         public static int starCannonLevel = 1; //恒星炮建造的所属阶段（等级），即完成度
@@ -352,7 +353,7 @@ namespace DSP_Battle
 
             if (fireStage != 0 && fireStage != -1) //每个壳层都需要做的
             {
-                VectorLF3 direction = targetUPos - __instance.starData.uPosition;
+                VectorLF3 direction = (targetUPos - __instance.starData.uPosition) * reverseDirection;
                 VectorLF3 vert = new VectorLF3(0, 0, 1);
                 if (direction.z != 0)
                     vert = new VectorLF3(1, 1, (-direction.x - direction.y) / direction.z);
@@ -632,7 +633,7 @@ namespace DSP_Battle
             }
         }
 
-        //其他效果2，从戴森壳(第二层？还是每一层更好看一点？)的各个node接收能量，起点在恒星内部
+        //其他效果2，从戴森壳(每一层)的各个node接收能量，起点在恒星内部。可能要改成前五层，要不然太多了
         public static void LaserEffect2(DysonSphere sphere, long gameTick)
         {
             var __instance = sphere;
@@ -650,7 +651,7 @@ namespace DSP_Battle
                 }
             }
 
-            VectorLF3 endPoint = __instance.starData.uPosition;
+            VectorLF3 beginPointInStar = __instance.starData.uPosition;
             for (int i = 1; i < __instance.layersIdBased.Length; i++)
             {
                 if (__instance.layersIdBased[i] != null)
@@ -660,14 +661,14 @@ namespace DSP_Battle
                     {
                         if (layer.nodePool[j] == null)
                             continue;
-                        VectorLF3 beginPByNode = layer.NodeUPos(layer.nodePool[j]);
+                        VectorLF3 endPByNode = layer.NodeUPos(layer.nodePool[j]);
                         int bulletIndex = __instance.swarm.AddBullet(new SailBullet
                         {
                             maxt = 0.01f,
                             lBegin = __instance.starData.uPosition,
                             uEndVel = targetUPos,
-                            uBegin = endPoint,
-                            uEnd = beginPByNode
+                            uBegin = beginPointInStar,
+                            uEnd = endPByNode
                         }, 0);
                         __instance.swarm.bulletPool[bulletIndex].state = 0;
                         noExplodeBullets.AddOrUpdate(bulletIndex, 1, (x, y) => 1);
@@ -714,7 +715,7 @@ namespace DSP_Battle
                     break;
                 if (layer.nodePool[i] == null)
                     continue;
-                eff3EndPos = layer.starData.uPosition + (VectorLF3)Maths.QRotate(layer.currentRotation, normDirection * maxRadius*0.95);
+                eff3EndPos = layer.starData.uPosition + (VectorLF3)Maths.QRotate(layer.currentRotation, normDirection * maxRadius * 0.95 * reverseDirection);
                 for (int j = 0; j < laserIntensity; j++)
                 {
                     int bulletIndex = __instance.swarm.AddBullet(new SailBullet
