@@ -14,14 +14,16 @@ namespace DSP_Battle
 {
     public class ShieldGenerator
     {
+        //需要存档
         public static ConcurrentDictionary<int, int> currentShield = new ConcurrentDictionary<int, int>();
         public static ConcurrentDictionary<int, int> maxShieldCapacity = new ConcurrentDictionary<int, int>();
 
+        //无需存档，每帧清零并重新计算
         public static ConcurrentDictionary<int, int> calcShieldCapacity = new ConcurrentDictionary<int, int>();
         public static ConcurrentDictionary<int, int> calcShieldInc = new ConcurrentDictionary<int, int>();
         public static ConcurrentDictionary<int, int> calcShieldGenCount = new ConcurrentDictionary<int, int>();
 
-        public static int curShieldIncUI = 0;
+        public static int curShieldIncUI = 0; //由于每帧会清零calc的三个Dictionary，UI无法从中获取数值并更新显示，因此在清零前将必要信息暂时保存在这两个int中，供UI刷新显示数值使用
         public static int curShieldGenCntUI = 0;
 
         public static GameObject modeButtonsLeftBarObj = null;
@@ -326,8 +328,10 @@ namespace DSP_Battle
 
             if(isShieldUI)
             {
-                modeButtonsLeftBarObj.transform.localPosition = new Vector3(23, -74, 0);
                 modeButtonsLeftBarObj.GetComponent<RectTransform>().sizeDelta = new Vector2(3, 68);
+                modeButtonsLeftBarObj.transform.localPosition = new Vector3(23, -57, 0); // 23 -74 0 from 23 -40 0
+                switchButton2Obj.transform.localPosition = new Vector3(26, -57, 0);
+                switchButton3Obj.transform.localPosition = new Vector3(26, -91, 0);
                 switchButton1Obj.SetActive(false);
                 emptyItemCntTextObj.SetActive(false);
                 fullItemCntTextObj.SetActive(false);
@@ -351,8 +355,10 @@ namespace DSP_Battle
             }
             else
             {
-                modeButtonsLeftBarObj.transform.localPosition = new Vector3(23, -40, 0);
                 modeButtonsLeftBarObj.GetComponent<RectTransform>().sizeDelta = new Vector2(3, 102);
+                modeButtonsLeftBarObj.transform.localPosition = new Vector3(23, -40, 0);
+                switchButton2Obj.transform.localPosition = new Vector3(26, -74, 0);
+                switchButton3Obj.transform.localPosition = new Vector3(26, -108, 0);
                 switchButton1Obj.SetActive(true);
                 emptyItemCntTextObj.SetActive(true);
                 fullItemCntTextObj.SetActive(true);
@@ -441,11 +447,39 @@ namespace DSP_Battle
 
         public static void Export(BinaryWriter w)
         {
-
+            w.Write(currentShield.Count);
+            foreach (var item in currentShield)
+            {
+                w.Write(item.Key);
+                w.Write(item.Value);
+            }
+            w.Write(maxShieldCapacity.Count);
+            foreach (var item in maxShieldCapacity)
+            {
+                w.Write(item.Key);
+                w.Write(item.Value);
+            }
         }
         public static void Import(BinaryReader r)
         {
             InitAll();
+            if(Configs.versionWhenImporting >= 30220325)
+            {
+                int num1 = r.ReadInt32();
+                for (int i = 0; i < num1; i++)
+                {
+                    int k = r.ReadInt32();
+                    int v = r.ReadInt32();
+                    currentShield.AddOrUpdate(k, v, (x, y) => v);
+                }
+                int num2 = r.ReadInt32();
+                for (int i = 0; i < num2; i++)
+                {
+                    int k = r.ReadInt32();
+                    int v = r.ReadInt32();
+                    maxShieldCapacity.AddOrUpdate(k, v, (x, y) => v);
+                }
+            }
         }
         public static void IntoOtherSave()
         {

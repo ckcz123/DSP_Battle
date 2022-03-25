@@ -758,7 +758,7 @@ namespace DSP_Battle
         public static void Import(BinaryReader r)
         {
             InitAll();
-            if (Configs.versionWhenImporting >= 20220323)
+            if (Configs.versionWhenImporting >= 30220323)
             {
                 time = r.ReadInt32();
                 fireStage = r.ReadInt32();
