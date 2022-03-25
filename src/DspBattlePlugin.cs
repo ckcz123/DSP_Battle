@@ -18,6 +18,7 @@ namespace DSP_Battle
     [BepInDependency(DSPModSavePlugin.MODGUID)]
     [BepInDependency(CommonAPIPlugin.GUID)]
     [BepInDependency(LDBToolPlugin.MODGUID)]
+    [BepInDependency("Gnimaerd.DSP.plugin.MoreMegaStructure")]
     [CommonAPISubmoduleDependency(nameof(ProtoRegistry))]
     [CommonAPISubmoduleDependency(nameof(TabSystem))]
     public class DspBattlePlugin : BaseUnityPlugin, IModCanSave
@@ -46,7 +47,8 @@ namespace DSP_Battle
                 using (ProtoRegistry.StartModLoad(GUID))
                 {
                     pagenum = TabSystem.RegisterTab($"{MODID_tab}:{MODID_tab}Tab", new TabData("轨道防御", "Assets/DSPBattle/dspbattletabicon"));
-                    BattleProtos.pageBias = (pagenum - 2) * 1000 - 500;
+                    BattleProtos.pageBias = (pagenum - 2) * 1000;
+                    MoreMegaStructure.MoreMegaStructure.battlePagenum = pagenum;
                 }
             }
             catch (Exception)
@@ -66,6 +68,8 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(WormholeUIPatch));
             Harmony.CreateAndPatchAll(typeof(UIBattleStatistics));
             Harmony.CreateAndPatchAll(typeof(UIDialogPatch));
+            Harmony.CreateAndPatchAll(typeof(StarCannon));
+            Harmony.CreateAndPatchAll(typeof(ShieldGenerator));
 
             LDBTool.PreAddDataAction += BattleProtos.AddProtos;
             LDBTool.PostAddDataAction += BattleProtos.PostDataAction;
@@ -139,6 +143,9 @@ namespace DSP_Battle
             Cannon.Export(w);
             MissileSilo.Export(w);
             UIAlert.Export(w);
+            WormholeProperties.Export(w);
+            StarCannon.Export(w);
+            ShieldGenerator.Export(w);
         }
 
         public void Import(BinaryReader r)
@@ -148,6 +155,9 @@ namespace DSP_Battle
             Cannon.Import(r);
             MissileSilo.Import(r);
             UIAlert.Import(r);
+            WormholeProperties.Import(r);
+            StarCannon.Import(r);
+            ShieldGenerator.Import(r);
 
             UIBattleStatistics.InitAll();
             UIBattleStatistics.InitSelectDifficulty();
@@ -160,6 +170,9 @@ namespace DSP_Battle
             Cannon.IntoOtherSave();
             MissileSilo.IntoOtherSave();
             UIAlert.IntoOtherSave();
+            WormholeProperties.IntoOtherSave();
+            StarCannon.IntoOtherSave();
+            ShieldGenerator.IntoOtherSave();
 
             UIBattleStatistics.InitAll();
             UIBattleStatistics.InitSelectDifficulty();

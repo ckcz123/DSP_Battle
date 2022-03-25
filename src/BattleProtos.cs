@@ -117,7 +117,7 @@ namespace DSP_Battle
 
             ProtoRegistry.RegisterString("行星力场护盾", "Planet shield", "行星力场护盾");
             ProtoRegistry.RegisterString("星际要塞", "Star fortress", "星际要塞");
-            ProtoRegistry.RegisterString("恒星炮", "Star cannon", "恒星炮");
+            ProtoRegistry.RegisterString("恒星炮gm2", "Star cannon", "恒星炮");
             ProtoRegistry.RegisterString("水滴gm", "Water-drop", "水滴");
             ProtoRegistry.RegisterString("即将到来gm", "Coming soon", "即将推出");
 
@@ -172,10 +172,12 @@ namespace DSP_Battle
 
 
             ProtoRegistry.RegisterString("UI快捷键提示", "Press Backspace to hide/open this window. Press \"-\" key to advance the attack time by one minute.", "按下退格键开启或关闭此窗口，按下减号键使敌军进攻时间提前1分钟。");
+
             ProtoRegistry.RegisterString("简单难度提示", "Difficulty: Easy (Station won't be destroyed; Reward duration * 0.75)", "当前难度：简单（物流塔不会被破坏；奖励持续时间*0.75）");
             ProtoRegistry.RegisterString("普通难度提示", "Difficulty: Normal (Station attacked will turn to blueprint mode; Reward duration * 1.0)", "当前难度：普通（物流塔被破坏会进入蓝图模式；奖励持续时间*1.0）");
             ProtoRegistry.RegisterString("困难难度提示", "Difficulty: Hard (Station will be dismantled; Enemy strength will increase; Reward duration * 2.0)", "当前难度：困难（物流塔会被破坏拆除，敌人战斗力大幅提升；奖励持续时间*2.0）");
-            ProtoRegistry.RegisterString("奖励倒计时：", "Reward time left: ", "奖励倒计时：");
+            ProtoRegistry.RegisterString("奖励倒计时：", "Reward time left: ", "奖励剩余时间：");
+
             ProtoRegistry.RegisterString("mod版本信息", "Current version: " + Configs.versionString, "当前版本：" + Configs.versionString + "          欢迎加入mod交流群：" + Configs.qq);
             ProtoRegistry.RegisterString("未探测到威胁", "No threat detected", "未探测到威胁");
             ProtoRegistry.RegisterString("预估数量", "Estimated quantity", "预估数量");
@@ -212,6 +214,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("最低生命", "Lowest HP", "最低生命");
             ProtoRegistry.RegisterString("目标生命值", "Target HP", "目标生命值");
             ProtoRegistry.RegisterString("无攻击目标", "No target", "无攻击目标");
+            ProtoRegistry.RegisterString("开火中gm", "Firing", "开火中");
             ProtoRegistry.RegisterString("下一波攻击即将到来！", "Next wave is coming!", "下一波攻击即将到来！");
             ProtoRegistry.RegisterString("做好防御提示", "Please prepare next wave in <color=#c2853d>{0}</color>!", "请为<color=#c2853d>{0}</color>做好防御准备。");
             ProtoRegistry.RegisterString("虫洞已生成！", "Wormhole generated!", "虫洞已生成！");
@@ -261,8 +264,22 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("占比gm", "Percentage", "占比");
             ProtoRegistry.RegisterString("游戏提示gm", "Message", "游戏提示");
 
+            ProtoRegistry.RegisterString("护盾容量", "Shield capacity", "护盾容量");
+            ProtoRegistry.RegisterString("护盾容量短", "Max shield", "护盾容量");
+            ProtoRegistry.RegisterString("当前护盾", "Current shield", "当前护盾");
+            ProtoRegistry.RegisterString("护盾恢复", "Recharge speed", "护盾恢复");
+            ProtoRegistry.RegisterString("护盾生成器总数", "Generator amount", "护盾生成器总数");
+            ProtoRegistry.RegisterString("完全充能时间", "Fully recharged in", "完全充能时间");
+            ProtoRegistry.RegisterString("充能gm", "Charged", "已充能");
+            ProtoRegistry.RegisterString("关闭gm", "Shut down", "关闭");
+            ProtoRegistry.RegisterString("启动gm", "Activate", "启动");
+            ProtoRegistry.RegisterString("护盾生成器待机提示", "The Shield Generator will stop consuming energy, and will no longer provide shield capacity or recharge shields.", "护盾生成器将停止消耗能量，并不再提供最大护盾容量，也无法为护盾充能。");
+            ProtoRegistry.RegisterString("护盾生成器启动提示", "Shield generators will provide shield capacity, and speed up shield recharging.", "护盾生成器将提供护盾容量，并加快护盾充能速度。");
+            ProtoRegistry.RegisterString("耗电需求gm", "Consumption demand", "耗电需求");
+            ProtoRegistry.RegisterString("耗电需求短gm", "Consumption", "耗电需求");
+            ProtoRegistry.RegisterString("发电性能短gm", "Generation", "发电性能"); 
 
-            ItemProto bullet1 = ProtoRegistry.RegisterItem(8001, "子弹1", "子弹1描述", "Assets/DSPBattle/bullet1", 2701 + pageBias, 100, EItemType.Material);
+             ItemProto bullet1 = ProtoRegistry.RegisterItem(8001, "子弹1", "子弹1描述", "Assets/DSPBattle/bullet1", 2701 + pageBias, 100, EItemType.Material);
             ItemProto bullet2 = ProtoRegistry.RegisterItem(8002, "子弹2", "子弹2描述", "Assets/DSPBattle/bullet2", 2702 + pageBias, 100, EItemType.Material);
             ItemProto bullet3 = ProtoRegistry.RegisterItem(8003, "子弹3", "子弹3描述", "Assets/DSPBattle/bullet3", 2703 + pageBias, 100, EItemType.Material);
             ItemProto missile1 = ProtoRegistry.RegisterItem(8004, "导弹1", "导弹1描述", "Assets/DSPBattle/missile1", 2705 + pageBias, 100, EItemType.Material);
@@ -324,6 +341,15 @@ namespace DSP_Battle
             Silo.Upgrades = new int[] { };
             Silo.DescFields = new int[] { 35, 11, 12, 1, 40 };
 
+
+            var ShieldGenerator = ProtoRegistry.RegisterItem(8030, "护盾生成器", "护盾生成器描述", "Assets/DSPBattle/cannon3", 2605 + pageBias, 50, EItemType.Production);
+            ShieldGenerator.BuildMode = 1;
+            ShieldGenerator.IsEntity = true;
+            ShieldGenerator.isRaw = false;
+            ShieldGenerator.CanBuild = true;
+            ShieldGenerator.Upgrades = new int[] { };
+
+
             ProtoRegistry.RegisterRecipe(801, ERecipeType.Assemble, 60, new int[] { 1112, 1103 }, new int[] { 1, 1 }, new int[] { 8001 }, new int[] { 1 }, "子弹1描述",
                 1901, 2701 + pageBias, "Assets/DSPBattle/bullet1");
             ProtoRegistry.RegisterRecipe(802, ERecipeType.Assemble, 90, new int[] { 1118, 1110, 1116 }, new int[] { 1, 1, 1 }, new int[] { 8002 }, new int[] { 2 }, "子弹2描述",
@@ -338,12 +364,14 @@ namespace DSP_Battle
                 1914, 2706 + pageBias, "Assets/DSPBattle/missile3");
             ProtoRegistry.RegisterRecipe(811, ERecipeType.Assemble, 360, new int[] { 1103, 1201, 1303, 1205 }, new int[] { 10, 10, 10, 5 }, new int[] { 8011 }, new int[] { 1 }, "弹射器1描述",
                 1901, 2601 + pageBias, "Assets/DSPBattle/cannon1");
-            ProtoRegistry.RegisterRecipe(812, ERecipeType.Assemble, 360, new int[] { 1107, 1206, 1303, 1209 }, new int[] { 10, 10, 10, 3 }, new int[] { 8012 }, new int[] { 1 }, "弹射器2描述",
+            ProtoRegistry.RegisterRecipe(812, ERecipeType.Assemble, 360, new int[] { 1107, 9480, 1303, 1209 }, new int[] { 10, 10, 10, 3 }, new int[] { 8012 }, new int[] { 1 }, "弹射器2描述",
                 1914, 2602 + pageBias, "Assets/DSPBattle/cannon2");
             ProtoRegistry.RegisterRecipe(813, ERecipeType.Assemble, 900, new int[] { 1107, 1125, 1209, 1305 }, new int[] { 40, 15, 5, 5 }, new int[] { 8013 }, new int[] { 1 }, "发射器1描述",
                 1911, 2603 + pageBias, "Assets/DSPBattle/missilesilo");
-            ProtoRegistry.RegisterRecipe(814, ERecipeType.Assemble, 900, new int[] { 1125, 1402, 1304, 1305 }, new int[] { 20, 10, 10, 5 }, new int[] { 8014 }, new int[] { 1 }, "脉冲炮描述",
+            ProtoRegistry.RegisterRecipe(814, ERecipeType.Assemble, 900, new int[] { 1125, 9481, 9486 }, new int[] { 20, 5, 2 }, new int[] { 8014 }, new int[] { 1 }, "脉冲炮描述",
                 1915, 2604 + pageBias, "Assets/DSPBattle/cannon3");
+            ProtoRegistry.RegisterRecipe(815, ERecipeType.Assemble, 900, new int[] { 1101 }, new int[] { 1 }, new int[] { 8030 }, new int[] { 1 }, "护盾生成器描述",
+                1916, 2605 + pageBias, "Assets/DSPBattle/cannon3");
 
             TechProto techBullet1 = ProtoRegistry.RegisterTech(1901, "近地防卫系统", "近地防卫系统描述", "近地防卫系统结论", "Assets/DSPBattle/bullet1tech", new int[] { 1711 }, new int[] { 6001, 6002 }, new int[] { 20, 20 },
                 72000, new int[] { 801, 811 }, new Vector2(29, -43));
@@ -382,16 +410,16 @@ namespace DSP_Battle
 
 
             TechProto techShield1 = ProtoRegistry.RegisterTech(1916, "行星力场护盾", "即将到来gm", "即将到来gm", "Assets/DSPBattle/cannon3tech", new int[] { 1705 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { }, new Vector2(53, -31));
+                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 565,815 }, new Vector2(53, -31));
             techShield1.Published = false;
             TechProto techStellarFortress = ProtoRegistry.RegisterTech(1917, "星际要塞", "即将到来gm", "即将到来gm", "Assets/DSPBattle/cannon3tech", new int[] { 1903 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
                 new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { }, new Vector2(41, -43));
             techStellarFortress.Published = false;
             TechProto techStarCannon = ProtoRegistry.RegisterTech(1918, "恒星炮", "即将到来gm", "即将到来gm", "Assets/DSPBattle/cannon3tech", new int[] { 1144 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { }, new Vector2(65, -3));
+                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 570, 571, 572 }, new Vector2(65, -3));
             techStarCannon.Published = false;
             TechProto techDrop = ProtoRegistry.RegisterTech(1919, "水滴gm", "即将到来gm", "即将到来gm", "Assets/DSPBattle/cannon3tech", new int[] { 1915 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { }, new Vector2(57, -43));
+                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 566, 567, 568, 569, 573 }, new Vector2(57, -43));
             techDrop.Published = false;
 
             TechProto winGame = LDB.techs.Select(1508);
@@ -580,6 +608,13 @@ namespace DSP_Battle
             SiloModel.prefabDesc.siloColdFrame = 120;
             LDBTool.PreAddProto(SiloModel);
 
+            var ShieldGenModel = CopyModelProto(45, 315, Color.blue);
+            ShieldGenModel.prefabDesc.emptyId = 9999;
+            ShieldGenModel.prefabDesc.fullId = 1208;
+            ShieldGenModel.prefabDesc.exchangeEnergyPerTick = 1500000;
+
+            LDBTool.PreAddProto(ShieldGenModel);
+
 
             LDBTool.SetBuildBar(6, 7, 8011);
             LDBTool.SetBuildBar(6, 8, 8012);
@@ -657,6 +692,11 @@ namespace DSP_Battle
             LDB.models.Select(313).prefabDesc.modelIndex = 313;
             LDB.items.Select(8013).ModelIndex = 313;
             LDB.items.Select(8013).prefabDesc = LDB.models.Select(313).prefabDesc;
+
+
+            LDB.models.Select(315).prefabDesc.modelIndex = 315;
+            LDB.items.Select(8030).ModelIndex = 315;
+            LDB.items.Select(8030).prefabDesc = LDB.models.Select(315).prefabDesc;
 
             GameMain.gpuiManager.Init();
         }

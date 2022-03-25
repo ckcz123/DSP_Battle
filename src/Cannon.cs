@@ -148,7 +148,11 @@ namespace DSP_Battle
             int calcOrbitId = __instance.orbitId;
             if (cannon)
             {
-                if (calcOrbitId <= 0 || calcOrbitId > 4) calcOrbitId = 1;
+                if (calcOrbitId <= 0 || calcOrbitId > 4)
+                {
+                    calcOrbitId = 1;
+                    __instance.orbitId = 1;
+                }
             }
             else
             {

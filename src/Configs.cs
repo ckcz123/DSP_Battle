@@ -1,4 +1,6 @@
 ﻿using BepInEx.Configuration;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -7,7 +9,8 @@ namespace DSP_Battle
 {
     class Configs
     {
-        public static string versionString = "1.2.1";
+
+        public static string versionString = "1.3.0";
         public static string qq = "694213906";
 
 
@@ -90,6 +93,14 @@ namespace DSP_Battle
 
         public static int starCount = 100;
         public static int[] wavePerStar;
+
+        // --- 护盾信息
+        public static int shieldGenPerTick = 10; //每个生成器提供的回复速度不会因为护盾生成器数量变多而有削减，是线性的增长，回复速度如此之慢是为保留：可能加入的，回复护盾的，巨构的存在价值
+        //当现有capacity超过20M后（前四个），每个后续的生成器只提供50%Capacity，达到更高会有更严重的debuff
+        public static List<Tuple<int, int>> capacityPerGenerator =
+            new List<Tuple<int, int>> { new Tuple<int, int>(0, 5000000), new Tuple<int, int>(20000000, 2500000), new Tuple<int, int>(50000000, 500000), new Tuple<int, int>(80000000, 0) };
+
+
 
         public static int totalWave
         {
@@ -253,7 +264,7 @@ namespace DSP_Battle
         public static void Import(BinaryReader r)
         {
             int version = r.ReadInt32();
-
+            versionWhenImporting = version;
             difficulty = r.ReadInt32();
 
             bulletSpeedScale = r.ReadDouble();

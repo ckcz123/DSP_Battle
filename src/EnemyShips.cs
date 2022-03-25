@@ -232,6 +232,7 @@ namespace DSP_Battle
             }
         }
 
+
         public static void OnShipDistroyed(EnemyShip ship)
         {
             RemoveShip(ship);
