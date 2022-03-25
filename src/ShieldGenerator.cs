@@ -305,7 +305,7 @@ namespace DSP_Battle
             __instance.emptyUIButton.tips.itemId = 0;
             __instance.fullUIButton.tips.itemId = 0;
             __instance.emptyIcon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/elect0");
-            __instance.fullIcon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/shield1");
+            __instance.fullIcon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/shield3");
 
             //if (powerExchangerComponent.targetState == 1 && isShieldUI)
             //{
@@ -337,8 +337,8 @@ namespace DSP_Battle
                 circleFg.color = shieldFg;
                 circleFg2.color = shieldFg2;
                 circleFg3.color = shieldFg3;
-                circlePowerIcon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/shield1");
-                circleFg3.sprite = Resources.Load<Sprite>("Assets/DSPBattle/shield1");
+                circlePowerIcon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/shield3");
+                circleFg3.sprite = Resources.Load<Sprite>("Assets/DSPBattle/shield3");
                 powerCircleLegend3Obj.SetActive(false);
                 powerCircleLegend4Obj.SetActive(false);
                 powerCircleAccInObj.SetActive(false);
