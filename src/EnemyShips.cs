@@ -252,18 +252,26 @@ namespace DSP_Battle
             foreach (var entry in pendingDestroyedEntities)
             {
                 removingComponets = true;
+                PlanetData planet = GameMain.galaxy.PlanetById(entry.Key);
+                PlanetFactory planetFactory = planet.factory;
+                bool freePhysics = false;
                 try
                 {
-                    PlanetFactory planetFactory = GameMain.galaxy.PlanetById(entry.Key).factory;
-
                     for (int i = 0; i < planetFactory.entityPool.Length; ++i)
                     {
                         if (planetFactory.entityPool[i].isNull ||
                             planetFactory.entityPool[i].beltId != 0 ||
-                            planetFactory.entityPool[i].inserterId != 0 || 
+                            planetFactory.entityPool[i].inserterId != 0 ||
                             !entry.Value.Any((e) => (planetFactory.entityPool[i].pos - e.Item1).magnitude <= e.Item2))
                         {
                             continue;
+                        }
+
+                        if (planet.physics == null)
+                        {
+                            freePhysics = true;
+                            planet.physics = new PlanetPhysics(planet);
+                            planet.physics.Init();
                         }
 
                         if (planetFactory.entityPool[i].stationId > 0)
@@ -284,6 +292,11 @@ namespace DSP_Battle
                 }
                 catch (Exception) { }
                 finally { removingComponets = false; }
+                if (freePhysics)
+                {
+                    planet.physics.Free();
+                    planet.physics = null;
+                }
             }
             pendingDestroyedEntities.Clear();
         }
@@ -298,8 +311,6 @@ namespace DSP_Battle
             }
             UIBattleStatistics.RegisterResourceLost(station.warperCount + station.idleShipCount + station.workShipCount + station.idleDroneCount + station.workDroneCount);
             distroyedStation[station.gid] = 0;
-
-            
 
             // 破坏资源但不损毁物流塔
             for (var i = 0; i < station.storage.Length; ++i)
@@ -325,7 +336,15 @@ namespace DSP_Battle
 
             factory.transport.RefreshTraffic(station.id);
             GameMain.data.galacticTransport.RefreshTraffic(station.gid);
-            
+
+            bool freePhysics = false;
+            if (factory.planet.physics == null)
+            {
+                freePhysics = true;
+                factory.planet.physics = new PlanetPhysics(factory.planet);
+                factory.planet.physics.Init();
+            }
+
             if (Configs.difficulty == 0)
             {
                 UIBattleStatistics.RegisterStationLost();
@@ -335,6 +354,12 @@ namespace DSP_Battle
             {
                 UIBattleStatistics.RegisterStationLost();
                 RemoveEntity(factory, station.entityId);
+            }
+
+            if (freePhysics)
+            {
+                factory.planet.physics.Free();
+                factory.planet.physics = null;
             }
         }
 
@@ -371,7 +396,6 @@ namespace DSP_Battle
             catch
             {
             }
-
         }
 
         // Source: https://gist.github.com/starfi5h/2d52f7959892467ae46599317ce84f63
@@ -462,11 +486,11 @@ namespace DSP_Battle
                     {
                         if (prefabDesc.isInserter)
                         {
-                            ColliderData colliderData = prefabDesc.colliders[i];
-                            Vector3 wpos = Vector3.Lerp(factory.prebuildPool[num].pos, factory.prebuildPool[num].pos2, 0.5f);
-                            Quaternion wrot = Quaternion.LookRotation(factory.prebuildPool[num].pos2 - factory.prebuildPool[num].pos, wpos.normalized);
-                            colliderData.ext = new Vector3(colliderData.ext.x, colliderData.ext.y, Vector3.Distance(factory.prebuildPool[num].pos2, factory.prebuildPool[num].pos) * 0.5f + colliderData.ext.z);
-                            factory.prebuildPool[num].colliderId = factory.planet.physics.AddColliderData(colliderData.BindToObject(num, factory.prebuildPool[num].colliderId, EObjectType.Prebuild, wpos, wrot));
+                                ColliderData colliderData = prefabDesc.colliders[i];
+                                Vector3 wpos = Vector3.Lerp(factory.prebuildPool[num].pos, factory.prebuildPool[num].pos2, 0.5f);
+                                Quaternion wrot = Quaternion.LookRotation(factory.prebuildPool[num].pos2 - factory.prebuildPool[num].pos, wpos.normalized);
+                                colliderData.ext = new Vector3(colliderData.ext.x, colliderData.ext.y, Vector3.Distance(factory.prebuildPool[num].pos2, factory.prebuildPool[num].pos) * 0.5f + colliderData.ext.z);
+                                factory.prebuildPool[num].colliderId = factory.planet.physics.AddColliderData(colliderData.BindToObject(num, factory.prebuildPool[num].colliderId, EObjectType.Prebuild, wpos, wrot));
                         }
                         else
                         {
@@ -477,6 +501,50 @@ namespace DSP_Battle
                 }
             }
             return num;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(PlanetFactory), "ApplyEntityDisconnection")]
+        public static bool PlanetFactory_ApplyEntityDisconnection(ref PlanetFactory __instance, int otherEntityId, int removingEntityId, int otherSlotId, int removingSlotId)
+        {
+            if (__instance.planet == GameMain.localPlanet || otherEntityId == 0) return true;
+            int inserterId = __instance.entityPool[otherEntityId].inserterId;
+            if (inserterId > 0)
+            {
+                int modelId = __instance.entityPool[otherEntityId].modelId;
+                __instance.entityPool[otherEntityId].modelId = 0;
+                if (__instance.factorySystem.inserterPool[inserterId].insertTarget == removingEntityId)
+                {
+                    __instance.factorySystem.SetInserterInsertTarget(inserterId, 0, 0);
+                }
+                if (__instance.factorySystem.inserterPool[inserterId].pickTarget == removingEntityId)
+                {
+                    __instance.factorySystem.SetInserterPickTarget(inserterId, 0, 0);
+                }
+                __instance.entityPool[otherEntityId].modelId = modelId;
+                return false;
+            }
+            return true;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(PlanetFactory), "RemoveEntityWithComponents")]
+        public static bool PlanetFactory_RemoveEntityWithComponents(ref PlanetFactory __instance, int id)
+        {
+            if (__instance.planet == GameMain.localPlanet) return true;
+            if (id != 0 && __instance.entityPool[id].id != 0 && __instance.entityPool[id].colliderId != 0)
+            {
+                if (__instance.planet.physics != null)
+                {
+                    try
+                    {
+                        __instance.planet.physics.RemoveLinkedColliderData(__instance.entityPool[id].colliderId);
+                    }
+                    catch (Exception e) { }
+                }
+                __instance.entityPool[id].colliderId = 0;
+            }
+            return true;
         }
 
         public static void OnShipDistroyed(EnemyShip ship)
