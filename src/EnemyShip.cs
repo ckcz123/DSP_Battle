@@ -15,6 +15,12 @@ namespace DSP_Battle
         public int damageRange;
         public int countDown;
         public int wormholeIndex;
+        // 强制位移参数，时间很短不需要存档
+        public VectorLF3 forceDisplacement;
+        public int forceDisplacementTime = 0;
+        public float movePerTick; //每tick位移占剩余位移的百分之多少
+
+        public static int minForcedMove = 0; //每tick产生的最小强制位移
 
         public enum State
         {
@@ -169,6 +175,13 @@ namespace DSP_Battle
             shipData.planetB = GameMain.data.galacticTransport.stationPool[nextStationId].planetId;
         }
 
+        public void InitForceDisplacement(VectorLF3 targetUPos, int needTime = 40, float moveFactor = 0.04f)
+        {
+            forceDisplacement = targetUPos;
+            forceDisplacementTime = needTime;
+            movePerTick = moveFactor;
+        }
+
         public void Update(long time)
         {
             VectorLF3 wormholePos = Configs.nextWaveWormholes[wormholeIndex].uPos;
@@ -181,6 +194,21 @@ namespace DSP_Battle
             }
 
             if (state != State.active) return;
+
+            //强制位移
+            if(forceDisplacementTime > 0 && forceDisplacement!=null && distanceToTarget > 3000) //最后一个判断条件让其不要在距离地表过近的位置被强制位移
+            {
+                VectorLF3 direction = forceDisplacement - shipData.uPos;
+                double fullDistance = direction.magnitude;
+                double forceDispDistance = fullDistance * movePerTick + minForcedMove;
+                if(fullDistance <= minForcedMove)
+                {
+                    forceDisplacementTime = 1;
+                    forceDispDistance = fullDistance;
+                }
+                shipData.uPos = shipData.uPos + direction.normalized * forceDispDistance;
+                forceDisplacementTime -= 1;
+            }
 
             StationComponent station = targetStation;
             if (station == null || station.id == 0)

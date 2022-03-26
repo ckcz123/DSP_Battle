@@ -42,6 +42,12 @@ namespace DSP_Battle
             int gmProtoId = factory.entityPool[__instance.entityId].protoId;
             if (gmProtoId == 2312) return true; //要改的！！！改成原始发射井返回原函数
 
+            if(Configs.developerMode)
+            {
+                __instance.bulletId = 8006;
+                __instance.bulletCount = 99;
+            }
+
             if (GameMain.instance.timei % 60 == 0 && __instance.bulletCount == 0)
             {
                 __instance.bulletId = nextBulletId(__instance.bulletId);
@@ -208,6 +214,7 @@ namespace DSP_Battle
 
                     bool isMissile = dysonRocket.node == null;//只有null是导弹，其他的是正常的戴森火箭
                     int starIndex = __instance.starData.index;
+                    bool forceDisplacement = false;
 
                     if (isMissile && missileProtoIds[starIndex].ContainsKey(i))
                     {
@@ -226,6 +233,7 @@ namespace DSP_Battle
                             missileMaxSpeed = (float)Configs.missile3Speed;
                             damage = Configs.missile3Atk;
                             dmgRange = Configs.missile3Range;
+                            forceDisplacement = true;
                         }
                         float missileSpeedUp = (float)missileMaxSpeed / 200f;
 
@@ -473,7 +481,7 @@ namespace DSP_Battle
                                     }
                                 }
 
-                                //范围伤害
+                                //范围伤害和强制位移
                                 var shipsHit = EnemyShips.FindShipsInRange(dysonRocket.uPos, dmgRange);
 
                                 if(shipsHit.Count > 0) UIBattleStatistics.RegisterHit(missileId, 0, 1); //首先注册一下该导弹击中，但不注册伤害
@@ -489,6 +497,9 @@ namespace DSP_Battle
                                         }
                                         int realDamage = EnemyShips.ships[item].BeAttacked(aoeDamage);
                                         UIBattleStatistics.RegisterHit(missileId, realDamage, 0); //每个目标不再注册新的击中数量，只注册伤害
+                                        //引力导弹的强制位移
+                                        if (forceDisplacement)
+                                            EnemyShips.ships[item].InitForceDisplacement(dysonRocket.uPos);
                                     }
                                 }
                                 missileProtoIds[starIndex][i] = 0;
@@ -867,6 +878,7 @@ namespace DSP_Battle
 
                     bool isMissile = dysonRocket.node == null;//只有null是导弹，其他的是正常的戴森火箭
                     int starIndex = __instance.starData.index;
+                    bool forceDisplacement = false;
 
                     if (isMissile && missileProtoIds[starIndex].ContainsKey(i))
                     {
@@ -887,6 +899,7 @@ namespace DSP_Battle
                                 missileMaxSpeed = (float)Configs.missile3Speed;
                                 damage = Configs.missile3Atk;
                                 dmgRange = Configs.missile3Range;
+                                forceDisplacement = true;
                             }
                             float missileSpeedUp = (float)missileMaxSpeed / 200f;
 
@@ -1134,7 +1147,7 @@ namespace DSP_Battle
                                         }
                                     }
 
-                                    //范围伤害
+                                    //范围伤害和强制位移
                                     var shipsHit = EnemyShips.FindShipsInRange(dysonRocket.uPos, dmgRange);
                                     if (shipsHit.Count > 0) UIBattleStatistics.RegisterHit(missileId, 0, 1); //首先注册一下该导弹击中，但不注册伤害
                                     foreach (var item in shipsHit)
@@ -1149,8 +1162,13 @@ namespace DSP_Battle
                                             }
                                             int realDamage = EnemyShips.ships[item].BeAttacked(aoeDamage);
                                             UIBattleStatistics.RegisterHit(missileId, realDamage, 0); //每个目标不再注册新的击中数量，只注册伤害
+                                            //引力导弹的强制位移
+                                            if(forceDisplacement)
+                                                EnemyShips.ships[item].InitForceDisplacement(dysonRocket.uPos);
                                         }
                                     }
+                                    
+
                                     missileProtoIds[starIndex][i] = 0;
                                     __instance.RemoveDysonRocket(i);
                                     goto IL_BDF;

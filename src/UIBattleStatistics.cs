@@ -512,9 +512,9 @@ namespace DSP_Battle
                 ammoLabel.text = "\n" + 
                     "数量总计".Translate() + "\n" + "伤害总计".Translate() + "\n\n" +
                     "子弹数量".Translate() + "\n" + "  > " + "子弹1".Translate() + "\n" + "  > " + "子弹2".Translate() + "\n" + "  > " + "子弹3".Translate() + "\n" + "  > " + "脉冲".Translate() + "\n\n" +
-                    "导弹数量".Translate() + "\n" + "  > " + "导弹1".Translate() + "\n" + "  > " + "导弹2".Translate() + "\n" + "  > " + "导弹3".Translate() + "\n\n" +
+                    "导弹数量".Translate() + "\n" + "  > " + "导弹1".Translate() + "\n" + "  > " + "导弹2".Translate() + "\n" + "  > " + "导弹3短".Translate() + "\n\n" +
                     "子弹伤害gm".Translate() + "\n" + "  > " + "子弹1".Translate() + "\n" + "  > " + "子弹2".Translate() + "\n" + "  > " + "子弹3".Translate() + "\n" + "  > " + "脉冲".Translate() + "\n\n" +
-                    "导弹伤害gm".Translate() + "\n" + "  > " + "导弹1".Translate() + "\n" + "  > " + "导弹2".Translate() + "\n" + "  > " + "导弹3".Translate() + "\n\n";
+                    "导弹伤害gm".Translate() + "\n" + "  > " + "导弹1".Translate() + "\n" + "  > " + "导弹2".Translate() + "\n" + "  > " + "导弹3短".Translate() + "\n\n";
 
                 ammoValue1.text = "击中gm".Translate() + "/" + "发射gm".Translate() + "\n" +
                     $"{totalAmmoHit}/{totalAmmoUse}\n{totalAmmoDamageHit}/{totalAmmoDamageOut}\n\n" +

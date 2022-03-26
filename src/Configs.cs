@@ -9,9 +9,9 @@ namespace DSP_Battle
 {
     class Configs
     {
-
         public static string versionString = "2.0.0";
         public static string qq = "694213906";
+        public static bool developerMode = false; //发布前务必修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
 
         public static int versionWhenImporting = -1;
         public static int versionCode = 30220325;
@@ -190,8 +190,8 @@ namespace DSP_Battle
             missile2Range = 500; // config.Bind("config", "missile2Range", defaultValue: 500, "反物质导弹破坏范围").Value;
 
             _missile3Speed = 8000.0; // config.Bind("config", "missile3Speed", defaultValue: 8000.0, "引力塌陷导弹速度（米每秒）").Value;
-            _missile3Atk = 2500; // config.Bind("config", "missile3Atk", defaultValue: 2500, "引力塌陷导弹攻击力").Value;
-            missile3Range = 2000; // config.Bind("config", "missile3Range", defaultValue: 2000, "引力塌陷导弹破坏范围").Value;
+            _missile3Atk = 1500; // config.Bind("config", "missile3Atk", defaultValue: 2500, "引力塌陷导弹攻击力").Value;
+            missile3Range = 8000; // config.Bind("config", "missile3Range", defaultValue: 2000, "引力塌陷导弹破坏范围").Value;
 
             enemyIntensity[0] = 1; // config.Bind("config", "enemy1Intensity", defaultValue: 1, "敌方飞船1强度").Value;
             enemyHp[0] = 4000; // config.Bind("config", "enemy1Hp", defaultValue: 4000, "敌方飞船1血量").Value;
@@ -219,6 +219,14 @@ namespace DSP_Battle
             enemyRange[4] = 100; // config.Bind("config", "enemy5Range", defaultValue: 100, "敌方飞船5破坏范围").Value;
 
             _wormholeRange = 20000; // config.Bind("config", "wormholeRange", defaultValue: 20000, "初始虫洞刷新范围，米为单位").Value;
+
+            if (Configs.developerMode)
+            {
+                _missile3Atk = 2500;
+                _missile3Speed = 10000;
+                missile3Range = 10000;
+                _wormholeRange = 80000;
+            }
 
             intensity =
                 new int[] { 2, 5, 10, 15, 20, 30, 50, 80, 100, 150, 250, 300, 400, 500, 600, 800, 1000, 1100, 1500, 1800, 2000, 2200, 2500, 3000, 3500, 4000 };

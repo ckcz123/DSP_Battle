@@ -36,6 +36,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("导弹2结论", "You have unlocked anti-matter missile.", "你解锁了反物质导弹，可以自动追踪敌人");
 
             ProtoRegistry.RegisterString("导弹3", "Gravitational collapse missile", "引力塌陷导弹");
+            ProtoRegistry.RegisterString("导弹3短", "Grav-missile", "引力塌陷导弹");
             ProtoRegistry.RegisterString("导弹3描述", "A missile can creates a micro-black-hole instantaneously after exposion.", "发明出<color=#c2853d>引力弹射炮</color>的先驱者一鼓作气，将微型黑洞封装进导弹，制成了这种超级武器。它能在爆炸后短暂生成一个微型黑洞将范围内的敌人吸入其中，简单高效。");
             ProtoRegistry.RegisterString("导弹3结论", "You have unlocked gravitational collapse missile.", "你解锁了引力塌陷导弹，可以自动追踪敌人");
 
