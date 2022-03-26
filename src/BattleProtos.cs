@@ -119,7 +119,8 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("行星力场护盾", "Planet shield", "行星力场护盾");
             ProtoRegistry.RegisterString("星际要塞", "Star fortress", "星际要塞");
             ProtoRegistry.RegisterString("恒星炮gm2", "Star cannon", "恒星炮");
-            ProtoRegistry.RegisterString("水滴gm", "Water-drop", "水滴");
+            ProtoRegistry.RegisterString("水滴gm", "Water-drop", "水滴"); 
+            ProtoRegistry.RegisterString("玻色子操控", "Boson control", "玻色子操控");
             ProtoRegistry.RegisterString("即将到来gm", "Coming soon", "即将推出");
 
 
@@ -343,7 +344,7 @@ namespace DSP_Battle
             Silo.DescFields = new int[] { 35, 11, 12, 1, 40 };
 
 
-            var ShieldGenerator = ProtoRegistry.RegisterItem(8030, "护盾生成器", "护盾生成器描述", "Assets/DSPBattle/cannon3", 2605 + pageBias, 50, EItemType.Production);
+            var ShieldGenerator = ProtoRegistry.RegisterItem(8030, "护盾生成器", "护盾生成器描述", "Assets/MegaStructureTab/shieldGen", 2605 + pageBias, 10, EItemType.Production);
             ShieldGenerator.BuildMode = 1;
             ShieldGenerator.IsEntity = true;
             ShieldGenerator.isRaw = false;
@@ -371,8 +372,8 @@ namespace DSP_Battle
                 1911, 2603 + pageBias, "Assets/DSPBattle/missilesilo");
             ProtoRegistry.RegisterRecipe(814, ERecipeType.Assemble, 900, new int[] { 1125, 9481, 9486 }, new int[] { 20, 5, 2 }, new int[] { 8014 }, new int[] { 1 }, "脉冲炮描述",
                 1915, 2604 + pageBias, "Assets/DSPBattle/cannon3");
-            ProtoRegistry.RegisterRecipe(815, ERecipeType.Assemble, 900, new int[] { 1101 }, new int[] { 1 }, new int[] { 8030 }, new int[] { 1 }, "护盾生成器描述",
-                1916, 2605 + pageBias, "Assets/DSPBattle/cannon3");
+            ProtoRegistry.RegisterRecipe(815, ERecipeType.Assemble, 900, new int[] { 9503, 1305, 1125 }, new int[] { 30, 20, 30 }, new int[] { 8030 }, new int[] { 1 }, "护盾生成器描述",
+                1916, 2605 + pageBias, "Assets/MegaStructureTab/shieldGen");
 
             TechProto techBullet1 = ProtoRegistry.RegisterTech(1901, "近地防卫系统", "近地防卫系统描述", "近地防卫系统结论", "Assets/DSPBattle/bullet1tech", new int[] { 1711 }, new int[] { 6001, 6002 }, new int[] { 20, 20 },
                 72000, new int[] { 801, 811 }, new Vector2(29, -43));
@@ -419,7 +420,7 @@ namespace DSP_Battle
             TechProto techStarCannon = ProtoRegistry.RegisterTech(1918, "恒星炮", "即将到来gm", "即将到来gm", "Assets/DSPBattle/cannon3tech", new int[] { 1144 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
                 new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 570, 571, 572 }, new Vector2(65, -3));
             techStarCannon.Published = false;
-            TechProto techDrop = ProtoRegistry.RegisterTech(1919, "水滴gm", "即将到来gm", "即将到来gm", "Assets/DSPBattle/cannon3tech", new int[] { 1915 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+            TechProto techDrop = ProtoRegistry.RegisterTech(1919, "玻色子操控", "即将到来gm", "即将到来gm", "Assets/DSPBattle/cannon3tech", new int[] { 1915 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
                 new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 566, 567, 568, 569, 573 }, new Vector2(57, -43));
             techDrop.Published = false;
 
