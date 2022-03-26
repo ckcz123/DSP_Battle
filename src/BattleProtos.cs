@@ -870,5 +870,16 @@ namespace DSP_Battle
             }
         }
 
+        public static void ChangeTabName(Proto proto)
+        {
+            if(proto is StringProto && proto.name == "MegaStructures")
+            {
+                var item = proto as StringProto;
+                item.ZHCN = "轨道防御";
+                item.ENUS = "Defense";
+                item.FRFR = "Defense";
+            }
+        }
+
     }
 }

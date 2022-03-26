@@ -46,7 +46,9 @@ namespace DSP_Battle
             {
                 using (ProtoRegistry.StartModLoad(GUID))
                 {
-                    pagenum = TabSystem.RegisterTab($"{MODID_tab}:{MODID_tab}Tab", new TabData("轨道防御", "Assets/DSPBattle/dspbattletabicon"));
+                    //pagenum = TabSystem.RegisterTab($"{MODID_tab}:{MODID_tab}Tab", new TabData("轨道防御", "Assets/DSPBattle/dspbattletabicon"));
+                    //不再使用自己的tab页，而使用巨构的页，于此同时巨构的tab图标也改成了轨道防御的图标，且此mod开启后名称也改成了轨道防御(后面调用了ChangeTabName)
+                    pagenum = MoreMegaStructure.MoreMegaStructure.pagenum;
                     BattleProtos.pageBias = (pagenum - 2) * 1000;
                     MoreMegaStructure.MoreMegaStructure.battlePagenum = pagenum;
 
@@ -74,6 +76,7 @@ namespace DSP_Battle
 
             LDBTool.PreAddDataAction += BattleProtos.AddProtos;
             LDBTool.PostAddDataAction += BattleProtos.PostDataAction;
+            LDBTool.EditDataAction += BattleProtos.ChangeTabName;
         }
 
         public void Update()
