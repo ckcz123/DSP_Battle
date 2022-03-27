@@ -13,6 +13,8 @@ namespace DSP_Battle
     public class ShieldRenderer
     {
         public static StarData[] starData = new StarData[20];
+        public static StarSimulator[] shieldSimulator = new StarSimulator[20];
+        public static GameObject cursorViewUIBg = null;
 
         private static Dictionary<StarSimulator, Material> bodyMaterialMap = new Dictionary<StarSimulator, Material>();
         public static Dictionary<StarSimulator, Material> shieldMassMatMap = new Dictionary<StarSimulator, Material>();
@@ -21,14 +23,24 @@ namespace DSP_Battle
         public static Dictionary<StarSimulator, float> shieldAtomParamMap = new Dictionary<StarSimulator, float>();
         public static Dictionary<StarSimulator, float> shieldEffectParamMap = new Dictionary<StarSimulator, float>();
 
-        public static StarData testData;
-        public static StarSimulator testSimulator;
-        public static StarSimulator[] shieldSimulator = new StarSimulator[20];
+        public static Color shieldColor1 = new Color(0, 0.35f, 0.9f); //整个半透明的发光颜色
+        public static Color shieldColor2 = new Color(0, 0.1f, 0.3f); //整个颜色，饱和度不能太高
+        public static Color shieldColor3 = new Color(0.1f, 0.55f, 1f); //外环光晕
+        public static int shieldRenderMin = 50000; //低于这个护盾值不会渲染护盾
+        public static int shieldFullyRendered = 100000; //护盾值高于这个数量就渲染满护盾的饱和度，否则护盾量越少颜色越暗
+        public static bool activeProp1 = true;
+        public static bool activeProp2 = true;
+        public static bool activeProp3 = false;
+
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UniverseSimulator), "OnGameLoaded")]
         public static void UniverseSimulator_OnGameLoaded(ref UniverseSimulator __instance)
         {
+            if(cursorViewUIBg == null)
+            {
+                cursorViewUIBg = GameObject.Find("UI Root/Overlay Canvas/In Game/Starmap UIs/starmap-screen-ui/cursor-view/bg");
+            }
 
             CopyWhiteDwarfData();
 
@@ -43,15 +55,6 @@ namespace DSP_Battle
                 shieldSimulator[i].gameObject.name = "shieldSim_" + i.ToString();
                 shieldSimulator[i].gameObject.SetActive(false);
             }
-            //if (testSimulator != null) UnityEngine.Object.DestroyImmediate(testSimulator.gameObject);
-
-            //testSimulator = UnityEngine.Object.Instantiate<StarSimulator>(__instance.starPrefab, __instance.transform);
-            //testSimulator.universeSimulator = __instance;
-            //testSimulator.SetStarData(testData);
-            //testSimulator.gameObject.layer = 24;
-            //testSimulator.gameObject.name = "Test planet";
-            //// simulator[i].gameObject.SetActive((Configs.nextWaveState == 2 || Configs.nextWaveState == 3) && i < Configs.nextWaveWormCount);
-            //testSimulator.gameObject.SetActive(true);
 
         }
 
@@ -64,16 +67,15 @@ namespace DSP_Battle
             VectorLF3 uPosition = GameMain.mainPlayer.uPosition;
             Vector3 position2 = GameCamera.main.transform.position;
             Quaternion rotation = GameCamera.main.transform.rotation;
-            if (false)
+            int starId100 = -100000;
+            if(GameMain.data.localStar != null)
             {
-                testSimulator.starData.uPosition = GameMain.galaxy.PlanetById(103).uPosition;
-                testSimulator.UpdateUniversalPosition(position, uPosition, position2, rotation);
+                starId100 = GameMain.data.localStar.id * 100;
             }
-            int starId100 = GameMain.data.localStar.id * 100;
             for (int i = 1; i < 20; i++)
             {
-                int planetId = starId100 + i;
-                if (ShieldGenerator.currentShield.ContainsKey(planetId) && ShieldGenerator.currentShield[planetId] > 20000)
+                int planetId = starId100 + i; //此时shieldSimulator的stardata的index实际上与planet的index+1相等、相对应，也就是说shieldSimulator[0]永远不会被用到。
+                if (starId100 >= 0 && ShieldGenerator.currentShield.ContainsKey(planetId) && ShieldGenerator.currentShield[planetId] > shieldRenderMin)
                 {
                     shieldSimulator[i].gameObject.SetActive(true);
                     shieldSimulator[i].starData.uPosition = GameMain.galaxy.PlanetById(planetId).uPosition;
@@ -196,7 +198,22 @@ namespace DSP_Battle
                 __instance.massRenderer.transform.rotation = Quaternion.Inverse(GameMain.data.relativeRot);
                 __instance.effectRenderer.transform.rotation = Quaternion.Inverse(GameMain.data.relativeRot);
                 massMaterial.SetFloat("_Multiplier", num15 / 2);
-                massMaterial.SetColor("_Color3", new Color(0.0f, 0.35f, 0.9f));
+
+                float shieldCharged = 1f;
+                if(GameMain.localStar != null)
+                {
+                    int planetId = GameMain.localStar.id * 100 + __instance.starData.index; //不要用id（因为全是-2）也不要+1（跟其他逻辑不同），这里simulator的stardata的index是和planetId对应的，这是由于上面的GameTick的patch决定的
+                    if(ShieldGenerator.currentShield.ContainsKey(planetId) && ShieldGenerator.currentShield[planetId] < shieldFullyRendered)
+                    {
+                        shieldCharged = (float)(ShieldGenerator.currentShield[planetId] * 1.0 / shieldFullyRendered);
+                    }
+                }
+
+                //颜色根据护盾已充能的数量变得更亮
+                massMaterial.SetColor("_Color1", new Color(shieldColor1.r * shieldCharged, shieldColor1.g * shieldCharged, shieldColor1.b * shieldCharged) ); //整个半透明的发光颜色
+                massMaterial.SetColor("_Color2", new Color(shieldColor2.r * shieldCharged, shieldColor2.g * shieldCharged, shieldColor2.b * shieldCharged)); //整个颜色，饱和度不能太高
+                massMaterial.SetColor("_Color3", new Color(shieldColor3.r * shieldCharged, shieldColor3.g * shieldCharged, shieldColor3.b * shieldCharged)); //外环光晕
+
                 atmoMaterial.SetFloat("_Multiplier", num15);
                 atmoMaterial.SetVector("_SunPos", __instance.posVector);
                 effectMaterial.SetVector("_SunPos", __instance.posVector);
@@ -217,8 +234,6 @@ namespace DSP_Battle
                 {
                     __instance.sunFlare.enabled = (__instance.sunFlare.brightness > 0.001f);
                 }
-                //新增
-                //__instance.sunFlare.enabled = false;
             }
             else
             {
@@ -232,14 +247,9 @@ namespace DSP_Battle
 
         private static void CopyWhiteDwarfData()
         {
-            if (testData != null) return;
+            if (starData[0] != null) return;
 
-            testData = GameMain.galaxy.stars.Where(e => e.type == EStarType.WhiteDwarf).First().Copy();
-            testData.planetCount = 0;
-            testData.planets = new PlanetData[] { };
-            testData.id = -1;
-            testData.index = -1;
-            testData.radius = 0.35f;
+            StarData testData = GameMain.galaxy.stars.Where(e => e.type == EStarType.WhiteDwarf).First().Copy();
 
             for (int i = 0; i < 20; i++)
             {
@@ -248,8 +258,42 @@ namespace DSP_Battle
                 starData[i].planets = new PlanetData[] { };
                 starData[i].id = -2;
                 starData[i].index = i;
-                starData[i].radius = 0.35f;
+                starData[i].radius = 0.41f;
             }
         }
+
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIStarmap), "UpdateCursorView")]
+        public static void UIStarmapUpdateCursorViewPatch(ref UIStarmap __instance)
+        {
+            UIStarmapPlanet uistarmapPlanet = __instance.mouseHoverPlanet;
+            if (__instance.focusPlanet != null)
+            {
+                uistarmapPlanet = __instance.focusPlanet;
+            }
+
+            if (uistarmapPlanet == null)
+                return;
+
+            int planetId = uistarmapPlanet.planet.id;
+            if (ShieldGenerator.maxShieldCapacity.ContainsKey(planetId) && ShieldGenerator.maxShieldCapacity[planetId] > 0)
+            {
+                int curShield = 0;
+                int maxShield = 1;
+                if(ShieldGenerator.currentShield.TryGetValue(planetId, out curShield) && ShieldGenerator.maxShieldCapacity.TryGetValue(planetId, out maxShield))
+                {
+                    int length = __instance.cursorViewText.text.Length;
+                    if (length > 5 && __instance.cursorViewText.text[length-1] != 'k')
+                        __instance.cursorViewText.text += "\n" + "力场护盾短".Translate() + "  " + (curShield / 1000).ToString() + "k / " + (maxShield / 1000).ToString() + "k";
+                }
+                    
+            }
+            __instance.cursorViewTrans.sizeDelta = new Vector2(__instance.cursorViewText.preferredWidth * 0.5f + 44f, __instance.cursorViewText.preferredHeight * 0.5f + 14f);
+            __instance.cursorRightDeco.sizeDelta = new Vector2(__instance.cursorViewTrans.sizeDelta.y - 12f, 5f);
+
+        }
+
     }
 }
+

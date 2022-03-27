@@ -13,6 +13,8 @@ namespace DSP_Battle
         public static int pageBias = 0;
         public static void AddProtos()
         {
+            //官方星图界面 橙色高亮字体color=FD965EC0
+
             ProtoRegistry.RegisterString("轨道防御", "Defense", "轨道防御");
 
             ProtoRegistry.RegisterString("子弹1", "Armour piercing", "穿甲磁轨弹");
@@ -266,6 +268,9 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("占比gm", "Percentage", "占比");
             ProtoRegistry.RegisterString("游戏提示gm", "Message", "游戏提示");
 
+
+            ProtoRegistry.RegisterString("力场护盾", "Planet shield", "力场护盾");
+            ProtoRegistry.RegisterString("力场护盾短", "Shield", "力场护盾");
             ProtoRegistry.RegisterString("护盾容量", "Shield capacity", "护盾容量");
             ProtoRegistry.RegisterString("护盾容量短", "Max shield", "护盾容量");
             ProtoRegistry.RegisterString("当前护盾", "Current shield", "当前护盾");
