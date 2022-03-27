@@ -90,6 +90,14 @@ namespace DSP_Battle
             {
                 UIAlert.OnActiveChange();
             }
+            if(Configs.developerMode && Input.GetKeyDown(KeyCode.Z))
+            {
+                int planetId = 103;
+                if (GameMain.localPlanet != null)
+                    planetId = GameMain.localPlanet.id;
+                if (ShieldGenerator.currentShield.ContainsKey(planetId))
+                    ShieldGenerator.currentShield.AddOrUpdate(planetId, 100000, (x, y) => y + 100000);
+            }
         }
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameMain), "OnDestroy")]

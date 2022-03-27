@@ -15,12 +15,15 @@ namespace DSP_Battle
         public int damageRange;
         public int countDown;
         public int wormholeIndex;
+        public bool isFiring = false;
+        public bool isBlockedByShield = false;
         // 强制位移参数，时间很短不需要存档
         public VectorLF3 forceDisplacement;
         public int forceDisplacementTime = 0;
         public float movePerTick; //每tick位移占剩余位移的百分之多少
 
         public static int minForcedMove = 0; //每tick产生的最小强制位移
+
 
         public enum State
         {
@@ -131,6 +134,9 @@ namespace DSP_Battle
             renderingUIData = new ShipUIRenderingData();
             renderingUIData.SetEmpty();
             renderingUIData.gid = gid;
+
+            isFiring = false;
+            isBlockedByShield = false;
         }
 
         public double distanceTo(VectorLF3 pos)
@@ -196,12 +202,12 @@ namespace DSP_Battle
             if (state != State.active) return;
 
             //强制位移
-            if(forceDisplacementTime > 0 && forceDisplacement!=null && distanceToTarget > 3000) //最后一个判断条件让其不要在距离地表过近的位置被强制位移
+            if (forceDisplacementTime > 0 && forceDisplacement != null && distanceToTarget > 3000) //最后一个判断条件让其不要在距离地表过近的位置被强制位移
             {
                 VectorLF3 direction = forceDisplacement - shipData.uPos;
                 double fullDistance = direction.magnitude;
                 double forceDispDistance = fullDistance * movePerTick + minForcedMove;
-                if(fullDistance <= minForcedMove)
+                if (fullDistance <= minForcedMove)
                 {
                     forceDisplacementTime = 1;
                     forceDispDistance = fullDistance;
@@ -217,6 +223,63 @@ namespace DSP_Battle
                 // if (state != State.active) return;
             }
 
+            //如果目标行星有护盾且距离行星小于开火射程，则开火
+            int planetId = shipData.planetB;
+            int shipTypeNum = Configs.enemyIntensity2TypeMap[intensity];
+            if (ShieldGenerator.currentShield.ContainsKey(planetId) && ShieldGenerator.currentShield[planetId] > 0 && distanceToTarget <= Configs.enemyFireRange[shipTypeNum] && shipData.otherGId >= 0)
+            {
+                if (shipTypeNum != 3) //3号是自爆船，不能开火
+                    isFiring = true;
+                else
+                    isFiring = false;
+                //目前设定是只要护盾量大于1就可以阻挡飞船，但是护盾没有战时回复。飞船被阻挡的位置约为其射程的90%。
+                if (ShieldGenerator.currentShield[planetId] > ShieldRenderer.shieldRenderMin && distanceToTarget <= Configs.enemyFireRange[shipTypeNum] * 0.9f)
+                {
+                    if (shipTypeNum != 3)
+                        isBlockedByShield = true;
+                    else
+                        isBlockedByShield = false;
+                    //如果在护盾>有效护盾（暂定50000）的情况下撞上了护盾，船承受巨量伤害，同时也会对护盾造成伤害。自爆船将会造成巨量伤害，暂定为intensity=9的3号船
+                    if((GameMain.galaxy.PlanetById(planetId).uPosition - uPos).magnitude <= ShieldRenderer.shieldRadius * 810)
+                    {
+                        UIBattleStatistics.RegisterShieldAttack(BeAttacked(999999));
+                        ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => y - Configs.enemyDamagePerBullet[shipTypeNum]);
+                        if(ShieldGenerator.currentShield.GetOrAdd(planetId, 0) < 0)
+                            ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => 0);
+                        UIBattleStatistics.RegisterShieldTakeDamage(Configs.enemyDamagePerBullet[shipTypeNum]);
+
+                        //爆炸效果
+                        DysonSwarm swarm = GameMain.data.dysonSpheres[planetId / 100 - 1]?.swarm;
+                        if (swarm != null)
+                        {
+                            int maxi = 1;
+                            if (shipTypeNum == 3) maxi = 10;
+                            for (int i = 0; i < maxi; i++)
+                            {
+                                int bulletIndex = swarm.AddBullet(new SailBullet
+                                {
+                                    maxt = 0.016667f * i,
+                                    lBegin = new Vector3(0, 0, 0),
+                                    uEndVel = new Vector3(0, 0, 0),
+                                    uBegin = uPos,
+                                    uEnd = uPos
+                                }, 1);
+
+                                swarm.bulletPool[bulletIndex].state = 0;
+                            }
+                        }
+
+                    }
+                }
+                else
+                    isBlockedByShield = false;
+            }
+            else
+            {
+                isFiring = false;
+                isBlockedByShield = false;
+            }
+
             Quaternion quaternion = Quaternion.identity;
             bool flag7 = false;
             if (shipData.stage == 0) UpdateStage0(out quaternion, out flag7);
@@ -225,12 +288,46 @@ namespace DSP_Battle
             PlanetData planet = GameMain.galaxy.PlanetById(shipData.planetB);
             renderingData.SetPose(shipData.uPos, flag7 ? quaternion : shipData.uRot, GameMain.data.relativePos, GameMain.data.relativeRot, shipData.uVel * shipData.uSpeed, shipData.itemId);
             renderingUIData.SetPose(shipData.uPos, flag7 ? quaternion : shipData.uRot, (float)(
-                planet.star.uPosition - (shipData.otherGId < 0 ? wormholePos :planet.uPosition)).magnitude, shipData.uSpeed, shipData.itemId);
+                planet.star.uPosition - (shipData.otherGId < 0 ? wormholePos : planet.uPosition)).magnitude, shipData.uSpeed, shipData.itemId);
             if (renderingData.anim.z < 0) renderingData.anim.z = 0;
+
         }
 
         private void UpdateStage0(out Quaternion quaternion, out bool flag7)
         {
+            //飞船开火
+            if(isFiring)
+            {
+                int shipTypeNum = Configs.enemyIntensity2TypeMap[intensity];
+                int interval = Configs.enemyFireInterval[shipTypeNum];
+                if(GameMain.instance.timei % interval == shipIndex % interval)
+                {
+                    //造成伤害
+                    int planetId = shipData.planetB;
+                    ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => y - Configs.enemyDamagePerBullet[shipTypeNum]);
+                    if (ShieldGenerator.currentShield[planetId] < 0) 
+                        ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => 0);
+                    UIBattleStatistics.RegisterShieldTakeDamage(Configs.enemyDamagePerBullet[shipTypeNum]);
+                    //子弹
+                    DysonSwarm swarm = GameMain.data.dysonSpheres[planetId / 100 - 1]?.swarm;
+                    if(swarm!=null)
+                    {
+                        int bulletIndex = swarm.AddBullet(new SailBullet
+                        {
+                            maxt = 0.1f,
+                            lBegin = new Vector3(0, 0, 0),
+                            uEndVel = new Vector3(0, 0, 0),
+                            uBegin = uPos,
+                            uEnd = (uPos - GameMain.galaxy.PlanetById(planetId).uPosition).normalized * ShieldRenderer.shieldRadius * 820 + GameMain.galaxy.PlanetById(planetId).uPosition
+                        }, 1);
+
+                        swarm.bulletPool[bulletIndex].state = 0;
+                    }
+                }
+
+            }
+
+            //飞船移动
             // float shipSailSpeed = GameMain.history.logisticShipSailSpeedModified;
             float shipSailSpeed = maxSpeed;
 
@@ -284,7 +381,7 @@ namespace DSP_Battle
                     num47 = shipSailSpeed;
                 }
             }
-            else
+            else if(!isBlockedByShield)
             {
                 float num48 = (float)((double)shipData.uSpeed * num46) + 6f;
                 if (num48 > shipSailSpeed)
@@ -306,6 +403,13 @@ namespace DSP_Battle
                     shipData.uSpeed = num48;
                 }
                 num47 = shipData.uSpeed;
+            }
+            else
+            {
+                if (shipData.uSpeed > 200)
+                    shipData.uSpeed = shipData.uSpeed * 0.9f - 180;
+                else
+                    shipData.uSpeed = 0;
             }
 
             int num50 = -1;
@@ -597,7 +701,8 @@ namespace DSP_Battle
             renderingData.gid = shipData.shipIndex;
             renderingUIData.SetEmpty();
             renderingUIData.gid = shipData.shipIndex;
-
+            isFiring = false;
+            isBlockedByShield =false;
         }
 
     }

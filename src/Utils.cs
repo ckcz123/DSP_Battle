@@ -37,6 +37,33 @@ namespace DSP_Battle
             }
         }
 
-        
+        public static string KMGFormat(long num)
+        {
+            if(num >= 1000000000000000)
+            {
+                return (num * 1.0 / 1000000000000000).ToString("G3") + " P";
+            }
+            else if(num >= 1000000000000)
+            {
+                return (num * 1.0 / 1000000000000).ToString("G3") + " T";
+            }
+            else if (num >= 1000000000)
+            {
+                return (num * 1.0 / 1000000000).ToString("G3") + " G";
+            }
+            else if (num >= 1000000)
+            {
+                return (num * 1.0 / 1000000).ToString("G3") + " M";
+            }
+            else if (num >= 1000)
+            {
+                return (num * 1.0 / 1000).ToString("G3") + " k";
+            }
+            else
+            {
+                return num.ToString();
+            }
+        }
+
     }
 }

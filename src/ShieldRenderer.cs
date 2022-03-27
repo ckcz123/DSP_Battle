@@ -14,7 +14,6 @@ namespace DSP_Battle
     {
         public static StarData[] starData = new StarData[20];
         public static StarSimulator[] shieldSimulator = new StarSimulator[20];
-        public static GameObject cursorViewUIBg = null;
 
         private static Dictionary<StarSimulator, Material> bodyMaterialMap = new Dictionary<StarSimulator, Material>();
         public static Dictionary<StarSimulator, Material> shieldMassMatMap = new Dictionary<StarSimulator, Material>();
@@ -26,22 +25,17 @@ namespace DSP_Battle
         public static Color shieldColor1 = new Color(0, 0.35f, 0.9f); //整个半透明的发光颜色
         public static Color shieldColor2 = new Color(0, 0.1f, 0.3f); //整个颜色，饱和度不能太高
         public static Color shieldColor3 = new Color(0.1f, 0.55f, 1f); //外环光晕
-        public static int shieldRenderMin = 50000; //低于这个护盾值不会渲染护盾
+        public static int shieldRenderMin = 1; //低于这个护盾值不会渲染护盾
         public static int shieldFullyRendered = 100000; //护盾值高于这个数量就渲染满护盾的饱和度，否则护盾量越少颜色越暗
         public static bool activeProp1 = true;
         public static bool activeProp2 = true;
         public static bool activeProp3 = false;
-
+        public static float shieldRadius = 0.41f; //行星护盾的半径，0.4或以下会导致在地表时摄像机拉到最远会被护盾遮挡，使得整体有一层白雾的感觉
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UniverseSimulator), "OnGameLoaded")]
         public static void UniverseSimulator_OnGameLoaded(ref UniverseSimulator __instance)
         {
-            if(cursorViewUIBg == null)
-            {
-                cursorViewUIBg = GameObject.Find("UI Root/Overlay Canvas/In Game/Starmap UIs/starmap-screen-ui/cursor-view/bg");
-            }
-
             CopyWhiteDwarfData();
 
             for (int i = 0; i < 20; i++)
@@ -205,7 +199,7 @@ namespace DSP_Battle
                     int planetId = GameMain.localStar.id * 100 + __instance.starData.index; //不要用id（因为全是-2）也不要+1（跟其他逻辑不同），这里simulator的stardata的index是和planetId对应的，这是由于上面的GameTick的patch决定的
                     if(ShieldGenerator.currentShield.ContainsKey(planetId) && ShieldGenerator.currentShield[planetId] < shieldFullyRendered)
                     {
-                        shieldCharged = (float)(ShieldGenerator.currentShield[planetId] * 1.0 / shieldFullyRendered);
+                        shieldCharged = (float)((ShieldGenerator.currentShield[planetId] - shieldRenderMin) * 1.0 / (shieldFullyRendered - shieldRenderMin));
                     }
                 }
 
@@ -258,7 +252,7 @@ namespace DSP_Battle
                 starData[i].planets = new PlanetData[] { };
                 starData[i].id = -2;
                 starData[i].index = i;
-                starData[i].radius = 0.41f;
+                starData[i].radius = shieldRadius;
             }
         }
 

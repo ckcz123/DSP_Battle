@@ -66,6 +66,18 @@ namespace DSP_Battle
 
         public static int[] enemyLandCnt = new int[] { 1, 3, 5, 5, 10000 };
 
+        public static int[] enemyFireInterval = new int[] {120, 60, 60, int.MaxValue, 60 }; //每攻击一次间隔的tick0
+
+        public static int[] enemyFireRange = new int[] { 5000, 8000, 15000, 15000, 50000 }; //射程
+
+        public static int[] enemyDamagePerBullet = new int[] { 200, 200, 300, 20000, 1000 };
+        //public static int[] enemyDamagePerBullet = new int[] { 2, 2, 3, 20000, 2 };
+
+        //public static int[] enemyBulletSpeed = new int[] {20000, 30000, 50000, 80000, 150000 }; //虽然有speed设置，但是为了减少运算，子弹伤害是在发射时就结算的。speed应该设置的比较大来减少视觉上的误差
+
+        public static int[] enemyIntensity2TypeMap = new int[] { 0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4 };
+        //-------------------------------------------------------0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16,17,18,19,20,21,22,2
+
         // --- 虫洞信息
         public static int _wormholeRange;
 
@@ -211,7 +223,7 @@ namespace DSP_Battle
             enemyIntensity[3] = 9; // config.Bind("config", "enemy4Intensity", defaultValue: 8, "敌方飞船4强度").Value;
             enemyHp[3] = 120000; // config.Bind("config", "enemy4Hp", defaultValue: 120000, "敌方飞船4血量").Value;
             enemySpeed[3] = 1000f; // config.Bind("config", "enemy4Speed", defaultValue: 1000f, "敌方飞船4速度（米每秒）").Value;
-            enemyRange[3] = 80; // config.Bind("config", "enemy4Range", defaultValue: 80, "敌方飞船4破坏范围").Value;
+            enemyRange[3] = 120; // config.Bind("config", "enemy4Range", defaultValue: 80, "敌方飞船4破坏范围").Value;
 
             enemyIntensity[4] = 15; // config.Bind("config", "enemy5Intensity", defaultValue: 15, "敌方飞船5强度").Value;
             enemyHp[4] = 80000; // config.Bind("config", "enemy5Hp", defaultValue: 80000, "敌方飞船5血量").Value;
@@ -222,10 +234,6 @@ namespace DSP_Battle
 
             if (Configs.developerMode)
             {
-                _missile3Atk = 2500;
-                _missile3Speed = 10000;
-                missile3Range = 10000;
-                _wormholeRange = 80000;
             }
 
             intensity =

@@ -63,6 +63,9 @@ namespace DSP_Battle
         public static double minInterceptDis; //最小拦截距离
         public static long battleTime; // 当前战斗时间
 
+        public static long shieldDamageTaken; //护盾承受伤害
+        public static long shieldDamageMade; //护盾造成伤害
+
         //除上面的之外其他总和数值
         public static int totalEnemyGen; //生成的敌人总数
         public static long totalAmmoDamageOut, totalAmmoDamageHit, bAmmoDamageOut, bAmmoDamageHit, mAmmoDamageOut, mAmmoDamageHit; //伤害输出和命中总和记录。此处Ammo泛指子弹和导弹，前缀b和m指代子弹和导弹
@@ -208,6 +211,8 @@ namespace DSP_Battle
                 totalDamage = 0;
                 totalEnemyEliminated = 0;
                 totalEnemyGen = 0;
+                shieldDamageMade = 0;
+                shieldDamageTaken = 0;
                 totalAmmoDamageHit = 0;
                 totalAmmoDamageOut = 0;
                 totalAmmoHit = 0;
@@ -368,7 +373,7 @@ namespace DSP_Battle
             catch (Exception) { }
         }
 
-        //敌人被拦截
+        //敌人被拦截摧毁
         public static void RegisterIntercept(EnemyShip ship, double distance = -1)
         {
             try
@@ -386,6 +391,18 @@ namespace DSP_Battle
                 allInterceptDis.AddItem(distance);
             }
             catch (Exception) { }
+        }
+
+        //护盾承受伤害
+        public static void RegisterShieldTakeDamage(int damage)
+        {
+            Interlocked.Add(ref shieldDamageTaken, damage);
+        }
+
+        //护盾造成伤害
+        public static void RegisterShieldAttack(int damage)
+        {
+            Interlocked.Add(ref shieldDamageMade, damage);
         }
 
         public static void OnClickBattleStatButton()
@@ -503,25 +520,26 @@ namespace DSP_Battle
 
                 briefLabel.text = "战斗时间".Translate() + "\n" + "歼灭敌人".Translate() + "\n" + "输出伤害".Translate() + "\n" + "损失物流塔".Translate() + "\n" +
                     "损失其他建筑".Translate() + "\n"
-                    + "损失资源".Translate() + "\n\n" + "平均拦截距离".Translate() + "\n" + "最小拦截距离".Translate();
+                    + "损失资源".Translate() + "\n\n" + "平均拦截距离".Translate() + "\n" + "最小拦截距离".Translate() + "\n" + "护盾承受伤害".Translate() + "\n" + "护盾造成伤害".Translate();
                 briefValue1.text = "";
                 briefValue2.text = 
                     string.Format("{0:00}:{1:00}", new object[] { battleTime / 60 / 60, battleTime / 60 % 60 }) + "\n" +
-                    totalEnemyEliminated.ToString("N0") + "\n" + totalDamage.ToString("N0") + "\n" + stationLost.ToString("N0") + "\n" + othersLost.ToString("N0") + "\n" + resourceLost.ToString("N0") + "\n\n" + avgInterDisStr + "\n" + minInterDisStr;
+                    totalEnemyEliminated.ToString("N0") + "\n" + totalDamage.ToString("N0") + "\n" + stationLost.ToString("N0") + "\n" + othersLost.ToString("N0") + "\n" + resourceLost.ToString("N0") + "\n\n" + avgInterDisStr + "\n" + minInterDisStr + "\n" +
+                    shieldDamageTaken.ToString("N0") + "\n" + shieldDamageMade.ToString("N0");
 
                 ammoLabel.text = "\n" + 
                     "数量总计".Translate() + "\n" + "伤害总计".Translate() + "\n\n" +
-                    "子弹数量".Translate() + "\n" + "  > " + "子弹1".Translate() + "\n" + "  > " + "子弹2".Translate() + "\n" + "  > " + "子弹3".Translate() + "\n" + "  > " + "脉冲".Translate() + "\n\n" +
-                    "导弹数量".Translate() + "\n" + "  > " + "导弹1".Translate() + "\n" + "  > " + "导弹2".Translate() + "\n" + "  > " + "导弹3短".Translate() + "\n\n" +
-                    "子弹伤害gm".Translate() + "\n" + "  > " + "子弹1".Translate() + "\n" + "  > " + "子弹2".Translate() + "\n" + "  > " + "子弹3".Translate() + "\n" + "  > " + "脉冲".Translate() + "\n\n" +
-                    "导弹伤害gm".Translate() + "\n" + "  > " + "导弹1".Translate() + "\n" + "  > " + "导弹2".Translate() + "\n" + "  > " + "导弹3短".Translate() + "\n\n";
+                    "子弹数量".Translate() + "\n" + "  > " + "子弹1".Translate() + "\n" + "  > " + "子弹2".Translate() + "\n" + "  > " + "子弹3短".Translate() + "\n" + "  > " + "脉冲短".Translate() + "\n\n" +
+                    "导弹数量".Translate() + "\n" + "  > " + "导弹1短".Translate() + "\n" + "  > " + "导弹2短".Translate() + "\n" + "  > " + "导弹3短".Translate() + "\n\n" +
+                    "子弹伤害gm".Translate() + "\n" + "  > " + "子弹1".Translate() + "\n" + "  > " + "子弹2".Translate() + "\n" + "  > " + "子弹3短".Translate() + "\n" + "  > " + "脉冲短".Translate() + "\n\n" +
+                    "导弹伤害gm".Translate() + "\n" + "  > " + "导弹1短".Translate() + "\n" + "  > " + "导弹2短".Translate() + "\n" + "  > " + "导弹3短".Translate() + "\n\n";
 
                 ammoValue1.text = "击中gm".Translate() + "/" + "发射gm".Translate() + "\n" +
-                    $"{totalAmmoHit}/{totalAmmoUse}\n{totalAmmoDamageHit}/{totalAmmoDamageOut}\n\n" +
+                    $"{totalAmmoHit}/{totalAmmoUse}\n{Utils.KMGFormat(totalAmmoDamageHit)} / {Utils.KMGFormat(totalAmmoDamageOut)}\n\n" +
                     $"{bAmmoHit}/{bAmmoUse}\n{ammoHit[8001]}/{ammoUse[8001]}\n {ammoHit[8002]}/{ammoUse[8002]}\n {ammoHit[8003]}/{ammoUse[8003]}\n {ammoHit[8007]}/{ammoUse[8007]}\n\n" + 
                     $"{mAmmoHit}/{mAmmoUse}\n{ammoHit[8004]}/{ammoUse[8004]}\n {ammoHit[8005]}/{ammoUse[8005]}\n {ammoHit[8006]}/{ammoUse[8006]}\n\n" +
-                    $"{bAmmoDamageHit}/{bAmmoDamageOut}\n{ammoDamageHit[8001]}/{ammoDamageOutput[8001]}\n {ammoDamageHit[8002]}/{ammoDamageOutput[8002]}\n {ammoDamageHit[8003]}/{ammoDamageOutput[8003]}\n {ammoDamageHit[8007]}/{ammoDamageOutput[8007]}\n\n" +
-                    $"{mAmmoDamageHit}/{mAmmoDamageOut}\n{ammoDamageHit[8004]}/{ammoDamageOutput[8004]}\n {ammoDamageHit[8005]}/{ammoDamageOutput[8005]}\n {ammoDamageHit[8006]}/{ammoDamageOutput[8006]}\n\n";
+                    $"{Utils.KMGFormat(bAmmoDamageHit)} / {Utils.KMGFormat(bAmmoDamageOut)} \n{Utils.KMGFormat(ammoDamageHit[8001])} / {Utils.KMGFormat(ammoDamageOutput[8001])} \n {Utils.KMGFormat(ammoDamageHit[8002])} / {Utils.KMGFormat(ammoDamageOutput[8002])} \n {Utils.KMGFormat(ammoDamageHit[8003])} / {Utils.KMGFormat(ammoDamageOutput[8003])} \n {Utils.KMGFormat(ammoDamageHit[8007])} / {Utils.KMGFormat(ammoDamageOutput[8007])} \n\n" +
+                    $"{Utils.KMGFormat(mAmmoDamageHit)} / {Utils.KMGFormat(mAmmoDamageOut)} \n{Utils.KMGFormat(ammoDamageHit[8004])} / {Utils.KMGFormat(ammoDamageOutput[8004])} \n {Utils.KMGFormat(ammoDamageHit[8005])} / {Utils.KMGFormat(ammoDamageOutput[8005])} \n {Utils.KMGFormat(ammoDamageHit[8006])} / {Utils.KMGFormat(ammoDamageOutput[8006])} \n\n";
 
                 ammoValue2.text = "效率gm".Translate() + "\n" +
                     totalAmoutProp.ToString("0.00%")+ "\n" + totalDamageProp.ToString("0.00%") + "\n\n" +

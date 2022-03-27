@@ -23,6 +23,7 @@ namespace DSP_Battle
         public static ConcurrentDictionary<int, int> calcShieldInc = new ConcurrentDictionary<int, int>();
         public static ConcurrentDictionary<int, int> calcShieldGenCount = new ConcurrentDictionary<int, int>();
 
+
         public static int curShieldIncUI = 0; //由于每帧会清零calc的三个Dictionary，UI无法从中获取数值并更新显示，因此在清零前将必要信息暂时保存在这两个int中，供UI刷新显示数值使用
         public static int curShieldGenCntUI = 0;
 
@@ -189,6 +190,11 @@ namespace DSP_Battle
             //护盾回复
             int maxCap = maxShieldCapacity.GetOrAdd(planetId, 0);
             int gen = (int)(Configs.shieldGenPerTick * (__instance.currEnergyPerTick * 1.0 / __instance.energyPerTick)); //电网供给只要不是100%就会按比例缩减护盾恢复速度
+            if (Configs.nextWaveStarIndex == __instance.fullId / 100 - 1 && Configs.nextWaveState == 3) //战斗中不回复护盾
+            { 
+                gen = 0;
+                __instance.currPoolEnergy -= __instance.energyPerTick;
+            }
             calcShieldInc.AddOrUpdate(planetId, gen, (x, y) => y + gen);
 
             //计算护盾产生器总量

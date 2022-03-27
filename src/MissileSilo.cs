@@ -1150,21 +1150,32 @@ namespace DSP_Battle
                                     //范围伤害和强制位移
                                     var shipsHit = EnemyShips.FindShipsInRange(dysonRocket.uPos, dmgRange);
                                     if (shipsHit.Count > 0) UIBattleStatistics.RegisterHit(missileId, 0, 1); //首先注册一下该导弹击中，但不注册伤害
-                                    foreach (var item in shipsHit)
+                                    EnemyShip target = null;
+                                    if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))
+                                        target = EnemyShips.ships[MissileTargets[starIndex][i]];
+
+                                    if (target != null && (target.uPos - GameMain.galaxy.PlanetById(target.shipData.planetB).uPosition).magnitude < 2000) //如果离地表过近，则不造成范围伤害，否则在护盾强大时过于imba
                                     {
-                                        if (EnemyShips.ships.ContainsKey(item))
+                                        UIBattleStatistics.RegisterHit(missileId,target.BeAttacked(damage),0);
+                                    }
+                                    else
+                                    {
+                                        foreach (var item in shipsHit)
                                         {
-                                            double distance = (dysonRocket.uPos - EnemyShips.ships[item].uPos).magnitude;
-                                            int aoeDamage = damage;
-                                            if (distance > dmgRange * 0.5)
+                                            if (EnemyShips.ships.ContainsKey(item))
                                             {
-                                                aoeDamage = (int)(damage * (1.0 - (2 * distance - dmgRange) / dmgRange));
+                                                double distance = (dysonRocket.uPos - EnemyShips.ships[item].uPos).magnitude;
+                                                int aoeDamage = damage;
+                                                if (distance > dmgRange * 0.5)
+                                                {
+                                                    aoeDamage = (int)(damage * (1.0 - (2 * distance - dmgRange) / dmgRange));
+                                                }
+                                                int realDamage = EnemyShips.ships[item].BeAttacked(aoeDamage);
+                                                UIBattleStatistics.RegisterHit(missileId, realDamage, 0); //每个目标不再注册新的击中数量，只注册伤害
+                                                //引力导弹的强制位移
+                                                if (forceDisplacement)
+                                                    EnemyShips.ships[item].InitForceDisplacement(dysonRocket.uPos);
                                             }
-                                            int realDamage = EnemyShips.ships[item].BeAttacked(aoeDamage);
-                                            UIBattleStatistics.RegisterHit(missileId, realDamage, 0); //每个目标不再注册新的击中数量，只注册伤害
-                                            //引力导弹的强制位移
-                                            if(forceDisplacement)
-                                                EnemyShips.ships[item].InitForceDisplacement(dysonRocket.uPos);
                                         }
                                     }
                                     

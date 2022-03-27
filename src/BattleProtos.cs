@@ -24,16 +24,20 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("子弹2描述", "A powerful bullet by sulfuric acid.", "在对敌人进行分析和研究后，先驱者大胆将<color=#c2853d>硫酸</color>封装后制成了一种新的炮弹。爆破后可以对范围内敌人产生酸蚀，更加高效地杀伤敌人。");
             ProtoRegistry.RegisterString("子弹2结论", "You have unlocked acid bullet.", "你解锁了强酸磁轨弹，可以利用硫酸腐蚀外壳");
             ProtoRegistry.RegisterString("子弹3", "Deuterium nucleus", "氘核爆破弹");
+            ProtoRegistry.RegisterString("子弹3短", "D-nucleus", "氘核爆破弹");
             ProtoRegistry.RegisterString("子弹3描述", "A more powerful bullet with a micro-thermonuclear-boom in it.", "制造出<color=#c2853d>热核导弹</color>的先驱者想要让他更小更快，便试着把核弹微缩化封装进了子弹里。该武器可以在命中后发生聚变爆炸，对敌人造成大量伤害。");
             ProtoRegistry.RegisterString("子弹3结论", "You have unlocked deuterium nucleus", "你解锁了氘核爆破弹，可以利用核聚变进行破坏");
             ProtoRegistry.RegisterString("脉冲", "Phase-cracking beam", "相位裂解光束");
+            ProtoRegistry.RegisterString("脉冲短", "Cracking beam", "相位裂解光束");
             ProtoRegistry.RegisterString("脉冲描述", "The beam doens't need to be produced, just provide enough energy to <color=#c2853d>Phaser emitter</color> to eject.", "这种光束是不需要制作和提供的，只需给<color=#c2853d>相位裂解炮</color>提供足够电量即可无限发射。");
 
             ProtoRegistry.RegisterString("导弹1", "Thermonuclear missile", "热核导弹");
+            ProtoRegistry.RegisterString("导弹1短", "Nuclear missile", "热核导弹");
             ProtoRegistry.RegisterString("导弹1描述", "A powerful nuclear missile", "这天，百无聊赖的先驱者正在刷哔哩哔哩，突然刷到了一条《如何在卧室制造核弹》的视频，于是这种导弹便被制造了出来。这是一种重型武器，发射升空并命中敌人后产生核爆，造成大范围伤害。");
             ProtoRegistry.RegisterString("导弹1结论", "You have unlocked thermonuclear missile.", "你解锁了热核导弹，可以自动追踪敌人");
 
             ProtoRegistry.RegisterString("导弹2", "Anti-matter missile", "反物质导弹");
+            ProtoRegistry.RegisterString("导弹2短", "A-M missile", "反物质导弹");
             ProtoRegistry.RegisterString("导弹2描述", "A missile has a bit of anti-matter in it, turning anything into oblivion after explosion.", "先驱者在一次搬运货物时不慎手滑造成微量<color=#c2853d>反物质</color>泄露，这导致他辛辛苦苦拉好的产线毁于一旦。“为什么不让敌人尝尝这种痛苦呢？”他想到。于是这种将<color=#c2853d>反物质</color>封装入导弹的武器被制造了出来，命中敌人后会发生湮灭，将敌人彻底抹杀。");
             ProtoRegistry.RegisterString("导弹2结论", "You have unlocked anti-matter missile.", "你解锁了反物质导弹，可以自动追踪敌人");
 
@@ -416,18 +420,18 @@ namespace DSP_Battle
             techBullet4.AddItemCounts = new int[] { 1 };
 
 
-            TechProto techShield1 = ProtoRegistry.RegisterTech(1916, "行星力场护盾", "即将到来gm", "即将到来gm", "Assets/DSPBattle/cannon3tech", new int[] { 1705 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+            TechProto techShield1 = ProtoRegistry.RegisterTech(1916, "行星力场护盾", "行星力场护盾描述", "行星力场护盾结论", "Assets/DSPBattle/cannon3tech", new int[] { 1705 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
                 new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 565,815 }, new Vector2(53, -31));
-            techShield1.Published = false;
-            TechProto techStellarFortress = ProtoRegistry.RegisterTech(1917, "星际要塞", "即将到来gm", "即将到来gm", "Assets/DSPBattle/cannon3tech", new int[] { 1903 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+            
+            TechProto techStellarFortress = ProtoRegistry.RegisterTech(1917, "星际要塞", "星际要塞描述", "星际要塞结论", "Assets/DSPBattle/cannon3tech", new int[] { 1903 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
                 new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { }, new Vector2(41, -43));
             techStellarFortress.Published = false;
-            TechProto techStarCannon = ProtoRegistry.RegisterTech(1918, "恒星炮", "即将到来gm", "即将到来gm", "Assets/DSPBattle/cannon3tech", new int[] { 1144 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+            TechProto techStarCannon = ProtoRegistry.RegisterTech(1918, "恒星炮", "恒星炮描述", "恒星炮结论", "Assets/DSPBattle/cannon3tech", new int[] { 1144 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
                 new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 570, 571, 572 }, new Vector2(65, -3));
-            techStarCannon.Published = false;
-            TechProto techDrop = ProtoRegistry.RegisterTech(1919, "玻色子操控", "即将到来gm", "即将到来gm", "Assets/DSPBattle/cannon3tech", new int[] { 1915 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+            
+            TechProto techDrop = ProtoRegistry.RegisterTech(1919, "玻色子操控", "玻色子操控描述", "玻色子操控结论", "Assets/DSPBattle/cannon3tech", new int[] { 1915 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
                 new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 566, 567, 568, 569, 573 }, new Vector2(57, -43));
-            techDrop.Published = false;
+            
 
             TechProto winGame = LDB.techs.Select(1508);
             winGame.AddItems = new int[] { 8028, 8029 };
