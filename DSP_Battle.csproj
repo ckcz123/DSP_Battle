@@ -120,6 +120,7 @@
     <Compile Include="src\BattleProtos.cs" />
     <Compile Include="src\RemoveEntities.cs" />
     <Compile Include="src\ShieldGenerator.cs" />
+    <Compile Include="src\ShieldRenderer.cs" />
     <Compile Include="src\StarCannon.cs" />
     <Compile Include="src\UIBattleStatistics.cs" />
     <Compile Include="src\Cannon.cs" />

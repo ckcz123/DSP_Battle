@@ -18,6 +18,7 @@ namespace DSP_Battle
 
         private static Dictionary<StarSimulator, Material> bodyMaterialMap = new Dictionary<StarSimulator, Material>();
 
+
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UniverseSimulator), "OnGameLoaded")]
         public static void UniverseSimulator_OnGameLoaded(ref UniverseSimulator __instance)
@@ -100,12 +101,14 @@ namespace DSP_Battle
             Vector3 viewport = GameCamera.main.WorldToViewportPoint(__instance.transform.position);
             var distance = (__instance.starData.uPosition - playerUPos).magnitude;
             bool active = distance <= 40000 * 8 && (distance <= 2000 || (viewport.z > 0 && viewport.x > -0.1 && viewport.x < 1.1 && viewport.y > -0.1 && viewport.y < 1.1));
-            if (active != simulatorActive[__instance.starData.index])
+
+            if (__instance.starData.index >= 0 && active != simulatorActive[__instance.starData.index])
             {
                 __instance.gameObject.SetActive(active);
                 simulatorActive[__instance.starData.index] = active;
             }
             if (!active) return;
+
 
             float num4 = (float)(__instance.runtimeDist / 2400000.0);
             float num7 = 20f / (num4 + 3f);
@@ -125,7 +128,7 @@ namespace DSP_Battle
                 num9 = num9 * 0.5f + 0.5f;
             }
 
-            float num11 = __instance.visualScale * 6000f * __instance.starData.radius;
+            float num11 = __instance.visualScale * 6000f * __instance.starData.radius; 
             float a = num11 * 100f;
             float b2 = num11 * 50f;
             float num15 = Mathf.InverseLerp(a, b2, (float)__instance.runtimeDist);
@@ -141,7 +144,7 @@ namespace DSP_Battle
             {
                 __instance.sunFlare.enabled = (num9 > 0.001f);
             }
-
+            
             __instance.blackRenderer.transform.localScale = Vector3.one * (__instance.solidRadius * 2f);
         }
 

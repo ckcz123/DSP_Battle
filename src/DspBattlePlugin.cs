@@ -73,6 +73,7 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(UIDialogPatch));
             Harmony.CreateAndPatchAll(typeof(StarCannon));
             Harmony.CreateAndPatchAll(typeof(ShieldGenerator));
+            Harmony.CreateAndPatchAll(typeof(ShieldRenderer));
 
             LDBTool.PreAddDataAction += BattleProtos.AddProtos;
             LDBTool.PostAddDataAction += BattleProtos.PostDataAction;
