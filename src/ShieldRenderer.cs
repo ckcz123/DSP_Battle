@@ -77,10 +77,10 @@ namespace DSP_Battle
                 }
                 else
                 {
+                    shieldSimulator[i].starData.radius = 0.2f;
                     shieldSimulator[i].gameObject.SetActive(false);
                 }
             }
-
         }
 
         [HarmonyPostfix]
@@ -203,10 +203,23 @@ namespace DSP_Battle
                     }
                 }
 
-                //颜色根据护盾已充能的数量变得更亮
+                //颜色根据护盾已充能的数量变得更亮，护盾大小逐渐扩大
                 massMaterial.SetColor("_Color1", new Color(shieldColor1.r * shieldCharged, shieldColor1.g * shieldCharged, shieldColor1.b * shieldCharged) ); //整个半透明的发光颜色
                 massMaterial.SetColor("_Color2", new Color(shieldColor2.r * shieldCharged, shieldColor2.g * shieldCharged, shieldColor2.b * shieldCharged)); //整个颜色，饱和度不能太高
                 massMaterial.SetColor("_Color3", new Color(shieldColor3.r * shieldCharged, shieldColor3.g * shieldCharged, shieldColor3.b * shieldCharged)); //外环光晕
+                if (Configs.nextWaveState != 3 || (GameMain.localStar != null && Configs.nextWaveStarIndex != GameMain.localStar.index)) //如果不在战斗状态，会渲染护盾从充能过程逐渐变大的过程
+                {
+                    float shrank = __instance.starData.radius - (0.25f + (shieldRadius - 0.25f) * shieldCharged);
+                    if (shieldCharged >= 0.000000001f && shrank > 0.008f)
+                        shrank = 0.008f;
+                    __instance.starData.radius -= shrank;
+                }
+                else //如果在战斗过程，护盾迅速扩大到标准大小来应对敌人，但并不会加强任何实际的护盾强度，只是为了匹配飞船开火显示
+                {
+                    float expand = shieldRadius - __instance.starData.radius;
+                    expand = expand > 0.008f ? 0.008f : expand;
+                    __instance.starData.radius += expand;
+                }
 
                 atmoMaterial.SetFloat("_Multiplier", num15);
                 atmoMaterial.SetVector("_SunPos", __instance.posVector);
