@@ -15,9 +15,20 @@ namespace DSP_Battle
             return new VectorLF3(randSeed.NextDouble() - 0.5, randSeed.NextDouble() - 0.5, randSeed.NextDouble() - 0.5);
         }
 
+        public static VectorLF3 RandPosDelta(int Seed)
+        {
+            Random rand = new Random(Seed);
+            return new VectorLF3(rand.NextDouble() - 0.5, rand.NextDouble() - 0.5, rand.NextDouble() - 0.5);
+        }
+
         public static int RandInt(int min, int max)
         {
             return randSeed.Next(min, max);
+        }
+
+        public static int RandNext()
+        {
+            return randSeed.Next();
         }
 
         public static void Check(int num = 1, string str = "check ")

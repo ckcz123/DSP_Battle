@@ -252,7 +252,7 @@ namespace DSP_Battle
                                     num9 = 0f;
                                 }
                                 float num10 = num9 * num9 * 600f + 15f;
-                                dysonRocket.uSpeed = dysonRocket.uSpeed * 1f + num10 * 0.1f;
+                                dysonRocket.uSpeed = dysonRocket.uSpeed * 0.9f + num10 * 0.1f;
                                 dysonRocket.t = (num9 - 1f) * 1.2f;
                                 if (dysonRocket.t < -1f)
                                 {
@@ -918,7 +918,7 @@ namespace DSP_Battle
                                         num9 = 0f;
                                     }
                                     float num10 = num9 * num9 * 600f + 15f;
-                                    dysonRocket.uSpeed = dysonRocket.uSpeed * 1f + num10 * 0.1f;
+                                    dysonRocket.uSpeed = dysonRocket.uSpeed * 0.9f + num10 * 0.1f;
                                     dysonRocket.t = (num9 - 1f) * 1.2f;
                                     if (dysonRocket.t < -1f)
                                     {
