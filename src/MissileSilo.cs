@@ -252,7 +252,7 @@ namespace DSP_Battle
                                     num9 = 0f;
                                 }
                                 float num10 = num9 * num9 * 600f + 15f;
-                                dysonRocket.uSpeed = dysonRocket.uSpeed * 0.9f + num10 * 0.1f;
+                                dysonRocket.uSpeed = dysonRocket.uSpeed * 1f + num10 * 0.1f;
                                 dysonRocket.t = (num9 - 1f) * 1.2f;
                                 if (dysonRocket.t < -1f)
                                 {
@@ -286,7 +286,7 @@ namespace DSP_Battle
 
                                 //根据距离地表的距离设置速度，被我改成一直加速了
                                 double num11 = Math.Sqrt(vectorLF2.x * vectorLF2.x + vectorLF2.y * vectorLF2.y + vectorLF2.z * vectorLF2.z);
-                                if (num11 < missileMaxSpeed * 3)
+                                if (num11 < missileMaxSpeed * 3) //如果距离目标足够近，则进入下一阶段
                                 {
                                     dysonRocket.t = 0.0001f;
                                 }
@@ -391,15 +391,15 @@ namespace DSP_Battle
                                 }
                                 if (vectorLF2.magnitude < missileMaxSpeed * 0.5) //如果离得很近，则增大转弯速度
                                 {
-                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.6f);
+                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.4f);
                                 }
                                 else if (vectorLF2.magnitude < missileMaxSpeed)
                                 {
-                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.5f);
+                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.3f);
                                 }
                                 else
                                 {
-                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.4f);
+                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.2f);
                                 }
 
                             }
@@ -513,7 +513,8 @@ namespace DSP_Battle
                             }
                             if (dysonRocket.uSpeed <= missileMaxSpeed)
                             {
-                                if (vectorLF5.magnitude > missileMaxSpeed && dysonRocket.uSpeed < missileMaxSpeed)
+                                //离目标过远且没到满速度 或 速度少于1/2的最大速度 或 速度少于5000都会加速；而如果离目标过近且速度超过5000且速度超过1/2最大速度，则会减速
+                                if ((vectorLF5.magnitude > missileMaxSpeed && dysonRocket.uSpeed < missileMaxSpeed) || dysonRocket.uSpeed < missileMaxSpeed * 0.5f || dysonRocket.uSpeed < 5000)
                                     dysonRocket.uSpeed += missileSpeedUp;
                                 else if (vectorLF5.magnitude < missileMaxSpeed && dysonRocket.uSpeed > missileMaxSpeed * 0.5 && dysonRocket.uSpeed > 5000)
                                     dysonRocket.uSpeed -= missileSpeedUp;
@@ -917,7 +918,7 @@ namespace DSP_Battle
                                         num9 = 0f;
                                     }
                                     float num10 = num9 * num9 * 600f + 15f;
-                                    dysonRocket.uSpeed = dysonRocket.uSpeed * 0.9f + num10 * 0.1f;
+                                    dysonRocket.uSpeed = dysonRocket.uSpeed * 1f + num10 * 0.1f;
                                     dysonRocket.t = (num9 - 1f) * 1.2f;
                                     if (dysonRocket.t < -1f)
                                     {
@@ -1056,15 +1057,15 @@ namespace DSP_Battle
                                     }
                                     if (vectorLF2.magnitude < missileMaxSpeed * 0.5) //如果离得很近，则增大转弯速度
                                     {
-                                        dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.6f);
+                                        dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.4f);
                                     }
                                     else if (vectorLF2.magnitude < missileMaxSpeed)
                                     {
-                                        dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.5f);
+                                        dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.3f);
                                     }
                                     else
                                     {
-                                        dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.4f);
+                                        dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.2f);
                                     }
 
                                 }
@@ -1191,7 +1192,8 @@ namespace DSP_Battle
                                 }
                                 if (dysonRocket.uSpeed <= missileMaxSpeed)
                                 {
-                                    if (vectorLF5.magnitude > missileMaxSpeed && dysonRocket.uSpeed < missileMaxSpeed)
+                                    //离目标过远且没到满速度 或 速度少于1/2的最大速度 或 速度少于5000都会加速；而如果离目标过近且速度超过5000且速度超过1/2最大速度，则会减速
+                                    if ((vectorLF5.magnitude > missileMaxSpeed && dysonRocket.uSpeed < missileMaxSpeed) || dysonRocket.uSpeed < missileMaxSpeed*0.5f || dysonRocket.uSpeed<5000)
                                         dysonRocket.uSpeed += missileSpeedUp;
                                     else if (vectorLF5.magnitude < missileMaxSpeed && dysonRocket.uSpeed > missileMaxSpeed * 0.5 && dysonRocket.uSpeed > 5000)
                                         dysonRocket.uSpeed -= missileSpeedUp;

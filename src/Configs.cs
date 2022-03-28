@@ -62,7 +62,7 @@ namespace DSP_Battle
 
         public static int[] enemyRange = new int[10];
 
-        public static int[] enemyItemIds = new int[] { 6001, 6002, 6003, 6004, 6005, 6006 };
+        public static int[] enemyItemIds = new int[] { 8040, 8041, 8042, 8043, 8044, 8044 };
 
         public static int[] enemyLandCnt = new int[] { 1, 3, 5, 5, 10000 };
 
@@ -71,7 +71,7 @@ namespace DSP_Battle
         public static int[] enemyFireRange = new int[] { 5000, 8000, 15000, 15000, 50000 }; //射程
 
         public static int[] enemyDamagePerBullet = new int[] { 200, 200, 300, 20000, 1000 };
-        //public static int[] enemyDamagePerBullet = new int[] { 2, 2, 3, 20000, 2 };
+        //public static int[] enemyDamagePerBullet = new int[] { 2, 2, 3, 200, 2 };
 
         //public static int[] enemyBulletSpeed = new int[] {20000, 30000, 50000, 80000, 150000 }; //虽然有speed设置，但是为了减少运算，子弹伤害是在发射时就结算的。speed应该设置的比较大来减少视觉上的误差
 
@@ -217,7 +217,7 @@ namespace DSP_Battle
 
             enemyIntensity[2] = 8; // config.Bind("config", "enemy3Intensity", defaultValue: 8, "敌方飞船3强度").Value;
             enemyHp[2] = 10000; // config.Bind("config", "enemy3Hp", defaultValue: 10000, "敌方飞船3血量").Value;
-            enemySpeed[2] = 5000f; // config.Bind("config", "enemy3Speed", defaultValue: 5000f, "敌方飞船3速度（米每秒）").Value;
+            enemySpeed[2] = 4000f; // config.Bind("config", "enemy3Speed", defaultValue: 5000f, "敌方飞船3速度（米每秒）").Value;
             enemyRange[2] = 60; // config.Bind("config", "enemy3Range", defaultValue: 60, "敌方飞船3破坏范围").Value;
 
             enemyIntensity[3] = 9; // config.Bind("config", "enemy4Intensity", defaultValue: 8, "敌方飞船4强度").Value;
@@ -227,7 +227,7 @@ namespace DSP_Battle
 
             enemyIntensity[4] = 15; // config.Bind("config", "enemy5Intensity", defaultValue: 15, "敌方飞船5强度").Value;
             enemyHp[4] = 80000; // config.Bind("config", "enemy5Hp", defaultValue: 80000, "敌方飞船5血量").Value;
-            enemySpeed[4] = 3000f; // config.Bind("config", "enemy5Speed", defaultValue: 3000f, "敌方飞船5速度（米每秒）").Value;
+            enemySpeed[4] = 1200f; // config.Bind("config", "enemy5Speed", defaultValue: 3000f, "敌方飞船5速度（米每秒）").Value;
             enemyRange[4] = 100; // config.Bind("config", "enemy5Range", defaultValue: 100, "敌方飞船5破坏范围").Value;
 
             _wormholeRange = 20000; // config.Bind("config", "wormholeRange", defaultValue: 20000, "初始虫洞刷新范围，米为单位").Value;

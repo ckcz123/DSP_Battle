@@ -266,6 +266,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("护卫舰", "Frigate", "护卫舰");
             ProtoRegistry.RegisterString("驱逐舰", "Destroyer", "驱逐舰");
             ProtoRegistry.RegisterString("巡洋舰", "Cruiser", "巡洋舰");
+            ProtoRegistry.RegisterString("重型巡洋舰", "B-Cruiser", "重型巡洋舰");
             ProtoRegistry.RegisterString("战列舰", "Battleship", "战列舰");
             ProtoRegistry.RegisterString("已歼灭gm", "Eliminated", "已歼灭");
             ProtoRegistry.RegisterString("已产生gm", "Total", "已产生");
@@ -288,9 +289,11 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("护盾生成器启动提示", "Shield generators will provide shield capacity, and speed up shield recharging.", "护盾生成器将提供护盾容量，并加快护盾充能速度。");
             ProtoRegistry.RegisterString("耗电需求gm", "Consumption demand", "耗电需求");
             ProtoRegistry.RegisterString("耗电需求短gm", "Consumption", "耗电需求");
-            ProtoRegistry.RegisterString("发电性能短gm", "Generation", "发电性能"); 
+            ProtoRegistry.RegisterString("发电性能短gm", "Generation", "发电性能");
 
-             ItemProto bullet1 = ProtoRegistry.RegisterItem(8001, "子弹1", "子弹1描述", "Assets/DSPBattle/bullet1", 2701 + pageBias, 100, EItemType.Material);
+
+
+            ItemProto bullet1 = ProtoRegistry.RegisterItem(8001, "子弹1", "子弹1描述", "Assets/DSPBattle/bullet1", 2701 + pageBias, 100, EItemType.Material);
             ItemProto bullet2 = ProtoRegistry.RegisterItem(8002, "子弹2", "子弹2描述", "Assets/DSPBattle/bullet2", 2702 + pageBias, 100, EItemType.Material);
             ItemProto bullet3 = ProtoRegistry.RegisterItem(8003, "子弹3", "子弹3描述", "Assets/DSPBattle/bullet3", 2703 + pageBias, 100, EItemType.Material);
             ItemProto missile1 = ProtoRegistry.RegisterItem(8004, "导弹1", "导弹1描述", "Assets/DSPBattle/missile1", 2705 + pageBias, 100, EItemType.Material);
@@ -384,8 +387,34 @@ namespace DSP_Battle
             ProtoRegistry.RegisterRecipe(815, ERecipeType.Assemble, 900, new int[] { 9503, 1305, 1125 }, new int[] { 30, 20, 30 }, new int[] { 8030 }, new int[] { 1 }, "护盾生成器描述",
                 1916, 2605 + pageBias, "Assets/MegaStructureTab/shieldGen");
 
+
+            //给船染色用物品
+
+            ProtoRegistry.RegisterItem(8040, "侦查艇".Translate(), "敌船0".Translate(), "Assets/DSPBattle/enemyShip0", 9999, 200,
+                EItemType.Component, ProtoRegistry.GetDefaultIconDesc(new Color(0.8f, 0f, 0f), new Color(0.8f, 0f, 0f), new Color(0.8f, 0f, 0f), new Color(0.8f, 0f, 0f)));
+            ProtoRegistry.RegisterItem(8041, "护卫舰".Translate(), "敌船1".Translate(), "Assets/DSPBattle/enemyShip1", 9999, 200,
+                EItemType.Component, ProtoRegistry.GetDefaultIconDesc(new Color(0.5f, 0.2f, 0f), new Color(0.5f, 0.2f, 0f), new Color(0.5f, 0.2f, 0f), new Color(0.5f, 0.2f, 0f)));
+            ProtoRegistry.RegisterItem(8042, "驱逐舰".Translate(), "敌船2".Translate(), "Assets/DSPBattle/enemyShip2", 9999, 200,
+               
+                EItemType.Component, ProtoRegistry.GetDefaultIconDesc(new Color(1f, 0.8f, 0f), new Color(1f, 0.8f, 0f), new Color(1f, 0.7f, 0f), new Color(1f, 0.7f, 0f)));
+            ProtoRegistry.RegisterItem(8043, "重型巡洋舰".Translate(), "敌船3".Translate(), "Assets/DSPBattle/enemyShip3", 9999, 200,
+                EItemType.Component, ProtoRegistry.GetDefaultIconDesc(new Color(0f, 1f, 0f), new Color(0f, 1f, 0f), new Color(0f, 1f, 0f), new Color(0f, 1f, 0f)));
+            ProtoRegistry.RegisterItem(8044, "战列舰".Translate(), "敌船4".Translate(), "Assets/DSPBattle/enemyShip4", 9999, 200,
+                EItemType.Component, ProtoRegistry.GetDefaultIconDesc(new Color(1f, 0f, 0.6f), new Color(1f, 0f, 0.6f), new Color(1f, 0f, 0.6f), new Color(1f, 0f, 0.6f)));
+            //ProtoRegistry.RegisterRecipe(820, ERecipeType.Assemble, 1, new int[] { 1101 }, new int[] { 1 }, new int[] { 8040 }, new int[] { 1 }, "测试用1",
+            //    1901, 9999, "Assets/DSPBattle/enemyShip");
+            //ProtoRegistry.RegisterRecipe(821, ERecipeType.Assemble, 1, new int[] { 1101 }, new int[] { 1 }, new int[] { 8041 }, new int[] { 1 }, "测试用1",
+            //    1901, 9999, "Assets/DSPBattle/enemyShip");
+            //ProtoRegistry.RegisterRecipe(822, ERecipeType.Assemble, 1, new int[] { 1101 }, new int[] { 1 }, new int[] { 8042 }, new int[] { 1 }, "测试用1",
+            //    1901, 9999, "Assets/DSPBattle/enemyShip");
+            //ProtoRegistry.RegisterRecipe(823, ERecipeType.Assemble, 1, new int[] { 1101 }, new int[] { 1 }, new int[] { 8043 }, new int[] { 1 }, "测试用1",
+            //    1901, 9999, "Assets/DSPBattle/enemyShip");
+            //ProtoRegistry.RegisterRecipe(824, ERecipeType.Assemble, 1, new int[] { 1101 }, new int[] { 1 }, new int[] { 8044 }, new int[] { 1 }, "测试用1",
+            //    1901, 9999, "Assets/DSPBattle/enemyShip");
+
             TechProto techBullet1 = ProtoRegistry.RegisterTech(1901, "近地防卫系统", "近地防卫系统描述", "近地防卫系统结论", "Assets/DSPBattle/bullet1tech", new int[] { 1711 }, new int[] { 6001, 6002 }, new int[] { 20, 20 },
                 72000, new int[] { 801, 811 }, new Vector2(29, -43));
+
             techBullet1.PreTechsImplicit = new int[] { 1503 };
             techBullet1.AddItems = new int[] { 8021 };
             techBullet1.AddItemCounts = new int[] { 1 };
@@ -623,7 +652,6 @@ namespace DSP_Battle
             ShieldGenModel.prefabDesc.emptyId = 9999;
             ShieldGenModel.prefabDesc.fullId = 1208;
             ShieldGenModel.prefabDesc.exchangeEnergyPerTick = 1500000;
-
             LDBTool.PreAddProto(ShieldGenModel);
 
 
@@ -631,6 +659,9 @@ namespace DSP_Battle
             LDBTool.SetBuildBar(6, 8, 8012);
             LDBTool.SetBuildBar(6, 9, 8014);
             LDBTool.SetBuildBar(6, 10, 8013);
+
+
+            
         }
 
         private static ModelProto CopyModelProto(int oriId, int id, Color color)
