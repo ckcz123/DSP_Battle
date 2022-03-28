@@ -31,7 +31,7 @@ namespace DSP_Battle
         public static ManualLogSource logger;
         private static ConfigFile config;
 
-
+        public static bool isControlDown = false;
         public void Awake()
         {
             logger = Logger;
@@ -74,6 +74,7 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(StarCannon));
             Harmony.CreateAndPatchAll(typeof(ShieldGenerator));
             Harmony.CreateAndPatchAll(typeof(ShieldRenderer));
+            Harmony.CreateAndPatchAll(typeof(Droplets));
 
             LDBTool.PreAddDataAction += BattleProtos.AddProtos;
             LDBTool.PostAddDataAction += BattleProtos.PostDataAction;
@@ -82,7 +83,15 @@ namespace DSP_Battle
 
         public void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Minus) && !GameMain.isPaused && UIRoot.instance?.uiGame?.buildMenu?.currentCategory == 0 && (Configs.nextWaveState == 1 || Configs.nextWaveState == 2))
+            //if (Input.GetKeyDown(KeyCode.Minus) && !GameMain.isPaused && UIRoot.instance?.uiGame?.buildMenu?.currentCategory == 0 && (Configs.nextWaveState == 1 || Configs.nextWaveState == 2))
+            //{
+            //    Configs.nextWaveFrameIndex -= 60 * 60;
+            //}
+            if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
+                isControlDown = true;
+            if (Input.GetKeyUp(KeyCode.LeftControl) || Input.GetKeyUp(KeyCode.RightControl))
+                isControlDown = false;
+            if (Input.GetKeyDown(KeyCode.Minus) && isControlDown && !GameMain.isPaused && (Configs.nextWaveState == 1 || Configs.nextWaveState == 2))
             {
                 Configs.nextWaveFrameIndex -= 60 * 60;
             }
@@ -159,6 +168,7 @@ namespace DSP_Battle
             WormholeProperties.Export(w);
             StarCannon.Export(w);
             ShieldGenerator.Export(w);
+            Droplets.Export(w);
         }
 
         public void Import(BinaryReader r)
@@ -171,6 +181,7 @@ namespace DSP_Battle
             WormholeProperties.Import(r);
             StarCannon.Import(r);
             ShieldGenerator.Import(r);
+            Droplets.Import(r);
 
             UIBattleStatistics.InitAll();
             UIBattleStatistics.InitSelectDifficulty();
@@ -186,6 +197,7 @@ namespace DSP_Battle
             WormholeProperties.IntoOtherSave();
             StarCannon.IntoOtherSave();
             ShieldGenerator.IntoOtherSave();
+            Droplets.IntoOtherSave();
 
             UIBattleStatistics.InitAll();
             UIBattleStatistics.InitSelectDifficulty();

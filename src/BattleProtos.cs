@@ -125,7 +125,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("行星力场护盾", "Planet shield", "行星力场护盾");
             ProtoRegistry.RegisterString("星际要塞", "Star fortress", "星际要塞");
             ProtoRegistry.RegisterString("恒星炮gm2", "Star cannon", "恒星炮");
-            ProtoRegistry.RegisterString("水滴gm", "Water-drop", "水滴"); 
+            ProtoRegistry.RegisterString("水滴gm", "Droplet", "水滴"); 
             ProtoRegistry.RegisterString("玻色子操控", "Boson control", "玻色子操控");
             ProtoRegistry.RegisterString("即将到来gm", "Coming soon", "即将推出");
 
@@ -179,7 +179,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("彩蛋9描述", "<color=#c2853d>42</color>", "<color=#c2853d>42</color>");
 
 
-            ProtoRegistry.RegisterString("UI快捷键提示", "Press Backspace to hide/open this window. Press \"-\" key to advance the attack time by one minute.", "按下退格键开启或关闭此窗口，按下减号键使敌军进攻时间提前1分钟。");
+            ProtoRegistry.RegisterString("UI快捷键提示", "Press Backspace to hide/open this window. Press \"Ctrl\" + \"-\" to advance the attack time by 1 min.", "按下退格键开启或关闭此窗口，按下Ctrl+减号键使敌军进攻时间提前1分钟。");
 
             ProtoRegistry.RegisterString("简单难度提示", "Difficulty: Easy (Station won't be destroyed; Reward duration * 0.75)", "当前难度：简单（物流塔不会被破坏；奖励持续时间*0.75）");
             ProtoRegistry.RegisterString("普通难度提示", "Difficulty: Normal (Station attacked will turn to blueprint mode; Reward duration * 1.0)", "当前难度：普通（物流塔被破坏会进入蓝图模式；奖励持续时间*1.0）");
@@ -619,6 +619,32 @@ namespace DSP_Battle
             techWormDistanceInf.LevelCoef2 = 1800000;
 
 
+            TechProto dorpletControll1 = ProtoRegistry.RegisterTech(4927, "超距信号处理1", "超距信号处理描述", "超距信号处理结论", "Assets/DSPBattle/dropletW", new int[] { }, new int[] { 6001, 6002, 6003, 6004 },
+                 new int[] { 20, 20, 20, 20 }, 180000, new int[] { }, new Vector2(33, -47));
+            dorpletControll1.PreTechsImplicit = new int[] { 1919 };
+            dorpletControll1.UnlockFunctions = new int[] { 53 };
+            dorpletControll1.UnlockValues = new double[] { 1 };
+            dorpletControll1.Level = 1;
+            dorpletControll1.MaxLevel = 1;
+            dorpletControll1.LevelCoef1 = 0;
+            dorpletControll1.LevelCoef2 = 0;
+            TechProto dorpletControll2 = ProtoRegistry.RegisterTech(4928, "超距信号处理2", "超距信号处理描述", "超距信号处理结论", "Assets/DSPBattle/dropletW", new int[] { 4927 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+                  new int[] { 20, 20, 20, 20, 20 }, 300000, new int[] { }, new Vector2(37, -47));
+            dorpletControll2.UnlockFunctions = new int[] { 53 };
+            dorpletControll2.UnlockValues = new double[] { 1 };
+            dorpletControll2.Level = 2;
+            dorpletControll2.MaxLevel = 2;
+            dorpletControll2.LevelCoef1 = 0;
+            dorpletControll2.LevelCoef2 = 0;
+            TechProto dorpletControll3 = ProtoRegistry.RegisterTech(4929, "超距信号处理3", "超距信号处理描述", "超距信号处理结论", "Assets/DSPBattle/dropletW", new int[] { 4928 }, new int[] { 6006 },
+                  new int[] { 20 }, 600000, new int[] { }, new Vector2(41, -47));
+            dorpletControll3.UnlockFunctions = new int[] { 53 };
+            dorpletControll3.UnlockValues = new double[] { 1 };
+            dorpletControll3.Level = 3;
+            dorpletControll3.MaxLevel = 3;
+            dorpletControll3.LevelCoef1 = 0;
+            dorpletControll3.LevelCoef2 = 0;
+
 
             var CannonModel = CopyModelProto(72, 311, Color.red);
             CannonModel.prefabDesc.ejectorBulletId = 8001; //子弹的Id
@@ -758,6 +784,9 @@ namespace DSP_Battle
                 case 52:
                     Configs.wormholeRangeAdded += (int)value;
                     break;
+                case 53:
+                    Droplets.maxDroplet += (int)value;
+                    break;
                 default:
                     break;
             }
@@ -779,6 +808,8 @@ namespace DSP_Battle
             //    __result = "虫洞生成最近范围向10AU推进8%".Translate();
             else if (__instance.ID >= 4921 && __instance.ID <= 4926)
                 __result = "虫洞生成最近范围扩大0.25AU".Translate();
+            else if(__instance.ID >= 4927 && __instance.ID <= 4929)
+                __result = "水滴控制上限".Translate() + "+1";
         }
 
         public static Text infoLabel = null;
@@ -804,7 +835,7 @@ namespace DSP_Battle
             if (infoLabel.text.Split('\n').Length < 35)
             {
                 infoLabel.text = infoLabel.text + "\r\n\r\n" + "子弹伤害".Translate() + "\r\n" + "相位裂解光束伤害".Translate() + "\r\n"
-                    + "导弹伤害".Translate() + "\r\n" + "子弹飞行速度".Translate() + "\r\n" + "导弹飞行速度".Translate() + "\r\n" + "虫洞干扰半径".Translate();
+                    + "导弹伤害".Translate() + "\r\n" + "子弹飞行速度".Translate() + "\r\n" + "导弹飞行速度".Translate() + "\r\n" + "虫洞干扰半径".Translate() + "\r\n" + "水滴控制上限".Translate();
             }
         }
 
@@ -817,7 +848,8 @@ namespace DSP_Battle
             
             __instance.dataValueText.text = __instance.dataValueText.text + "\r\n\r\n" + Configs.bulletAtkScale.ToString("0%") + "\r\n"
                 + (1 + (Configs.bulletAtkScale - 1) * 2).ToString("0%") + "\r\n" + Configs.bulletAtkScale.ToString("0%")
-                + "\r\n" + Configs.bulletSpeedScale.ToString("0%") + "\r\n" + (1 + (Configs.bulletSpeedScale - 1) * 0.5).ToString("0%") + "\r\n" + (Configs.wormholeRange / 40000.0).ToString() + "AU";
+                + "\r\n" + Configs.bulletSpeedScale.ToString("0%") + "\r\n" + (1 + (Configs.bulletSpeedScale - 1) * 0.5).ToString("0%") + "\r\n" + (Configs.wormholeRange / 40000.0).ToString() + "AU" + "\r\n"
+                + Droplets.maxDroplet.ToString();
 
         }
 
@@ -904,7 +936,8 @@ namespace DSP_Battle
                 case 8007:
                 case 8014:
                     return new int[] { Configs.bullet4Atk, Mathf.RoundToInt((float)Configs.bullet4Speed), 0 };
-
+                case 9511: //水滴
+                    return new int[] { Configs.dropletAtk, Mathf.RoundToInt((float)Configs.dropletSpd), 0 };
                 default:
                     return new int[] { 0, 0, 0 };
             }
