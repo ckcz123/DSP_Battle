@@ -15,6 +15,9 @@ namespace DSP_Battle
     {
         public static GameObject mechaDropletObj = null;
         public static Text mechaDropletAmountText = null;
+        public static long energyComsumptionPerLaunch = 1000000000; //发射水滴耗能
+        public static long energyComsumptionPerAttack = 10000000; //水滴攻击耗能，不再使用
+        public static long energyComsumptionPerTick = 250000; //水滴每帧耗能
 
         //存档内容
         public static Droplet[] dropletPool = new Droplet[5];
@@ -74,7 +77,11 @@ namespace DSP_Battle
                 int starIndex = GameMain.localStar.index;
                 for (int i = 0; i < maxDroplet; i++)
                 {
-                    if (dropletPool[i].Launch(starIndex)) break;
+                    if (GameMain.mainPlayer.mecha.coreEnergy > energyComsumptionPerLaunch && dropletPool[i].Launch(starIndex))
+                    {
+                        TryConsumeMechaEnergy(energyComsumptionPerLaunch);
+                        break; 
+                    }
                 }
             }
 
@@ -107,9 +114,24 @@ namespace DSP_Battle
             return loadedDropletCnt;
         }
 
-        public static void UpdateMechaUI()
+        public static bool TryConsumeMechaEnergy(double energy)
         {
+            if (GameMain.mainPlayer.mecha.coreEnergy >= energy)
+            {
+                GameMain.mainPlayer.mecha.coreEnergy -= energy;
+                GameMain.mainPlayer.mecha.MarkEnergyChange(8, -energy);
+                return true;
+            }
+            else
+                return false;
+        }
 
+        public static void ForceConsumeMechaEnergy(double energy)
+        {
+            double curEnergy = GameMain.mainPlayer.mecha.coreEnergy;
+            energy = energy < curEnergy ? energy : curEnergy;
+            GameMain.mainPlayer.mecha.coreEnergy -= energy;
+            GameMain.mainPlayer.mecha.MarkEnergyChange(8, -energy);
         }
 
         public static void Export(BinaryWriter w) 
@@ -277,6 +299,10 @@ namespace DSP_Battle
                 return;
             }
 
+            if(state >=1 && state<=3)//返航过程不消耗能量
+            {
+                Droplets.ForceConsumeMechaEnergy(Droplets.energyComsumptionPerTick);
+            }
 
             if (state == 1) //刚起飞
             {

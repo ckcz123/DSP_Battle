@@ -125,7 +125,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("行星力场护盾", "Planet shield", "行星力场护盾");
             ProtoRegistry.RegisterString("星际要塞", "Star fortress", "星际要塞");
             ProtoRegistry.RegisterString("恒星炮gm2", "Star cannon", "恒星炮");
-            ProtoRegistry.RegisterString("水滴gm", "Droplet", "水滴"); 
+            ProtoRegistry.RegisterString("水滴gm2", "Droplet", "水滴"); 
             ProtoRegistry.RegisterString("玻色子操控", "Boson control", "玻色子操控");
             ProtoRegistry.RegisterString("即将到来gm", "Coming soon", "即将推出");
 
@@ -274,6 +274,9 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("游戏提示gm", "Message", "游戏提示");
 
 
+            ProtoRegistry.RegisterString("行星护盾生成器", "Planet shield generation", "行星护盾生成器");
+            ProtoRegistry.RegisterString("行星护盾生成器描述", "Using a large amount of energy to maintain a force field shield on the planet's surface, the encoding of the force field's resonant frequency allows allies to easily pass through the shield, while blocking the enemies. Multiple shield generators can speed up the shield recharge rate, and provide additional shield capacity. However, as the number of shield generators increases, each additional generator will provide less and less additional capacity.", 
+                "使用大量能量在行星表面维持一个力场护盾，对力场谐振频率的编码能够使友方轻易穿过护盾，同时阻挡敌人的进入或攻击。多个护盾生成器能够加快护盾充能的速度，也能够提供的额外护盾容量上限。不过随着单个星球上护盾生成器数量的增加，每个生成器能够提供的额外护盾也将越来越少。");
             ProtoRegistry.RegisterString("力场护盾", "Planet shield", "力场护盾");
             ProtoRegistry.RegisterString("力场护盾短", "Shield", "力场护盾");
             ProtoRegistry.RegisterString("护盾容量", "Shield capacity", "护盾容量");
@@ -291,6 +294,11 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("耗电需求短gm", "Consumption", "耗电需求");
             ProtoRegistry.RegisterString("发电性能短gm", "Generation", "发电性能");
 
+            ProtoRegistry.RegisterString("护盾承受伤害", "Shield damage taken", "护盾承受伤害");
+            ProtoRegistry.RegisterString("护盾造成伤害", "Shield damage dealed", "护盾造成伤害");
+            ProtoRegistry.RegisterString("水滴伤害", "Droplet damage", "水滴伤害");
+            ProtoRegistry.RegisterString("水滴发射耗能", "Launch Consumption", "发射耗能");
+            ProtoRegistry.RegisterString("水滴工作功率", "Work Consumption", "工作功率");
 
 
             ItemProto bullet1 = ProtoRegistry.RegisterItem(8001, "子弹1", "子弹1描述", "Assets/DSPBattle/bullet1", 2701 + pageBias, 100, EItemType.Material);
@@ -356,7 +364,7 @@ namespace DSP_Battle
             Silo.DescFields = new int[] { 35, 11, 12, 1, 40 };
 
 
-            var ShieldGenerator = ProtoRegistry.RegisterItem(8030, "护盾生成器", "护盾生成器描述", "Assets/MegaStructureTab/shieldGen", 2605 + pageBias, 10, EItemType.Production);
+            var ShieldGenerator = ProtoRegistry.RegisterItem(8030, "行星护盾生成器", "行星护盾生成器描述", "Assets/MegaStructureTab/shieldGen", 2605 + pageBias, 10, EItemType.Production);
             ShieldGenerator.BuildMode = 1;
             ShieldGenerator.IsEntity = true;
             ShieldGenerator.isRaw = false;
@@ -384,12 +392,11 @@ namespace DSP_Battle
                 1911, 2603 + pageBias, "Assets/DSPBattle/missilesilo");
             ProtoRegistry.RegisterRecipe(814, ERecipeType.Assemble, 900, new int[] { 1125, 9481, 9486 }, new int[] { 20, 5, 2 }, new int[] { 8014 }, new int[] { 1 }, "脉冲炮描述",
                 1915, 2604 + pageBias, "Assets/DSPBattle/cannon3");
-            ProtoRegistry.RegisterRecipe(815, ERecipeType.Assemble, 900, new int[] { 9503, 1305, 1125 }, new int[] { 30, 20, 30 }, new int[] { 8030 }, new int[] { 1 }, "护盾生成器描述",
+            ProtoRegistry.RegisterRecipe(815, ERecipeType.Assemble, 900, new int[] { 9503, 1305, 1125 }, new int[] { 30, 20, 30 }, new int[] { 8030 }, new int[] { 1 }, "行星护盾生成器描述",
                 1916, 2605 + pageBias, "Assets/MegaStructureTab/shieldGen");
 
 
             //给船染色用物品
-
             ProtoRegistry.RegisterItem(8040, "侦查艇".Translate(), "敌船0".Translate(), "Assets/DSPBattle/enemyShip0", 9999, 200,
                 EItemType.Component, ProtoRegistry.GetDefaultIconDesc(new Color(0.8f, 0f, 0f), new Color(0.8f, 0f, 0f), new Color(0.8f, 0f, 0f), new Color(0.8f, 0f, 0f)));
             ProtoRegistry.RegisterItem(8041, "护卫舰".Translate(), "敌船1".Translate(), "Assets/DSPBattle/enemyShip1", 9999, 200,
@@ -878,6 +885,12 @@ namespace DSP_Battle
                 case 53:
                     __result = "射速".Translate();
                     return;
+                case 54:
+                    __result = "水滴发射耗能".Translate();
+                    return;
+                case 55:
+                    __result = "水滴工作功率".Translate();
+                    return;
             }
         }
 
@@ -912,6 +925,12 @@ namespace DSP_Battle
                         __result = (3600.0 / (double)(__instance.prefabDesc.siloChargeFrame + __instance.prefabDesc.siloColdFrame)).ToString("0.##") + "/min";
                         return;
                     }
+                    return;
+                case 54:
+                    __result = Utils.KMGFormat(Droplets.energyComsumptionPerLaunch) + "J";
+                    return;
+                case 55:
+                    __result = Utils.KMGFormat(Droplets.energyComsumptionPerTick * 60) + "W";
                     return;
             }
         }

@@ -405,12 +405,14 @@ namespace DSP_Battle
         public static void RegisterShieldAttack(int damage)
         {
             Interlocked.Add(ref shieldDamageMade, damage);
+            Interlocked.Add(ref totalDamage, damage);
         }
 
         //水滴造成伤害
         public static void RegisterDropletAttack(int damage)
         {
             Interlocked.Add(ref dropletDamage, damage);
+            Interlocked.Add(ref totalDamage, damage);
         }
 
         public static void OnClickBattleStatButton()
