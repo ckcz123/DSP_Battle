@@ -30,7 +30,7 @@ namespace DSP_Battle
         public static int laserBulletPosDelta = 1000;
         public static int laserBulletEndPosDelta = 150;
         public static VectorLF3 normDirection = new VectorLF3(0, 1, 0);
-        public static int reverseDirection = -1; //设置成-1使得开炮方向是反向，即相当于戴森球所有层级南北极互换
+        public static int reverseDirection = 1; //只能是1或者-1，1是北极为炮口，-1则是南极。相当于设计恒星炮时所有层级南北极互换
 
         //下面属性可能根据戴森球等级有变化，但并不需要存档        
         public static int starCannonLevel = 1; //恒星炮建造的所属阶段（等级），即完成度
@@ -116,6 +116,7 @@ namespace DSP_Battle
                 UIRealtimeTip.Popup("恒星炮需要至少修建至第一阶段才能够开火！".Translate());
                 return;
             }
+
             switch (fireStage)
             {
                 case 1: //原本计划是可以在瞄准初期取消开火，但每次瞄准的时间不一样，可供取消的时间窗口也不一样，不如不加这个功能
@@ -447,16 +448,20 @@ namespace DSP_Battle
                     return;
                 }
 
+                int lessBulletRatio = 1;
+                if (targetSwarm == null || targetSwarm.starData.index != __instance.starData.index)
+                    lessBulletRatio = 2;
+
                 //主激光效果
-                for (int i = 0; i < laserBulletNum; i++)
+                for (int i = 0; i < laserBulletNum / lessBulletRatio; i++)
                 {
                     int bulletIndex = __instance.swarm.AddBullet(new SailBullet
                     {
                         maxt = 0.3f,
                         lBegin = __instance.starData.uPosition,
                         uEndVel = targetUPos,
-                        uBegin = __instance.starData.uPosition + Utils.RandPosDelta()* laserBulletPosDelta,
-                        uEnd = targetUPos + Utils.RandPosDelta() * laserBulletEndPosDelta
+                        uBegin = __instance.starData.uPosition + Utils.RandPosDelta() * laserBulletPosDelta / lessBulletRatio,
+                        uEnd = targetUPos + Utils.RandPosDelta() * laserBulletEndPosDelta / lessBulletRatio
                     }, 0);
                     __instance.swarm.bulletPool[bulletIndex].state = 0;
                     if(i>5)
@@ -467,24 +472,26 @@ namespace DSP_Battle
 
 
                 //如果不在同星系，则本星系内光会很细，增加一段短光，由于额外效果3有更好的效果，此部分已废弃
-                //if (targetSwarm == null || targetSwarm.starData.index != __instance.starData.index)
-                //{
-                //    int nearPoint = 400000;
-                //    if (__instance.starData.type == EStarType.GiantStar)
-                //        nearPoint = 1000000;
-                //    for (int i = 0; i < laserBulletNum; i++)
-                //    {
-                //        int bulletIndex = __instance.swarm.AddBullet(new SailBullet
-                //        {
-                //            maxt = 0.3f,
-                //            lBegin = __instance.starData.uPosition,
-                //            uEndVel = targetUPos,
-                //            uBegin = __instance.starData.uPosition + Utils.RandPosDelta()* laserBulletPosDelta,
-                //            uEnd = (targetUPos - __instance.starData.uPosition).normalized * nearPoint + __instance.starData.uPosition + Utils.RandPosDelta() * laserBulletEndPosDelta
-                //        }, 0);
-                //        __instance.swarm.bulletPool[bulletIndex].state = 0;
-                //    }
-                //}
+                if (targetSwarm == null || targetSwarm.starData.index != __instance.starData.index)
+                {
+                    int nearPoint = 400000;
+                    if (__instance.starData.type == EStarType.GiantStar)
+                        nearPoint = 1000000;
+                    for (int i = 0; i < laserBulletNum/10; i++)
+                    {
+                        int bulletIndex = __instance.swarm.AddBullet(new SailBullet
+                        {
+                            maxt = 0.3f,
+                            lBegin = __instance.starData.uPosition,
+                            uEndVel = targetUPos,
+                            uBegin = __instance.starData.uPosition + Utils.RandPosDelta() * laserBulletPosDelta/10,
+                            uEnd = (targetUPos - __instance.starData.uPosition).normalized * nearPoint + __instance.starData.uPosition + Utils.RandPosDelta() * laserBulletEndPosDelta/10
+                        }, 0);
+                        __instance.swarm.bulletPool[bulletIndex].state = 0;
+
+                        noExplodeBullets.AddOrUpdate(bulletIndex, 1, (x, y) => 1);
+                    }
+                }
 
 
                 //如果不在同星系，接收星系需要同样生成光束（由于发射星系的光束不会在观察目标星系时渲染），此部分是必须的
@@ -639,20 +646,20 @@ namespace DSP_Battle
             var __instance = sphere;
             VectorLF3 targetDirection = targetUPos - __instance.starData.uPosition;
             VectorLF3 vertDirection = new VectorLF3(0, 0, 1);
-            float minRadius = 99999999;
+            //float minRadius = 99999999;
             float maxRadius = 0;
-            for (int i = 0; i < __instance.layersIdBased.Length; i++)
-            {
-                if (__instance.layersIdBased[i] != null)
-                {
-                    maxRadius = Mathf.Max(maxRadius, __instance.layersIdBased[i].orbitRadius);
-                    if (__instance.layersIdBased[i].orbitRadius > 10 && __instance.layersIdBased[i].orbitRadius < minRadius)
-                        minRadius = __instance.layersIdBased[i].orbitRadius;
-                }
-            }
+            //for (int i = 0; i < __instance.layersIdBased.Length; i++)
+            //{
+            //    if (__instance.layersIdBased[i] != null)
+            //    {
+            //        maxRadius = Mathf.Max(maxRadius, __instance.layersIdBased[i].orbitRadius);
+            //        if (__instance.layersIdBased[i].orbitRadius > 10 && __instance.layersIdBased[i].orbitRadius < minRadius)
+            //            minRadius = __instance.layersIdBased[i].orbitRadius;
+            //    }
+            //}
 
             VectorLF3 beginPointInStar = __instance.starData.uPosition;
-            for (int i = 1; i < __instance.layersIdBased.Length; i++)
+            for (int i = 1; i < 5; i++)
             {
                 if (__instance.layersIdBased[i] != null)
                 {

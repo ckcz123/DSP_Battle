@@ -68,6 +68,10 @@ namespace DSP_Battle
                 }
                 return;
             }
+            if(lastWaveState!=2 && Configs.nextWaveState == 2)
+            {
+                WormholeProperties.InitWormholeProperties();
+            }
 
             Vector3 position = GameMain.mainPlayer.position;
             VectorLF3 uPosition = GameMain.mainPlayer.uPosition;
@@ -241,7 +245,7 @@ namespace DSP_Battle
 
         public static void InitWormholeProperties()
         {
-            DspBattlePlugin.logger.LogInfo("Init wormhole properties");
+            //DspBattlePlugin.logger.LogInfo("Init wormhole properties");
             for (int i = 0; i < 100; i++)
             {
                 wormholeHp[i] = 1000000; //虫洞默认血量

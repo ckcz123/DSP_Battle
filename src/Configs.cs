@@ -14,7 +14,7 @@ namespace DSP_Battle
         public static bool developerMode = false; //发布前务必修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
 
         public static int versionWhenImporting = -1;
-        public static int versionCode = 30220328;
+        public static int versionCode = 30220329;
 
         public static int difficulty = 0; // -1 easy, 0 normal, 1 hard
 
@@ -53,9 +53,9 @@ namespace DSP_Battle
 
         public static int missile3Range;
 
-        public static int dropletAtk = 500;
+        public static int dropletAtk = 2000;
 
-        public static double dropletSpd = 20000.0;
+        public static double dropletSpd = 30000.0;
 
         // --- 敌方战舰信息
         public static int[] enemyIntensity = new int[10];
