@@ -89,9 +89,10 @@ namespace DSP_Battle
             //计算当前机甲能量可支持的最大运行状态的水滴数
             double mechaCurEnergy = GameMain.mainPlayer.mecha.coreEnergy;
             int maxWorkingDropletsNew = (int)((long)mechaCurEnergy / 100000000);
-            if (maxWorkingDropletsNew >= 10)
-                maxWorkingDroplets = 5;
-            maxWorkingDroplets = maxWorkingDropletsNew < maxWorkingDroplets ? maxWorkingDropletsNew : maxWorkingDroplets;
+            if (maxWorkingDropletsNew > maxWorkingDroplets + 1)
+                maxWorkingDroplets = maxWorkingDropletsNew - 1;
+            if (maxWorkingDropletsNew < maxWorkingDroplets)
+                maxWorkingDroplets = maxWorkingDropletsNew;
             maxWorkingDropletsNew = maxWorkingDroplets;
 
             //每个水滴update
