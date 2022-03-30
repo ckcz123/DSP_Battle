@@ -17,7 +17,8 @@ namespace DSP_Battle
         public static Text mechaDropletAmountText = null;
         public static long energyComsumptionPerLaunch = 1000000000; //发射水滴耗能
         public static long energyComsumptionPerAttack = 10000000; //水滴攻击耗能，不再使用
-        public static long energyComsumptionPerTick = 250000; //水滴每帧耗能
+        public static long energyComsumptionPerTick = 500000; //水滴每帧耗能
+        public static int maxWorkingDroplets = 5;
 
         //存档内容
         public static Droplet[] dropletPool = new Droplet[5];
@@ -77,7 +78,7 @@ namespace DSP_Battle
                 int starIndex = GameMain.localStar.index;
                 for (int i = 0; i < maxDroplet; i++)
                 {
-                    if (GameMain.mainPlayer.mecha.coreEnergy > energyComsumptionPerLaunch && dropletPool[i].Launch(starIndex))
+                    if (GameMain.mainPlayer.mecha.coreEnergy > energyComsumptionPerLaunch * 2 && dropletPool[i].Launch(starIndex))
                     {
                         TryConsumeMechaEnergy(energyComsumptionPerLaunch);
                         break; 
@@ -85,10 +86,33 @@ namespace DSP_Battle
                 }
             }
 
+            //计算当前机甲能量可支持的最大运行状态的水滴数
+            double mechaCurEnergy = GameMain.mainPlayer.mecha.coreEnergy;
+            int maxWorkingDropletsNew = (int)((long)mechaCurEnergy / 100000000);
+            if (maxWorkingDropletsNew >= 10)
+                maxWorkingDroplets = 5;
+            maxWorkingDroplets = maxWorkingDropletsNew < maxWorkingDroplets ? maxWorkingDropletsNew : maxWorkingDroplets;
+            maxWorkingDropletsNew = maxWorkingDroplets;
+
             //每个水滴update
             for (int i = 0; i < maxDroplet; i++)
             {
-                dropletPool[i].Update();
+                if (dropletPool[i].state >= 2 && dropletPool[i].state <= 3)
+                {
+                    if (maxWorkingDropletsNew > 0)
+                    {
+                        dropletPool[i].Update(true);
+                        maxWorkingDropletsNew--;
+                    }
+                    else
+                    {
+                        dropletPool[i].Update(false);
+                    }
+                }
+                else
+                {
+                    dropletPool[i].Update(true);
+                }
                 if (time % 120 == 0)
                     dropletPool[i].CheckBullet(); //游荡而又没有实体的子弹强行返回机甲
             }
@@ -189,17 +213,18 @@ namespace DSP_Battle
 
             if (swarmIndex == starIndex || state == 0) 
             {
+                swarmIndex = starIndex;
                 if (FindNextTarget())
                 {
-                    swarmIndex = starIndex;
-
                     if (CreateBulltes())
                     {
                         state = 1;//起飞
                         return true;
                     }
                     else //没创建成功，很可能是因为swarm为null
+                    {
                         return false;
+                    }
                 }
             }
             return false;
@@ -245,11 +270,43 @@ namespace DSP_Battle
             return true;
         }
 
-        bool FindNextTarget(int strategy=1, int planetIdDelta = 101)
+        bool FindNextNearTarget(double searchRangeRatio = 0.2, int backupStrategy = 1, int planetIdDelta = 1)
         {
-            if(Configs.nextWaveState == 3 && GameMain.localStar!=null && GameMain.localStar.index == Configs.nextWaveStarIndex)
+            if (Configs.nextWaveState == 3 && swarmIndex == Configs.nextWaveStarIndex)
             {
-                List<EnemyShip> targets = EnemyShips.sortedShips(strategy, Configs.nextWaveStarIndex, Configs.nextWaveStarIndex * 100 + planetIdDelta);
+                VectorLF3 curUPos = GetCurrentUPos();
+                List<int> enemiesNear = EnemyShips.FindShipsInRange(curUPos, Configs.dropletSpd * searchRangeRatio);
+                if (enemiesNear.Count <= 0) return FindNextTarget();
+
+                int tarIdx = Utils.RandInt(0, enemiesNear.Count);
+                if(tarIdx == targetShipIndex && enemiesNear.Count > 1) //新目标如果和上一个目标一样，并且有其他可选目标，则尽量选择不同的目标
+                {
+                    if(tarIdx > 0)
+                    {
+                        tarIdx = Utils.RandInt(0, tarIdx);
+                    }
+                    else
+                    {
+                        tarIdx = Utils.RandInt(tarIdx + 1, enemiesNear.Count);
+                    }
+                }
+                if (EnemyShips.ships[enemiesNear[tarIdx]].state == EnemyShip.State.active)
+                {
+                    targetShipIndex = enemiesNear[tarIdx];
+                    return true;
+                }
+                else
+                {
+                    return FindNextTarget();
+                }
+            }
+            return false;
+        }
+        bool FindNextTarget(int strategy=1, int planetIdDelta = 1)
+        {
+            if(Configs.nextWaveState == 3 && swarmIndex == Configs.nextWaveStarIndex)
+            {
+                List<EnemyShip> targets = EnemyShips.sortedShips(strategy, Configs.nextWaveStarIndex, (Configs.nextWaveStarIndex+1) * 100 + planetIdDelta);
                 if(targets.Count>0)
                 {
                     int begin = randSeed % 5;
@@ -279,7 +336,7 @@ namespace DSP_Battle
             return false;
         }
 
-        public void Update()
+        public void Update(bool working = true)
         {
             if (state <= 0) return;
             if(swarmIndex < 0)
@@ -299,9 +356,23 @@ namespace DSP_Battle
                 return;
             }
 
-            if(state >=1 && state<=3)//返航过程不消耗能量
+            if(state >= 2 && state <= 3 && working)//飞出、返航过程不消耗能量
             {
                 Droplets.ForceConsumeMechaEnergy(Droplets.energyComsumptionPerTick);
+            }
+
+            if(state >= 2 && state <= 3 && !working && Configs.nextWaveState==3) //如果因为机甲能量水平不够，水滴会停在原地，但是如果战斗状态结束了，那么水滴会无视能量限制继续正常Update（正常Update会在战斗结束后让水滴立刻进入4阶段回机甲）
+            {
+                float tickT = 0.016666668f;
+                swarm.bulletPool[bulletIds[0]].t -= tickT;
+                VectorLF3 lastUPos = GetCurrentUPos();
+                for (int i = 0; i < 25; i++)
+                {
+                    if (swarm.bulletPool.Length <= bulletIds[i]) continue;
+                    swarm.bulletPool[bulletIds[i]].uBegin = lastUPos;
+                    swarm.bulletPool[bulletIds[i]].t = 0;
+                }
+                return;
             }
 
             if (state == 1) //刚起飞
@@ -342,12 +413,11 @@ namespace DSP_Battle
                 //如果原目标不存在了，尝试寻找新目标，如果找不到目标，设定为回机甲状态（4）
                 if (!EnemyShips.ships.ContainsKey(targetShipIndex) || EnemyShips.ships[targetShipIndex].state != EnemyShip.State.active)
                 {
-                    if (!FindNextTarget())
+                    if (!FindNextNearTarget())
                     {
                         state = 4;
                         VectorLF3 newBegin = GetCurrentUPos();
-                        VectorLF3 newEnd = swarm.bulletPool[bulletIds[0]].uEnd;
-                        newEnd = GameMain.mainPlayer.uPosition;
+                        VectorLF3 newEnd = GameMain.mainPlayer.uPosition;
                         if (GameMain.localPlanet!=null) //如果玩家在星球上，水滴则不是直线往玩家身上飞，而是飞到玩家头顶星球上空，然后再飞回玩家（这是在state=5阶段）
                         {
                             int planetId = GameMain.localPlanet.id;
@@ -387,6 +457,7 @@ namespace DSP_Battle
 
                     if (continueAttack)
                     {
+                        FindNextNearTarget(); //寻找新的较近的敌人
                         randSeed = Utils.RandNext(); //改变索敌定位时的随机偏移种子
                         state = 2; //回到追敌攻击状态
                         VectorLF3 uEnd = swarm.bulletPool[bulletIds[0]].uEnd;
@@ -397,6 +468,14 @@ namespace DSP_Battle
                     else
                     {
                         state = 4;
+                        VectorLF3 newEnd = GameMain.mainPlayer.uPosition;
+                        if (GameMain.localPlanet != null) //如果玩家在星球上，水滴则不是直线往玩家身上飞，而是飞到玩家头顶星球上空，然后再飞回玩家（这是在state=5阶段）
+                        {
+                            int planetId = GameMain.localPlanet.id;
+                            AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
+                            newEnd = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, GameMain.mainPlayer.position * 2);
+                        }
+                        RetargetAllBullet(newBegin, newEnd, 25, 5, 5, Configs.dropletSpd);
                     }
                 }
             }

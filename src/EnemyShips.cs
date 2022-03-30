@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace DSP_Battle
 {
@@ -21,7 +22,7 @@ namespace DSP_Battle
         public static List<Dictionary<int, List<EnemyShip>>> targetPlanetShips;
         public static List<List<EnemyShip>> maxThreatSortedShips;
         public static List<List<EnemyShip>> minHpSortedShips;
-
+        //public static string meshDir = "entities/models/space capsule/space-capsule"; //是十字外面一个圈，很小
         public static bool shouldDistroy = true;
 
         public static void Init()
@@ -393,11 +394,83 @@ namespace DSP_Battle
         {
             logisticShipUIRendererExpanded = true;
         }
-        
+
+
+
+
+
+        //[HarmonyPrefix]
+        //[HarmonyPatch(typeof(LogisticShipUIRenderer), "Draw")]
+        //public static bool ShipUiDrawPrePatch(ref LogisticShipUIRenderer __instance)
+        //{
+        //    int shipCount = (int)Traverse.Create(__instance).Field("shipCount").GetValue();
+        //    if (shipCount <= 0)
+        //    {
+        //        return false;
+        //    }
+        //    //if (__instance.uiStarmap == null || !__instance.uiStarmap.active || UIStarmap.isChangingToMilkyWay)
+        //    //{
+        //    //    return;
+        //    //}
+        //    uint[] argArr = (uint[])Traverse.Create(__instance).Field("argArr").GetValue();
+        //    Material[] shipMats = (Material[])Traverse.Create(__instance).Field("shipMats").GetValue();
+        //    Mesh shipMesh = (Mesh)Traverse.Create(__instance).Field("shipMesh").GetValue();
+        //    ComputeBuffer argBuffer = (ComputeBuffer)Traverse.Create(__instance).Field("argBuffer").GetValue();
+        //    ComputeBuffer shipsBuffer = (ComputeBuffer)Traverse.Create(__instance).Field("shipsBuffer").GetValue();
+        //    try
+        //    {
+        //        for (int i = 0; i < shipMats.Length; i++)
+        //        {
+        //            argArr[i * 5] = shipMesh.GetIndexCount(i);
+        //            argArr[1 + i * 5] = (uint)shipCount;
+        //            argArr[2 + i * 5] = shipMesh.GetIndexStart(i);
+        //            argArr[3 + i * 5] = shipMesh.GetBaseVertex(i);
+        //            argArr[4 + i * 5] = 0U;
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        Utils.Check(1, "err");
+        //    }
+
+        //    argBuffer.SetData(argArr);
+        //    for (int j = 0; j < shipMats.Length; j++)
+        //    {
+        //        try
+        //        {
+        //            shipMats[j].SetBuffer("_ShipBuffer", shipsBuffer);
+        //            Graphics.DrawMeshInstancedIndirect(shipMesh, j, shipMats[j], new Bounds(Vector3.zero, new Vector3(200000f, 200000f, 200000f)), argBuffer, j * 5 * 4, null, ShadowCastingMode.Off, false, 20);
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            DspBattlePlugin.logger.LogError(e);
+        //        }
+        //    }
+        //    //__instance.GpuAnalysis();
+        //    return false;
+        //}
+
+
+
+
+
+
+
         [HarmonyPostfix]
         [HarmonyPatch(typeof(LogisticShipUIRenderer), "Update")]
         public static void LogisticShipUIRenderer_Update(ref LogisticShipUIRenderer __instance)
         {
+            //try
+            //{
+            //    ref Mesh ms = ref AccessTools.FieldRefAccess<LogisticShipUIRenderer, Mesh>(__instance, "shipMesh");
+            //    //ms = Resources.Load<Mesh>("test/tgs demo/enemy-easteregg");
+            //    //ms = Resources.Load<Mesh>("doodads/echo/model/echo");//可用备选，貌似是两个小翅膀
+            //    ms = Resources.Load<Mesh>(meshDir);
+            //}
+            //catch (Exception e)
+            //{
+            //    DspBattlePlugin.logger.LogError(e);
+            //}
             if (ships.Count == 0) return;
 
             if (!logisticShipUIRendererUIStarmap.ContainsKey(__instance))
