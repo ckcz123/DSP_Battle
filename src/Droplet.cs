@@ -527,7 +527,13 @@ namespace DSP_Battle
                     {
                         TryRemoveOtherBullets();
                         if (GameMain.localPlanet != null) newBegin = mechaUPos2; //如果是在星球上，则从上空(也就是mechUPos2)飞回来，否则从阶段拐点的原位置(也就是GetCurrentUPos())直线向机甲飞回来
-                        RetargetAllBullet(newBegin, mechaUPos, 1, 0, 0, Configs.dropletSpd / 200.0);
+                        //RetargetAllBullet(newBegin, mechaUPos, 1, 0, 0, Configs.dropletSpd / 200.0);
+                        float tickT = 0.016666668f;
+                        swarm.bulletPool[bulletIds[0]].maxt = (float)((newBegin - mechaUPos).magnitude / (Configs.dropletSpd / 200.0));
+                        swarm.bulletPool[bulletIds[0]].t = swarm.bulletPool[bulletIds[0]].maxt - tickT * 3;
+                        swarm.bulletPool[bulletIds[0]].uEnd = newBegin;
+                        swarm.bulletPool[bulletIds[0]].uBegin = mechaUPos;
+                        swarm.bulletPool[bulletIds[0]].lBegin = GameMain.mainPlayer.position;
                     }
                     else
                     {
@@ -542,17 +548,19 @@ namespace DSP_Battle
             {
                 VectorLF3 mechaUPos = GameMain.mainPlayer.uPosition;
 
+                float tickT = 0.016666668f;
+
                 if (GameMain.localPlanet != null)
                 {
                     int planetId = GameMain.localPlanet.id;
                     AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
                     mechaUPos = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, GameMain.mainPlayer.position);
                 }
-
+                swarm.bulletPool[bulletIds[0]].t -= tickT * 2;
                 float lastT = swarm.bulletPool[bulletIds[0]].t;
-                float lastMaxt = swarm.bulletPool[bulletIds[0]].maxt;
+                //float lastMaxt = swarm.bulletPool[bulletIds[0]].maxt;
 
-                if (lastMaxt - lastT <= 0.03) //足够近，则回到机甲
+                if (lastT <= 0.03) //足够近，则回到机甲
                 {
                     state = 0;
                     TryRemoveOtherBullets(0);
@@ -563,7 +571,8 @@ namespace DSP_Battle
                     for (int i = 0; i < 1; i++)
                     {
                         if (swarm.bulletPool.Length <= bulletIds[i]) continue;
-                        swarm.bulletPool[bulletIds[i]].uEnd = mechaUPos;
+                        swarm.bulletPool[bulletIds[i]].uBegin = mechaUPos;
+                        swarm.bulletPool[bulletIds[0]].lBegin = GameMain.mainPlayer.position;
                     }
 
                 }
