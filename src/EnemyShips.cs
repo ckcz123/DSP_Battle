@@ -336,7 +336,7 @@ namespace DSP_Battle
                     if (GameMain.data.dysonSpheres.Length > starIndex && GameMain.data.dysonSpheres[starIndex] != null && GameMain.data.dysonSpheres[starIndex].swarm != null && (GameMain.instance.timei + ship.shipIndex) % 20 == 0) 
                     {
                         int planetId = planetFactory.planetId;
-                        DysonSwarm swarm = GameMain.data.dysonSpheres[starIndex].swarm;
+                        DysonSwarm swarm = RendererSphere.enemySpheres[starIndex].swarm;
                         AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
                         VectorLF3 stationUpos = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, stationPos);
                         VectorLF3 shipLocalPos = Maths.QInvRotateLF(astroPoses[planetId].uRot, ship.uPos - astroPoses[planetId].uPos);

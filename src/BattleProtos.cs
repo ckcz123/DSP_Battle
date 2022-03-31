@@ -195,7 +195,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("剩余敌人", "Remaining enemies", "剩余敌人");
             ProtoRegistry.RegisterString("剩余强度", "Remaining strength", "剩余强度");
             ProtoRegistry.RegisterString("已被摧毁", "Eliminated enemies", "已被摧毁");
-            ProtoRegistry.RegisterString("入侵抵达提示", "The next wave will be arrived in {0} at {1}", "下一次入侵预计于{0}后抵达{1}");
+            ProtoRegistry.RegisterString("入侵抵达提示", "The next wave will arrive in {0} on {1}", "下一次入侵预计于{0}后抵达{1}");
             ProtoRegistry.RegisterString("约gm", "", "约");
             ProtoRegistry.RegisterString("小时gm", "h", "小时");
             ProtoRegistry.RegisterString("分gm", "m", "分");

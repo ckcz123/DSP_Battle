@@ -24,8 +24,6 @@ namespace DSP_Battle
         public static Droplet[] dropletPool = new Droplet[5];
         public static int maxDroplet = 2;
 
-
-
         public static void InitAll()
         {
             maxDroplet = 2;
@@ -159,6 +157,8 @@ namespace DSP_Battle
             GameMain.mainPlayer.mecha.MarkEnergyChange(8, -energy);
         }
 
+
+
         public static void Export(BinaryWriter w) 
         {
             for (int i = 0; i < 5; i++)
@@ -234,7 +234,7 @@ namespace DSP_Battle
         bool CreateBulltes()
         {
             if (swarmIndex < 0) return false;
-            DysonSwarm swarm = GameMain.data.dysonSpheres[swarmIndex]?.swarm;
+            DysonSwarm swarm = GetSwarm();
             if (swarm == null || !EnemyShips.ships.ContainsKey(targetShipIndex)) return false;
 
             VectorLF3 beginUPos = GameMain.mainPlayer.uPosition;
@@ -345,8 +345,9 @@ namespace DSP_Battle
                 state = 0;
                 return;
             }
-            DysonSwarm swarm = GameMain.data.dysonSpheres[swarmIndex]?.swarm;
-            if(swarm == null)
+            DysonSwarm swarm = GetSwarm();
+
+            if (swarm == null)
             {
                 state = 0;
                 return;
@@ -584,16 +585,15 @@ namespace DSP_Battle
         VectorLF3 GetCurrentUPos()
         {
             VectorLF3 uPos000 = new VectorLF3(0, 0, 0);
-            DysonSwarm swarm = null;
-            if (swarmIndex < 0) return uPos000;
-            if (GameMain.data.dysonSpheres[swarmIndex] != null)
-                swarm = GameMain.data.dysonSpheres[swarmIndex].swarm;
+            DysonSwarm swarm = GetSwarm();
+
             if (swarm == null) return uPos000;
             if (swarm.bulletPool.Length <= bulletIds[0])
             {
                 state = 0;
                 return uPos000;
             }
+
 
             float lastT = swarm.bulletPool[bulletIds[0]].t;
             float lastMaxt = swarm.bulletPool[bulletIds[0]].maxt;
@@ -607,9 +607,8 @@ namespace DSP_Battle
         void RetargetAllBullet(VectorLF3 newUBegin, VectorLF3 newUEnd, int bulletNum, int randomBeginRatio, int randomEndRatio, double speed) //如果只更新uEnd，不更新maxt等其他信息，则不要使用这个函数
         {
             if (swarmIndex < 0) return;
-            DysonSwarm swarm = null;
-            if (GameMain.data.dysonSpheres[swarmIndex] != null)
-                swarm = GameMain.data.dysonSpheres[swarmIndex].swarm;
+            DysonSwarm swarm = GetSwarm();
+
             if (swarm == null) return;
             if (swarm.bulletPool.Length <= bulletIds[0])
             {
@@ -652,9 +651,8 @@ namespace DSP_Battle
         void TryRemoveOtherBullets(int beginIndex=1)
         {
             if (swarmIndex < 0) return;
-            DysonSwarm swarm = null;
-            if (GameMain.data.dysonSpheres[swarmIndex] != null)
-                swarm = GameMain.data.dysonSpheres[swarmIndex].swarm;
+            DysonSwarm swarm = GetSwarm();
+
             if (swarm == null) return;
             for (int i = beginIndex; i < bulletIds.Length; i++)
             {
@@ -673,9 +671,8 @@ namespace DSP_Battle
                 state = 0;
                 return;
             }
-            DysonSwarm swarm = null;
-            if (GameMain.data.dysonSpheres[swarmIndex] != null)
-                swarm = GameMain.data.dysonSpheres[swarmIndex].swarm;
+            DysonSwarm swarm = GetSwarm();
+
             if (swarm == null) return;
             if (state < 0) return;
             for (int i = 0; i < bulletIds.Length; i++)
@@ -684,6 +681,14 @@ namespace DSP_Battle
                 if (swarm.bulletPool[bulletIds[i]].id > 0) return;
             }
             state = 0;
+        }
+
+        DysonSwarm GetSwarm()
+        {
+            if (swarmIndex >= 0 && swarmIndex < GameMain.galaxy.starCount)
+                return GameMain.data.dysonSpheres[swarmIndex]?.swarm;
+            else
+                return null;
         }
 
         public void Export(BinaryWriter w)

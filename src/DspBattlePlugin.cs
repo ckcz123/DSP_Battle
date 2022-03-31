@@ -75,6 +75,7 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(ShieldGenerator));
             Harmony.CreateAndPatchAll(typeof(ShieldRenderer));
             Harmony.CreateAndPatchAll(typeof(Droplets));
+            Harmony.CreateAndPatchAll(typeof(RendererSphere));
 
             LDBTool.PreAddDataAction += BattleProtos.AddProtos;
             LDBTool.PostAddDataAction += BattleProtos.PostDataAction;
@@ -185,6 +186,7 @@ namespace DSP_Battle
 
             UIBattleStatistics.InitAll();
             UIBattleStatistics.InitSelectDifficulty();
+            RendererSphere.InitAll();
         }
 
         public void IntoOtherSave()
@@ -201,6 +203,7 @@ namespace DSP_Battle
 
             UIBattleStatistics.InitAll();
             UIBattleStatistics.InitSelectDifficulty();
+            RendererSphere.InitAll();
         }
 
 

@@ -309,7 +309,7 @@ namespace DSP_Battle
                         ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => 0);
                     UIBattleStatistics.RegisterShieldTakeDamage(Configs.enemyDamagePerBullet[shipTypeNum]);
                     //子弹
-                    DysonSwarm swarm = GameMain.data.dysonSpheres[planetId / 100 - 1]?.swarm;
+                    DysonSwarm swarm = RendererSphere.enemySpheres[planetId / 100 - 1]?.swarm;
                     if(swarm!=null)
                     {
                         int bulletIndex = swarm.AddBullet(new SailBullet
