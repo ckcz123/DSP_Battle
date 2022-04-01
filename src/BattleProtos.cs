@@ -29,17 +29,17 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("子弹3结论", "You have unlocked deuterium nucleus", "你解锁了氘核爆破弹，可以利用核聚变进行破坏");
             ProtoRegistry.RegisterString("脉冲", "Phase-cracking beam", "相位裂解光束");
             ProtoRegistry.RegisterString("脉冲短", "Cracking beam", "相位裂解光束");
-            ProtoRegistry.RegisterString("脉冲描述", "The beam doens't need to be produced, just provide enough energy to <color=#c2853d>Phaser emitter</color> to eject.", "这种光束是不需要制作和提供的，只需给<color=#c2853d>相位裂解炮</color>提供足够电量即可无限发射。");
+            ProtoRegistry.RegisterString("脉冲描述", "The beam doesn't need to be produced, just provide enough energy for the <color=#c2853d>Phaser emitter</color> to eject.", "这种光束是不需要制作和提供的，只需给<color=#c2853d>相位裂解炮</color>提供足够电量即可无限发射。");
 
             ProtoRegistry.RegisterString("导弹1", "Thermonuclear missile", "热核导弹");
             ProtoRegistry.RegisterString("导弹1短", "Nuclear missile", "热核导弹");
             ProtoRegistry.RegisterString("导弹1描述", "A powerful nuclear missile", "这天，百无聊赖的先驱者正在刷哔哩哔哩，突然刷到了一条《如何在卧室制造核弹》的视频，于是这种导弹便被制造了出来。这是一种重型武器，发射升空并命中敌人后产生核爆，造成大范围伤害。");
             ProtoRegistry.RegisterString("导弹1结论", "You have unlocked thermonuclear missile.", "你解锁了热核导弹，可以自动追踪敌人");
 
-            ProtoRegistry.RegisterString("导弹2", "Anti-matter missile", "反物质导弹");
+            ProtoRegistry.RegisterString("导弹2", "Antimatter missile", "反物质导弹");
             ProtoRegistry.RegisterString("导弹2短", "A-M missile", "反物质导弹");
-            ProtoRegistry.RegisterString("导弹2描述", "A missile has a bit of anti-matter in it, turning anything into oblivion after explosion.", "先驱者在一次搬运货物时不慎手滑造成微量<color=#c2853d>反物质</color>泄露，这导致他辛辛苦苦拉好的产线毁于一旦。“为什么不让敌人尝尝这种痛苦呢？”他想到。于是这种将<color=#c2853d>反物质</color>封装入导弹的武器被制造了出来，命中敌人后会发生湮灭，将敌人彻底抹杀。");
-            ProtoRegistry.RegisterString("导弹2结论", "You have unlocked anti-matter missile.", "你解锁了反物质导弹，可以自动追踪敌人");
+            ProtoRegistry.RegisterString("导弹2描述", "A missile has a bit of antimatter in it, turning anything into oblivion after explosion.", "先驱者在一次搬运货物时不慎手滑造成微量<color=#c2853d>反物质</color>泄露，这导致他辛辛苦苦拉好的产线毁于一旦。“为什么不让敌人尝尝这种痛苦呢？”他想到。于是这种将<color=#c2853d>反物质</color>封装入导弹的武器被制造了出来，命中敌人后会发生湮灭，将敌人彻底抹杀。");
+            ProtoRegistry.RegisterString("导弹2结论", "You have unlocked antimatter missile.", "你解锁了反物质导弹，可以自动追踪敌人");
 
             ProtoRegistry.RegisterString("导弹3", "Gravitational collapse missile", "引力塌陷导弹");
             ProtoRegistry.RegisterString("导弹3短", "Grav-missile", "引力塌陷导弹");
@@ -50,12 +50,12 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("弹射器1描述", "An giant railgun based on electromagnetic-ejection technology, ejecting any physical ammunition.", "制造出<color=#c2853d>穿甲磁轨弹</color>的先驱者不知道该如何把他们扔上天，直到他不小心把<color=#c2853d>太阳帆</color>误装成了炮弹。“好极了，现在我‘创造’了一种武器。”先驱者这样想着，“但是怎么区分他们呢？”。随后，先驱者默念着：“你指尖闪动的电光，是我此生不变的信仰……”给它装上了橙色氛围灯。该武器打击范围受到仰角限制。");
             ProtoRegistry.RegisterString("弹射器1结论", "You have unlocked super railgun.", "你解锁了电磁轨道炮，可以发射子弹攻击敌方");
 
-            ProtoRegistry.RegisterString("弹射器2", "Gravitaion Slingshot ejector", "引力弹射炮");
+            ProtoRegistry.RegisterString("弹射器2", "Gravitation Slingshot ejector", "引力弹射炮");
             ProtoRegistry.RegisterString("弹射器2描述", "An giant ejector, speed up any physical ammunition by two micro-black-hole inside it.", "在黑洞杀了个七进七出之后，先驱者对引力操控有了深入见解，他终于决定自己开发一种武器。于是他拆除了<color=#c2853d>电磁轨道炮</color>的加速磁场，制造了一种利用微型黑洞制造引力弹弓的发生器，这使得发射炮弹获得了数倍于之前的动能。“这回可不是换个氛围灯那么简单了！”先驱者自我陶醉着。");
-            ProtoRegistry.RegisterString("弹射器2结论", "You have unlocked Gravitaion Slingshot ejector.", "你解锁了引力弹射炮，可以发射子弹攻击敌方");
+            ProtoRegistry.RegisterString("弹射器2结论", "You have unlocked Gravitation Slingshot ejector.", "你解锁了引力弹射炮，可以发射子弹攻击敌方");
 
             ProtoRegistry.RegisterString("脉冲炮", "Phaser emitter", "相位裂解炮");
-            ProtoRegistry.RegisterString("脉冲炮描述", "Just like any same weapons in sifi-movies or sifi-games, ejecting powerful-radiation to break down enemy. <color=#c2853d>Physical bullets needless.</color>", "开发出超级武器的先驱者百般无聊，整日靠着当P社战犯度日，但是他灭绝寰宇的大业总是因为弹药短缺被打断，于是他一气之下依照《群星》的舰载武器开发了这种武器。利用发射的高能粒子流产生相位裂解链式反应，大范围杀伤敌人，最大的优点是，<color=#c2853d>无需弹药</color>！从此，先驱者在成为战犯的道路上越走越远。");
+            ProtoRegistry.RegisterString("脉冲炮描述", "Just like weapons you've seen in sci-fi movies and games, ejects powerful radiation to break down enemy. <color=#c2853d>Physical bullets needless.</color>", "开发出超级武器的先驱者百般无聊，整日靠着当P社战犯度日，但是他灭绝寰宇的大业总是因为弹药短缺被打断，于是他一气之下依照《群星》的舰载武器开发了这种武器。利用发射的高能粒子流产生相位裂解链式反应，大范围杀伤敌人，最大的优点是，<color=#c2853d>无需弹药</color>！从此，先驱者在成为战犯的道路上越走越远。");
             ProtoRegistry.RegisterString("脉冲炮结论", "You have unlocked Phaser emitter.", "你解锁了相位裂解炮，可以仅使用电力攻击敌方");
 
             ProtoRegistry.RegisterString("发射器1", "Void missile launching silo", "深空导弹发射井");
@@ -69,7 +69,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("深空防卫系统描述", "Manufacturing <color=#c2853d>void-missile-launching-silo</color> to deploy <color=#c2853d>thermonuclear-missile</color> to bulid broader strike, Filling the gap in near-earth-defense.", "制造<color=#c2853d>深空导弹发射井</color>部署<color=#c2853d>热核导弹</color>实现更大范围覆盖打击，填补近地防卫的空白。");
             ProtoRegistry.RegisterString("深空防卫系统结论", "You have unlocked Void Def-system.", "你解锁了深空防卫系统");
             ProtoRegistry.RegisterString("引力操控技术", "Gravitation control", "引力操控技术");
-            ProtoRegistry.RegisterString("引力操控技术描述", "Manufacturing <color=#c2853d>gravitaion-slingshot-ejector</color> to level up near-earth-defense and <color=#c2853d>gravitational-collapse-missile</color> to further strengthen void-defense.", "制造<color=#c2853d>引力弹射炮</color>升级近地防卫系统，生产<color=#c2853d>引力塌陷导弹</color>进一步加强深空防御。");
+            ProtoRegistry.RegisterString("引力操控技术描述", "Manufacturing <color=#c2853d>gravitation-slingshot-ejector</color> to level up near-earth-defense and <color=#c2853d>gravitational-collapse-missile</color> to further strengthen void-defense.", "制造<color=#c2853d>引力弹射炮</color>升级近地防卫系统，生产<color=#c2853d>引力塌陷导弹</color>进一步加强深空防御。");
             ProtoRegistry.RegisterString("引力操控技术结论", "You have unlocked Gravitation control.", "你解锁了引力操控技术");
             ProtoRegistry.RegisterString("相位裂解技术", "Phaser fission", "相位裂解技术");
             ProtoRegistry.RegisterString("相位裂解技术描述", "Manufacturing super weapon <color=#c2853d>phaser-fission</color> to bulid ultimate near-earth-defense.", "这波<color=#c2853d>相位裂解炮</color>来全杀了。");
@@ -77,7 +77,7 @@ namespace DSP_Battle
 
             ProtoRegistry.RegisterString("子弹2tech描述", "Manufacturing <color=#c2853d>Acid bullet</color> to strengthen defensive system.", "制造<color=#c2853d>强酸磁轨弹</color>加强近地防御力。");
             ProtoRegistry.RegisterString("子弹3tech描述", "Manufacturing <color=#c2853d>Deuterium nucleus</color> to strengthen defensive system.", "制造<color=#c2853d>氘核爆破弹</color>进一步加强近地防御力。");
-            ProtoRegistry.RegisterString("导弹2tech描述", "Manufacturing <color=#c2853d>Anti-matter missile</color> to strengthen defensive system.", "制造<color=#c2853d>反物质导弹</color>加强深空防御力。");
+            ProtoRegistry.RegisterString("导弹2tech描述", "Manufacturing <color=#c2853d>Antimatter missile</color> to strengthen defensive system.", "制造<color=#c2853d>反物质导弹</color>加强深空防御力。");
 
             ProtoRegistry.RegisterString("定向爆破1", "Directional blasting", "定向爆破");
             ProtoRegistry.RegisterString("定向爆破2", "Directional blasting", "定向爆破");
@@ -130,49 +130,49 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("即将到来gm", "Coming soon", "即将推出");
 
 
-            ProtoRegistry.RegisterString("彩蛋1描述", "Seems like these enemies are a kind of space insects. They live in deep space, feed on the tides of power without vision. " +
-                "The stellar station will create regular ripples in the space, making itself as a beacon in dark universe, can be easily captured and attacked by the insects. " +
-                "In other words, <color=#c2853d>they will randomly choose a stellar station, and attack its solar system by wormholes. Stars with more stellar stations will have higher possibility to be selected, and stars without any stellar stations won't be attacked. </color>" +
-                "Obviously, I can't rely on giving up stellar stations, as the progress will come slowly without transportations. Instead, I have to find a way to defense. Hope I still have time to think about 'The Answer to Life, the Universe, and Everything'.", 
+            ProtoRegistry.RegisterString("彩蛋1描述", "Seems like these enemies are a kind of space insect. They live in deep space, feed on the tides of power without vision. " +
+                "The interstellar station creates regular ripples in space, making itself a beacon in a dark universe that can easily be captured and attacked by the insects. " +
+                "In other words, <color=#c2853d>they will randomly choose an interstellar station, and attack its star system via wormholes. Stars with more interstellar stations will have a higher probability of being selected, and stars without any interstellar stations won't be attacked. </color>" +
+                "Obviously, I can't give up my interstellar stations as progress will slow without item transportation. Instead, I have to find a way to defend. Hope I still have time to think about 'The Answer to Life, the Universe, and Everything'.", 
                 "这种生物似乎是一种虫类，靠进食宇宙中的各种能量潮汐为生，同时还具有虫洞制造能力，一旦发现食物就会直接在附近建立虫洞。" +
                 "星际物流塔产生的能量潮汐让它变成了宇宙中的一座灯塔，能被这些生物轻易捕捉并视作食物来源。" +
                 "换言之，<color=#c2853d>它们会随机选择全星区的任意一个星际物流塔，通过虫洞进攻该星系；物流塔越多的星系受到攻击概率越高，而只要不建设星际物流塔，那个星系就不会受到它们的侵扰。</color>" +
                 "但这显然行不通，不用星际物流塔将极大的延缓任务完成的速度，这是主脑不愿意看到的。看来我需要一些防御设施来保护星际物流塔。唉，本来还说抽空思考一下宇宙的终极答案的……");
-            ProtoRegistry.RegisterString("彩蛋2描述", "Armour piercing are still too inefficient, I have to find a better alternative. Anyway, they are real creatures, and acid erosion should have better damages on them.\n" +
-                "Besides, I found that <color=#c2853d>the wormholes will always establish when the warning coming to 5 minutes?</color> If my railgun can't fire the invading enemies, maybe I can do something before that...", 
+            ProtoRegistry.RegisterString("彩蛋2描述", "Armour piercing rounds are still too inefficient, I have to find a better alternative. Anyway, they are real creatures, and acid erosion should do more damage to them.\n" +
+                "Besides, I found that <color=#c2853d>the wormholes will always establish when the warning timer reaches 5 minutes?</color> If my railgun can't destroy the invading enemies, maybe I can do something before then...", 
                 "穿甲弹的效率还是太低了，我得试试找到强力的替代品，最好是能产生更大的伤害。就目前的情况来看，硫酸是个不错的选择，我可以试着直接把他们投射向敌人。" +
                 "再怎么说他们也是实体生物，酸蚀也够他们喝一壶的。还好它们不是异形，不然就是够我喝一壶的了。\n" +
                 "另外我发现，<color=#c2853d>虫洞永远在预警五分钟时才生成？</color>" +
                 "要是我的磁轨炮打不到入侵的敌人，也许我可以提前做点什么...");
-            ProtoRegistry.RegisterString("彩蛋3描述", "They are more powerful than I think. With the expansion of pipelines and stellar stations, their offensive has become more and more ferocious. " +
-                "The Near Earth Def-system had limited coverage and could no longer effectively resist them. Luckily I have learned to build manufacture thermonuclear missiles on YouTube, and launching it will definitely solve the urgent need.\n" +
-                "In addition, I found that <color=#c2853d>every time they destroy an stellar station, the next wave will be delayed! </color>Maybe I can find a way to get more time for development?", 
+            ProtoRegistry.RegisterString("彩蛋3描述", "They are more powerful than I thought. With the expansion of pipelines and interstellar stations, their offensive has become more and more ferocious. " +
+                "The Near Earth Def-system had limited coverage and could no longer effectively resist them. Luckily I have learned to manufacture thermonuclear missiles on YouTube, and launching it will definitely solve this urgent need.\n" +
+                "In addition, I found that <color=#c2853d>every time they destroy an interstellar station, the next wave will be delayed! </color>Maybe I can find a way to get more time for building?", 
                 "我还是把他们想的太简单了。随着产线扩张，物流塔的建设，他们的攻势越来越凶猛。大炮的覆盖范围有限，已经无法有效抵挡他们了。好在我这几天在B站上学会了造热核弹，把它发射上去肯定能解燃眉之急。" +
                 "至于怎么发射上去，那还真得研究研究了，炮管子实在是太细了，放不进去。赶快结束这一切吧，我还想去梦里数电子羊呢。\n" +
                 "另外我发现，<color=#c2853d>虫子每破坏一座星际物流塔，下一次进攻就会被推迟！</color>也许可以想想办法获得更多的发展时间呢？");
-            ProtoRegistry.RegisterString("彩蛋4描述", "The thermonuclear missiles are so powerul, but the launch is too slow. How can I create a miniature version of it and integrate with bullets, so they can both have lethality and speed? How genius am I!\n" +
-                "Another thing I found is, <color=#c2853d>the intensity of attacking different stars is independent. Attacking to a new star will start from the lowest intensity...</color> It seems I don't need to worry about the safety of planets only for miners now.", 
+            ProtoRegistry.RegisterString("彩蛋4描述", "The thermonuclear missiles are very powerful, but the launch is too slow. How can I create a miniature version and integrate with bullets, so they can both have lethality and speed? What a genius I am!\n" +
+                "Another thing I found is, <color=#c2853d>the intensity of the attack on different stars is independent. The first attack on a new star will start from the lowest intensity...</color> It seems I don't need to worry about the safety of planets with only for miners now.", 
                 "热核导弹的杀伤力确实很大，但是发射也太慢了，我得研究研究怎么把热核导弹造成微缩版本塞进炮弹里面去，那不就既有杀伤力又有速度嘛。我可真是个天才！" +
                 "唉，你说我这天才为什么就不得伊卡拉姆妹妹的喜欢呢？我为她专门点亮了一片星系告白，但她居然说：“前天看到了小白兔，昨天是小鹿，今天是你。”这不是嘲讽我像个动物一样蠢吗。算了算了，不提了，女人只会影响我造戴森球的速度。\n" +
                 "另外我发现，<color=#c2853d>这些虫子攻击不同星系的强度是独立的啊，进攻全新星系的虫群似乎会重新从最低强度开始...</color> 看来暂时是不怎么需要担心矿星的安全性问题了。");
-            ProtoRegistry.RegisterString("彩蛋5描述", "Damn it, a bit of anti-matter leakage almost lifted my pipelines, which caused me a lot of time to repair them. " +
-                "Wait, they can destroy my pipelines, why not insects? Good idea! Wait for me, fxxk insects, taste the anit-matter and die!", 
+            ProtoRegistry.RegisterString("彩蛋5描述", "Damn it, a bit of antimatter leakage almost destroyed my pipelines, which took me a lot of time to repair. " +
+                "Wait, they can destroy my pipelines, why not insects? Good idea! Wait for me, fxxk insects, taste the antimatter and die!", 
                 "倒霉透了，手滑泄露的那一点反物质差点把产线给扬了，害得我修复了好久。诶等等，能扬了我的产线为什么不能扬了那堆臭虫？思路打开了！" +
                 "死虫子你们给我等着，跟我轻型机甲拼你们有这个实力吗？我这就把反物质打上天，指定没有你们好果子吃！");
-            ProtoRegistry.RegisterString("彩蛋6描述", "Jesus! Why I limited myself to existing technologies? I'm Icarus, who can travel through black holes, hard landing with ultra-high speed, take a shower in lava and swim in sulfuric acid lake. " +
+            ProtoRegistry.RegisterString("彩蛋6描述", "Jesus! Why did I limit myself to existing technologies? I'm Icarus, who can travel through black holes, make a hard landing with ultra-high speed, take a shower in lava and swim in a sulfuric acid lake. " +
                 "Why can't I develop some outrageous weapons? Damn insects, can't be avoided and keep slowing down my progress, let me teach you a lesson! Come on!", 
                 "真是的，我为什么要局限于现有的武器技术啊。我可是伊卡洛斯啊，能穿越黑洞，能超高速硬着陆，能去岩浆里泡澡去硫酸里游泳，我为什么不能大胆开发点离谱的武器？" +
                 "反正也是闲着，不如给虫子看看我的真本事！TNND，杀又杀不完，躲也躲不掉，还一直拖慢我的进度，跟我玩阴的是吧？直接来吧！");
-            ProtoRegistry.RegisterString("彩蛋7描述", "Sure enough, nothing will stop me if I really want to do. I was too limited before, as I can build a Dyson sphere, why does the cannon need bullets? Just Phaser fission! " +
+            ProtoRegistry.RegisterString("彩蛋7描述", "Sure enough, nothing will stop me if I really want something. I was too limited before, as I can build a Dyson sphere, why does the cannon need bullets? Just Phaser fission! " +
                 "Everything is good now, I don't need to be distracted by making bullets, so nice!\n" +
-                "By the way, I found <color=#c2853d>the intensity of attack has an upper limit. I really thought it will would infinitely...</color> Now it's so easy for me to defend them! " +
-                "I don't know if uploading universe matrix or building Dyson sphere will change anything, let me find at that time.", 
+                "By the way, I found <color=#c2853d>the intensity of attack has an upper limit. I really thought it would increase infinitely...</color> Now it's so easy for me to defend them! " +
+                "I don't know if uploading universe matrix or building Dyson sphere will change anything, let me find out.", 
                 "果然只要我出手没什么办不到的，之前还是太局限了，戴森球都能造出来了为什么武器还需要弹药？直接相位裂解就完事了，要不是降维技术不可逆我都有心想丢二向箔过去。这下好啦，不用专门分心去造子弹了，我要继续去当第四天灾了。" +
                 "顺便说一句，这些虫子可比索林原虫差远了，虽然索林原虫也是渣渣~~日记。\n" +
                 "另外我发现，<color=#c2853d>强度攻击原来是有上限的啊，我还真以为是无限提升呢...</color> 现在已经游刃有余了嘿嘿... 不知道给主脑上传宇宙矩阵或者建成戴森球后会不会有什么额外影响，等到那一步再看吧。");
-            ProtoRegistry.RegisterString("彩蛋8描述", "Young Icarus, no matter how you come here, you have proved your smart and power. Even facing unknown risks, you still light up your stars. " +
-                "Now you can proudly say, \"I've seen things that you absolutely can't believe, I've seen wormholes established in galaxies, I've seen fission rays flickering in swarms. All these moments will eventually fade away with time, like tears disappear in the rain.\" " +
-                "Continue your journey now! No matter what difficulties you encounter, don't be afraid and face them with a smile! Remember, you are a brave Icarus!", 
+            ProtoRegistry.RegisterString("彩蛋8描述", "Young Icarus, no matter how you came here, you have proved your smarts and strength. Even facing unknown risks, you still light up the stars. " +
+                "Now you can proudly say, \"I've seen things that you absolutely can't believe, I've seen wormholes established in galaxies, I've seen fission rays flickering in swarms. All those moments will be lost in time, like tears in rain.\" " +
+                "Continue your journey now! No matter what difficulties you encounter, don't be afraid and face them with a smile! Remember, you are the mighty Icarus!",
                 "年轻的伊卡洛斯，不管你是用什么方法走到了这一步，都足以证明你的聪颖和强大。即使是面对未知的风险，你依旧为主脑点亮了繁星。" +
                 "现在，你可以骄傲的说：“我见过你们绝对无法置信的事物，我目睹了虫洞在星系内诞生，我看着裂解射线在虫群之中闪烁，所有这些时刻，终将随时间消逝，一如眼泪消失在雨中。”" +
                 "现在继续你的征途吧！无论遇到什么困难，都不要怕，微笑着面对他！因为，你是一个一个一个勇敢的伊卡洛斯哼哼，啊啊啊啊啊啊啊啊啊啊啊！");
