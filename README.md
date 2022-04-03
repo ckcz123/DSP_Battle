@@ -54,6 +54,13 @@ Also welcome to anyone who'd like to contribute to the mod, better if you have e
 
 ## Update Log
 
+### 2022-04-03 V1.2.2
+
+ - Miners won't be destroyed in Normal mode
+ - 普通模式下，矿机不会被拆毁
+ - Improve some translatations
+ - 优化部分翻译
+
 ### 2022-03-25 v1.2.0
 
  - In normal mode, station attacked will turn into blueprint mode.
