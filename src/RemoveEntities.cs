@@ -196,7 +196,7 @@ namespace DSP_Battle
             try
             {
                 if (entityId < 0 || entityId >= factory.entityPool.Length || factory.entityPool[entityId].isNull) return;
-                if (factory.entityPool[entityId].beltId > 0 || factory.entityPool[entityId].inserterId > 0) return;
+                if (factory.entityPool[entityId].beltId > 0 || factory.entityPool[entityId].inserterId > 0 || factory.entityPool[entityId].minerId > 0) return;
 
                 PrebuildData prebuildData = default(PrebuildData);
                 prebuildData.protoId = factory.entityPool[entityId].protoId;
