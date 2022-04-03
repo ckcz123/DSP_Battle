@@ -297,6 +297,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("护盾承受伤害", "Shield damage taken", "护盾承受伤害");
             ProtoRegistry.RegisterString("护盾造成伤害", "Shield damage dealed", "护盾造成伤害");
             ProtoRegistry.RegisterString("水滴伤害", "Droplet damage", "水滴伤害");
+            ProtoRegistry.RegisterString("最小发射能量", "Launch Energy Threshold", "发射能量阈值");
             ProtoRegistry.RegisterString("水滴发射耗能", "Launch Consumption", "发射耗能");
             ProtoRegistry.RegisterString("水滴工作功率", "Work Consumption", "工作功率");
 
@@ -891,6 +892,9 @@ namespace DSP_Battle
                 case 55:
                     __result = "水滴工作功率".Translate();
                     return;
+                case 56:
+                    __result = "最小发射能量".Translate();
+                    return;
             }
         }
 
@@ -931,6 +935,9 @@ namespace DSP_Battle
                     return;
                 case 55:
                     __result = Utils.KMGFormat(Droplets.energyComsumptionPerTick * 60) + "W";
+                    return;
+                case 56:
+                    __result = Utils.KMGFormat(Droplets.energyComsumptionPerLaunch * 2) + "J";
                     return;
             }
         }

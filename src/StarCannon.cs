@@ -145,6 +145,9 @@ namespace DSP_Battle
                 case -2:
                     UIRealtimeTip.Popup("超出射程！".Translate());
                     return;
+                case -4:
+                    UIRealtimeTip.Popup("黑洞已完全稳定，无法被摧毁".Translate());
+                    return;
                 case 1:
                     StartAiming();
                     UIRealtimeTip.Popup("恒星炮已启动".Translate());
@@ -240,6 +243,10 @@ namespace DSP_Battle
             if (Configs.nextWaveState < 2)
             {
                 return -1; //没有目标
+            }
+            else if(Configs.nextWaveState == 3)
+            {
+                return -4; //黑洞已完全稳定，无法被摧毁
             }
             else if(starCannonStarIndex < 0)
             {
@@ -342,7 +349,7 @@ namespace DSP_Battle
             starCannonStarIndex = starIndex;
 
 
-            if ( (Configs.nextWaveState != 2 && Configs.nextWaveState != 3 && fireStage > 0) || fireStage >= 9)
+            if ( (Configs.nextWaveState != 2 && fireStage > 0) || fireStage >= 9)
             {
                 StopFiring(ref __instance);
                 return;
@@ -419,7 +426,7 @@ namespace DSP_Battle
                         //预热时就开始的集束激光效果,但是连续瞄准过程中没有
                         if(fireStage>=2)
                         {
-                            int laserIntensity = (int)((time - endAimTime) * 1.0f / warmTimeNeed * 10); //决定激光强度，这个逻辑是预热时周围集束激光效果随时间增强
+                            int laserIntensity = (int)((time - endAimTime) * 1.0f / warmTimeNeed * 5); //决定激光强度，这个逻辑是预热时周围集束激光效果随时间增强
                             if(laserIntensity > 10 || fireStage >=3)
                             {
                                 laserIntensity = 10;
@@ -464,7 +471,7 @@ namespace DSP_Battle
                         uEnd = targetUPos + Utils.RandPosDelta() * laserBulletEndPosDelta / lessBulletRatio
                     }, 0);
                     __instance.swarm.bulletPool[bulletIndex].state = 0;
-                    if(i>5)
+                    if(i>1)
                     {
                         noExplodeBullets.AddOrUpdate(bulletIndex, 1, (x, y) => 1);
                     }
