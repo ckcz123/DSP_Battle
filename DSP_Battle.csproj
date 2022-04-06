@@ -36,8 +36,8 @@
       <HintPath>..\..\..\Steam\steamapps\common\Dyson Sphere Program\BepInEx\core\0Harmony20.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\Steam\steamapps\common\Dyson Sphere Program\DSPGAME_Data\Managed\Assembly-CSharp.dll</HintPath>
+    <Reference Include="Assembly-CSharp-nstrip-allPublic">
+      <HintPath>dependencies\Assembly-CSharp-nstrip-allPublic.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="BepInEx">

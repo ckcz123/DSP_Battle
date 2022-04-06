@@ -26,11 +26,30 @@ namespace DSP_Battle
             }
         }
 
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameMain), "Start")]
+        public static void GameStartPatch()
+        {
+            enemySpheres = new List<DysonSphere>();
+        }
+
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(GameData), "GameTick")]
+        public static bool BeforeGameTick()
+        {
+            if (enemySpheres.Count <= 0) 
+                InitAll();
+
+            return true;
+        }
+
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameData), "GameTick")]
         public static void RSphereGameTick(long time)
         {
+            if (enemySpheres.Count <= 0) InitAll();
             for (int i = 0; i < enemySpheres.Count; i++)
             {
                 enemySpheres[i].swarm.GameTick(time);
@@ -42,7 +61,8 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(GameData), "OnPostDraw")]
         public static void DrawPatch1(GameData __instance)
         {
-            if(__instance.localStar!=null && DysonSphere.renderPlace == ERenderPlace.Universe)
+            if (enemySpheres.Count <= 0) return;
+            if (__instance.localStar!=null && DysonSphere.renderPlace == ERenderPlace.Universe)
             {
                 int index = __instance.localStar.index;
                 if (enemySpheres[index] != null)
@@ -57,6 +77,7 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(StarmapCamera), "OnPostRender")]
         public static void DrawPatch2(StarmapCamera __instance)
         {
+            if (enemySpheres.Count <= 0) return;
             if (__instance.uiStarmap.viewStarSystem != null && !UIStarmap.isChangingToMilkyWay)
             {
                 DysonSphere dysonSphere = enemySpheres[__instance.uiStarmap.viewStarSystem.index];
@@ -72,6 +93,7 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(UIDysonEditor), "DrawDysonSphereMapPost")]
         public static void DrawPatch3(UIDysonEditor __instance)
         {
+            if (enemySpheres.Count <= 0) return;
             if (__instance.selection.viewDysonSphere != null)
             {
                 if (DysonSphere.renderPlace == ERenderPlace.Dysonmap)
@@ -87,6 +109,7 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(UIDysonPanel), "DrawDysonSphereMapPost")]
         public static void DrawPatch4(UIDysonPanel __instance)
         {
+            if (enemySpheres.Count <= 0) return;
             if (__instance.viewDysonSphere != null)
             {
                 if (DysonSphere.renderPlace == ERenderPlace.Dysonmap)

@@ -186,7 +186,6 @@ namespace DSP_Battle
 
             UIBattleStatistics.InitAll();
             UIBattleStatistics.InitSelectDifficulty();
-            RendererSphere.InitAll();
         }
 
         public void IntoOtherSave()
@@ -203,7 +202,6 @@ namespace DSP_Battle
 
             UIBattleStatistics.InitAll();
             UIBattleStatistics.InitSelectDifficulty();
-            RendererSphere.InitAll();
         }
 
 

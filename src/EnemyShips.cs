@@ -455,7 +455,6 @@ namespace DSP_Battle
 
 
 
-
         [HarmonyPostfix]
         [HarmonyPatch(typeof(LogisticShipUIRenderer), "Update")]
         public static void LogisticShipUIRenderer_Update(ref LogisticShipUIRenderer __instance)
@@ -471,6 +470,22 @@ namespace DSP_Battle
             //{
             //    DspBattlePlugin.logger.LogError(e);
             //}
+            //if (setSize)
+            //{
+            //    Mesh mesh = __instance.shipMesh;
+            //    var oriVerts = mesh.vertices;
+            //    for (int i = 0; i < oriVerts.Length; i++)
+            //    {
+            //        Vector3 vert = oriVerts[i];
+            //        vert.x *= 5;
+            //        vert.y *= 5;
+            //        vert.z *= 5;
+            //        oriVerts[i] = vert;
+            //    }
+            //    mesh.vertices = oriVerts;
+            //    setSize = false;
+            //}
+
             if (ships.Count == 0) return;
 
             if (!logisticShipUIRendererUIStarmap.ContainsKey(__instance))

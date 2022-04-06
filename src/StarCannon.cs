@@ -581,15 +581,15 @@ namespace DSP_Battle
             if (starCannonStarIndex < 0) return;
             DysonSwarm swarm = GameMain.data.dysonSpheres[starCannonStarIndex]?.swarm;
             if (swarm == null) return;
-            foreach (var item in noExplodeBullets)
+            foreach (var item in noExplodeBullets.Keys)
             {
-                if(item.Value > 0 && swarm.bulletPool.Length>item.Key)
+                if(noExplodeBullets[item] > 0 && swarm.bulletPool.Length>item)
                 {
-                    if (swarm.bulletPool[item.Key].id != 0 && swarm.bulletPool[item.Key].t >= swarm.bulletPool[item.Key].maxt)
+                    if (swarm.bulletPool[item].id != 0 && swarm.bulletPool[item].t >= swarm.bulletPool[item].maxt)
                     {
-                        swarm.RemoveBullet(item.Key);
+                        swarm.RemoveBullet(item);
                         int rm;
-                        noExplodeBullets.TryRemove(item.Key, out rm);
+                        noExplodeBullets.TryRemove(item, out rm);
                     }
                 }
             }
