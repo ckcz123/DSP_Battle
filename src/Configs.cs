@@ -66,7 +66,8 @@ namespace DSP_Battle
 
         public static int[] enemyRange = new int[10];
 
-        public static int[] enemyItemIds = new int[] { 8040, 8041, 8042, 8043, 8044, 8044 };
+        // public static int[] enemyItemIds = new int[] { 8040, 8041, 8042, 8043, 8044, 8044 };
+        public static int[] enemyItemIds = new int[] { 6001, 6002, 6003, 6004, 6005, 6006 };
 
         public static int[] enemyLandCnt = new int[] { 1, 3, 5, 5, 10000 };
 

@@ -30,6 +30,7 @@ namespace DSP_Battle
             ships = new ConcurrentDictionary<int, EnemyShip>();
             RemoveEntities.Init();
             SortShips();
+            EnemyShipUIRenderer.Init();
         }
 
         public static void Create(int starIndex, int wormholeIndex, int enemyId, int countDown)
@@ -380,7 +381,7 @@ namespace DSP_Battle
                 logisticShipRendererComputeBuffer[__instance].SetData(__instance.shipsArr, 0, 0, __instance.shipCount);
             }
         }
-
+        /* 
         private static Dictionary<LogisticShipUIRenderer, UIStarmap> logisticShipUIRendererUIStarmap = new Dictionary<LogisticShipUIRenderer, UIStarmap>();
         private static Dictionary<LogisticShipUIRenderer, ComputeBuffer> logisticShipUIRendererComputeBuffer = new Dictionary<LogisticShipUIRenderer, ComputeBuffer>();
         private static Dictionary<LogisticShipUIRenderer, ShipUIRenderingData[]> logisticShipUIRendererShipUIRenderingData = new Dictionary<LogisticShipUIRenderer, ShipUIRenderingData[]>();
@@ -468,6 +469,21 @@ namespace DSP_Battle
                 __instance.galacticTransport.shipRenderer.Update();
                 enemyShipsUIRenderers[0].Draw();
             }
+        }
+        */
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(LogisticShipUIRenderer), "Update")]
+        public static void LogisticShipUIRenderer_Update(ref LogisticShipUIRenderer __instance)
+        {
+            EnemyShipUIRenderer.Update(__instance.uiStarmap);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(LogisticShipUIRenderer), "Draw")]
+        public static void LogisticShipUIRenderer_Draw(ref LogisticShipUIRenderer __instance)
+        {
+            EnemyShipUIRenderer.Draw(__instance);
         }
 
         public static void Export(BinaryWriter w)
