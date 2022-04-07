@@ -395,63 +395,28 @@ namespace DSP_Battle
             logisticShipUIRendererExpanded = true;
         }
 
+        static List<LogisticShipUIRenderer> enemyShipsUIRenderers = new List<LogisticShipUIRenderer>(); //List是为了后续还能支持不同的敌舰大小或其他模型，目前只用第[0]个测试
 
-
-
-
-        //[HarmonyPrefix]
-        //[HarmonyPatch(typeof(LogisticShipUIRenderer), "Draw")]
-        //public static bool ShipUiDrawPrePatch(ref LogisticShipUIRenderer __instance)
-        //{
-        //    int shipCount = (int)Traverse.Create(__instance).Field("shipCount").GetValue();
-        //    if (shipCount <= 0)
-        //    {
-        //        return false;
-        //    }
-        //    //if (__instance.uiStarmap == null || !__instance.uiStarmap.active || UIStarmap.isChangingToMilkyWay)
-        //    //{
-        //    //    return;
-        //    //}
-        //    uint[] argArr = (uint[])Traverse.Create(__instance).Field("argArr").GetValue();
-        //    Material[] shipMats = (Material[])Traverse.Create(__instance).Field("shipMats").GetValue();
-        //    Mesh shipMesh = (Mesh)Traverse.Create(__instance).Field("shipMesh").GetValue();
-        //    ComputeBuffer argBuffer = (ComputeBuffer)Traverse.Create(__instance).Field("argBuffer").GetValue();
-        //    ComputeBuffer shipsBuffer = (ComputeBuffer)Traverse.Create(__instance).Field("shipsBuffer").GetValue();
-        //    try
-        //    {
-        //        for (int i = 0; i < shipMats.Length; i++)
-        //        {
-        //            argArr[i * 5] = shipMesh.GetIndexCount(i);
-        //            argArr[1 + i * 5] = (uint)shipCount;
-        //            argArr[2 + i * 5] = shipMesh.GetIndexStart(i);
-        //            argArr[3 + i * 5] = shipMesh.GetBaseVertex(i);
-        //            argArr[4 + i * 5] = 0U;
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //        Utils.Check(1, "err");
-        //    }
-
-        //    argBuffer.SetData(argArr);
-        //    for (int j = 0; j < shipMats.Length; j++)
-        //    {
-        //        try
-        //        {
-        //            shipMats[j].SetBuffer("_ShipBuffer", shipsBuffer);
-        //            Graphics.DrawMeshInstancedIndirect(shipMesh, j, shipMats[j], new Bounds(Vector3.zero, new Vector3(200000f, 200000f, 200000f)), argBuffer, j * 5 * 4, null, ShadowCastingMode.Off, false, 20);
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            DspBattlePlugin.logger.LogError(e);
-        //        }
-        //    }
-        //    //__instance.GpuAnalysis();
-        //    return false;
-        //}
-
-
-
+        public static void InitRenderers()
+        {
+            enemyShipsUIRenderers = new List<LogisticShipUIRenderer>();
+            for (int i = 0; i < 6; i++)
+            {
+                enemyShipsUIRenderers.Add(new LogisticShipUIRenderer(GameMain.data.galacticTransport));
+            }
+            enemyShipsUIRenderers[0].shipMesh = Resources.Load<Mesh>("test/tgs demo/enemy-base");
+            Mesh mesh = enemyShipsUIRenderers[0].shipMesh;
+            var oriVerts = mesh.vertices;
+            for (int i = 0; i < oriVerts.Length; i++)
+            {
+                Vector3 vert = oriVerts[i];
+                vert.x *= 2;
+                vert.y *= 2;
+                vert.z *= 2;
+                oriVerts[i] = vert;
+            }
+            mesh.vertices = oriVerts;
+        }
 
 
 
@@ -459,61 +424,21 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(LogisticShipUIRenderer), "Update")]
         public static void LogisticShipUIRenderer_Update(ref LogisticShipUIRenderer __instance)
         {
-            //try
-            //{
-            //    ref Mesh ms = ref AccessTools.FieldRefAccess<LogisticShipUIRenderer, Mesh>(__instance, "shipMesh");
-            //    //ms = Resources.Load<Mesh>("test/tgs demo/enemy-easteregg");
-            //    //ms = Resources.Load<Mesh>("doodads/echo/model/echo");//可用备选，貌似是两个小翅膀
-            //    ms = Resources.Load<Mesh>(meshDir);
-            //}
-            //catch (Exception e)
-            //{
-            //    DspBattlePlugin.logger.LogError(e);
-            //}
-            //if (setSize)
-            //{
-            //    Mesh mesh = __instance.shipMesh;
-            //    var oriVerts = mesh.vertices;
-            //    for (int i = 0; i < oriVerts.Length; i++)
-            //    {
-            //        Vector3 vert = oriVerts[i];
-            //        vert.x *= 5;
-            //        vert.y *= 5;
-            //        vert.z *= 5;
-            //        oriVerts[i] = vert;
-            //    }
-            //    mesh.vertices = oriVerts;
-            //    setSize = false;
-            //}
-
             if (ships.Count == 0) return;
-
-            if (!logisticShipUIRendererUIStarmap.ContainsKey(__instance))
-            {
-                logisticShipUIRendererUIStarmap.Add(__instance, AccessTools.FieldRefAccess<LogisticShipUIRenderer, UIStarmap>(__instance, "uiStarmap"));
-                logisticShipUIRendererShipCount = AccessTools.Field(typeof(LogisticShipUIRenderer), "shipCount");
-            }
-
-            UIStarmap uiStarMap = logisticShipUIRendererUIStarmap[__instance];
+            UIStarmap uiStarMap = enemyShipsUIRenderers[0].uiStarmap;
 
             if (__instance.transport == null || uiStarMap == null || !uiStarMap.active) return;
 
-            int shipCount = (int)logisticShipUIRendererShipCount.GetValue(__instance);
+            enemyShipsUIRenderers[0].shipCount = 0; //我试了不归零貌似也不行
+            int shipCount = enemyShipsUIRenderers[0].shipCount;
 
-            while (__instance.capacity < shipCount + ships.Count)
+            while (enemyShipsUIRenderers[0].capacity < shipCount + ships.Count)
             {
-                __instance.Expand2x();
+                enemyShipsUIRenderers[0].Expand2x();
             }
 
-            if (!logisticShipUIRendererComputeBuffer.ContainsKey(__instance) || logisticShipUIRendererExpanded)
-            {
-                logisticShipUIRendererComputeBuffer[__instance] = AccessTools.FieldRefAccess<LogisticShipUIRenderer, ComputeBuffer>(__instance, "shipsBuffer");
-                logisticShipUIRendererShipUIRenderingData[__instance] = AccessTools.FieldRefAccess<LogisticShipUIRenderer, ShipUIRenderingData[]>(__instance, "shipsArr");
-                logisticShipUIRendererExpanded = false;
-            }
-
-            ComputeBuffer shipsBuffer = logisticShipUIRendererComputeBuffer[__instance];
-            ShipUIRenderingData[] shipsArr = logisticShipUIRendererShipUIRenderingData[__instance];
+            ComputeBuffer shipsBuffer = enemyShipsUIRenderers[0].shipsBuffer;
+            ShipUIRenderingData[] shipsArr = enemyShipsUIRenderers[0].shipsArr;
 
             foreach (var ship in ships.Values)
             {
@@ -521,14 +446,17 @@ namespace DSP_Battle
                 shipsArr[shipCount] = ship.renderingUIData;
                 shipsArr[shipCount].rpos = (shipsArr[shipCount].upos - uiStarMap.viewTargetUPos) * 0.00025;
                 shipCount++;
+                if (shipCount == 1)
+                    Utils.Log($"shipsarr pos =  {shipsArr[shipCount].upos} and real pos = {ship.shipData.uPos}");
             }
-
-            logisticShipUIRendererShipCount.SetValue(__instance, shipCount);
+            enemyShipsUIRenderers[0].shipCount = shipCount;
 
             if (shipsBuffer != null)
             {
                 shipsBuffer.SetData(shipsArr, 0, 0, shipCount);
             }
+            enemyShipsUIRenderers[0].shipsArr = shipsArr;
+            enemyShipsUIRenderers[0].shipsBuffer = shipsBuffer;
         }
 
         [HarmonyPrefix]
@@ -538,6 +466,7 @@ namespace DSP_Battle
             if (__instance.galacticTransport != null && ships.Count != 0)
             {
                 __instance.galacticTransport.shipRenderer.Update();
+                enemyShipsUIRenderers[0].Draw();
             }
         }
 
