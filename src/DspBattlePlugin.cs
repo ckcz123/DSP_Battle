@@ -186,6 +186,7 @@ namespace DSP_Battle
 
             UIBattleStatistics.InitAll();
             UIBattleStatistics.InitSelectDifficulty();
+            EnemyShipUIRenderer.Init();
             // EnemyShips.InitRenderers();
         }
 
@@ -203,6 +204,7 @@ namespace DSP_Battle
 
             UIBattleStatistics.InitAll();
             UIBattleStatistics.InitSelectDifficulty();
+            EnemyShipUIRenderer.Init();
             // EnemyShips.InitRenderers();
         }
 

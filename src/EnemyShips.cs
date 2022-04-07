@@ -30,7 +30,6 @@ namespace DSP_Battle
             ships = new ConcurrentDictionary<int, EnemyShip>();
             RemoveEntities.Init();
             SortShips();
-            EnemyShipUIRenderer.Init();
         }
 
         public static void Create(int starIndex, int wormholeIndex, int enemyId, int countDown)
