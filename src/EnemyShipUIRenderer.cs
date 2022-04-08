@@ -17,9 +17,9 @@ namespace DSP_Battle
             for (int i = 0; i < oriVerts.Length; i++)
             {
                 Vector3 vert = oriVerts[i];
-                vert.x *= 2;
-                vert.y *= 2;
-                vert.z *= 2;
+                vert.x *= 1.5f;
+                vert.y *= 1.5f;
+                vert.z *= 1.5f;
                 oriVerts[i] = vert;
             }
             shipMesh.vertices = oriVerts;

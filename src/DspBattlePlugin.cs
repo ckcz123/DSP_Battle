@@ -76,6 +76,7 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(ShieldRenderer));
             Harmony.CreateAndPatchAll(typeof(Droplets));
             Harmony.CreateAndPatchAll(typeof(RendererSphere));
+            Harmony.CreateAndPatchAll(typeof(PlanetEngine));
 
             LDBTool.PreAddDataAction += BattleProtos.AddProtos;
             LDBTool.PostAddDataAction += BattleProtos.PostDataAction;

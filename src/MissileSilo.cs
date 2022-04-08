@@ -40,7 +40,8 @@ namespace DSP_Battle
             int starIndex = planetId / 100 - 1;
             PlanetFactory factory = GameMain.galaxy.stars[starIndex].planets[planetId % 100 - 1].factory;
             int gmProtoId = factory.entityPool[__instance.entityId].protoId;
-            if (gmProtoId == 2312) return true; //要改的！！！改成原始发射井返回原函数
+
+            if (gmProtoId == 2312) return true; //原始发射井返回原函数
 
             if(Configs.developerMode)
             {

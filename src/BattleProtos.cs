@@ -1,6 +1,7 @@
 ﻿using CommonAPI.Systems;
 using HarmonyLib;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
@@ -372,6 +373,15 @@ namespace DSP_Battle
             ShieldGenerator.CanBuild = true;
             ShieldGenerator.Upgrades = new int[] { };
 
+            int hideMask = 393;
+            if (Configs.developerMode) hideMask = 0;
+            var TestEngine = ProtoRegistry.RegisterItem(8031, "测试用发动机", "测试用发动机描述", "Assets/MegaStructureTab/shieldGen", 2606 + hideMask + pageBias, 10, EItemType.Production);
+            TestEngine.BuildMode = 1;
+            TestEngine.IsEntity = true;
+            TestEngine.isRaw = false;
+            TestEngine.CanBuild = true;
+            TestEngine.Upgrades = new int[] { };
+
 
             ProtoRegistry.RegisterRecipe(801, ERecipeType.Assemble, 60, new int[] { 1112, 1103 }, new int[] { 1, 1 }, new int[] { 8001 }, new int[] { 1 }, "子弹1描述",
                 1901, 2701 + pageBias, "Assets/DSPBattle/bullet1");
@@ -395,6 +405,8 @@ namespace DSP_Battle
                 1915, 2604 + pageBias, "Assets/DSPBattle/cannon3");
             ProtoRegistry.RegisterRecipe(815, ERecipeType.Assemble, 900, new int[] { 9503, 1305, 1125 }, new int[] { 30, 20, 30 }, new int[] { 8030 }, new int[] { 1 }, "行星护盾生成器描述",
                 1916, 2605 + pageBias, "Assets/MegaStructureTab/shieldGen");
+            ProtoRegistry.RegisterRecipe(816, ERecipeType.Assemble, 10, new int[] { 1101 }, new int[] { 1 }, new int[] { 8031 }, new int[] { 1 }, "测试用发动机描述",
+                1916, 2606 + hideMask + pageBias, "Assets/MegaStructureTab/shieldGen");
 
 
             //给船染色用物品
@@ -458,7 +470,7 @@ namespace DSP_Battle
 
 
             TechProto techShield1 = ProtoRegistry.RegisterTech(1916, "行星力场护盾", "行星力场护盾描述", "行星力场护盾结论", "Assets/DSPBattle/cannon3tech", new int[] { 1705 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 565,815 }, new Vector2(53, -31));
+                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 565,815,816 }, new Vector2(53, -31));
             
             TechProto techStellarFortress = ProtoRegistry.RegisterTech(1917, "星际要塞", "星际要塞描述", "星际要塞结论", "Assets/DSPBattle/cannon3tech", new int[] { 1903 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
                 new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { }, new Vector2(41, -43));
@@ -689,12 +701,19 @@ namespace DSP_Battle
             LDBTool.PreAddProto(ShieldGenModel);
 
 
+            ModelProto TestEngineModel = CopyModelProto(68, 316, new Color(0,1,1,1));
+            
+            //TestEngineModel.prefabDesc.siloChargeFrame = 120;
+            //TestEngineModel.prefabDesc.siloColdFrame = 60;
+            LDBTool.PreAddProto(TestEngineModel);
+
+
             LDBTool.SetBuildBar(6, 7, 8011);
             LDBTool.SetBuildBar(6, 8, 8012);
             LDBTool.SetBuildBar(6, 9, 8014);
             LDBTool.SetBuildBar(6, 10, 8013);
 
-
+            
             
         }
 
@@ -769,10 +788,118 @@ namespace DSP_Battle
             LDB.items.Select(8013).ModelIndex = 313;
             LDB.items.Select(8013).prefabDesc = LDB.models.Select(313).prefabDesc;
 
-
             LDB.models.Select(315).prefabDesc.modelIndex = 315;
             LDB.items.Select(8030).ModelIndex = 315;
             LDB.items.Select(8030).prefabDesc = LDB.models.Select(315).prefabDesc;
+
+            LDB.models.Select(316).prefabDesc.modelIndex = 316;
+            LDB.items.Select(8031).ModelIndex = 316;
+            LDB.items.Select(8031).prefabDesc = LDB.models.Select(316).prefabDesc;
+
+            //以下为星球发动机模型修改
+            if (true)
+            {
+                var prefab = LDB.items.Select(8031).prefabDesc;
+                var originalMeshVertices = new Vector3[prefab.lodCount][];
+                for (int i = 0; i < prefab.lodCount; i++)
+                {
+                    var vertices = prefab.lodMeshes[i].vertices;
+                    originalMeshVertices[i] = new Vector3[vertices.Length];
+                    for (int j = 0; j < vertices.Length; j++)
+                    {
+                        originalMeshVertices[i][j] = vertices[j];
+                    }
+                }
+                //碰撞
+                for (int i = 0; i < prefab.colliders.Length; i++)
+                {
+                    prefab.colliders[i].ext.x *= 2f;
+                    prefab.colliders[i].ext.y *= 3f;
+                    prefab.colliders[i].ext.z *= 2f;
+                }
+                for (int i = 0; i < prefab.buildColliders.Length; i++)
+                {
+                    prefab.buildColliders[i].ext.x *= 2f;
+                    prefab.buildColliders[i].ext.y *= 3f;
+                    prefab.buildColliders[i].ext.z *= 2f;
+                }
+                prefab.buildCollider.ext.x *= 1f;
+                prefab.buildCollider.ext.z *= 1f;
+                //静态顶点（prebuild）
+                for (int i = 0; i < prefab.lodCount; i++)
+                {
+                    var mesh = prefab.lodMeshes[i];
+                    var oriVerts = originalMeshVertices[i];
+                    var vertices = mesh.vertices;
+                    for (int j = 0; j < oriVerts.Length; j++)
+                    {
+                        Vector3 vert = oriVerts[j];
+                        vert.x *= 4;
+                        vert.y *= 2f;
+                        vert.z *= 4;
+                        if(vert.y <=3)
+                        {
+                            vert.x *= 1.7f;
+                            vert.z *= 1.7f;
+                        }
+                        else if(vert.y >= 4 && vert.y <= 6)
+                        {
+                            vert.x *= 2.2f;
+                            vert.z *= 2.2f;
+                        }
+                        else if (vert.y >= 7)
+                        {
+                            vert.x *= 0.5f;
+                            vert.z *= 0.5f;
+                        }
+                        vertices[j] = vert;
+                    }
+                    mesh.vertices = vertices;
+                }
+                //动画顶点
+                for (int i = 0; i < 1; i++)
+                {
+                    List<int> centerHighP = new List<int>();
+                    List<int> highP2 = new List<int>();
+                    int loop = (int)prefab.lodVertas[i].vertexType;
+                    if (loop == 0) loop = 12;
+                    //Utils.Log($"lodV index {i} have dataLength{prefab.lodVertas[i].dataLength} whose type is {prefab.lodVertas[i].vertexType}\n frame count is {prefab.lodVertas[i].frameCount} and frameStride is {prefab.lodVertas[i].frameStride} vertex count is {prefab.lodVertas[i].vertexCount} and vertex size is {prefab.lodVertas[i].vertexSize}");
+                    for (int j = 0; j < prefab.lodVertas[i].dataLength; j++)
+                    {
+                        if (j % loop == 2) //整体放大
+                        {
+                            prefab.lodVertas[i].data[j - 2] *= 4;
+                            prefab.lodVertas[i].data[j - 1] *= 3;
+                            prefab.lodVertas[i].data[j] *= 4;
+                        }
+                        if(j%loop == 2 && prefab.lodVertas[i].data[j - 1] <=3) //底座放大
+                        {
+                            prefab.lodVertas[i].data[j - 2] *= 1.75f;
+                            prefab.lodVertas[i].data[j] *= 1.75f;
+                        }
+                        if (j % loop == 2 && prefab.lodVertas[i].data[j - 1] >= 6 && prefab.lodVertas[i].data[j - 1] <= 8) //中间不再收紧
+                        {
+                            prefab.lodVertas[i].data[j - 2] *= 2.2f;
+                            prefab.lodVertas[i].data[j] *= 2.2f;
+                        }
+                        if (j % loop == 2 && j > 15318 * 60)//得到结果是j%15318>=4772的
+                        {
+                            if (prefab.lodVertas[i].data[j - 1] > 155 && !highP2.Contains(j % 15318))
+                                highP2.Add(j % 15318);
+                        }
+                    }
+                    for (int j = 0; j < prefab.lodVertas[i].dataLength; j++)
+                    {
+                        if (j % loop == 2 && highP2.Contains(j%15318))
+                        {
+                            prefab.lodVertas[i].data[j - 2] = 0f;
+                            prefab.lodVertas[i].data[j - 1] =400;
+                            prefab.lodVertas[i].data[j] = 0f;
+                        }
+                    }
+                }
+            }
+
 
             GameMain.gpuiManager.Init();
         }
