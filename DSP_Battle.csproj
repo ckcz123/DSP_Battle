@@ -120,6 +120,7 @@
   <ItemGroup>
     <Compile Include="src\BattleProtos.cs" />
     <Compile Include="src\Droplet.cs" />
+    <Compile Include="src\EnemyShipRenderer.cs" />
     <Compile Include="src\EnemyShipUIRenderer.cs" />
     <Compile Include="src\PlanetEngine.cs" />
     <Compile Include="src\RemoveEntities.cs" />

@@ -309,22 +309,21 @@ namespace DSP_Battle
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(LogisticShipRenderer), "Update")]
-        public static void LogisticShipRenderer_Update(ref LogisticShipRenderer __instance)
+        public static void LogisticShip_Update(ref LogisticShipRenderer __instance)
         {
+            
             if (ships.Count == 0 || UIRoot.instance.uiGame.starmap.active) return;
+            /*
             if (__instance.transport == null) return;
             while (__instance.capacity < __instance.shipCount + ships.Count)
             {
                 __instance.Expand2x();
-            }
+            }*/
 
             foreach (var ship in ships.Values)
             {
                 if (ship.state != EnemyShip.State.active) continue;
 
-                __instance.shipsArr[__instance.shipCount++] = ship.renderingData;
-                //if (ship.shipData.stage != 1)
-                //    continue;
                 if (ship.distanceToTarget > 250 || ship.shipData.planetB != GameMain.localPlanet?.id)
                     continue;
                 //飞船发射子弹轰击
@@ -368,7 +367,7 @@ namespace DSP_Battle
                 }
                 
             }
-
+            /*
             if (!logisticShipRendererComputeBuffer.ContainsKey(__instance) || logisticShipRendererExpanded)
             {
                 logisticShipRendererComputeBuffer[__instance] = AccessTools.FieldRefAccess<LogisticShipRenderer, ComputeBuffer>(__instance, "shipsBuffer");
@@ -378,7 +377,7 @@ namespace DSP_Battle
             if (logisticShipRendererComputeBuffer[__instance] != null)
             {
                 logisticShipRendererComputeBuffer[__instance].SetData(__instance.shipsArr, 0, 0, __instance.shipCount);
-            }
+            }*/
         }
         /* 
         private static Dictionary<LogisticShipUIRenderer, UIStarmap> logisticShipUIRendererUIStarmap = new Dictionary<LogisticShipUIRenderer, UIStarmap>();
@@ -483,6 +482,20 @@ namespace DSP_Battle
         public static void LogisticShipUIRenderer_Draw(ref LogisticShipUIRenderer __instance)
         {
             EnemyShipUIRenderer.Draw(__instance);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(LogisticShipRenderer), "Update")]
+        public static void LogisticShipRenderer_Update(ref LogisticShipRenderer __instance)
+        {
+            EnemyShipRenderer.Update();
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(LogisticShipRenderer), "Draw")]
+        public static void LogisticShipRenderer_Draw(ref LogisticShipRenderer __instance)
+        {
+            EnemyShipRenderer.Draw();
         }
 
         public static void Export(BinaryWriter w)
