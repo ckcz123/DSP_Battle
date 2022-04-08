@@ -63,6 +63,7 @@ namespace DSP_Battle
             if (EnemyShips.ships.Count == 0)
             {
                 shipCount = 0;
+                shipsBuffer.SetData(shipsArr, 0, 0, shipCount);
                 return; 
             }
 

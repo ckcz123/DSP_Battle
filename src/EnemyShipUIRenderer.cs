@@ -42,7 +42,12 @@ namespace DSP_Battle
 
         public static void Update(UIStarmap uiStarMap)
         {
-            if (EnemyShips.ships.Count == 0) return;
+            if (EnemyShips.ships.Count == 0)
+            {
+                shipCount = 0;
+                shipsBuffer.SetData(shipsArr, 0, 0, shipCount);
+                return; 
+            }
             
             while (shipsArr.Length < EnemyShips.ships.Count)
             {
