@@ -307,6 +307,7 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(UIPowerExchangerWindow), "_OnUpdate")]
         public static void UIUpdatePatch(ref UIPowerExchangerWindow __instance)
         {
+            if (__instance == null || __instance.powerSystem == null || __instance.powerSystem.excPool == null) return;
             PowerExchangerComponent powerExchangerComponent = __instance.powerSystem.excPool[__instance.exchangerId];
             if (powerExchangerComponent.emptyId != 9999) return;
 
