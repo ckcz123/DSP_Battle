@@ -205,7 +205,7 @@ namespace DSP_Battle
         {
             if (curEjectorIsCannon)
             {
-
+                if (__instance == null || __instance.factorySystem == null || __instance.factorySystem.ejectorPool == null) return;
                 EjectorComponent ejectorComponent = __instance.factorySystem.ejectorPool[__instance.ejectorId];
                 PowerConsumerComponent powerConsumerComponent = __instance.powerSystem.consumerPool[ejectorComponent.pcId];
                 int networkId = powerConsumerComponent.networkId;

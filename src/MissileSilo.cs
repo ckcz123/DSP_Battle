@@ -1732,6 +1732,7 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(UISiloWindow), "_OnUpdate")]
         public static void UISiloWindow_OnUpdate(ref UISiloWindow __instance)
         {
+            if (__instance == null || __instance.factorySystem == null || __instance.factorySystem.siloPool == null) return;
             SiloComponent siloComponent = __instance.factorySystem.siloPool[__instance.siloId];
             int gmProtoId = __instance.factory.entityPool[siloComponent.entityId].protoId;
             if (gmProtoId != 2312)
