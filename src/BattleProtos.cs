@@ -122,13 +122,45 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("彩蛋8", "Pioneer Diary #8", "先驱者日记#8");
             ProtoRegistry.RegisterString("彩蛋9", "Pioneer Diary #9", "先驱者日记#9");
 
-
-            ProtoRegistry.RegisterString("行星力场护盾", "Planet shield", "行星力场护盾");
+            //ProtoRegistry.RegisterString("行星力场护盾", "Planet shield", "行星力场护盾");
             ProtoRegistry.RegisterString("星际要塞", "Star fortress", "星际要塞");
             ProtoRegistry.RegisterString("恒星炮gm2", "Star cannon", "恒星炮");
             ProtoRegistry.RegisterString("水滴gm2", "Droplet", "水滴"); 
-            ProtoRegistry.RegisterString("玻色子操控", "Boson control", "玻色子操控");
             ProtoRegistry.RegisterString("即将到来gm", "Coming soon", "即将推出");
+
+            ProtoRegistry.RegisterString("尼科尔戴森光束", "Nicoll-Dyson beam", "尼科尔-戴森光束");
+            ProtoRegistry.RegisterString("尼科尔戴森光束描述", "Disintegrating wormholes with stellar energy.", "利用恒星级能量瓦解虫洞。");
+            ProtoRegistry.RegisterString("尼科尔戴森光束结论", "You have unlocked the star cannon.", "你解锁了建造恒星炮的能力。");
+            ProtoRegistry.RegisterString("行星力场护盾", "Planetary force field shield", "行星力场护盾");
+            ProtoRegistry.RegisterString("行星力场护盾描述", "Maintain force field shields around planets.", "在行星周围构建力场护盾。");
+            ProtoRegistry.RegisterString("行星力场护盾结论", "You have unlocked the planet shield generator.", "你解锁了行星护盾生成器。");
+            ProtoRegistry.RegisterString("玻色子操控", "Boson control", "玻色子操控");
+            ProtoRegistry.RegisterString("玻色子操控描述", "Create powerful materials by manipulating various interacting forces.", "通过操控各种相互作用力来制造强大的材料。");
+            ProtoRegistry.RegisterString("玻色子操控结论", "You have unlocked the Boson control.", "你解锁了玻色子操控。");
+            ProtoRegistry.RegisterString("超距信号处理1", "Stellar-range signal processing", "超距信号处理");
+            ProtoRegistry.RegisterString("超距信号处理2", "Stellar-range signal processing", "超距信号处理");
+            ProtoRegistry.RegisterString("超距信号处理3", "Stellar-range signal processing", "超距信号处理");
+            ProtoRegistry.RegisterString("超距信号处理描述", "Enhance real-time control of droplets.", "强化对水滴的实时控制能力。");
+            ProtoRegistry.RegisterString("超距信号处理结论", "Drop control limit is increased.", "可同时操控的水滴上限提升。");
+            ProtoRegistry.RegisterString("水滴控制上限", "Droplet control limit", "水滴控制上限");
+
+            ProtoRegistry.RegisterString("恒星炮未规划", "Star Cannon Unplanned", "恒星炮未规划");
+            ProtoRegistry.RegisterString("恒星炮建设中", "Building In Progress", "恒星炮建设中");
+            ProtoRegistry.RegisterString("恒星炮冷却中", "Cooling Down", "恒星炮冷却中");
+            ProtoRegistry.RegisterString("恒星炮充能中", "Charging", "恒星炮充能中");
+            ProtoRegistry.RegisterString("恒星炮开火", "Star Cannon Open Fire", "恒星炮开火");
+            ProtoRegistry.RegisterString("瞄准中", "Aiming", "瞄准中");
+            ProtoRegistry.RegisterString("预热中", "Preheating", "预热中");
+            ProtoRegistry.RegisterString("正在开火", "Firing", "正在开火");
+            ProtoRegistry.RegisterString("没有规划的恒星炮", "Firing", "没有规划的恒星炮");
+            ProtoRegistry.RegisterString("恒星炮需要至少修建至第一阶段才能够开火！", "Firing", "恒星炮需要至少修建至第一阶段才能够开火！");
+            ProtoRegistry.RegisterString("恒星炮已经启动", "Star cannon has already launched.", "恒星炮已经启动。");
+            ProtoRegistry.RegisterString("恒星炮冷却中！", "Star cannon is cooling down.", "恒星炮冷却中！");
+            ProtoRegistry.RegisterString("恒星炮充能中！", "Star cannon is charging.", "恒星炮充能中！");
+            ProtoRegistry.RegisterString("没有目标！", "Can not find target.", "没有目标！");
+            ProtoRegistry.RegisterString("超出射程！", "Out of range.", "超出射程！");
+            ProtoRegistry.RegisterString("虫洞已完全稳定，无法被摧毁", "The wormholes are fully stabilized and cannot be destroyed.", "虫洞已完全稳定，无法被摧毁。");
+            ProtoRegistry.RegisterString("恒星炮已启动", "Launching.", "恒星炮已启动。");
 
 
             ProtoRegistry.RegisterString("彩蛋1描述", "Seems like these enemies are a kind of space insect. They live in deep space, feed on the tides of power without vision. " +
@@ -275,7 +307,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("游戏提示gm", "Message", "游戏提示");
 
 
-            ProtoRegistry.RegisterString("行星护盾生成器", "Planet shield generation", "行星护盾生成器");
+            ProtoRegistry.RegisterString("行星护盾生成器", "Planet shield generator", "行星护盾生成器");
             ProtoRegistry.RegisterString("行星护盾生成器描述", "Using a large amount of energy to maintain a force field shield on the planet's surface, the encoding of the force field's resonant frequency allows allies to easily pass through the shield, while blocking the enemies. Multiple shield generators can speed up the shield recharge rate, and provide additional shield capacity. However, as the number of shield generators increases, each additional generator will provide less and less additional capacity.", 
                 "使用大量能量在行星表面维持一个力场护盾，对力场谐振频率的编码能够使友方轻易穿过护盾，同时阻挡敌人的进入或攻击。多个护盾生成器能够加快护盾充能的速度，也能够提供的额外护盾容量上限。不过随着单个星球上护盾生成器数量的增加，每个生成器能够提供的额外护盾也将越来越少。");
             ProtoRegistry.RegisterString("力场护盾", "Planet shield", "力场护盾");
@@ -372,6 +404,7 @@ namespace DSP_Battle
             ShieldGenerator.isRaw = false;
             ShieldGenerator.CanBuild = true;
             ShieldGenerator.Upgrades = new int[] { };
+            ShieldGenerator.DescFields = new int[] { 11, 57, 58, 1, 40 };
 
             int hideMask = 393;
             if (Configs.developerMode) hideMask = 0;
@@ -464,22 +497,22 @@ namespace DSP_Battle
             techMissile3.AddItems = new int[] { 8026 };
             techMissile3.AddItemCounts = new int[] { 1 };
             TechProto techBullet4 = ProtoRegistry.RegisterTech(1915, "相位裂解技术", "相位裂解技术描述", "相位裂解技术结论", "Assets/DSPBattle/cannon3tech", new int[] { 1914 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 814 }, new Vector2(53, -43));
+                new int[] { 24, 24, 24, 24, 24 }, 300000, new int[] { 814 }, new Vector2(53, -43));
             techBullet4.AddItems = new int[] { 8027 };
             techBullet4.AddItemCounts = new int[] { 1 };
 
 
-            TechProto techShield1 = ProtoRegistry.RegisterTech(1916, "行星力场护盾", "行星力场护盾描述", "行星力场护盾结论", "Assets/DSPBattle/cannon3tech", new int[] { 1705 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 565,815,816 }, new Vector2(53, -31));
+            TechProto techShield1 = ProtoRegistry.RegisterTech(1916, "行星力场护盾", "行星力场护盾描述", "行星力场护盾结论", "Assets/DSPBattle/shieldtech", new int[] { 1705 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+                new int[] { 24, 24, 24, 24, 24 }, 300000, new int[] { 565,815 }, new Vector2(53, -31));
             
             TechProto techStellarFortress = ProtoRegistry.RegisterTech(1917, "星际要塞", "星际要塞描述", "星际要塞结论", "Assets/DSPBattle/cannon3tech", new int[] { 1903 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { }, new Vector2(41, -43));
+                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 816 }, new Vector2(41, -43));
             techStellarFortress.Published = false;
-            TechProto techStarCannon = ProtoRegistry.RegisterTech(1918, "恒星炮", "恒星炮描述", "恒星炮结论", "Assets/DSPBattle/cannon3tech", new int[] { 1144 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 570, 571, 572 }, new Vector2(65, -3));
+            TechProto techStarCannon = ProtoRegistry.RegisterTech(1918, "尼科尔戴森光束", "尼科尔戴森光束描述", "尼科尔戴森光束结论", "Assets/DSPBattle/starcannontech", new int[] { 1144 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+                new int[] { 24, 24, 24, 24, 24 }, 300000, new int[] { 570, 571, 572 }, new Vector2(65, -3));
             
-            TechProto techDrop = ProtoRegistry.RegisterTech(1919, "玻色子操控", "玻色子操控描述", "玻色子操控结论", "Assets/DSPBattle/cannon3tech", new int[] { 1915 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 566, 567, 568, 569, 573 }, new Vector2(57, -43));
+            TechProto techDrop = ProtoRegistry.RegisterTech(1919, "玻色子操控", "玻色子操控描述", "玻色子操控结论", "Assets/DSPBattle/bosontech", new int[] { 1915 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+                new int[] { 24, 24, 24, 24, 24 }, 450000, new int[] { 566, 567, 568, 569, 573 }, new Vector2(57, -43));
             
 
             TechProto winGame = LDB.techs.Select(1508);
@@ -649,7 +682,7 @@ namespace DSP_Battle
             dorpletControll1.LevelCoef1 = 0;
             dorpletControll1.LevelCoef2 = 0;
             TechProto dorpletControll2 = ProtoRegistry.RegisterTech(4928, "超距信号处理2", "超距信号处理描述", "超距信号处理结论", "Assets/DSPBattle/dropletW", new int[] { 4927 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-                  new int[] { 20, 20, 20, 20, 20 }, 300000, new int[] { }, new Vector2(37, -47));
+                  new int[] { 20, 20, 20, 20, 20 }, 360000, new int[] { }, new Vector2(37, -47));
             dorpletControll2.UnlockFunctions = new int[] { 53 };
             dorpletControll2.UnlockValues = new double[] { 1 };
             dorpletControll2.Level = 2;
@@ -657,7 +690,7 @@ namespace DSP_Battle
             dorpletControll2.LevelCoef1 = 0;
             dorpletControll2.LevelCoef2 = 0;
             TechProto dorpletControll3 = ProtoRegistry.RegisterTech(4929, "超距信号处理3", "超距信号处理描述", "超距信号处理结论", "Assets/DSPBattle/dropletW", new int[] { 4928 }, new int[] { 6006 },
-                  new int[] { 20 }, 600000, new int[] { }, new Vector2(41, -47));
+                  new int[] { 20 }, 900000, new int[] { }, new Vector2(41, -47));
             dorpletControll3.UnlockFunctions = new int[] { 53 };
             dorpletControll3.UnlockValues = new double[] { 1 };
             dorpletControll3.Level = 3;
@@ -698,13 +731,12 @@ namespace DSP_Battle
             ShieldGenModel.prefabDesc.emptyId = 9999;
             ShieldGenModel.prefabDesc.fullId = 1208;
             ShieldGenModel.prefabDesc.exchangeEnergyPerTick = 1500000;
+            ShieldGenModel.prefabDesc.workEnergyPerTick = 1500000;
             LDBTool.PreAddProto(ShieldGenModel);
 
 
             ModelProto TestEngineModel = CopyModelProto(68, 316, new Color(0,1,1,1));
-            
-            //TestEngineModel.prefabDesc.siloChargeFrame = 120;
-            //TestEngineModel.prefabDesc.siloColdFrame = 60;
+            TestEngineModel.prefabDesc.idleEnergyPerTick = 500000; //卫星配电站只走idle耗电，数还需要改
             LDBTool.PreAddProto(TestEngineModel);
 
 
@@ -1022,6 +1054,12 @@ namespace DSP_Battle
                 case 56:
                     __result = "最小发射能量".Translate();
                     return;
+                case 57:
+                    __result = "护盾容量".Translate();
+                    return;
+                case 58:
+                    __result = "护盾恢复".Translate();
+                    return;
             }
         }
 
@@ -1065,6 +1103,12 @@ namespace DSP_Battle
                     return;
                 case 56:
                     __result = Utils.KMGFormat(Droplets.energyComsumptionPerLaunch * 2) + "J";
+                    return;
+                case 57:
+                    __result = "0 - " + Configs.capacityPerGenerator[0].Item2.ToString();
+                    return;
+                case 58:
+                    __result = (Configs.shieldGenPerTick * 60).ToString() + "/s";
                     return;
             }
         }

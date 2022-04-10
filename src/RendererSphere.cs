@@ -50,10 +50,9 @@ namespace DSP_Battle
         public static void RSphereGameTick(long time)
         {
             if (enemySpheres.Count <= 0) InitAll();
-            for (int i = 0; i < enemySpheres.Count; i++)
-            {
-                enemySpheres[i].swarm.GameTick(time);
-            }
+            if( Configs.nextWaveStarIndex >= 0 && Configs.nextWaveStarIndex < enemySpheres.Count)
+                enemySpheres[Configs.nextWaveStarIndex].swarm.GameTick(time);
+            
         }
 
 

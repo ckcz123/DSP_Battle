@@ -31,6 +31,7 @@ namespace DSP_Battle
         public static int laserBulletEndPosDelta = 150;
         public static VectorLF3 normDirection = new VectorLF3(0, 1, 0);
         public static int reverseDirection = 1; //只能是1或者-1，1是北极为炮口，-1则是南极。相当于设计恒星炮时所有层级南北极互换
+        public static int renderLevel = 2; // 默认是2，更小可以减少恒星炮渲染的光束数量
 
         //下面属性可能根据戴森球等级有变化，但并不需要存档        
         public static int starCannonLevel = 1; //恒星炮建造的所属阶段（等级），即完成度
@@ -146,7 +147,7 @@ namespace DSP_Battle
                     UIRealtimeTip.Popup("超出射程！".Translate());
                     return;
                 case -4:
-                    UIRealtimeTip.Popup("黑洞已完全稳定，无法被摧毁".Translate());
+                    UIRealtimeTip.Popup("虫洞已完全稳定，无法被摧毁".Translate());
                     return;
                 case 1:
                     StartAiming();
@@ -326,7 +327,7 @@ namespace DSP_Battle
             //如果至少进入过预热阶段（fireStage=2的阶段），则必须经过完整的冷却和再充能过程，才能再次瞄准、开火
             fireStage = -2;
             time = -cooldownTimeNeed - chargingTimeNeed;
-            
+            noExplodeBullets.Clear();
         }
 
 
@@ -426,10 +427,10 @@ namespace DSP_Battle
                         //预热时就开始的集束激光效果,但是连续瞄准过程中没有
                         if(fireStage>=2)
                         {
-                            int laserIntensity = (int)((time - endAimTime) * 1.0f / warmTimeNeed * 5); //决定激光强度，这个逻辑是预热时周围集束激光效果随时间增强
-                            if(laserIntensity > 10 || fireStage >=3)
+                            int laserIntensity = (int)((time - endAimTime) * 1.0f / warmTimeNeed*5); //决定激光强度，这个逻辑是预热时周围集束激光效果随时间增强
+                            if(laserIntensity > 5 || fireStage >=3)
                             {
-                                laserIntensity = 10;
+                                laserIntensity = 5;
                             }
                             LaserEffect3(__instance, gameTick, laserIntensity);
                             LaserEffect2(__instance, gameTick);
@@ -458,6 +459,7 @@ namespace DSP_Battle
                 int lessBulletRatio = 1;
                 if (targetSwarm == null || targetSwarm.starData.index != __instance.starData.index)
                     lessBulletRatio = 2;
+                
 
                 //主激光效果
                 for (int i = 0; i < laserBulletNum / lessBulletRatio; i++)
@@ -478,7 +480,7 @@ namespace DSP_Battle
                 }
 
 
-                //如果不在同星系，则本星系内光会很细，增加一段短光，由于额外效果3有更好的效果，此部分已废弃
+                //如果不在同星系，则本星系内光会很细，增加一段短光
                 if (targetSwarm == null || targetSwarm.starData.index != __instance.starData.index)
                 {
                     int nearPoint = 400000;
@@ -575,7 +577,7 @@ namespace DSP_Battle
         /// 阻止子弹粒子的爆炸特效，提高帧率
         /// </summary>
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(DysonSwarm), "GameTick")]
+        [HarmonyPatch(typeof(GameData), "GameTick")]
         public static void PreventBulletExplodeEffect() 
         {
             if (starCannonStarIndex < 0) return;
@@ -647,7 +649,7 @@ namespace DSP_Battle
             }
         }
 
-        //其他效果2，从戴森壳(每一层)的各个node接收能量，起点在恒星内部。可能要改成前五层，要不然太多了
+        //其他效果2，从戴森壳(某一层或几层，取决于设定的渲染等级)的各个node接收能量，起点在恒星内部。
         public static void LaserEffect2(DysonSphere sphere, long gameTick)
         {
             var __instance = sphere;
@@ -655,20 +657,22 @@ namespace DSP_Battle
             VectorLF3 vertDirection = new VectorLF3(0, 0, 1);
             //float minRadius = 99999999;
             float maxRadius = 0;
-            //for (int i = 0; i < __instance.layersIdBased.Length; i++)
-            //{
-            //    if (__instance.layersIdBased[i] != null)
-            //    {
-            //        maxRadius = Mathf.Max(maxRadius, __instance.layersIdBased[i].orbitRadius);
-            //        if (__instance.layersIdBased[i].orbitRadius > 10 && __instance.layersIdBased[i].orbitRadius < minRadius)
-            //            minRadius = __instance.layersIdBased[i].orbitRadius;
-            //    }
-            //}
-
+            int maxRadiusLayerId = 2;
+            for (int i = 2; i < 5; i++) //寻找除了第一层之外最大的壳层的id
+            {
+                if (__instance.layersIdBased[i] != null)
+                {
+                    if (__instance.layersIdBased[i].orbitRadius > maxRadius)
+                    {
+                        maxRadius = __instance.layersIdBased[i].orbitRadius;
+                        maxRadiusLayerId = i;
+                    }
+                }
+            }
             VectorLF3 beginPointInStar = __instance.starData.uPosition;
             for (int i = 1; i < 5; i++)
             {
-                if (__instance.layersIdBased[i] != null)
+                if (__instance.layersIdBased[i] != null && renderLevel >= 2 && (i == 1 || i == maxRadiusLayerId || renderLevel >= 3)) //renderLevel = 2的时候只有第1层和半径最大层有光效。renderLevel=3则前五层都有。
                 {
                     DysonSphereLayer layer = __instance.layersIdBased[i];
                     for (int j = 0; j < layer.nodeCursor; j++)
@@ -698,15 +702,12 @@ namespace DSP_Battle
             var __instance = sphere;
             VectorLF3 targetDirection = targetUPos - __instance.starData.uPosition;
             VectorLF3 vertDirection = new VectorLF3(0, 0, 1);
-            float minRadius = 99999999;
             float maxRadius = 0;
             for (int i = 0; i < __instance.layersIdBased.Length; i++)
             {
                 if (__instance.layersIdBased[i] != null)
                 {
                     maxRadius = Mathf.Max(maxRadius, __instance.layersIdBased[i].orbitRadius);
-                    if (__instance.layersIdBased[i].orbitRadius > 10 && __instance.layersIdBased[i].orbitRadius < minRadius)
-                        minRadius = __instance.layersIdBased[i].orbitRadius;
                 }
             }
 
@@ -734,7 +735,7 @@ namespace DSP_Battle
                 {
                     int bulletIndex = __instance.swarm.AddBullet(new SailBullet
                     {
-                        maxt = 0.05f,
+                        maxt = 0.035f,
                         lBegin = __instance.starData.uPosition,
                         uEndVel = targetUPos,
                         uBegin = layer.NodeUPos(layer.nodePool[i]),
@@ -761,7 +762,7 @@ namespace DSP_Battle
             w.Write(targetUPos.y);
             w.Write(targetUPos.z);
             w.Write((double)rotateSpeedScale);
-            //w.Write(noExplodeBullets.Count); //不再存读档，虽然加载存档时可能会有大量爆炸特效卡一秒，但是却有可能会增大存档体积（游戏中开炮时弹射弹道数量可以飙升3000+甚至更多）
+            //w.Write(noExplodeBullets.Count); //不再存读档，虽然加载存档时可能会有大量爆炸特效卡一秒，但是却有可能会增大存档体积（游戏中开炮时弹射弹道数量可以飙升6000+甚至更多）
             //foreach (var item in noExplodeBullets)
             //{
             //    w.Write(item.Key);

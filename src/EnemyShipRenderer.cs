@@ -14,31 +14,36 @@ namespace DSP_Battle
     {
         public static void Init()
         {
-            PrefabDesc prefabDesc = LDB.items.Select(5002).prefabDesc; 
-            shipMesh = Resources.Load<Mesh>("test/tgs demo/enemy-base");
-            var oriVerts = shipMesh.vertices;
-            for (int i = 0; i < oriVerts.Length; i++)
+            PrefabDesc prefabDesc = LDB.items.Select(5002).prefabDesc;
+            if (!meshAlreadySet)
             {
-                Vector3 vert = oriVerts[i];
-                vert.x *= 1.5f;
-                vert.y *= 1.5f;
-                vert.z *= 1.5f;
-                if (vert.x > 5) vert.x = 5;
-                if (vert.y > 5) vert.y = 5;
-                if (vert.z > 5) vert.z = 5;
-                if (vert.x < -5) vert.x = -5;
-                if (vert.y < -5) vert.y = -5;
-                if (vert.z < -5) vert.z = -5;
-                oriVerts[i] = vert;
-            }
-            shipMesh.vertices = oriVerts;
-            Material[] array = prefabDesc.lodMaterials[0];
-            shipMats = new Material[shipMesh.subMeshCount]; //这里有修改
-            int num = 0;
-            while (num < shipMesh.subMeshCount && num < array.Length)
-            {
-                shipMats[num] = UnityEngine.Object.Instantiate<Material>(array[num]);
-                num++;
+                shipMesh = Resources.Load<Mesh>("test/tgs demo/enemy-base");
+                var oriVerts = shipMesh.vertices;
+                for (int i = 0; i < oriVerts.Length; i++)
+                {
+                    Vector3 vert = oriVerts[i];
+                    vert.x *= 2f;
+                    vert.y *= 2f;
+                    vert.z *= 2f;
+                    if (vert.x > 5) vert.x = 5;
+                    if (vert.y > 5) vert.y = 5;
+                    if (vert.z > 5) vert.z = 5;
+                    if (vert.x < -5) vert.x = -5;
+                    if (vert.y < -5) vert.y = -5;
+                    if (vert.z < -5) vert.z = -5;
+                    oriVerts[i] = vert;
+                }
+                shipMesh.vertices = oriVerts;
+                meshAlreadySet = true;
+
+                Material[] array = prefabDesc.lodMaterials[0];
+                shipMats = new Material[shipMesh.subMeshCount]; //这里有修改
+                int num = 0;
+                while (num < shipMesh.subMeshCount && num < array.Length)
+                {
+                    shipMats[num] = UnityEngine.Object.Instantiate<Material>(array[num]);
+                    num++;
+                }
             }
             argBuffer = new ComputeBuffer(25, 4, ComputeBufferType.DrawIndirect);
             shipCount = 0;
@@ -114,6 +119,22 @@ namespace DSP_Battle
             }
         }
 
+        public static void Destory()
+        {
+            shipsArr = null;
+            shipCount = 0;
+            if (shipsBuffer != null)
+            {
+                shipsBuffer.Release();
+                shipsBuffer = null;
+            }
+            if (argBuffer != null)
+            {
+                argBuffer.Release();
+                argBuffer = null;
+            }
+        }
+
         private static int shipCount;
         private static Mesh shipMesh;
         private static ShipRenderingData[] shipsArr;
@@ -121,5 +142,6 @@ namespace DSP_Battle
         private static ComputeBuffer argBuffer;
         private static uint[] argArr;
         private static Material[] shipMats;
+        private static bool meshAlreadySet = false;
     }
 }

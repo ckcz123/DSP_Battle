@@ -498,6 +498,20 @@ namespace DSP_Battle
             EnemyShipRenderer.Draw();
         }
 
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(LogisticShipRenderer), "Destory")]
+        public static void LogisticShipRenderer_Destory(ref LogisticShipRenderer __instance)
+        {
+            EnemyShipRenderer.Destory();
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(LogisticShipUIRenderer), "Destory")]
+        public static void LogisticShipUIRenderer_Destory(ref LogisticShipRenderer __instance)
+        {
+            EnemyShipUIRenderer.Destory();
+        }
+
         public static void Export(BinaryWriter w)
         {
             w.Write(ships.Count);

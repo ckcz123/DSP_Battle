@@ -30,6 +30,7 @@ namespace DSP_Battle
         public static int pagenum;
         public static ManualLogSource logger;
         private static ConfigFile config;
+        public static ConfigEntry<int> starCannonRenderLevel;
 
         public static bool isControlDown = false;
         public void Awake()
@@ -58,7 +59,10 @@ namespace DSP_Battle
             {
                 pagenum = 0;
             }
-
+            starCannonRenderLevel = Config.Bind<int>("config", "StarCannonRenderLevel", 2, "[0-3] Higher Level will provide more star cannon effect and particles but might decrease the UPS and FPS when star cannon is firing. 更高的设置会提供更多的恒星炮特效，但可能会在恒星炮开火时降低帧率，反之则可能提高开火时的帧率。");
+            StarCannon.renderLevel = starCannonRenderLevel.Value;
+            StarCannon.renderLevel = StarCannon.renderLevel > 3 ? 3 : StarCannon.renderLevel;
+            StarCannon.renderLevel = StarCannon.renderLevel < 0 ? 0 : StarCannon.renderLevel;
             EnemyShips.Init();
             Harmony.CreateAndPatchAll(typeof(DspBattlePlugin));
             Harmony.CreateAndPatchAll(typeof(EnemyShips));
@@ -115,12 +119,17 @@ namespace DSP_Battle
         public static void GameMain_onDestroy()
         {
             if (config == null) return;
-            string configFile = config.ConfigFilePath;
-            string path = Path.Combine(Path.GetDirectoryName(configFile), "LDBTool");
-            if (Directory.Exists(path))
+            try
             {
-                Directory.Delete(path, true);
+                string configFile = config.ConfigFilePath;
+                string path = Path.Combine(Path.GetDirectoryName(configFile), "LDBTool");
+                if (Directory.Exists(path))
+                {
+                    Directory.Delete(path, true);
+                }
             }
+            catch (Exception)
+            { }
         }
 
         [HarmonyPostfix]
