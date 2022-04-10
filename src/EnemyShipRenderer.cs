@@ -119,7 +119,7 @@ namespace DSP_Battle
             }
         }
 
-        public static void Destory()
+        public static void Destroy()
         {
             shipsArr = null;
             shipCount = 0;

@@ -261,8 +261,8 @@ namespace DSP_Battle
                     return -2; //射程不足
                 }
 
-                int alreadyDestoryCount = WormholeProperties.initialWormholeCount - Configs.nextWaveWormCount;
-                if (alreadyDestoryCount >= maxAimCount)
+                int alreadyDestroyCount = WormholeProperties.initialWormholeCount - Configs.nextWaveWormCount;
+                if (alreadyDestroyCount >= maxAimCount)
                 {
                     return -3; //达到连续开火次数上限
                 }
@@ -377,12 +377,19 @@ namespace DSP_Battle
                         if (fireStage == 1 && time <= 1) //原本第二个条件是是time==0，但可能会出现不进行瞄准动画的问题，因此改成了<=1，大不了瞄准两次
                         {
                             layer.orbitAngularSpeed *= 10.0f; //加快轨道旋转速度，只在下面计算时用到一次，之后可以立刻还原
-
+                            if(layer.orbitRadius > 20000)
+                            {
+                                layer.orbitAngularSpeed *= layer.orbitRadius / 20000;
+                            }
                             layer.InitOrbitRotation(layer.orbitRotation, final); //每个戴森壳层开始轨道旋转、对齐瞄准
                             float aimTimeNeed = Quaternion.Angle(layer.orbitRotation, final) / layer.orbitAngularSpeed * 60f;
                             endAimTime = Mathf.Max(endAimTime, (int)aimTimeNeed); //保存瞄准完成所需的最大时间
 
                             layer.orbitAngularSpeed /= 10.0f; //轨道旋转速度还原
+                            if(layer.orbitRadius > 20000)
+                            {
+                                layer.orbitAngularSpeed /= layer.orbitRadius / 20000;
+                            }
                         }
 
                         //旋转

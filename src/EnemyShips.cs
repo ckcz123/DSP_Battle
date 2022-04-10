@@ -499,17 +499,17 @@ namespace DSP_Battle
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(LogisticShipRenderer), "Destory")]
-        public static void LogisticShipRenderer_Destory(ref LogisticShipRenderer __instance)
+        [HarmonyPatch(typeof(LogisticShipRenderer), "Destroy")]
+        public static void LogisticShipRenderer_Destroy(ref LogisticShipRenderer __instance)
         {
-            EnemyShipRenderer.Destory();
+            EnemyShipRenderer.Destroy();
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(LogisticShipUIRenderer), "Destory")]
-        public static void LogisticShipUIRenderer_Destory(ref LogisticShipRenderer __instance)
+        [HarmonyPatch(typeof(LogisticShipUIRenderer), "Destroy")]
+        public static void LogisticShipUIRenderer_Destroy(ref LogisticShipUIRenderer __instance)
         {
-            EnemyShipUIRenderer.Destory();
+            EnemyShipUIRenderer.Destroy();
         }
 
         public static void Export(BinaryWriter w)
