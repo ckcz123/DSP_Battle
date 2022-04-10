@@ -496,6 +496,7 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(DysonSwarm), "GameTick")]
         public static void EarlyCalcBulletState(ref DysonSwarm __instance)
         {
+            if (__instance.dysonSphere.layerCount < 0) return; //专门用于渲染的swarm设置成layerCount=-1，不受这个patch影响
             int starIndex = __instance.starData.index;
 
             foreach (var i in bulletTargets[starIndex].Keys)
@@ -546,6 +547,7 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(DysonSwarm), "RemoveBullet")]
         public static void RemoveBulletThenRemoveSailMark(DysonSwarm __instance, int id)
         {
+            if (__instance.dysonSphere.layerCount < 0) return; //专门用于渲染的swarm设置成layerCount=-1，不受这个patch影响
             if (sailBulletsIndex[__instance.starData.index].ContainsKey(id))
             {
                 int v;

@@ -21,8 +21,8 @@ namespace DSP_Battle
                 enemySpheres.Add(new DysonSphere());
                 enemySpheres[i].Init(GameMain.data, GameMain.galaxy.stars[i]);
                 enemySpheres[i].ResetNew();
-
                 enemySpheres[i].swarm.bulletMaterial.SetColor("_Color0", new Color(1, 0, 0, 1)); //还有_Color1,2,3但是测试的时候没发现123有什么用
+                enemySpheres[i].layerCount = -1;
             }
         }
 
@@ -50,7 +50,7 @@ namespace DSP_Battle
         public static void RSphereGameTick(long time)
         {
             if (enemySpheres.Count <= 0) InitAll();
-            if( Configs.nextWaveStarIndex >= 0 && Configs.nextWaveStarIndex < enemySpheres.Count)
+            if (Configs.nextWaveStarIndex >= 0 && Configs.nextWaveStarIndex < enemySpheres.Count && (Configs.nextWaveState == 3|| Configs.nextWaveState == 0))
                 enemySpheres[Configs.nextWaveStarIndex].swarm.GameTick(time);
             
         }
@@ -61,7 +61,7 @@ namespace DSP_Battle
         public static void DrawPatch1(GameData __instance)
         {
             if (enemySpheres.Count <= 0) return;
-            if (__instance.localStar!=null && DysonSphere.renderPlace == ERenderPlace.Universe)
+            if (__instance.localStar!=null && DysonSphere.renderPlace == ERenderPlace.Universe && Configs.nextWaveState == 3)
             {
                 int index = __instance.localStar.index;
                 if (enemySpheres[index] != null)
@@ -77,7 +77,7 @@ namespace DSP_Battle
         public static void DrawPatch2(StarmapCamera __instance)
         {
             if (enemySpheres.Count <= 0) return;
-            if (__instance.uiStarmap.viewStarSystem != null && !UIStarmap.isChangingToMilkyWay)
+            if (__instance.uiStarmap.viewStarSystem != null && !UIStarmap.isChangingToMilkyWay && Configs.nextWaveState == 3)
             {
                 DysonSphere dysonSphere = enemySpheres[__instance.uiStarmap.viewStarSystem.index];
                 if (dysonSphere != null && DysonSphere.renderPlace == ERenderPlace.Starmap)
@@ -93,7 +93,7 @@ namespace DSP_Battle
         public static void DrawPatch3(UIDysonEditor __instance)
         {
             if (enemySpheres.Count <= 0) return;
-            if (__instance.selection.viewDysonSphere != null)
+            if (__instance.selection.viewDysonSphere != null && Configs.nextWaveState == 3)
             {
                 if (DysonSphere.renderPlace == ERenderPlace.Dysonmap)
                 {
@@ -109,7 +109,7 @@ namespace DSP_Battle
         public static void DrawPatch4(UIDysonPanel __instance)
         {
             if (enemySpheres.Count <= 0) return;
-            if (__instance.viewDysonSphere != null)
+            if (__instance.viewDysonSphere != null && Configs.nextWaveState == 3)
             {
                 if (DysonSphere.renderPlace == ERenderPlace.Dysonmap)
                 {

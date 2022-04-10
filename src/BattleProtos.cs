@@ -672,7 +672,7 @@ namespace DSP_Battle
             techWormDistanceInf.LevelCoef2 = 1800000;
 
 
-            TechProto dorpletControll1 = ProtoRegistry.RegisterTech(4927, "超距信号处理1", "超距信号处理描述", "超距信号处理结论", "Assets/DSPBattle/dropletW", new int[] { }, new int[] { 6001, 6002, 6003, 6004 },
+            TechProto dorpletControll1 = ProtoRegistry.RegisterTech(4927, "超距信号处理1", "超距信号处理描述", "超距信号处理结论", "Assets/DSPBattle/dropletcontroltech1", new int[] { }, new int[] { 6001, 6002, 6003, 6004 },
                  new int[] { 20, 20, 20, 20 }, 180000, new int[] { }, new Vector2(33, -47));
             dorpletControll1.PreTechsImplicit = new int[] { 1919 };
             dorpletControll1.UnlockFunctions = new int[] { 53 };
@@ -681,7 +681,7 @@ namespace DSP_Battle
             dorpletControll1.MaxLevel = 1;
             dorpletControll1.LevelCoef1 = 0;
             dorpletControll1.LevelCoef2 = 0;
-            TechProto dorpletControll2 = ProtoRegistry.RegisterTech(4928, "超距信号处理2", "超距信号处理描述", "超距信号处理结论", "Assets/DSPBattle/dropletW", new int[] { 4927 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+            TechProto dorpletControll2 = ProtoRegistry.RegisterTech(4928, "超距信号处理2", "超距信号处理描述", "超距信号处理结论", "Assets/DSPBattle/dropletcontroltech2", new int[] { 4927 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
                   new int[] { 20, 20, 20, 20, 20 }, 360000, new int[] { }, new Vector2(37, -47));
             dorpletControll2.UnlockFunctions = new int[] { 53 };
             dorpletControll2.UnlockValues = new double[] { 1 };
@@ -689,7 +689,7 @@ namespace DSP_Battle
             dorpletControll2.MaxLevel = 2;
             dorpletControll2.LevelCoef1 = 0;
             dorpletControll2.LevelCoef2 = 0;
-            TechProto dorpletControll3 = ProtoRegistry.RegisterTech(4929, "超距信号处理3", "超距信号处理描述", "超距信号处理结论", "Assets/DSPBattle/dropletW", new int[] { 4928 }, new int[] { 6006 },
+            TechProto dorpletControll3 = ProtoRegistry.RegisterTech(4929, "超距信号处理3", "超距信号处理描述", "超距信号处理结论", "Assets/DSPBattle/dropletcontroltech3", new int[] { 4928 }, new int[] { 6006 },
                   new int[] { 20 }, 900000, new int[] { }, new Vector2(41, -47));
             dorpletControll3.UnlockFunctions = new int[] { 53 };
             dorpletControll3.UnlockValues = new double[] { 1 };

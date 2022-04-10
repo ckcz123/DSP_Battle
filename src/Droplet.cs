@@ -49,7 +49,7 @@ namespace DSP_Battle
             lineTrans.localPosition = new Vector3(-33,-22,0);
             lineTrans.rotation = Quaternion.Euler(0,0,30);
             mechaDropletObj.transform.Find("icon").GetComponent<Image>().sprite = Resources.Load<Sprite>("Assets/DSPBattle/dropletW");
-            mechaDropletObj.transform.Find("icon").localPosition = new Vector3(1, 0, 0);
+            //mechaDropletObj.transform.Find("icon").localPosition = new Vector3(0, 0, 0);
             mechaDropletAmountText = mechaDropletObj.transform.Find("cnt-text").GetComponent<Text>();
         }
 
