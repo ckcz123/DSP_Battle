@@ -34,12 +34,18 @@ namespace DSP_Battle
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(SiloComponent), "InternalUpdate")]
-        public static bool SiloPatch(ref SiloComponent __instance, float power, DysonSphere sphere, AnimData[] animPool, int[] consumeRegister, uint __result)
+        public static bool SiloPatch(ref SiloComponent __instance, float power, DysonSphere sphere, AnimData[] animPool, int[] consumeRegister, ref uint __result)
         {
             int planetId = __instance.planetId;
             int starIndex = planetId / 100 - 1;
             PlanetFactory factory = GameMain.galaxy.stars[starIndex].planets[planetId % 100 - 1].factory;
             int gmProtoId = factory.entityPool[__instance.entityId].protoId;
+
+            if(gmProtoId == 2312 && MoreMegaStructure.MoreMegaStructure.StarMegaStructureType[starIndex] == 6 && StarCannon.fireStage>0) //如果恒星炮正在开火，停止发射火箭
+            {
+                __result = 0;
+                return false;
+            }
 
             if (gmProtoId == 2312) return true; //原始发射井返回原函数
 

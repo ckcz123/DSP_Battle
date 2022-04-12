@@ -26,9 +26,11 @@ namespace DSP_Battle
         static Color cannonAimingColor = new Color(0.973f, 0.359f, 0.170f, 1f);
         static Color cannonFiringColor = new Color(1f, 0.16f, 0.16f, 1f);
 
-        public static int laserBulletNum = 100;
-        public static int laserBulletPosDelta = 1000;
-        public static int laserBulletEndPosDelta = 150;
+        public static int laserBulletNum = 100; //主激光子弹数倍率
+        public static int laserBulletPosDelta = 1000; //主激光发射处随机偏移（激光半径）
+        public static int laserBulletEndPosDelta = 150; //主激光命中处随机偏移（激光命中处半径）
+        public static int maxSideLaserIntensity = 5; //12束集束激光子弹数
+        public static float sideLaserBulletLifeTime = 0.035f;
         public static VectorLF3 normDirection = new VectorLF3(0, 1, 0);
         public static int reverseDirection = 1; //只能是1或者-1，1是北极为炮口，-1则是南极。相当于设计恒星炮时所有层级南北极互换
         public static int renderLevel = 2; // 默认是2，更小可以减少恒星炮渲染的光束数量
@@ -76,6 +78,12 @@ namespace DSP_Battle
             endAimTime = 0;
             fireStage = 0;
             InitUI();
+            int ratio = renderLevel > 2 ? 2 : renderLevel;
+            laserBulletNum = (int)(49.5 * renderLevel + 1);
+            laserBulletPosDelta = 500 * ratio;
+            laserBulletEndPosDelta = 75 * ratio;
+            maxSideLaserIntensity = 2 * ratio + 1;
+            sideLaserBulletLifeTime = 0.016f * ratio + 0.002f;
         }
         public static void InitUI()
         {
@@ -434,10 +442,10 @@ namespace DSP_Battle
                         //预热时就开始的集束激光效果,但是连续瞄准过程中没有
                         if(fireStage>=2)
                         {
-                            int laserIntensity = (int)((time - endAimTime) * 1.0f / warmTimeNeed*5); //决定激光强度，这个逻辑是预热时周围集束激光效果随时间增强
-                            if(laserIntensity > 5 || fireStage >=3)
+                            int laserIntensity = (int)((time - endAimTime) * 1.0f / warmTimeNeed * maxSideLaserIntensity); //决定激光强度，这个逻辑是预热时周围集束激光效果随时间增强
+                            if(laserIntensity > maxSideLaserIntensity || fireStage >=3)
                             {
-                                laserIntensity = 5;
+                                laserIntensity = maxSideLaserIntensity;
                             }
                             LaserEffect3(__instance, gameTick, laserIntensity);
                             LaserEffect2(__instance, gameTick);
@@ -742,14 +750,14 @@ namespace DSP_Battle
                 {
                     int bulletIndex = __instance.swarm.AddBullet(new SailBullet
                     {
-                        maxt = 0.035f,
+                        maxt = sideLaserBulletLifeTime,
                         lBegin = __instance.starData.uPosition,
                         uEndVel = targetUPos,
                         uBegin = layer.NodeUPos(layer.nodePool[i]),
                         uEnd = eff3EndPos
                     }, 0);
                     __instance.swarm.bulletPool[bulletIndex].state = 0;
-                    if (j > 0)
+                    if (j >= 0)
                     {
                         noExplodeBullets.AddOrUpdate(bulletIndex, 1, (x, y) => 1);
                     }
