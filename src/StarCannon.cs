@@ -83,7 +83,7 @@ namespace DSP_Battle
             laserBulletPosDelta = 500 * ratio;
             laserBulletEndPosDelta = 75 * ratio;
             maxSideLaserIntensity = 2 * ratio + 1;
-            sideLaserBulletLifeTime = 0.016f * ratio + 0.002f;
+            sideLaserBulletLifeTime = 0.016f * ratio + 0.003f;
         }
         public static void InitUI()
         {

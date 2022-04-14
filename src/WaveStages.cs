@@ -33,8 +33,16 @@ namespace DSP_Battle
             Configs.nextWaveDelay = 0;
             Configs.nextWaveIntensity = Configs.intensity[Math.Min(Configs.intensity.Length - 1, Configs.wavePerStar[starId])];
             // Extra intensity
+            int r1 = 1000;
+            int r2 = 5;
+            int waveNum = Configs.wavePerStar[starId];
+            if(waveNum<3)
+            {
+                r1 = 1000 * (int)Math.Pow(2, (4 - waveNum));
+                r2 = waveNum + 1;
+            }
             long cube = (long)(GameMain.history.universeMatrixPointUploaded * 0.0002777777777777778);
-            if (cube > 100000) Configs.nextWaveIntensity += (int)((cube - 100000) / 1000);
+            if (cube > 100000) Configs.nextWaveIntensity += (int)((cube - 100000) / r1);
 
             ulong energy = 0;
             DysonSphere[] dysonSpheres = GameMain.data.dysonSpheres;
@@ -50,7 +58,7 @@ namespace DSP_Battle
             energy /= (1024 * 1024 * 1024L);
 
             if (energy > 300) // 300G
-                Configs.nextWaveIntensity += (int)(energy - 300) * 5;
+                Configs.nextWaveIntensity += (int)(energy - 300) * r2;
             if (Configs.nextWaveIntensity > 30000) Configs.nextWaveIntensity = 30000;
 
             Configs.nextWaveStarIndex = starId;
