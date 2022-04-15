@@ -474,10 +474,9 @@ namespace DSP_Battle
                 int lessBulletRatio = 1;
                 if (targetSwarm == null || targetSwarm.starData.index != __instance.starData.index)
                     lessBulletRatio = 2;
-                
 
                 //主激光效果
-                for (int i = 0; i < laserBulletNum / lessBulletRatio; i++)
+                for (int i = 0; i < laserBulletNum / lessBulletRatio || i==0; i++)
                 {
                     int bulletIndex = __instance.swarm.AddBullet(new SailBullet
                     {
@@ -488,28 +487,31 @@ namespace DSP_Battle
                         uEnd = targetUPos + Utils.RandPosDelta() * laserBulletEndPosDelta / lessBulletRatio
                     }, 0);
                     __instance.swarm.bulletPool[bulletIndex].state = 0;
-                    if(i>1)
+                    if(i>=1)
                     {
                         noExplodeBullets.AddOrUpdate(bulletIndex, 1, (x, y) => 1);
                     }
                 }
 
-
+                //根据渲染等级，额外激光的粗细削减系数
+                int dec = 5;
+                if (renderLevel >= 3) dec = 2;
                 //如果不在同星系，则本星系内光会很细，增加一段短光
                 if (targetSwarm == null || targetSwarm.starData.index != __instance.starData.index)
                 {
                     int nearPoint = 400000;
                     if (__instance.starData.type == EStarType.GiantStar)
                         nearPoint = 1000000;
-                    for (int i = 0; i < laserBulletNum/10; i++)
+                    
+                    for (int i = 0; i < laserBulletNum / dec || i==0; i++)
                     {
                         int bulletIndex = __instance.swarm.AddBullet(new SailBullet
                         {
                             maxt = 0.3f,
                             lBegin = __instance.starData.uPosition,
                             uEndVel = targetUPos,
-                            uBegin = __instance.starData.uPosition + Utils.RandPosDelta() * laserBulletPosDelta/10,
-                            uEnd = (targetUPos - __instance.starData.uPosition).normalized * nearPoint + __instance.starData.uPosition + Utils.RandPosDelta() * laserBulletEndPosDelta/10
+                            uBegin = __instance.starData.uPosition + Utils.RandPosDelta() * laserBulletPosDelta / dec,
+                            uEnd = (targetUPos - __instance.starData.uPosition).normalized * nearPoint + __instance.starData.uPosition + Utils.RandPosDelta() * laserBulletEndPosDelta / dec
                         }, 0);
                         __instance.swarm.bulletPool[bulletIndex].state = 0;
 
@@ -523,17 +525,21 @@ namespace DSP_Battle
                 if (targetSwarm != null && targetSwarm.starData.index != __instance.starData.index)
                 {
                     //无需改变生成点和终点
-                    for (int i = 0; i < laserBulletNum / 10; i++)
+                    for (int i = 0; i < laserBulletNum / dec || i==0; i++)
                     {
                         int bulletIndex = targetSwarm.AddBullet(new SailBullet
                         {
                             maxt = 0.3f,
                             lBegin = __instance.starData.uPosition,
                             uEndVel = targetUPos,
-                            uBegin = __instance.starData.uPosition + Utils.RandPosDelta() * (laserBulletPosDelta / 10),
-                            uEnd = targetUPos + Utils.RandPosDelta() * (laserBulletEndPosDelta / 5)
+                            uBegin = __instance.starData.uPosition + Utils.RandPosDelta() * (laserBulletPosDelta / dec),
+                            uEnd = targetUPos + Utils.RandPosDelta() * (laserBulletEndPosDelta / dec * 2)
                         }, 0);
                         targetSwarm.bulletPool[bulletIndex].state = 0;
+                        if (i >= 1)
+                        {
+                            noExplodeBullets.AddOrUpdate(bulletIndex, 1, (x, y) => 1);
+                        }
                     }
                 }
 
