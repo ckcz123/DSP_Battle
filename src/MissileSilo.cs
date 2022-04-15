@@ -303,7 +303,7 @@ namespace DSP_Battle
                                 }
                                 double num12 = num11 / ((double)dysonRocket.uSpeed + 0.1) * 0.382;
                                 double num13 = num11 / (double)num5;
-                                float num14 = (float)((double)dysonRocket.uSpeed * num12) + 150f;
+                                float num14 = (float)((double)dysonRocket.uSpeed * num12) + 150f; //这里对于导弹，num14是没有用的
                                 if (num14 > num5)
                                 {
                                     num14 = num5;
@@ -471,7 +471,7 @@ namespace DSP_Battle
                                 //持续爆炸，以及根据子弹爆炸范围决定爆炸效果
                                 for (int s = 0; s < 10; s++)
                                 {
-                                    for (int ss = 0; ss < dmgRange / 25 - 15; ss++)
+                                    for (int ss = 0; ss < (int)Math.Sqrt(dmgRange) - 15; ss++)
                                     {
                                         VectorLF3 explodePoint = dysonRocket.uPos;
                                         int bulletIndex = __instance.swarm.AddBullet(new SailBullet
@@ -935,7 +935,7 @@ namespace DSP_Battle
                                 else //离地面超过或等于200
                                 {
 
-                                    VectorLF3 vectorLF2 = dysonRocket.uPos;
+                                    VectorLF3 vectorLF2 = dysonRocket.uPos; //这个值下面立刻会修改
                                     //根据是导弹还是火箭确定
                                     if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
                                     {
@@ -957,7 +957,7 @@ namespace DSP_Battle
                                         }
                                     }
 
-                                    //根据距离地表的距离设置速度
+                                    //设置速度
                                     double num11 = Math.Sqrt(vectorLF2.x * vectorLF2.x + vectorLF2.y * vectorLF2.y + vectorLF2.z * vectorLF2.z);
                                     if (num11 < missileMaxSpeed * 3) //如果与目标足够近，进入下一阶段
                                     {
@@ -969,7 +969,7 @@ namespace DSP_Battle
                                     }
                                     double num12 = num11 / ((double)dysonRocket.uSpeed + 0.1) * 0.382;
                                     double num13 = num11 / (double)num5;
-                                    float num14 = (float)((double)dysonRocket.uSpeed * num12) + 150f;
+                                    float num14 = (float)((double)dysonRocket.uSpeed * num12) + 150f; //这里对于导弹，num14是没有用的
                                     if (num14 > num5)
                                     {
                                         num14 = num5;
@@ -1138,7 +1138,7 @@ namespace DSP_Battle
                                     //持续爆炸，以及根据子弹爆炸范围决定爆炸效果
                                     for (int s = 0; s < 10; s++)
                                     {
-                                        for (int ss = 0; ss < dmgRange / 25 - 15; ss++)
+                                        for (int ss = 0; ss < (int)Math.Sqrt(dmgRange) - 15; ss++)
                                         {
                                             VectorLF3 explodePoint = dysonRocket.uPos;
                                             int bulletIndex = __instance.swarm.AddBullet(new SailBullet
@@ -1603,13 +1603,21 @@ namespace DSP_Battle
         private static int FindTarget(int starIndex, int planetId)
         {
             int index;
-            if (DspBattlePlugin.randSeed.NextDouble() < 0.5) {
+            if (DspBattlePlugin.randSeed.NextDouble() < 0.5)
+            {
                 index = FindNearestTarget(EnemyShips.minPlanetDisSortedShips[starIndex][planetId]);
-                if (index > 0) return index;
+                if (index > 0)
+                {
+                    return index;
+                }
             }
 
-            index = FindRandTarget(EnemyShips.targetPlanetShips[starIndex][planetId]);
-            if (index > 0) return index;
+            index = FindRandTarget(EnemyShips.minPlanetDisSortedShips[starIndex][planetId]);
+            if (index > 0)
+            {
+                return index;
+            }
+
             return FindRandTarget(EnemyShips.minTargetDisSortedShips[starIndex]);
         }
 
@@ -1628,6 +1636,7 @@ namespace DSP_Battle
             if (ships.Count == 0) return -1;
             return ships[DspBattlePlugin.randSeed.Next(0, ships.Count)].shipIndex;
         }
+
 
         public static void Export(BinaryWriter w)
         {

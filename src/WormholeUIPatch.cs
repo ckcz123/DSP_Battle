@@ -267,6 +267,7 @@ namespace DSP_Battle
             if(index<100 && index > 0)
             {
                 float ratio = (Configs.nextWaveWormCount - 1) * 1f / (initialWormholeCount - 1); //目前是线性减伤，因此消灭所需时间是反比例增长，且最后一个虫洞减伤是100%，不会被消灭
+                ratio = (float)Math.Pow(ratio, 1.5); //改成了n次函数减伤
                 damage = Mathf.RoundToInt(damage * ratio);
                 wormholeHp[index] -= damage;
                 if(wormholeHp[index] <= 0)

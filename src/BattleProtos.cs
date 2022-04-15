@@ -832,6 +832,7 @@ namespace DSP_Battle
             if (true)
             {
                 var prefab = LDB.items.Select(8031).prefabDesc;
+                var oriPrefab = LDB.models.Select(68).prefabDesc;
                 var originalMeshVertices = new Vector3[prefab.lodCount][];
                 for (int i = 0; i < prefab.lodCount; i++)
                 {
@@ -843,14 +844,18 @@ namespace DSP_Battle
                     }
                 }
                 //碰撞
+                prefab.colliders = new ColliderData[oriPrefab.colliders.Length];
                 for (int i = 0; i < prefab.colliders.Length; i++)
                 {
+                    prefab.colliders[i] = oriPrefab.colliders[i];
                     prefab.colliders[i].ext.x *= 2f;
                     prefab.colliders[i].ext.y *= 3f;
                     prefab.colliders[i].ext.z *= 2f;
                 }
+                prefab.buildColliders = new ColliderData[oriPrefab.buildColliders.Length];
                 for (int i = 0; i < prefab.buildColliders.Length; i++)
                 {
+                    prefab.buildColliders[i] = oriPrefab.buildColliders[i];
                     prefab.buildColliders[i].ext.x *= 2f;
                     prefab.buildColliders[i].ext.y *= 3f;
                     prefab.buildColliders[i].ext.z *= 2f;
