@@ -58,6 +58,12 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(GameData), "GameTick")]
         public static void GameData_GameTick(ref GameData __instance, long time)
         {
+            //根据科技等级确定上限
+            if (GameMain.history.techStates.ContainsKey(4929) && GameMain.history.techStates[4929].unlocked) { maxDroplet = 5; }
+            else if (GameMain.history.techStates.ContainsKey(4928) && GameMain.history.techStates[4928].unlocked) { maxDroplet = 4; }
+            else if (GameMain.history.techStates.ContainsKey(4927) && GameMain.history.techStates[4927].unlocked) { maxDroplet = 3; }
+            else { maxDroplet = 2; }
+
             if(DysonSphere.renderPlace == ERenderPlace.Universe)
             {
                 Droplet.maxPosDelta = 5;

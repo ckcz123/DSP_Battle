@@ -600,16 +600,16 @@ namespace DSP_Battle
                 new int[] { 4, 4, 4, 4, 4 }, 1800000, new int[] { }, new Vector2(21, -51));
             techBulletSpeed4.UnlockFunctions = new int[] { 51 };
             techBulletSpeed4.UnlockValues = new double[] { 0.1 };
-            techBulletSpeed4.Level = 3;
-            techBulletSpeed4.MaxLevel = 3;
+            techBulletSpeed4.Level = 4;
+            techBulletSpeed4.MaxLevel = 4;
             techBulletSpeed4.LevelCoef1 = 0;
             techBulletSpeed4.LevelCoef2 = 0;
             TechProto techBulletSpeed5 = ProtoRegistry.RegisterTech(4915, "引力波引导5", "引力波引导描述", "引力波引导结论", "Assets/DSPBattle/bulletspeedtech5", new int[] { 4914 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
                 new int[] { 4, 4, 4, 4, 4 }, 2700000, new int[] { }, new Vector2(25, -51));
             techBulletSpeed5.UnlockFunctions = new int[] { 51 };
             techBulletSpeed5.UnlockValues = new double[] { 0.1 };
-            techBulletSpeed5.Level = 3;
-            techBulletSpeed5.MaxLevel = 3;
+            techBulletSpeed5.Level = 5;
+            techBulletSpeed5.MaxLevel = 5;
             techBulletSpeed5.LevelCoef1 = 0;
             techBulletSpeed5.LevelCoef2 = 0;
             TechProto techBulletSpeedInf = ProtoRegistry.RegisterTech(4916, "引力波引导6", "引力波引导描述", "引力波引导结论", "Assets/DSPBattle/bulletspeedtech0", new int[] { 4915 }, new int[] { 6006 },
@@ -957,7 +957,7 @@ namespace DSP_Battle
                     Configs.wormholeRangeAdded += (int)value;
                     break;
                 case 53:
-                    Droplets.maxDroplet += (int)value;
+                    Droplets.maxDroplet += 0; //(int)value; // 改成了每帧根据科技等级刷新max数。就不存档了。
                     break;
                 default:
                     break;
