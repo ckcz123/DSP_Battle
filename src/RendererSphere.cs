@@ -12,6 +12,8 @@ namespace DSP_Battle
     class RendererSphere
     {
         public static List<DysonSphere> enemySpheres = new List<DysonSphere>();
+        public static List<DysonSphere> dropletSpheres = new List<DysonSphere>();
+
 
         public static void InitAll()
         {
@@ -24,6 +26,15 @@ namespace DSP_Battle
                 enemySpheres[i].swarm.bulletMaterial.SetColor("_Color0", new Color(1, 0, 0, 1)); //还有_Color1,2,3但是测试的时候没发现123有什么用
                 enemySpheres[i].layerCount = -1;
             }
+            dropletSpheres = new List<DysonSphere>();
+            for (int i = 0; i < GameMain.galaxy.starCount; i++)
+            {
+                dropletSpheres.Add(new DysonSphere());
+                dropletSpheres[i].Init(GameMain.data, GameMain.galaxy.stars[i]);
+                dropletSpheres[i].ResetNew();
+                dropletSpheres[i].swarm.bulletMaterial.SetColor("_Color0", new Color(0, 1, 1, 1)); 
+                dropletSpheres[i].layerCount = -1;
+            }
         }
 
         [HarmonyPostfix]
@@ -31,6 +42,7 @@ namespace DSP_Battle
         public static void GameStartPatch()
         {
             enemySpheres = new List<DysonSphere>();
+            dropletSpheres = new List<DysonSphere>();
         }
 
 
@@ -52,7 +64,8 @@ namespace DSP_Battle
             if (enemySpheres.Count <= 0) InitAll();
             if (Configs.nextWaveStarIndex >= 0 && Configs.nextWaveStarIndex < enemySpheres.Count && (Configs.nextWaveState == 3|| Configs.nextWaveState == 0))
                 enemySpheres[Configs.nextWaveStarIndex].swarm.GameTick(time);
-            
+            if (GameMain.localStar != null)
+                dropletSpheres[GameMain.localStar.index].swarm.GameTick(time);
         }
 
 
@@ -68,6 +81,10 @@ namespace DSP_Battle
                 {
                     enemySpheres[index].DrawPost();
                 }
+            }
+            if (GameMain.localStar != null && DysonSphere.renderPlace == ERenderPlace.Universe)
+            {
+                dropletSpheres[GameMain.localStar.index].DrawPost();
             }
         }
 
@@ -85,6 +102,10 @@ namespace DSP_Battle
                     dysonSphere.DrawPost();
                 }
             }
+            if (GameMain.localStar != null && __instance.uiStarmap.viewStarSystem != null && !UIStarmap.isChangingToMilkyWay && DysonSphere.renderPlace == ERenderPlace.Starmap)
+            {
+                dropletSpheres[GameMain.localStar.index].DrawPost();
+            }
         }
 
 
@@ -101,6 +122,10 @@ namespace DSP_Battle
                     enemySpheres[index].DrawPost();
                 }
             }
+            if (GameMain.localStar != null && __instance.selection.viewDysonSphere != null && DysonSphere.renderPlace == ERenderPlace.Dysonmap)
+            {
+                dropletSpheres[GameMain.localStar.index].DrawPost();
+            }
         }
 
 
@@ -116,6 +141,10 @@ namespace DSP_Battle
                     int index = __instance.viewDysonSphere.starData.index;
                     enemySpheres[index].DrawPost();
                 }
+            }
+            if (GameMain.localStar != null && __instance.viewDysonSphere != null && DysonSphere.renderPlace == ERenderPlace.Dysonmap)
+            {
+                dropletSpheres[GameMain.localStar.index].DrawPost();
             }
         }
 

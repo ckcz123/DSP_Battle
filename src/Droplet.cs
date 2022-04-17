@@ -58,6 +58,15 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(GameData), "GameTick")]
         public static void GameData_GameTick(ref GameData __instance, long time)
         {
+            if(DysonSphere.renderPlace == ERenderPlace.Universe)
+            {
+                Droplet.maxPosDelta = 5;
+            }
+            else
+            {
+                Droplet.maxPosDelta = 100;
+            }
+
             if (maxDroplet > dropletPool.Length) maxDroplet = dropletPool.Length;
 
             int loadedDropletCnt = RefreshDropletNum();
@@ -187,18 +196,19 @@ namespace DSP_Battle
     {
         public int state = -1; //-1空-根本没有水滴，0有水滴-正在机甲中待命，1刚刚从机甲出来-慢，2攻击-飞向目标，3攻击-已越过目标准备折返，4返航回机甲,5马上要回到机甲-慢
         int swarmIndex = -1;
-        int[] bulletIds = new int[25];
+        int[] bulletIds = new int[bulletCnt];
         int targetShipIndex = -1;
         int randSeed = 0; //决定水滴在撞向敌舰时的一个随机的小偏移，使其往返攻击时不是在两个点之间来回飞，而是有一些随机的角度变化，每次find敌人和从2阶段回到1阶段都会改变一次randSeed
 
         public static int exceedDis = 3000; //水滴撞击敌舰后保持原速度方向飞行的距离，之后才会瞬间转弯
-
+        public static int bulletCnt = 25;
+        public static int maxPosDelta = 100; //会根据是否达开星图设置为100或5，在Droplets里更新。目的是不打开星图时水滴比较细，打开星图后为了能清楚地看到设置得很大
 
         public Droplet()
         {
             state = -1;
             swarmIndex = -1;
-            bulletIds = new int[25];
+            bulletIds = new int[bulletCnt];
             for (int i = 0; i < bulletIds.Length; i++)
             {
                 bulletIds[i] = 0;
@@ -250,7 +260,7 @@ namespace DSP_Battle
             }
 
             float newMaxt = (float)((endUPos - beginUPos).magnitude / Configs.dropletSpd * 200);
-            for (int i = 0; i < 25; i++)
+            for (int i = 0; i < bulletIds.Length; i++)
             {
                 if (i > 0) //起飞阶段只渲染一个
                 {
@@ -277,7 +287,8 @@ namespace DSP_Battle
             {
                 VectorLF3 curUPos = GetCurrentUPos();
                 List<int> enemiesNear = EnemyShips.FindShipsInRange(curUPos, Configs.dropletSpd * searchRangeRatio);
-                if (enemiesNear.Count <= 0) return FindNextTarget();
+                if (enemiesNear.Count <= 0) enemiesNear = EnemyShips.FindShipsInRange(curUPos, Configs.dropletSpd * searchRangeRatio * 10); //如果没找到，扩大寻找范围
+                if (enemiesNear.Count <= 0) return FindNextTarget(); //还没找到就按其他规则寻敌
 
                 int tarIdx = Utils.RandInt(0, enemiesNear.Count);
                 if(tarIdx == targetShipIndex && enemiesNear.Count > 1) //新目标如果和上一个目标一样，并且有其他可选目标，则尽量选择不同的目标
@@ -358,6 +369,13 @@ namespace DSP_Battle
                 return;
             }
 
+            if(GameMain.localStar == null || GameMain.localStar.index!=swarmIndex)//机甲所在星系和水滴不一样，让水滴返回
+            {
+                state = 0;
+                TryRemoveOtherBullets(0);
+                return;
+            }
+
             if(state >= 2 && state <= 3 && working)//飞出、返航过程不消耗能量
             {
                 Droplets.ForceConsumeMechaEnergy(Droplets.energyComsumptionPerTick);
@@ -368,7 +386,7 @@ namespace DSP_Battle
                 float tickT = 0.016666668f;
                 swarm.bulletPool[bulletIds[0]].t -= tickT;
                 VectorLF3 lastUPos = GetCurrentUPos();
-                for (int i = 0; i < 25; i++)
+                for (int i = 0; i < bulletIds.Length; i++)
                 {
                     if (swarm.bulletPool.Length <= bulletIds[i]) continue;
                     swarm.bulletPool[bulletIds[i]].uBegin = lastUPos;
@@ -426,7 +444,7 @@ namespace DSP_Battle
                             AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
                             newEnd = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, GameMain.mainPlayer.position * 2); 
                         }
-                        RetargetAllBullet(newBegin, newEnd, 25, 5, 5, Configs.dropletSpd);
+                        RetargetAllBullet(newBegin, newEnd, bulletIds.Length, maxPosDelta, maxPosDelta, Configs.dropletSpd);
                     }
                 }
                 else //目标存在
@@ -435,7 +453,7 @@ namespace DSP_Battle
                     VectorLF3 newBegin = GetCurrentUPos();
                     VectorLF3 newEnd = (enemyUPos - newBegin).normalized * exceedDis + enemyUPos;
                     float newMaxt = (float)((newEnd - newBegin).magnitude / Configs.dropletSpd);
-                    RetargetAllBullet(newBegin, newEnd, 25, 5, 5, Configs.dropletSpd);
+                    RetargetAllBullet(newBegin, newEnd, bulletIds.Length, maxPosDelta, maxPosDelta, Configs.dropletSpd);
                     //判断击中，如果距离过近
                     if ((newBegin - enemyUPos).magnitude < 500 || newMaxt <= exceedDis * 1.0 / Configs.dropletSpd + 0.035f)
                     {
@@ -465,7 +483,7 @@ namespace DSP_Battle
                         VectorLF3 uEnd = swarm.bulletPool[bulletIds[0]].uEnd;
                         VectorLF3 enemyUPos = EnemyShips.ships[targetShipIndex].uPos + Utils.RandPosDelta(randSeed) * 200f;
                         uEnd = (enemyUPos - newBegin).normalized * exceedDis + enemyUPos;
-                        RetargetAllBullet(newBegin, uEnd, 25, 5, 5, Configs.dropletSpd);
+                        RetargetAllBullet(newBegin, uEnd, bulletIds.Length, maxPosDelta, maxPosDelta, Configs.dropletSpd);
                     }
                     else
                     {
@@ -477,7 +495,7 @@ namespace DSP_Battle
                             AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
                             newEnd = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, GameMain.mainPlayer.position * 2);
                         }
-                        RetargetAllBullet(newBegin, newEnd, 25, 5, 5, Configs.dropletSpd);
+                        RetargetAllBullet(newBegin, newEnd, bulletIds.Length, maxPosDelta, maxPosDelta, Configs.dropletSpd);
                     }
                 }
             }
@@ -538,7 +556,7 @@ namespace DSP_Battle
                     }
                     else
                     {
-                        RetargetAllBullet(newBegin, mechaUPos2, 25, 5, 5, Configs.dropletSpd);
+                        RetargetAllBullet(newBegin, mechaUPos2, bulletIds.Length, maxPosDelta, maxPosDelta, Configs.dropletSpd);
                     }
 
                 }
@@ -686,9 +704,14 @@ namespace DSP_Battle
         DysonSwarm GetSwarm()
         {
             if (swarmIndex >= 0 && swarmIndex < GameMain.galaxy.starCount)
-                return GameMain.data.dysonSpheres[swarmIndex]?.swarm;
+            {
+                //return GameMain.data.dysonSpheres[swarmIndex]?.swarm;
+                return RendererSphere.dropletSpheres[swarmIndex]?.swarm;
+            }
             else
+            {
                 return null;
+            }
         }
 
         public void Export(BinaryWriter w)
@@ -706,7 +729,16 @@ namespace DSP_Battle
         {
             state = r.ReadInt32();
             swarmIndex = r.ReadInt32();
-            for (int i = 0; i < 25; i++)
+            int savedCnt = 25;
+            if (Configs.versionWhenImporting >= 30220417)
+            {
+                savedCnt = bulletIds.Length;
+            }
+            else if (state > 0 && bulletIds.Length > 25) //版本更迭后的存档子弹数量存储不足，强制水滴回到机甲重新创建足够数量的子弹
+            {
+                state = 0;
+            }
+            for (int i = 0; i < savedCnt; i++)
             {
                 bulletIds[i] = r.ReadInt32();
             }

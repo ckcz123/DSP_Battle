@@ -14,7 +14,7 @@ namespace DSP_Battle
         public static bool developerMode = false; //发布前务必修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
 
         public static int versionWhenImporting = -1;
-        public static int versionCode = 30220410;
+        public static int versionCode = 30220417;
 
         public static int difficulty = 0; // -1 easy, 0 normal, 1 hard
 
