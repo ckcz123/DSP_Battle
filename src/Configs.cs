@@ -319,6 +319,8 @@ namespace DSP_Battle
                 wavePerStar = new int[starCount];
                 for (var i = 0; i < 100; ++i) wavePerStar[i] = r.ReadInt32();
             }
+
+            WaveStages.ResetCargoAccIncTable(extraSpeedEnabled);
         }
 
         public static void IntoOtherSave()
@@ -345,6 +347,8 @@ namespace DSP_Battle
 
             starCount = Mathf.Max(GameMain.galaxy?.starCount ?? 90, 90) + 10;
             wavePerStar = new int[starCount];
+
+            WaveStages.ResetCargoAccIncTable(extraSpeedEnabled);
         }
 
     }

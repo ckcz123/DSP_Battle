@@ -15,6 +15,7 @@ namespace DSP_Battle
         public static void AddProtos()
         {
             //官方星图界面 橙色高亮字体color=FD965EC0
+            //增产效果的蓝色高亮字体 0.3821 0.8455 1 0.7059 : 61d8ffb4
 
             ProtoRegistry.RegisterString("轨道防御", "Defense", "轨道防御");
 
@@ -247,6 +248,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("导弹飞行速度", "Missile speed", "导弹飞行速度");
             ProtoRegistry.RegisterString("虫洞干扰半径", "Wormhole interference radius", "虫洞干扰半径");
             ProtoRegistry.RegisterString("效率gm", "Efficiency", "弹药效率");
+            ProtoRegistry.RegisterString("额外奖励gm", "★bonus ", "★奖励 ");
 
             ProtoRegistry.RegisterString("设定索敌最高优先级", "Set priority to eject", "设定索敌最高优先级");
             ProtoRegistry.RegisterString("最接近物流塔", "Nearest to station", "最接近物流塔");
@@ -267,7 +269,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("损失物流塔", "Station lost", "损失物流塔");
             ProtoRegistry.RegisterString("损失其他建筑", "Other buildings lost", "损失其他建筑");
             ProtoRegistry.RegisterString("损失资源", "Resource lost", "损失资源");
-            ProtoRegistry.RegisterString("奖励提示", "Got reward: mining speed * 2, tech speed * 2, vessel ship speed * 1.5, lasting for {0} seconds.", "获得奖励：采矿速率*2，研究速率*2，运输船速度*1.5，持续 {0} 秒。");
+            ProtoRegistry.RegisterString("奖励提示", "Got reward: ore consumption -50%, mining speed * 2, tech speed * 2, vessel ship speed * 1.5, proliferator's efficiency has been improved, lasting for {0} seconds.", "获得奖励：采矿消耗-50%，采矿速率*2，研究速率*2，运输船速度*1.5，增产剂效能全面提升，持续 {0} 秒。");
             ProtoRegistry.RegisterString("查看更多战斗信息", "View more details of this wave in Statistics -> Battle Info", "在分析面板-战斗统计中，可以查看更为详细的战斗信息。");
             ProtoRegistry.RegisterString("火箭模式提示", "Current Mode: AUTO", "自动寻敌（无需设置）");
             ProtoRegistry.RegisterString("打开统计面板", "Open Statistics", "打开统计面板");
@@ -1004,6 +1006,7 @@ namespace DSP_Battle
         {
             if (infoLabel == null)
                 InitTechInfoUIs();
+            
             if (infoLabel.text.Split('\n').Length < 35)
             {
                 infoLabel.text = infoLabel.text + "\r\n\r\n" + "子弹伤害".Translate() + "\r\n" + "相位裂解光束伤害".Translate() + "\r\n"
@@ -1017,12 +1020,29 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(UITechTree), "RefreshDataValueText")]
         public static void UnlockFuncTextPatch(ref UITechTree __instance)
         {
-            
+            if (Configs.extraSpeedEnabled)
+            {
+                string[] txt = __instance.dataValueText.text.Split('\n');
+                string final = "";
+                for (int i = 0; i < txt.Length - 1; i++)
+                {
+                    if (i == 21 || i == 23 || i == 24 || i == 26 || i == 27 || i == 28)
+                    {
+                        final += "<color=#61d8ffb4>" + "额外奖励gm".Translate() + txt[i].Trim() + "</color>\r\n";
+                    }
+                    else
+                    {
+                        final += txt[i].Trim() + "\r\n";
+                    }
+                }
+                final += txt[txt.Length - 1];
+                __instance.dataValueText.text = final;
+            }
+
             __instance.dataValueText.text = __instance.dataValueText.text + "\r\n\r\n" + Configs.bulletAtkScale.ToString("0%") + "\r\n"
                 + (1 + (Configs.bulletAtkScale - 1) * 2).ToString("0%") + "\r\n" + Configs.bulletAtkScale.ToString("0%")
                 + "\r\n" + Configs.bulletSpeedScale.ToString("0%") + "\r\n" + (1 + (Configs.bulletSpeedScale - 1) * 0.5).ToString("0%") + "\r\n" + (Configs.wormholeRange / 40000.0).ToString() + "AU" + "\r\n"
                 + Droplets.maxDroplet.ToString();
-
         }
 
 

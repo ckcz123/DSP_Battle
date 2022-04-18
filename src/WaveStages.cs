@@ -17,6 +17,22 @@ namespace DSP_Battle
                 case 2: UpdateWaveStage2(time); break;
                 case 3: UpdateWaveStage3(time); break;
             }
+            CheckRewardLeftTime(time);
+        }
+
+        private static void CheckRewardLeftTime(long time)
+        {
+            if (time >= Configs.extraSpeedFrame && Configs.extraSpeedEnabled)
+            {
+                Configs.extraSpeedEnabled = false;
+                Configs.extraSpeedFrame = -1;
+                GameMain.history.miningCostRate *= 2;
+                GameMain.history.miningSpeedScale /= 2;
+                GameMain.history.techSpeed /= 2;
+                GameMain.history.logisticDroneSpeedScale /= 1.5f;
+                GameMain.history.logisticShipSpeedScale /= 1.5f;
+                ResetCargoAccIncTable(false);
+            }
         }
 
         private static void UpdateWaveStage0(long time)
@@ -151,10 +167,12 @@ namespace DSP_Battle
 
                 Configs.extraSpeedFrame = time + extraSpeedFrame;
                 Configs.extraSpeedEnabled = true;
+                GameMain.history.miningCostRate *= 0.5f;
                 GameMain.history.miningSpeedScale *= 2;
                 GameMain.history.techSpeed *= 2;
                 GameMain.history.logisticDroneSpeedScale *= 1.5f;
                 GameMain.history.logisticShipSpeedScale *= 1.5f;
+                ResetCargoAccIncTable(true);
 
                 UIDialogPatch.ShowUIDialog("战斗已结束！".Translate(),
                     "战斗时间".Translate() + ": " + string.Format("{0:00}:{1:00}", new object[] { UIBattleStatistics.battleTime / 60 / 60, UIBattleStatistics.battleTime / 60 % 60 }) + "; " +
@@ -170,5 +188,22 @@ namespace DSP_Battle
             }
         }
 
+        public static void ResetCargoAccIncTable(bool rewardActive)
+        {
+            if (rewardActive)
+            {
+                Cargo.accTable = new int[] { 0, 750, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000 };
+                Cargo.accTableMilli = new double[] { 0.0, 0.750, 1.000, 1.250, 1.500, 1.750, 2.000, 2.250, 2.500, 2.275, 3.0 };
+                Cargo.incTable = new int[] { 0, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450 };
+                Cargo.incTableMilli = new double[] { 0.0, 0.225, 0.250, 0.275, 0.300, 0.325, 0.350, 0.375, 0.400, 0.425, 0.45 };
+            }
+            else
+            {
+                Cargo.accTable = new int[] { 0, 250, 500, 750, 1000, 1250, 1500, 1750, 2000, 2250, 2500 };
+                Cargo.accTableMilli = new double[] { 0.0, 0.250, 0.500, 0.750, 1.000, 1.250, 1.500, 1.750, 2.000, 2.250, 2.500 };
+                Cargo.incTable = new int[] { 0, 125, 200, 225, 250, 275, 300, 325, 350, 375, 400 };
+                Cargo.incTableMilli = new double[] { 0.0, 0.125, 0.200, 0.225, 0.250, 0.275, 0.300, 0.325, 0.350, 0.375, 0.400 };
+            }
+        }
     }
 }

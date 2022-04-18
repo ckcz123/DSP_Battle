@@ -264,15 +264,6 @@ namespace DSP_Battle
 
             WaveStages.Update(time);
 
-            if (time >= Configs.extraSpeedFrame && Configs.extraSpeedEnabled)
-            {
-                Configs.extraSpeedEnabled = false;
-                Configs.extraSpeedFrame = -1;
-                GameMain.history.miningSpeedScale /= 2;
-                GameMain.history.techSpeed /= 2;
-                GameMain.history.logisticDroneSpeedScale /= 1.5f;
-                GameMain.history.logisticShipSpeedScale /= 1.5f;
-            }
         }
 
         [HarmonyPrefix]
