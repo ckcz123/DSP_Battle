@@ -67,6 +67,8 @@ namespace DSP_Battle
         public static long shieldDamageMade; //护盾造成伤害
         public static long dropletDamage; //水滴造成伤害
 
+        public static int alienMatrixGain; //获取的异星矩阵数
+
         //除上面的之外其他总和数值
         public static int totalEnemyGen; //生成的敌人总数
         public static long totalAmmoDamageOut, totalAmmoDamageHit, bAmmoDamageOut, bAmmoDamageHit, mAmmoDamageOut, mAmmoDamageHit; //伤害输出和命中总和记录。此处Ammo泛指子弹和导弹，前缀b和m指代子弹和导弹
@@ -229,6 +231,7 @@ namespace DSP_Battle
                 mAmmoHit = 0;
                 avgInterceptDis = 0;
                 minInterceptDis = 999999999999999999;
+                alienMatrixGain = 0;
                 enemyGen = new ConcurrentDictionary<int, int>();
                 enemyEliminated = new ConcurrentDictionary<int, int>();
                 ammoDamageOutput = new ConcurrentDictionary<int, long>();
@@ -414,6 +417,13 @@ namespace DSP_Battle
             Interlocked.Add(ref dropletDamage, damage);
             Interlocked.Add(ref totalDamage, damage);
         }
+
+        //异星矩阵掉落
+        public static void RegisterAlienMatrixGain(int num)
+        {
+            Interlocked.Add(ref alienMatrixGain, num);
+        }
+
 
         public static void OnClickBattleStatButton()
         {

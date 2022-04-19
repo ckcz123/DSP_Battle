@@ -198,6 +198,7 @@ namespace DSP_Battle
             UIBattleStatistics.InitSelectDifficulty();
             EnemyShipUIRenderer.Init();
             EnemyShipRenderer.Init();
+            BattleProtos.ReCheckTechUnlockRecipes();
         }
 
         public void IntoOtherSave()
@@ -216,6 +217,7 @@ namespace DSP_Battle
             UIBattleStatistics.InitSelectDifficulty();
             EnemyShipUIRenderer.Init();
             EnemyShipRenderer.Init();
+            BattleProtos.ReCheckTechUnlockRecipes();
         }
 
 

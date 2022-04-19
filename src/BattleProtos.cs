@@ -130,7 +130,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("即将到来gm", "Coming soon", "即将推出");
 
             ProtoRegistry.RegisterString("尼科尔戴森光束", "Nicoll-Dyson beam", "尼科尔-戴森光束");
-            ProtoRegistry.RegisterString("尼科尔戴森光束描述", "Disintegrating wormholes with stellar energy.", "利用恒星级能量瓦解虫洞。");
+            ProtoRegistry.RegisterString("尼科尔戴森光束描述", "Decoding a method for building a Star Cannon from alien matrices, disintegrating wormholes with stellar energy.", "从异星矩阵中解码建造恒星炮的方法，利用恒星级能量瓦解虫洞。");
             ProtoRegistry.RegisterString("尼科尔戴森光束结论", "You have unlocked the star cannon.", "你解锁了建造恒星炮的能力。");
             ProtoRegistry.RegisterString("行星力场护盾", "Planetary force field shield", "行星力场护盾");
             ProtoRegistry.RegisterString("行星力场护盾描述", "Maintain force field shields around planets.", "在行星周围构建力场护盾。");
@@ -163,6 +163,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("虫洞已完全稳定，无法被摧毁", "The wormholes are fully stabilized and cannot be destroyed.", "虫洞已完全稳定，无法被摧毁。");
             ProtoRegistry.RegisterString("恒星炮已启动", "Launching.", "恒星炮已启动。");
 
+           
 
             ProtoRegistry.RegisterString("彩蛋1描述", "Seems like these enemies are a kind of space insect. They live in deep space, feed on the tides of power without vision. " +
                 "The interstellar station creates regular ripples in space, making itself a beacon in a dark universe that can easily be captured and attacked by the insects. " +
@@ -311,7 +312,7 @@ namespace DSP_Battle
 
             ProtoRegistry.RegisterString("行星护盾生成器", "Planet shield generator", "行星护盾生成器");
             ProtoRegistry.RegisterString("行星护盾生成器描述", "Using a large amount of energy to maintain a force field shield on the planet's surface, the encoding of the force field's resonant frequency allows allies to easily pass through the shield, while blocking the enemies. Multiple shield generators can speed up the shield recharge rate, and provide additional shield capacity. However, as the number of shield generators increases, each additional generator will provide less and less additional capacity.", 
-                "使用大量能量在行星表面维持一个力场护盾，对力场谐振频率的编码能够使友方轻易穿过护盾，同时阻挡敌人的进入或攻击。多个护盾生成器能够加快护盾充能的速度，也能够提供的额外护盾容量上限。不过随着单个星球上护盾生成器数量的增加，每个生成器能够提供的额外护盾也将越来越少。");
+                "使用大量能量在行星表面维持一个力场护盾，对力场谐振频率的编码能够使友方轻易穿过护盾，同时阻挡敌人的进入或攻击。多个护盾生成器能够加快护盾充能的速度，也能够提供额外的护盾容量上限。不过随着单个星球上护盾生成器数量的增加，每个生成器能够提供的额外护盾也将越来越少。");
             ProtoRegistry.RegisterString("力场护盾", "Planet shield", "力场护盾");
             ProtoRegistry.RegisterString("力场护盾短", "Shield", "力场护盾");
             ProtoRegistry.RegisterString("护盾容量", "Shield capacity", "护盾容量");
@@ -336,6 +337,20 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("水滴发射耗能", "Launch Consumption", "发射耗能");
             ProtoRegistry.RegisterString("水滴工作功率", "Work Consumption", "工作功率");
 
+            ProtoRegistry.RegisterString("异星矩阵", "Alien matrix", "异星矩阵");
+            ProtoRegistry.RegisterString("异星矩阵描述", "A matrix containing high-density data accidentally dropped by invading swarms. Can be analyzed by mechs and used to unlock more advanced alien technologies.", "由入侵的虫群偶然掉落的载有高密度数据的矩阵。可以由机甲分析并用于解锁更高级的异星科技。");
+            ProtoRegistry.RegisterString("掉落的异星矩阵", "Alien matrix dropped by enemies", "敌舰掉落的异星矩阵");
+            ProtoRegistry.RegisterString("物质解压器科技描述", "Decoding a method from the alien matrices to build a Matter Decompressor.", "从异星矩阵中解码建造物质解压器的方法。");
+            ProtoRegistry.RegisterString("科学枢纽科技描述", "Decoding a method from the alien matrices to build a Science Nexus.", "从异星矩阵中解码建造科学枢纽的方法。");
+            ProtoRegistry.RegisterString("折跃场广播阵列科技描述", "Decoding a method from the alien matrices to build a Warp Field Broadcast Array.", "从异星矩阵中解码建造折跃场广播阵列的方法。");
+            ProtoRegistry.RegisterString("星际组装厂科技描述", "Decoding a method from the alien matrices to build an Interstellar Assembly.", "从异星矩阵中解码建造星际组装厂的方法。");
+            ProtoRegistry.RegisterString("晶体重构器科技描述", "Decoding a method from the alien matrices to build a Crystal Reconstructor.", "从异星矩阵中解码建造晶体重构器的方法。");
+            ProtoRegistry.RegisterString("物质解压器科技结论", "You have successfully decoded the blueprint of Matter decompressor carrier rocket.", "你成功解码了物质解压器运载火箭的制造蓝图。");
+            ProtoRegistry.RegisterString("科学枢纽科技结论", "You have successfully decoded the blueprint of Science nexus carrier rocket.", "你成功解码了科学枢纽运载火箭的制造蓝图。");
+            ProtoRegistry.RegisterString("折跃场广播阵列科技结论", "You have successfully decoded the blueprint of Resonant generator carrier rocket.", "你成功解码了谐振发射器运载火箭的制造蓝图。");
+            ProtoRegistry.RegisterString("星际组装厂科技结论", "You have successfully decoded the blueprint of Interstellar assembly component and its carrier rocket.", "你成功解码了星际组装厂组件和运载火箭的制造蓝图。");
+            ProtoRegistry.RegisterString("晶体重构器科技结论", "You have successfully decoded the blueprint of Crystal reconstructor carrier rocket.", "你成功解码了晶体重构器运载火箭的制造蓝图。");
+
 
             ItemProto bullet1 = ProtoRegistry.RegisterItem(8001, "子弹1", "子弹1描述", "Assets/DSPBattle/bullet1", 2701 + pageBias, 100, EItemType.Material);
             ItemProto bullet2 = ProtoRegistry.RegisterItem(8002, "子弹2", "子弹2描述", "Assets/DSPBattle/bullet2", 2702 + pageBias, 100, EItemType.Material);
@@ -344,6 +359,10 @@ namespace DSP_Battle
             ItemProto missile2 = ProtoRegistry.RegisterItem(8005, "导弹2", "导弹2描述", "Assets/DSPBattle/missile2", 2706 + pageBias, 100, EItemType.Material);
             ItemProto missile3 = ProtoRegistry.RegisterItem(8006, "导弹3", "导弹3描述", "Assets/DSPBattle/missile3", 2707 + pageBias, 100, EItemType.Material);
             ItemProto bullet4 = ProtoRegistry.RegisterItem(8007, "脉冲", "脉冲描述", "Assets/DSPBattle/bullet4", 9999, 100, EItemType.Material);
+            var icondesc = ProtoRegistry.GetDefaultIconDesc(Color.white, new Color(0f, 0.1f, 1f));
+            icondesc.solidAlpha = 0f;
+            ItemProto alienMatrix = ProtoRegistry.RegisterItem(8032, "异星矩阵", "异星矩阵描述", "Assets/DSPBattle/alienmatrix", 2712 + pageBias, 1000000, EItemType.Matrix, icondesc);
+            alienMatrix.missingTech = false;
 
             bullet1.DescFields = new int[] { 50, 51, 1 };
             bullet2.DescFields = new int[] { 50, 51, 1 };
@@ -442,6 +461,8 @@ namespace DSP_Battle
                 1916, 2605 + pageBias, "Assets/MegaStructureTab/shieldGen");
             ProtoRegistry.RegisterRecipe(816, ERecipeType.Assemble, 10, new int[] { 1101 }, new int[] { 1 }, new int[] { 8031 }, new int[] { 1 }, "测试用发动机描述",
                 1916, 2606 + hideMask + pageBias, "Assets/MegaStructureTab/shieldGen");
+            ProtoRegistry.RegisterRecipe(817, ERecipeType.Research, 60, new int[] { 8032 }, new int[] { 1 }, new int[] { 8032 }, new int[] { 1 }, "异星矩阵描述",
+                1901, 9999 + pageBias, "Assets/MegaStructureTab/alienmatrix");
 
 
             //给船染色用物品
@@ -468,7 +489,7 @@ namespace DSP_Battle
             //    1901, 9999, "Assets/DSPBattle/enemyShip");
 
             TechProto techBullet1 = ProtoRegistry.RegisterTech(1901, "近地防卫系统", "近地防卫系统描述", "近地防卫系统结论", "Assets/DSPBattle/bullet1tech", new int[] { 1711 }, new int[] { 6001, 6002 }, new int[] { 20, 20 },
-                72000, new int[] { 801, 811 }, new Vector2(29, -43));
+                72000, new int[] { 801, 811, 817 }, new Vector2(29, -43));
 
             techBullet1.PreTechsImplicit = new int[] { 1503 };
             techBullet1.AddItems = new int[] { 8021 };
@@ -510,12 +531,29 @@ namespace DSP_Battle
             TechProto techStellarFortress = ProtoRegistry.RegisterTech(1917, "星际要塞", "星际要塞描述", "星际要塞结论", "Assets/DSPBattle/cannon3tech", new int[] { 1903 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
                 new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 816 }, new Vector2(41, -43));
             techStellarFortress.Published = false;
-            TechProto techStarCannon = ProtoRegistry.RegisterTech(1918, "尼科尔戴森光束", "尼科尔戴森光束描述", "尼科尔戴森光束结论", "Assets/DSPBattle/starcannontech", new int[] { 1144 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-                new int[] { 24, 24, 24, 24, 24 }, 300000, new int[] { 570, 571, 572 }, new Vector2(65, -3));
+            TechProto techStarCannon = ProtoRegistry.RegisterTech(1918, "尼科尔戴森光束", "尼科尔戴森光束描述", "尼科尔戴森光束结论", "Assets/DSPBattle/starcannontech", new int[] { 1144 }, new int[] { 8032 },
+                new int[] { 200 }, 36000, new int[] { 570, 571, 572 }, new Vector2(65, -3));
             
             TechProto techDrop = ProtoRegistry.RegisterTech(1919, "玻色子操控", "玻色子操控描述", "玻色子操控结论", "Assets/DSPBattle/bosontech", new int[] { 1915 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
                 new int[] { 24, 24, 24, 24, 24 }, 450000, new int[] { 566, 567, 568, 569, 573 }, new Vector2(57, -43));
-            
+
+
+            TechProto techMegaMD = ProtoRegistry.RegisterTech(1920, "物质解压器", "物质解压器科技描述", "物质解压器科技结论", "Assets/DSPBattle/bosontech", new int[] {  }, new int[] { 8032 },
+                new int[] { 150 }, 36000, new int[] { 538 }, new Vector2(65, -7)); 
+            techMegaMD.PreTechsImplicit = new int[] { 1522 };
+            TechProto techMegaWBA = ProtoRegistry.RegisterTech(1921, "折跃场广播阵列", "折跃场广播阵列科技描述", "折跃场广播阵列科技结论", "Assets/DSPBattle/bosontech", new int[] { }, new int[] { 8032 },
+                new int[] { 240 }, 27000, new int[] { 540 }, new Vector2(65, -11));
+            techMegaWBA.PreTechsImplicit = new int[] { 1522 };
+            TechProto techMegaIA = ProtoRegistry.RegisterTech(1922, "星际组装厂", "星际组装厂科技描述", "星际组装厂科技结论", "Assets/DSPBattle/bosontech", new int[] { }, new int[] { 8032 },
+                new int[] { 200 }, 36000, new int[] { 537, 541 }, new Vector2(65, -15));
+            techMegaIA.PreTechsImplicit = new int[] { 1522 };
+            TechProto techMegaCR = ProtoRegistry.RegisterTech(1923, "晶体重构器", "晶体重构器科技描述", "晶体重构器科技结论", "Assets/DSPBattle/bosontech", new int[] { }, new int[] { 8032 },
+                new int[] { 240 }, 27000, new int[] { 542 }, new Vector2(65, -19));
+            techMegaCR.PreTechsImplicit = new int[] { 1522 };
+            TechProto techMegaSN = ProtoRegistry.RegisterTech(1924, "科学枢纽", "科学枢纽科技描述", "科学枢纽科技结论", "Assets/DSPBattle/bosontech", new int[] { 1918, 1920, 1921, 1922, 1923 }, new int[] { 8032 },
+                new int[] { 200 }, 45000, new int[] { 539 }, new Vector2(69, -11));
+            techMegaSN.PreTechsImplicit = new int[] { 1522 };
+
 
             TechProto winGame = LDB.techs.Select(1508);
             winGame.AddItems = new int[] { 8028, 8029 };
@@ -1139,6 +1177,70 @@ namespace DSP_Battle
         }
 
 
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(LabMatrixEffect), "Update")]
+        public static bool LabMatrixEffectUpdatePatch(ref LabMatrixEffect __instance)
+        {
+            __instance.time += (double)Time.deltaTime;
+            double num = __instance.time / 1000.0;
+            float num2 = (float)((num - Math.Floor(num)) * 1000.0);
+            Vector3 localEulerAngles = new Vector3(num2 * 37f, num2 * 101f, num2 * 23f);
+            __instance.matrixCube.localEulerAngles = localEulerAngles;
+            int currentTech = __instance.history.currentTech;
+            TechProto techProto = LDB.techs.Select(currentTech);
+            bool flag = false;
+            if (currentTech > 0 && techProto != null && techProto.IsLabTech && GameMain.history.techStates.ContainsKey(currentTech))
+            {
+                TechState techState = __instance.history.techStates[currentTech];
+                flag = true;
+            }
+            if (!flag)
+            {
+            }
+            __instance.techGroup.gameObject.SetActive(flag);
+            Array.Clear(__instance.techMatUse, 0, __instance.techMatUse.Length);
+            if (flag)
+            {
+                for (int i = 0; i < techProto.Items.Length; i++)
+                {
+                    int num3 = techProto.Items[i] - LabComponent.matrixIds[0];
+                    if (num3 < 0 || num3 > __instance.techMatUse.Length) continue;
+                    __instance.techMatUse[num3] = true;
+                }
+            }
+            for (int j = 0; j < __instance.techCubes.Length; j++)
+            {
+                __instance.techCubes[j].gameObject.SetActive(__instance.techMatUse[j]);
+            }
+            int num4 = 0;
+            for (int k = 0; k < __instance.techCubes.Length; k++)
+            {
+                if (__instance.techMatUse[k])
+                {
+                    num4++;
+                }
+            }
+            int num5 = 0;
+            for (int l = 0; l < __instance.techCubes.Length; l++)
+            {
+                if (__instance.techCubes[l].gameObject.activeSelf)
+                {
+                    float num6 = 360f * (float)num5 / (float)num4;
+                    float f = (num2 * 47f + num6) * 0.017453292f;
+                    float f2 = num2 * 121f * 0.017453292f;
+                    Vector3 localPosition = new Vector3(Mathf.Cos(f) * 0.7f, Mathf.Sin(f) * 0.7f, Mathf.Sin(f2) * 0.5f);
+                    __instance.techCubes[l].localPosition = localPosition;
+                    Vector3 localEulerAngles2 = new Vector3(num2 * 37f, num2 * 101f + num6, num2 * 23f);
+                    __instance.techCubes[l].localEulerAngles = localEulerAngles2;
+                    num5++;
+                }
+            }
+
+            return false;
+        }
+
+
         public static int[] GetBulletInfos(int protoId)
         {
             switch (protoId)
@@ -1176,5 +1278,31 @@ namespace DSP_Battle
             }
         }
 
+        public static void ReCheckTechUnlockRecipes()
+        {
+            if(!GameMain.history.TechState(1920).unlocked && GameMain.history.RecipeUnlocked(538))
+            {
+                GameMain.history.recipeUnlocked.Remove(538);
+            }
+            if (!GameMain.history.TechState(1921).unlocked && GameMain.history.RecipeUnlocked(540))
+            {
+                GameMain.history.recipeUnlocked.Remove(540);
+            }
+            if (!GameMain.history.TechState(1922).unlocked)
+            {
+                if (GameMain.history.RecipeUnlocked(537))
+                    GameMain.history.recipeUnlocked.Remove(537);
+                if (GameMain.history.RecipeUnlocked(541))
+                    GameMain.history.recipeUnlocked.Remove(541);
+            }
+            if (!GameMain.history.TechState(1923).unlocked && GameMain.history.RecipeUnlocked(542))
+            {
+                GameMain.history.recipeUnlocked.Remove(542);
+            }
+            if (!GameMain.history.TechState(1924).unlocked && GameMain.history.RecipeUnlocked(539))
+            {
+                GameMain.history.recipeUnlocked.Remove(539);
+            }
+        }
     }
 }

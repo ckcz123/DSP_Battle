@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace DSP_Battle
 {
-    class Configs
+    public class Configs
     {
         public static string versionString = "2.0.0";
         public static string qq = "694213906";

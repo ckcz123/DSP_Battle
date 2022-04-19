@@ -38,6 +38,7 @@ namespace DSP_Battle
         //下面属性可能根据戴森球等级有变化，但并不需要存档        
         public static int starCannonLevel = 1; //恒星炮建造的所属阶段（等级），即完成度
         public static int damagePerTick = 4000; //每tick伤害
+        public static int damageReduction = 0;
         public static double maxRange = 10.0; //恒星炮最大开火距离，以光年计，1ly = 60AU = 60 * 40000m。
         public static int warmTimeNeed = 240; //阶段2预热加速旋转需要的tick时间
         public static int cooldownTimeNeed = 600; //阶段5冷却需要的tick时间
@@ -191,6 +192,7 @@ namespace DSP_Battle
                 }
             }
             maxRange = datas[4];
+            damageReduction = datas[5];
         }
 
         public static void RefreshFireButtonUI()
@@ -455,8 +457,11 @@ namespace DSP_Battle
             }
             if (fireStage == 3) //开火阶段
             {
-                //造成伤害（瞬间造成，无视弹道速度）
-                int hitResult = WormholeProperties.TryTakeDamage(damagePerTick);
+                //造成伤害（瞬间造成，无视弹道速度）根据距离削减
+                double distance = (targetUPos - __instance.starData.uPosition).magnitude / 40000 / 60;
+                int realDamage = (int)(damagePerTick * 1.0f * (1 - 0.01f * damageReduction * distance));
+                realDamage = realDamage > damagePerTick * 0.5f ? realDamage : (int)(damagePerTick * 0.5f);
+                int hitResult = WormholeProperties.TryTakeDamage(realDamage);
                 if(hitResult == 1)//代表摧毁了一个虫洞
                 {
                     int result = TrySetNextTarget();

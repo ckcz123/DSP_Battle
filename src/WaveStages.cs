@@ -180,7 +180,8 @@ namespace DSP_Battle
                     "输出伤害".Translate() + ": " + UIBattleStatistics.totalDamage.ToString("N0") + "; " +
                     "损失物流塔".Translate() + ": " + UIBattleStatistics.stationLost.ToString("N0") + "; " +
                     "损失其他建筑".Translate() + ": " + UIBattleStatistics.othersLost.ToString("N0") + "; " +
-                    "损失资源".Translate() + ": " + UIBattleStatistics.resourceLost.ToString("N0") + "." +
+                    "损失资源".Translate() + ": " + UIBattleStatistics.resourceLost.ToString("N0") + ";" +
+                    "掉落的异星矩阵".Translate() + ": " + UIBattleStatistics.alienMatrixGain.ToString() + "." +
                     "\n\n<color=#c2853d>" + string.Format("奖励提示".Translate(), extraSpeedFrame / 60) + "</color>\n\n" +
                     "查看更多战斗信息".Translate()
                     );

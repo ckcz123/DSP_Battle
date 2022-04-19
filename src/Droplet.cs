@@ -29,7 +29,7 @@ namespace DSP_Battle
             maxDroplet = 2;
             for (int i = 0; i < 5; i++)
             {
-                dropletPool[i] = new Droplet();
+                dropletPool[i] = new Droplet(i);
             }
             InitUI();
         }
@@ -201,6 +201,7 @@ namespace DSP_Battle
     public class Droplet
     {
         public int state = -1; //-1空-根本没有水滴，0有水滴-正在机甲中待命，1刚刚从机甲出来-慢，2攻击-飞向目标，3攻击-已越过目标准备折返，4返航回机甲,5马上要回到机甲-慢
+        int dropletIndex = 0;
         int swarmIndex = -1;
         int[] bulletIds = new int[bulletCnt];
         int targetShipIndex = -1;
@@ -210,9 +211,10 @@ namespace DSP_Battle
         public static int bulletCnt = 25;
         public static int maxPosDelta = 100; //会根据是否达开星图设置为100或5，在Droplets里更新。目的是不打开星图时水滴比较细，打开星图后为了能清楚地看到设置得很大
 
-        public Droplet()
+        public Droplet(int idx)
         {
             state = -1;
+            dropletIndex = idx;
             swarmIndex = -1;
             bulletIds = new int[bulletCnt];
             for (int i = 0; i < bulletIds.Length; i++)
