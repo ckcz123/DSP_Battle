@@ -166,13 +166,16 @@ namespace DSP_Battle
                     extraSpeedFrame = UIBattleStatistics.totalEnemyEliminated * rewardBase / UIBattleStatistics.totalEnemyGen;
 
                 Configs.extraSpeedFrame = time + extraSpeedFrame;
-                Configs.extraSpeedEnabled = true;
-                GameMain.history.miningCostRate *= 0.5f;
-                GameMain.history.miningSpeedScale *= 2;
-                GameMain.history.techSpeed *= 2;
-                GameMain.history.logisticDroneSpeedScale *= 1.5f;
-                GameMain.history.logisticShipSpeedScale *= 1.5f;
-                ResetCargoAccIncTable(true);
+                if (!Configs.extraSpeedEnabled)
+                {
+                    Configs.extraSpeedEnabled = true;
+                    GameMain.history.miningCostRate *= 0.5f;
+                    GameMain.history.miningSpeedScale *= 2;
+                    GameMain.history.techSpeed *= 2;
+                    GameMain.history.logisticDroneSpeedScale *= 1.5f;
+                    GameMain.history.logisticShipSpeedScale *= 1.5f;
+                    ResetCargoAccIncTable(true);
+                }
 
                 UIDialogPatch.ShowUIDialog("战斗已结束！".Translate(),
                     "战斗时间".Translate() + ": " + string.Format("{0:00}:{1:00}", new object[] { UIBattleStatistics.battleTime / 60 / 60, UIBattleStatistics.battleTime / 60 % 60 }) + "; " +
