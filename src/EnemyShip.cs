@@ -158,10 +158,14 @@ namespace DSP_Battle
                     hp = 0;
                     state = State.distroyed;
                     EnemyShips.OnShipDistroyed(this);
-                    int remainInc;
-                    GameMain.mainPlayer.TryAddItemToPackage(8032, intensity, 0, true);
-                    UIItemup.Up(8032, intensity);
-                    UIBattleStatistics.RegisterAlienMatrixGain(intensity);
+                    try
+                    {
+                        GameMain.mainPlayer.TryAddItemToPackage(8032, intensity, 0, true);
+                        UIItemup.Up(8032, intensity);
+                        UIBattleStatistics.RegisterAlienMatrixGain(intensity);
+                    }
+                    catch (Exception)
+                    { }
                 }
                 return result;
             }
