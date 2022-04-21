@@ -158,11 +158,25 @@ namespace DSP_Battle
                     hp = 0;
                     state = State.distroyed;
                     EnemyShips.OnShipDistroyed(this);
-                    try
+                    Rank.AddExp(intensity); //获得经验
+                    try //根据期望掉落矩阵
                     {
-                        GameMain.mainPlayer.TryAddItemToPackage(8032, intensity, 0, true);
-                        UIItemup.Up(8032, intensity);
-                        UIBattleStatistics.RegisterAlienMatrixGain(intensity);
+                        double dropExpectation = intensity * 1.0 / Configs.nextWaveIntensity * Configs.nextWaveMatrixExpectation;
+                        if(dropExpectation > 1) //期望超过1的部分必然掉落
+                        {
+                            int guaranteed = (int)dropExpectation;
+                            dropExpectation -= guaranteed;
+
+                            GameMain.mainPlayer.TryAddItemToPackage(8032, guaranteed, 0, true);
+                            UIItemup.Up(8032, guaranteed);
+                            UIBattleStatistics.RegisterAlienMatrixGain(guaranteed);
+                        }
+                        if (Utils.RandDouble() < dropExpectation) //根据概率决定是否掉落
+                        {
+                            GameMain.mainPlayer.TryAddItemToPackage(8032, 1, 0, true);
+                            UIItemup.Up(8032, 1);
+                            UIBattleStatistics.RegisterAlienMatrixGain(1);
+                        }
                     }
                     catch (Exception)
                     { }

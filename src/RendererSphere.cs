@@ -130,19 +130,19 @@ namespace DSP_Battle
 
 
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(UIDysonPanel), "DrawDysonSphereMapPost")]
-        public static void DrawPatch4(UIDysonPanel __instance)
+        [HarmonyPatch(typeof(UIDysonEditor), "DrawDysonSphereMapPost")]
+        public static void DrawPatch4(UIDysonEditor __instance)
         {
             if (enemySpheres.Count <= 0) return;
-            if (__instance.viewDysonSphere != null && Configs.nextWaveState == 3)
+            if (__instance.selection?.viewDysonSphere != null && Configs.nextWaveState == 3)
             {
                 if (DysonSphere.renderPlace == ERenderPlace.Dysonmap)
                 {
-                    int index = __instance.viewDysonSphere.starData.index;
+                    int index = __instance.selection.viewDysonSphere.starData.index;
                     enemySpheres[index].DrawPost();
                 }
             }
-            if (GameMain.localStar != null && __instance.viewDysonSphere != null && DysonSphere.renderPlace == ERenderPlace.Dysonmap)
+            if (GameMain.localStar != null && __instance.selection?.viewDysonSphere != null && DysonSphere.renderPlace == ERenderPlace.Dysonmap)
             {
                 dropletSpheres[GameMain.localStar.index].DrawPost();
             }

@@ -120,6 +120,7 @@
   <ItemGroup>
     <Compile Include="src\BattleProtos.cs" />
     <Compile Include="src\Droplet.cs" />
+    <Compile Include="src\Rank.cs" />
     <Compile Include="src\SpaceForceShip.cs" />
     <Compile Include="src\EnemyShipRenderer.cs" />
     <Compile Include="src\EnemyShipUIRenderer.cs" />
@@ -139,6 +140,7 @@
     <Compile Include="src\MissileSilo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\UIDialogPatch.cs" />
+    <Compile Include="src\UIRank.cs" />
     <Compile Include="src\WaveStages.cs" />
     <Compile Include="src\Utils.cs" />
     <Compile Include="src\Wormhole.cs" />

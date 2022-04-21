@@ -81,6 +81,8 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(Droplets));
             Harmony.CreateAndPatchAll(typeof(RendererSphere));
             Harmony.CreateAndPatchAll(typeof(PlanetEngine));
+            Harmony.CreateAndPatchAll(typeof(UIRank));
+            Harmony.CreateAndPatchAll(typeof(Rank));
 
             LDBTool.PreAddDataAction += BattleProtos.AddProtos;
             LDBTool.PostAddDataAction += BattleProtos.PostDataAction;
@@ -100,6 +102,10 @@ namespace DSP_Battle
             if (Input.GetKeyDown(KeyCode.Minus) && isControlDown && !GameMain.isPaused && (Configs.nextWaveState == 1 || Configs.nextWaveState == 2))
             {
                 Configs.nextWaveFrameIndex -= 60 * 60;
+                //由于强行使进攻提前到来，期望掉落的矩阵数减少10%，最少降低到无时间加成（即10min间隔）的对应波次基础期望的10%。
+                Configs.nextWaveMatrixExpectation = (int)(Configs.nextWaveMatrixExpectation * 0.9f);
+                int minExpectation = (int)(Configs.expectationMatrices[Math.Min(Configs.expectationMatrices.Length - 1, Configs.wavePerStar[Configs.nextWaveStarIndex])] * 0.1f);
+                if (Configs.nextWaveMatrixExpectation < minExpectation) Configs.nextWaveMatrixExpectation = minExpectation;
             }
             if (Input.GetKeyDown(KeyCode.Backspace) && !GameMain.isPaused && UIRoot.instance?.uiGame?.buildMenu?.currentCategory == 0)
             {
@@ -180,6 +186,7 @@ namespace DSP_Battle
             StarCannon.Export(w);
             ShieldGenerator.Export(w);
             Droplets.Export(w);
+            Rank.Export(w);
         }
 
         public void Import(BinaryReader r)
@@ -193,7 +200,9 @@ namespace DSP_Battle
             StarCannon.Import(r);
             ShieldGenerator.Import(r);
             Droplets.Import(r);
+            Rank.Import(r);
 
+            WaveStages.ResetCargoAccIncTable(Configs.extraSpeedEnabled && Rank.rank>=5);
             UIBattleStatistics.InitAll();
             UIBattleStatistics.InitSelectDifficulty();
             EnemyShipUIRenderer.Init();
@@ -212,7 +221,9 @@ namespace DSP_Battle
             StarCannon.IntoOtherSave();
             ShieldGenerator.IntoOtherSave();
             Droplets.IntoOtherSave();
+            Rank.IntoOtherSave();
 
+            WaveStages.ResetCargoAccIncTable(Configs.extraSpeedEnabled && Rank.rank >= 5);
             UIBattleStatistics.InitAll();
             UIBattleStatistics.InitSelectDifficulty();
             EnemyShipUIRenderer.Init();

@@ -143,13 +143,13 @@ namespace DSP_Battle
             GameObject myStat1LabelObj = sons.Find("dyson-cnt-label").gameObject;
             GameObject addHelpObj = GameObject.Instantiate(myStat1LabelObj);
             addHelpObj.transform.SetParent(titleObj.transform, false);
-            addHelpObj.transform.localPosition = new Vector3(500, -60, 0);
+            addHelpObj.transform.localPosition = new Vector3(500, -70, 0);
             addHelpObj.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 70);
             helpInfo = addHelpObj.GetComponent<Text>();
 
             GameObject rewardObj = GameObject.Instantiate(myStat1LabelObj);
             rewardObj.transform.SetParent(titleObj.transform, false);
-            rewardObj.transform.localPosition = new Vector3(500, -80, 0);
+            rewardObj.transform.localPosition = new Vector3(500, -100, 0);
             rewardObj.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 70);
             rewardInfo = rewardObj.GetComponent<Text>();
             rewardInfo.color = new Color(194 / 255f, 133 / 255f, 61 / 255f);

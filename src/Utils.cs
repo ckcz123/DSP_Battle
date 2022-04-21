@@ -31,6 +31,11 @@ namespace DSP_Battle
             return randSeed.Next();
         }
 
+        public static double RandDouble()
+        {
+            return randSeed.NextDouble();
+        }
+
         public static void Check(int num = 1, string str = "check ")
         {
             DspBattlePlugin.logger.LogInfo(str + num.ToString());

@@ -14,7 +14,7 @@ namespace DSP_Battle
         public static bool developerMode = false; //发布前务必修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
 
         public static int versionWhenImporting = -1;
-        public static int versionCode = 30220417;
+        public static int versionCode = 30220420;
 
         public static int difficulty = 0; // -1 easy, 0 normal, 1 hard
 
@@ -90,6 +90,8 @@ namespace DSP_Battle
 
         public static int[] coldTime;
 
+        public static int[] expectationMatrices;
+
         public static double bulletSpeedScale = 1.0;
         public static double bulletAtkScale = 1.0;
         public static int wormholeRangeAdded = 0;
@@ -108,6 +110,8 @@ namespace DSP_Battle
         public static int[] nextWaveEnemy = new int[10];
         public static Wormhole[] nextWaveWormholes = new Wormhole[100];
 
+        public static int nextWaveMatrixExpectation = 0;
+
         public static int starCount = 100;
         public static int[] wavePerStar;
 
@@ -117,7 +121,9 @@ namespace DSP_Battle
         public static List<Tuple<int, int>> capacityPerGenerator =
             new List<Tuple<int, int>> { new Tuple<int, int>(0, 5000000), new Tuple<int, int>(20000000, 2500000), new Tuple<int, int>(50000000, 500000), new Tuple<int, int>(80000000, 0) };
 
-
+        //Rank信息
+        public static int[] expToNextRank = new int[] { 1, 10, 80, 300, 2000, 10000, 30000, 50000, 100000, 1000000, 0, 0, 0};
+        public static float[] rewardTimeRatio = new float[] { 1.0f, 1.0f, 1.2f, 1.2f, 1.4f, 1.4f, 1.6f, 1.6f, 1.8f, 1.8f, 2.0f, 2.0f, 2.0f, 2.0f };
 
         public static int totalWave
         {
@@ -250,6 +256,10 @@ namespace DSP_Battle
                 new int[] { 60, 50, 50, 45, 45, 45, 40, 40, 40, 40, 30, 30, 30, 30, 30, 20, 20, 20, 20, 20, 15, 15, 15, 15, 15, 10 };
             // config.Bind("config", "coldTime", defaultValue: "60,50,50,45,45,45,40,40,40,40,30,30,30,30,30,20,20,20,20,20,15,15,15,15,15,10", "相邻两波间隔时间").Value.Split(',').Select(e => int.Parse(e)).ToArray();
 
+            expectationMatrices =
+                new int[] { 25, 35, 45, 55, 75, 100, 155, 205, 255, 305, 310, 315, 320, 325, 330, 335, 340, 345, 350, 355, 360, 365, 370, 375, 380, 385, 390, 395, 400 };
+            //               2, 5, 10, 15, 20, 30,  50,  80,   100, 150, 250, 300, 400, 500, 600, 800, 1000, 1100, 1500, 1800, 2000, 2200, 2500, 3000, 3500, 4000
+
             IntoOtherSave();
         }
 
@@ -272,7 +282,7 @@ namespace DSP_Battle
             w.Write(extraSpeedEnabled);
 
             w.Write(nextWaveIntensity);
-
+            
             w.Write(nextWaveWormCount);
             for (var i = 0; i < 100; ++i) nextWaveWormholes[i].Export(w);
 
@@ -280,12 +290,14 @@ namespace DSP_Battle
 
             w.Write(starCount);
             for (var i = 0; i < starCount; ++i) w.Write(wavePerStar[i]);
+
+            w.Write(nextWaveMatrixExpectation);
         }
 
         public static void Import(BinaryReader r)
         {
-            int version = r.ReadInt32();
-            versionWhenImporting = version;
+            int importVersion = r.ReadInt32();
+            versionWhenImporting = importVersion;
             difficulty = r.ReadInt32();
 
             bulletSpeedScale = r.ReadDouble();
@@ -307,7 +319,7 @@ namespace DSP_Battle
 
             for (var i = 0; i < 10; ++i) nextWaveEnemy[i] = r.ReadInt32();
 
-            if (version >= 20220320)
+            if (importVersion >= 20220320)
             {
                 starCount = r.ReadInt32();
                 wavePerStar = new int[starCount];
@@ -320,7 +332,19 @@ namespace DSP_Battle
                 for (var i = 0; i < 100; ++i) wavePerStar[i] = r.ReadInt32();
             }
 
-            WaveStages.ResetCargoAccIncTable(extraSpeedEnabled);
+            if(importVersion >= 30220420)
+            {
+                nextWaveMatrixExpectation = r.ReadInt32();
+            }
+            else
+            {
+                nextWaveMatrixExpectation = expectationMatrices[0];
+                if(nextWaveState>0 && nextWaveStarIndex>=0)
+                {
+                    nextWaveMatrixExpectation = expectationMatrices[Math.Min(expectationMatrices.Length-1, wavePerStar[nextWaveStarIndex])];
+                }
+            }
+
         }
 
         public static void IntoOtherSave()
@@ -347,8 +371,8 @@ namespace DSP_Battle
 
             starCount = Mathf.Max(GameMain.galaxy?.starCount ?? 90, 90) + 10;
             wavePerStar = new int[starCount];
+            nextWaveMatrixExpectation = expectationMatrices[0];
 
-            WaveStages.ResetCargoAccIncTable(extraSpeedEnabled);
         }
 
     }
