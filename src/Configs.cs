@@ -11,7 +11,7 @@ namespace DSP_Battle
     {
         public static string versionString = "2.0.0";
         public static string qq = "694213906";
-        public static bool developerMode = true; //发布前务必修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+        public static bool developerMode = false; //发布前务必修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
 
         public static int versionWhenImporting = -1;
         public static int versionCode = 30220420;

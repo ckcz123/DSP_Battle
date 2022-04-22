@@ -93,6 +93,7 @@ namespace DSP_Battle
         {
             UIGeneralTips gTips = UIRoot.instance.uiGame.generalTips;
             promotionNoticeMainText.text = ("gmRankNoColor" + Rank.rank.ToString()).Translate();
+            //promotionNoticeSubText.text = "功勋阶级".Translate();
             gTips.researchCompleteTip.gameObject.SetActive(true);
             gTips.researchCompleteTip.Stop();
             gTips.researchCompleteTip.Play();

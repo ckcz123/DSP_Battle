@@ -1344,18 +1344,18 @@ namespace DSP_Battle
         }
 
 
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(TechProto), "GenPropertyOverrideItems")]
-        public static bool TechGenOverrideItemsPatch(ref TechProto __instance, TechProto proto)
-        {
-            if (!Configs.developerMode) return true;
-            if (proto.PropertyOverrideItems != null) return true;
-            __instance.PropertyItemCounts = new int[] { 1 };
-            __instance.PropertyOverrideItems = new int[] { 6001 };
-            __instance.PropertyOverrideItemArray = new IDCNT[1];
-            __instance.PropertyOverrideItemArray[0] = new IDCNT(6001, 1);
-            return false;
-        }
+        //[HarmonyPrefix]
+        //[HarmonyPatch(typeof(TechProto), "GenPropertyOverrideItems")]
+        //public static bool TechGenOverrideItemsPatch(ref TechProto __instance, TechProto proto)
+        //{
+        //    if (!Configs.developerMode) return true;
+        //    if (proto.PropertyOverrideItems != null) return true;
+        //    __instance.PropertyItemCounts = new int[] { 1 };
+        //    __instance.PropertyOverrideItems = new int[] { 6001 };
+        //    __instance.PropertyOverrideItemArray = new IDCNT[1];
+        //    __instance.PropertyOverrideItemArray[0] = new IDCNT(6001, 1);
+        //    return false;
+        //}
 
 
         [HarmonyPrefix]
