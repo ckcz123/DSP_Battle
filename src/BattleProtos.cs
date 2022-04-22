@@ -162,8 +162,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("超出射程！", "Out of range.", "超出射程！");
             ProtoRegistry.RegisterString("虫洞已完全稳定，无法被摧毁", "The wormholes are fully stabilized and cannot be destroyed.", "虫洞已完全稳定，无法被摧毁。");
             ProtoRegistry.RegisterString("恒星炮已启动", "Launching.", "恒星炮已启动。");
-
-           
+            
 
             ProtoRegistry.RegisterString("彩蛋1描述", "Seems like these enemies are a kind of space insect. They live in deep space, feed on the tides of power without vision. " +
                 "The interstellar station creates regular ripples in space, making itself a beacon in a dark universe that can easily be captured and attacked by the insects. " +
@@ -216,9 +215,9 @@ namespace DSP_Battle
 
             ProtoRegistry.RegisterString("UI快捷键提示", "Press Backspace to hide/open this window. Press \"Ctrl\" + \"-\" to advance the attack time by 1 min. \n Advancing the attack time will also reduce the amount of dropped Alien Matrix in next wave.", "按下退格键开启或关闭此窗口，按下Ctrl+减号键使敌军进攻时间提前1分钟\n手动提前进攻会减少下一次进攻中敌军掉落异星矩阵的数量");
 
-            ProtoRegistry.RegisterString("简单难度提示", "Difficulty: Easy (Station won't be destroyed; Reward duration * 0.75)", "当前难度：简单（物流塔不会被破坏；奖励持续时间*0.75）");
-            ProtoRegistry.RegisterString("普通难度提示", "Difficulty: Normal (Station attacked will turn to blueprint mode; Reward duration * 1.0)", "当前难度：普通（物流塔被破坏会进入蓝图模式；奖励持续时间*1.0）");
-            ProtoRegistry.RegisterString("困难难度提示", "Difficulty: Hard (Station will be dismantled; Enemy strength will increase; Reward duration * 2.0)", "当前难度：困难（物流塔会被破坏拆除，敌人战斗力大幅提升；奖励持续时间*2.0）");
+            ProtoRegistry.RegisterString("简单难度提示", "Difficulty: Easy (Station won't be destroyed; Rank experience *0.75)", "当前难度：简单（物流塔不会被破坏；功勋经验获得*0.75）");
+            ProtoRegistry.RegisterString("普通难度提示", "Difficulty: Normal (Station attacked will turn to blueprint mode)", "当前难度：普通（物流塔被破坏会进入蓝图模式）");
+            ProtoRegistry.RegisterString("困难难度提示", "Difficulty: Hard (Station will be dismantled; Enemy strength will increase; Rank experience *1.5)", "当前难度：困难（物流塔会被破坏拆除，敌人战斗力大幅提升；功勋经验获得*1.5）");
             ProtoRegistry.RegisterString("奖励倒计时：", "Reward time left: ", "奖励剩余时间：");
 
             ProtoRegistry.RegisterString("mod版本信息", "Current version: " + Configs.versionString, "当前版本：" + Configs.versionString + "          欢迎加入mod交流群：" + Configs.qq);
@@ -324,6 +323,29 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("gmRank8", "<color=#fd9620c0>Conqueror II</color>", "<color=#fd9620c0>征服者 II</color>");
             ProtoRegistry.RegisterString("gmRank9", "<color=#fd9620c0>Conqueror III</color>", "<color=#fd9620c0>征服者 III</color>");
             ProtoRegistry.RegisterString("gmRank10", "<color=#ffc620c8>Galaxy Guardian</color>", "<color=#ffc620da>星河卫士</color>");
+            ProtoRegistry.RegisterString("功勋阶级", "Merit Rank", "功勋阶级");
+            ProtoRegistry.RegisterString("gmRankNoColor0", "Icarus", "伊卡洛斯");
+            ProtoRegistry.RegisterString("gmRankNoColor1", "Explorer I", "探索者 I");
+            ProtoRegistry.RegisterString("gmRankNoColor2", "Explorer II", "探索者 II");
+            ProtoRegistry.RegisterString("gmRankNoColor3", "Explorer III", "探索者 III");
+            ProtoRegistry.RegisterString("gmRankNoColor4", "Pioneer I", "开拓者 I");
+            ProtoRegistry.RegisterString("gmRankNoColor5", "Pioneer II", "开拓者 II");
+            ProtoRegistry.RegisterString("gmRankNoColor6", "Pioneer III", "开拓者 III");
+            ProtoRegistry.RegisterString("gmRankNoColor7", "Conqueror I", "征服者 I");
+            ProtoRegistry.RegisterString("gmRankNoColor8", "Conqueror II", "征服者 II");
+            ProtoRegistry.RegisterString("gmRankNoColor9", "Conqueror III", "征服者 III");
+            ProtoRegistry.RegisterString("gmRankNoColor10", "Galaxy Guardian", "星河卫士");
+            ProtoRegistry.RegisterString("gmRankUnlockText0", "-", "-");
+            ProtoRegistry.RegisterString("gmRankUnlockText1", "", "战斗结束后给予持续五分钟的采矿速率*2，研究速率*2，运输船速度*1.5奖励。");
+            ProtoRegistry.RegisterString("gmRankUnlockText2", "", "战斗结束后的奖励持续时间增加20%。");
+            ProtoRegistry.RegisterString("gmRankUnlockText3", "", "战斗结束后额外获得采矿消耗-20%的奖励。");
+            ProtoRegistry.RegisterString("gmRankUnlockText4", "", "战斗结束后的奖励持续时间增加20%。");
+            ProtoRegistry.RegisterString("gmRankUnlockText5", "", "战斗结束后额外获得增产剂效果全面加强的奖励。");
+            ProtoRegistry.RegisterString("gmRankUnlockText6", "", "战斗结束后的奖励持续时间增加20%。");
+            ProtoRegistry.RegisterString("gmRankUnlockText7", "", "战斗结束后采矿消耗降低的奖励强化为-50%消耗。");
+            ProtoRegistry.RegisterString("gmRankUnlockText8", "", "战斗结束后的奖励持续时间增加20%。");
+            ProtoRegistry.RegisterString("gmRankUnlockText9", "", "恒星炮充能速度增加100%。");
+            ProtoRegistry.RegisterString("gmRankUnlockText10", "", "水滴伤害获得大幅度加强，战斗结束后的奖励持续时间增加20%。");
 
             ProtoRegistry.RegisterString("行星护盾生成器", "Planet shield generator", "行星护盾生成器");
             ProtoRegistry.RegisterString("行星护盾生成器描述", "Using a large amount of energy to maintain a force field shield on the planet's surface, the encoding of the force field's resonant frequency allows allies to easily pass through the shield, while blocking the enemies. Multiple shield generators can speed up the shield recharge rate, and provide additional shield capacity. However, as the number of shield generators increases, each additional generator will provide less and less additional capacity.", 
@@ -366,6 +388,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("星际组装厂科技结论", "You have successfully decoded the blueprint of Interstellar assembly component and its carrier rocket.", "你成功解码了星际组装厂组件和运载火箭的制造蓝图。");
             ProtoRegistry.RegisterString("晶体重构器科技结论", "You have successfully decoded the blueprint of Crystal reconstructor carrier rocket.", "你成功解码了晶体重构器运载火箭的制造蓝图。");
 
+            ProtoRegistry.RegisterString("被深空来敌mod禁止", "Banned by mod They Come From Void", "被深空来敌mod禁止");
 
             ItemProto bullet1 = ProtoRegistry.RegisterItem(8001, "子弹1", "子弹1描述", "Assets/DSPBattle/bullet1", 2701 + pageBias, 100, EItemType.Material);
             ItemProto bullet2 = ProtoRegistry.RegisterItem(8002, "子弹2", "子弹2描述", "Assets/DSPBattle/bullet2", 2702 + pageBias, 100, EItemType.Material);
@@ -1319,5 +1342,58 @@ namespace DSP_Battle
                 GameMain.history.recipeUnlocked.Remove(539);
             }
         }
+
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(TechProto), "GenPropertyOverrideItems")]
+        public static bool TechGenOverrideItemsPatch(ref TechProto __instance, TechProto proto)
+        {
+            if (!Configs.developerMode) return true;
+            if (proto.PropertyOverrideItems != null) return true;
+            __instance.PropertyItemCounts = new int[] { 1 };
+            __instance.PropertyOverrideItems = new int[] { 6001 };
+            __instance.PropertyOverrideItemArray = new IDCNT[1];
+            __instance.PropertyOverrideItemArray[0] = new IDCNT(6001, 1);
+            return false;
+        }
+
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UITechNode), "OnBuyoutButtonClick")]
+        public static bool BuyoutTechPrePatch(ref UITechNode __instance, int _data)
+        {
+            TechProto tech = __instance.techProto;
+            if (tech == null || tech.Items == null) return true;
+            for (int i = 0; i < tech.Items.Length; i++)
+            {
+                if(tech.Items[i] >= 6003 && tech.Items[i] <= 6006 || tech.Items[i] == 8032)
+                {
+                    UIRealtimeTip.Popup("被深空来敌mod禁止".Translate(), true, 0);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UITechNode), "UpdateInfoDynamic")]
+        public static void UITechNodeUpdateInfoDynamicPostPatch(ref UITechNode __instance)
+        {
+            TechProto tech = __instance.techProto;
+            if (tech == null || tech.Items == null) return;
+            for (int i = 0; i < tech.Items.Length; i++)
+            {
+                if (tech.Items[i] >= 6003 && tech.Items[i] <= 6006 || tech.Items[i] == 8032)
+                {
+                    __instance.buyoutButton.transitions[0].normalColor = __instance.buyoutNormalColor1;
+                    __instance.buyoutButton.transitions[0].mouseoverColor = __instance.buyoutMouseOverColor1;
+                    __instance.buyoutButton.transitions[0].pressedColor = __instance.buyoutPressedColor1;
+                    return;
+                }
+            }
+
+        }
+
     }
 }

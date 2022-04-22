@@ -163,13 +163,13 @@ namespace DSP_Battle
                 RemoveEntities.distroyedStation.Clear();
 
                 long rewardBase = 5 * 60 * 60;
-                if (Configs.difficulty == -1) rewardBase = rewardBase * 3 / 4;
-                if (Configs.difficulty == 1) rewardBase *= 2;
+                //if (Configs.difficulty == -1) rewardBase = rewardBase * 3 / 4;
+                //if (Configs.difficulty == 1) rewardBase *= 2;
                 long extraSpeedFrame = 0;
                 if (UIBattleStatistics.totalEnemyGen > 0)
                     extraSpeedFrame = UIBattleStatistics.totalEnemyEliminated * rewardBase / UIBattleStatistics.totalEnemyGen;
 
-                
+                extraSpeedFrame += 3600 * (Rank.rank / 2);
 
                 Configs.extraSpeedFrame = time + extraSpeedFrame;
                 if (!Configs.extraSpeedEnabled)

@@ -7,6 +7,7 @@ using System.Threading;
 using System.IO;
 using UnityEngine;
 using HarmonyLib;
+using System.Reflection;
 
 namespace DSP_Battle
 {
@@ -34,7 +35,9 @@ namespace DSP_Battle
 
         public static void AddExp(int num)
         {
-            Interlocked.Add(ref exp, num);
+            if (rank >= 10) return;
+            int realExp = (int)(num * Configs.expRatioByDifficulty[Configs.difficulty + 1]);
+            Interlocked.Add(ref exp, realExp);
         }
 
         private static void Promotion()
@@ -43,21 +46,32 @@ namespace DSP_Battle
             rank += 1;
             if (Configs.extraSpeedEnabled) //如果正处在奖励中升级，则刷新一下新增的奖励内容，防止奖励结束时计算出错
             {
-                if(rank == 3)
+                if (rank == 3)
                 {
                     GameMain.history.miningCostRate *= 0.8f;
                 }
-                else if(rank == 5)
+                else if (rank == 5)
                 {
                     WaveStages.ResetCargoAccIncTable(true);
                 }
-                else if(rank == 7)
+                else if (rank == 7)
                 {
                     GameMain.history.miningCostRate *= 0.625f;
                 }
             }
             UIRank.ForceRefreshAll();
+            UIRank.UIPromotionNotify();
         }
+
+        public static string RankInfoText()
+        {
+            string res = "";
+
+
+
+            return res;
+        }
+
 
         public static void Export(BinaryWriter w)
         {
@@ -67,7 +81,7 @@ namespace DSP_Battle
 
         public static void Import(BinaryReader r)
         {
-            if(Configs.versionWhenImporting>=30220420)
+            if (Configs.versionWhenImporting >= 30220420)
             {
                 rank = r.ReadInt32();
                 exp = r.ReadInt32();
@@ -86,5 +100,14 @@ namespace DSP_Battle
             UIRank.InitUI();
         }
 
+
+        //下面测试用
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UIGeneralTips), "OnTechUnlocked")]
+        public static bool TechUnlockNotifyPatch(ref UIGeneralTips __instance, int techId, int level)
+        {
+            return true;
+        }
     }
 }

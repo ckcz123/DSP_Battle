@@ -17,12 +17,16 @@ namespace DSP_Battle
             public string _title;
             public string _conclusion;
             public ItemProto[] _items;
-            public Data(int techId, string title, string conclusion, ItemProto[] items)
+            public Sprite _sprite;
+            public int _type;
+            public Data(int techId, string title, string conclusion, int type, Sprite sprite, ItemProto[] items)
             {
                 _techId = techId;
                 _title = title;
                 _conclusion = conclusion;
                 _items = items;
+                _sprite = sprite;
+                _type = type;
             }
         }
 
@@ -30,7 +34,7 @@ namespace DSP_Battle
         private static int _nextId = -1;
         private static string _originTitleText = null;
 
-        public static void ShowUIDialog(string title, string conclusion, ItemProto[] items = null)
+        public static void ShowUIDialog(string title, string conclusion, int type = 0, Sprite sprite = null, ItemProto[] items = null)
         {
             if (_originTitleText == null)
             {
@@ -38,7 +42,7 @@ namespace DSP_Battle
             }
 
             while (dictionary.ContainsKey(_nextId)) _nextId--;
-            dictionary.Add(_nextId, new Data(_nextId, title, conclusion, items));
+            dictionary.Add(_nextId, new Data(_nextId, title, conclusion, type, sprite, items));
 
             UIRoot.instance.uiGame.researchResultTip.SetTechId(_nextId);
         }
@@ -62,13 +66,22 @@ namespace DSP_Battle
 
             for (int i = 0; i < __instance.itemIcons.Length; i++)
             {
-                if (data._items == null || i >= data._items.Length)
+                if(data._type == 1)
+                {
+                    __instance.itemIcons[i].gameObject.SetActive(true);
+                    __instance.itemIcons[i].sprite = data._sprite;
+                    __instance.itemButtons[i].tips.itemId = 0;
+                    //__instance.itemButtons[i].tips.tipTitle = "";
+                    __instance.itemIcons[i].rectTransform.anchoredPosition = new Vector2(0f, 0f);
+                }
+                else if (data._items == null || i >= data._items.Length)
                 {
                     __instance.itemIcons[i].gameObject.SetActive(false);
                     __instance.itemIcons[i].sprite = null;
                     __instance.itemButtons[i].tips.itemId = 0;
 
-                } else
+                } 
+                else
                 {
                     __instance.itemIcons[i].gameObject.SetActive(true);
                     __instance.itemIcons[i].sprite = data._items[i].iconSprite;
@@ -77,11 +90,11 @@ namespace DSP_Battle
                     __instance.itemIcons[i].rectTransform.anchoredPosition = new Vector2(x, 0f);
                 }
             }
-            int num2 = (data._items != null && data._items.Length != 0) ? 90 : 0;
-            __instance.functionText.text = data._title;
+            int num2 = (data._items != null && data._items.Length != 0 || data._type == 1) ? 90 : 0;
+            __instance.functionText.text = data._type == 0 ? data._title : "";
             __instance.functionText.rectTransform.anchoredPosition = new Vector2(0f, (float)(-(float)num2));
 
-            if (!string.IsNullOrEmpty(data._title))
+            if (!string.IsNullOrEmpty(data._title) && data._type==0)
             {
                 num2 += (int)__instance.functionText.preferredHeight;
                 num2 += 5;
@@ -98,7 +111,10 @@ namespace DSP_Battle
             AccessTools.Field(typeof(UIResearchResultWindow), "windowHeight").SetValue(__instance, (float)num2);
             __instance.windowTrans.sizeDelta = new Vector2(400f, 0f);
             __instance._Open();
-            GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Research Result Window/content/title-text").GetComponent<Text>().text = "游戏提示gm".Translate();
+            string dialogTitle = "游戏提示gm".Translate();
+            if (data._type == 1)
+                dialogTitle = data._title;
+            GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Research Result Window/content/title-text").GetComponent<Text>().text = dialogTitle;
 
             return false;
         }

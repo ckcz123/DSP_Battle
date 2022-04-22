@@ -11,7 +11,7 @@ namespace DSP_Battle
     {
         public static string versionString = "2.0.0";
         public static string qq = "694213906";
-        public static bool developerMode = false; //发布前务必修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+        public static bool developerMode = true; //发布前务必修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
 
         public static int versionWhenImporting = -1;
         public static int versionCode = 30220420;
@@ -122,8 +122,9 @@ namespace DSP_Battle
             new List<Tuple<int, int>> { new Tuple<int, int>(0, 5000000), new Tuple<int, int>(20000000, 2500000), new Tuple<int, int>(50000000, 500000), new Tuple<int, int>(80000000, 0) };
 
         //Rank信息
-        public static int[] expToNextRank = new int[] { 1, 10, 80, 300, 2000, 10000, 30000, 50000, 100000, 1000000, 0, 0, 0};
+        public static int[] expToNextRank = new int[] { 10, 100, 800, 3000, 20000, 100000, 300000, 500000, 1000000, 10000000, 0, 0, 0};
         public static float[] rewardTimeRatio = new float[] { 1.0f, 1.0f, 1.2f, 1.2f, 1.4f, 1.4f, 1.6f, 1.6f, 1.8f, 1.8f, 2.0f, 2.0f, 2.0f, 2.0f };
+        public static float[] expRatioByDifficulty = new float[] { 0.75f, 1f, 1.5f };
 
         public static int totalWave
         {

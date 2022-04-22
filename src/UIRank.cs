@@ -19,6 +19,8 @@ namespace DSP_Battle
         public static Text rankText;
         static string color1Left = "<color=#c2853d>";
         static string colorRight = "</color>";
+        public static Text promotionNoticeMainText = null;
+        public static Text promotionNoticeSubText = null;
 
         public static void InitUI()
         {
@@ -79,10 +81,26 @@ namespace DSP_Battle
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameData), "GameTick")]
-        public static void UIUpdate(ref GameData __instance, long time)
+        public static void UIObjGet(ref GameData __instance, long time)
         {
+            if (promotionNoticeMainText == null)
+                promotionNoticeMainText = GameObject.Find("UI Root/Overlay Canvas/In Game/Top Tips/research-complete/main-text").GetComponent<Text>();
+            if (promotionNoticeSubText == null)
+                promotionNoticeSubText = GameObject.Find("UI Root/Overlay Canvas/In Game/Top Tips/research-complete/sub-text").GetComponent<Text>();
         }
 
+        public static void UIPromotionNotify()
+        {
+            UIGeneralTips gTips = UIRoot.instance.uiGame.generalTips;
+            promotionNoticeMainText.text = ("gmRankNoColor" + Rank.rank.ToString()).Translate();
+            gTips.researchCompleteTip.gameObject.SetActive(true);
+            gTips.researchCompleteTip.Stop();
+            gTips.researchCompleteTip.Play();
+            promotionNoticeSubText.text = "功勋阶级".Translate();
+            VFAudio.Create("mission-accomplished", null, Vector3.zero, true, 0, -1, -1L);
+
+            UIDialogPatch.ShowUIDialog(("gmRankNoColor" + Rank.rank.ToString()).Translate(), ("gmRankUnlockText" + Rank.rank.ToString()).Translate(), 1, rankIcon.sprite);
+        }
         
     }
 }
