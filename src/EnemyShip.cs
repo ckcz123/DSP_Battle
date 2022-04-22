@@ -158,7 +158,7 @@ namespace DSP_Battle
                     hp = 0;
                     state = State.distroyed;
                     EnemyShips.OnShipDistroyed(this);
-                    Rank.AddExp(intensity); //获得经验
+                    Rank.AddExp(intensity * 10); //获得经验
                     try //根据期望掉落矩阵
                     {
                         double dropExpectation = intensity * 1.0 / Configs.nextWaveIntensity * Configs.nextWaveMatrixExpectation;

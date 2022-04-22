@@ -177,6 +177,7 @@ namespace DSP_Battle
             starCannonLevel = datas[0];
             damagePerTick = datas[1];
             maxAimCount = datas[2];
+            if (Rank.rank >= 9) datas[3] = (int)(datas[3] * 0.5f);
             if (chargingTimeNeed != datas[3])
             {
                 if (fireStage == -2)

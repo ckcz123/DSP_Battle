@@ -465,7 +465,9 @@ namespace DSP_Battle
                     //判断击中，如果距离过近
                     if ((newBegin - enemyUPos).magnitude < 500 || newMaxt <= exceedDis * 1.0 / Configs.dropletSpd + 0.035f)
                     {
-                        UIBattleStatistics.RegisterDropletAttack(EnemyShips.ships[targetShipIndex].BeAttacked(Configs.dropletAtk));
+                        int damageBonus = 1;
+                        if (Rank.rank >= 10) damageBonus = 5;
+                        UIBattleStatistics.RegisterDropletAttack(EnemyShips.ships[targetShipIndex].BeAttacked(Configs.dropletAtk * damageBonus));
                         state = 3; //击中后继续冲过目标，准备转向的阶段
                     }
                 }

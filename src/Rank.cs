@@ -27,7 +27,7 @@ namespace DSP_Battle
         public static void RankGameTick(ref GameData __instance, long time)
         {
             //检查升级，因为AddExp有多线程调用，为了避免问题不在每次AddExp后检查升级，而是每帧检查
-            if (rank < 10 && exp > Configs.expToNextRank[rank])
+            if (rank < 10 && exp >= Configs.expToNextRank[rank])
             {
                 Promotion();
             }
@@ -63,14 +63,6 @@ namespace DSP_Battle
             UIRank.UIPromotionNotify();
         }
 
-        public static string RankInfoText()
-        {
-            string res = "";
-
-
-
-            return res;
-        }
 
 
         public static void Export(BinaryWriter w)
@@ -101,13 +93,6 @@ namespace DSP_Battle
         }
 
 
-        //下面测试用
-
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(UIGeneralTips), "OnTechUnlocked")]
-        public static bool TechUnlockNotifyPatch(ref UIGeneralTips __instance, int techId, int level)
-        {
-            return true;
-        }
+        
     }
 }

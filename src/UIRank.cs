@@ -21,6 +21,9 @@ namespace DSP_Battle
         static string colorRight = "</color>";
         public static Text promotionNoticeMainText = null;
         public static Text promotionNoticeSubText = null;
+        public static UIButton uiBtn = null;
+        public static Text tipTxtTitle = null;
+        public static Text tipTxtContent = null;
 
         public static void InitUI()
         {
@@ -44,17 +47,15 @@ namespace DSP_Battle
             rankObj.transform.SetAsFirstSibling();
             rankObj.transform.localScale = new Vector3(1, 1, 1);
 
-            rankIconObj = new GameObject();
+            GameObject oriIconWithTips = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Research Result Window/content/icon");
+            rankIconObj = GameObject.Instantiate(oriIconWithTips);
             rankIconObj.name = "icon";
             rankIconObj.transform.SetParent(rankObj.transform);
-            rankIconObj.transform.localPosition = new Vector3(0, 0, 0);
+            rankIconObj.transform.localPosition = new Vector3(0, 40, 0);
             rankIconObj.transform.localScale = new Vector3(1, 1, 1);
-            rankIconObj.AddComponent<Image>();
-            rankIconObj.AddComponent<RectTransform>();
-            rankIconObj.GetComponent<RectTransform>().sizeDelta = new Vector2(80, 80);
             rankIcon = rankIconObj.GetComponent<Image>();
             rankIcon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/rank0");
-
+            uiBtn = rankIconObj.GetComponent<UIButton>();
 
             rankTextObj = GameObject.Instantiate(oriTextObj);
             rankTextObj.name = "text";
@@ -75,18 +76,88 @@ namespace DSP_Battle
         public static void ForceRefreshAll()
         {
             if (rankObj == null) return;
+            rankIconObj.SetActive(true);
             rankText.text = ("gmRank" + Rank.rank.ToString()).Translate();
             rankIcon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/rank" + Rank.rank.ToString());
+            if (uiBtn?.tip!=null)
+            {
+                tipTxtContent = uiBtn.tip.GetComponent<UIButtonTip>().subTextComp;
+                tipTxtTitle =uiBtn.tip.GetComponent<UIButtonTip>().titleComp;
+                tipTxtTitle.supportRichText = true;
+            }
+
+            uiBtn.tips.delay = 0.1f;
+            uiBtn.tips.offset = new Vector2(-150, 40);
+            if (uiBtn.tipShowing)
+            {
+                uiBtn.OnPointerExit(null);
+                uiBtn.OnPointerEnter(null);
+                uiBtn.enterTime = 1;
+            }
+        }
+
+        public static string GetRankInfoText()
+        {
+            int rank = Rank.rank;
+            string res = "";
+            if (rank > 0)
+            {
+                res = "<color=#61d8ffb4>";
+                if (rank >= 1)
+                    res += "-  " + "gmRankReward1".Translate() + "\n";
+                if (rank >= 7)
+                    res += "-  " + "gmRankReward7".Translate() + "\n";
+                else if (rank >= 3)
+                    res += "-  " + "gmRankReward3".Translate() + "\n";
+                if (rank >= 5)
+                    res += "-  " + "gmRankReward5".Translate() + "\n";
+                if (rank >= 2)
+                    res += "-  " + "gmRankReward2".Translate() + (rank / 2 * 2).ToString() + "0%\n";
+                if (rank >= 9)
+                    res += "-  " + "gmRankReward9".Translate() + "\n";
+                if (rank == 10)
+                    res += "-  " + "gmRankReward10".Translate();
+                res += "</color>";
+            }
+            int nextRank = rank + 1;
+            if (rank > 0 && rank < 10) 
+                res += "\n";
+            if (rank<10)
+            {
+                res += "下一功勋等级解锁".Translate() + "\n<color=#61d8ffb4>-  ";
+                if (nextRank % 2 == 0)
+                    res += "gmRankReward2".Translate() + "20%";
+                else
+                    res += ("gmRankReward" + nextRank.ToString()).Translate();
+                if (nextRank == 10)
+                    res += "\n-  " + "gmRankReward10".Translate();
+                res += "</color>";
+            }
+
+            return res;
         }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameData), "GameTick")]
-        public static void UIObjGet(ref GameData __instance, long time)
+        public static void UIRankGameTick(ref GameData __instance, long time)
         {
             if (promotionNoticeMainText == null)
                 promotionNoticeMainText = GameObject.Find("UI Root/Overlay Canvas/In Game/Top Tips/research-complete/main-text").GetComponent<Text>();
             if (promotionNoticeSubText == null)
                 promotionNoticeSubText = GameObject.Find("UI Root/Overlay Canvas/In Game/Top Tips/research-complete/sub-text").GetComponent<Text>();
+
+            uiBtn.tips.tipTitle = ("gmRank" + Rank.rank.ToString()).Translate();
+            if (Rank.rank < 10 && Rank.rank >= 0)
+            {
+                uiBtn.tips.tipTitle += "  [" + "功勋点数".Translate() + " " + Rank.exp.ToString() + " / " + Configs.expToNextRank[Rank.rank].ToString() + "]";
+            }
+            uiBtn.tips.tipText = GetRankInfoText();
+            if (uiBtn.tipShowing && tipTxtTitle != null && tipTxtContent != null)
+            {
+                tipTxtTitle.text = uiBtn.tips.tipTitle;
+                tipTxtContent.text = uiBtn.tips.tipText;
+            }
+
         }
 
         public static void UIPromotionNotify()

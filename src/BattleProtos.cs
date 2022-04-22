@@ -215,9 +215,9 @@ namespace DSP_Battle
 
             ProtoRegistry.RegisterString("UI快捷键提示", "Press Backspace to hide/open this window. Press \"Ctrl\" + \"-\" to advance the attack time by 1 min. \n Advancing the attack time will also reduce the amount of dropped Alien Matrix in next wave.", "按下退格键开启或关闭此窗口，按下Ctrl+减号键使敌军进攻时间提前1分钟\n手动提前进攻会减少下一次进攻中敌军掉落异星矩阵的数量");
 
-            ProtoRegistry.RegisterString("简单难度提示", "Difficulty: Easy (Station won't be destroyed; Rank experience *0.75)", "当前难度：简单（物流塔不会被破坏；功勋经验获得*0.75）");
+            ProtoRegistry.RegisterString("简单难度提示", "Difficulty: Easy (Station won't be destroyed; Merit points earned *0.75)", "当前难度：简单（物流塔不会被破坏；功勋点数获得*0.75）");
             ProtoRegistry.RegisterString("普通难度提示", "Difficulty: Normal (Station attacked will turn to blueprint mode)", "当前难度：普通（物流塔被破坏会进入蓝图模式）");
-            ProtoRegistry.RegisterString("困难难度提示", "Difficulty: Hard (Station will be dismantled; Enemy strength will increase; Rank experience *1.5)", "当前难度：困难（物流塔会被破坏拆除，敌人战斗力大幅提升；功勋经验获得*1.5）");
+            ProtoRegistry.RegisterString("困难难度提示", "Difficulty: Hard (Station will be dismantled; Enemy strength will increase; Merit points earned *1.5)", "当前难度：困难（物流塔会被破坏拆除，敌人战斗力大幅提升；功勋点数获得*1.5）");
             ProtoRegistry.RegisterString("奖励倒计时：", "Reward time left: ", "奖励剩余时间：");
 
             ProtoRegistry.RegisterString("mod版本信息", "Current version: " + Configs.versionString, "当前版本：" + Configs.versionString + "          欢迎加入mod交流群：" + Configs.qq);
@@ -323,7 +323,6 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("gmRank8", "<color=#fd9620c0>Conqueror II</color>", "<color=#fd9620c0>征服者 II</color>");
             ProtoRegistry.RegisterString("gmRank9", "<color=#fd9620c0>Conqueror III</color>", "<color=#fd9620c0>征服者 III</color>");
             ProtoRegistry.RegisterString("gmRank10", "<color=#ffc620c8>Galaxy Guardian</color>", "<color=#ffc620da>星河卫士</color>");
-            ProtoRegistry.RegisterString("功勋阶级", "Merit Rank", "功勋阶级");
             ProtoRegistry.RegisterString("gmRankNoColor0", "Icarus", "伊卡洛斯");
             ProtoRegistry.RegisterString("gmRankNoColor1", "Explorer I", "探索者 I");
             ProtoRegistry.RegisterString("gmRankNoColor2", "Explorer II", "探索者 II");
@@ -335,17 +334,29 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("gmRankNoColor8", "Conqueror II", "征服者 II");
             ProtoRegistry.RegisterString("gmRankNoColor9", "Conqueror III", "征服者 III");
             ProtoRegistry.RegisterString("gmRankNoColor10", "Galaxy Guardian", "星河卫士");
-            ProtoRegistry.RegisterString("gmRankUnlockText0", "-", "-");
-            ProtoRegistry.RegisterString("gmRankUnlockText1", "", "战斗结束后给予持续五分钟的采矿速率*2，研究速率*2，运输船速度*1.5奖励。");
-            ProtoRegistry.RegisterString("gmRankUnlockText2", "", "战斗结束后的奖励持续时间增加20%。");
-            ProtoRegistry.RegisterString("gmRankUnlockText3", "", "战斗结束后额外获得采矿消耗-20%的奖励。");
-            ProtoRegistry.RegisterString("gmRankUnlockText4", "", "战斗结束后的奖励持续时间增加20%。");
-            ProtoRegistry.RegisterString("gmRankUnlockText5", "", "战斗结束后额外获得增产剂效果全面加强的奖励。");
-            ProtoRegistry.RegisterString("gmRankUnlockText6", "", "战斗结束后的奖励持续时间增加20%。");
-            ProtoRegistry.RegisterString("gmRankUnlockText7", "", "战斗结束后采矿消耗降低的奖励强化为-50%消耗。");
-            ProtoRegistry.RegisterString("gmRankUnlockText8", "", "战斗结束后的奖励持续时间增加20%。");
-            ProtoRegistry.RegisterString("gmRankUnlockText9", "", "恒星炮充能速度增加100%。");
-            ProtoRegistry.RegisterString("gmRankUnlockText10", "", "水滴伤害获得大幅度加强，战斗结束后的奖励持续时间增加20%。");
+            ProtoRegistry.RegisterString("gmRankUnlockText0", "", "");
+            ProtoRegistry.RegisterString("gmRankUnlockText1", "Wave reward: mining speed * 2, tech speed * 2, vessel ship speed * 1.5. Lasts up to 5 minutes", "战斗结束后给予采矿速率*2，研究速率*2，运输船速度*1.5的奖励，持续5分钟");
+            ProtoRegistry.RegisterString("gmRankUnlockText2", "Wave reward duration +20%", "战斗奖励持续时间增加20%");
+            ProtoRegistry.RegisterString("gmRankUnlockText3", "New wave reward: mining consumption -20%", "战斗结束后额外获得采矿消耗-20%的奖励");
+            ProtoRegistry.RegisterString("gmRankUnlockText4", "Wave reward duration +20%", "战斗奖励持续时间增加20%");
+            ProtoRegistry.RegisterString("gmRankUnlockText5", "New wave reward: proliferator's efficiency has been improved", "战斗结束后额外获得增产剂效果全面加强的奖励");
+            ProtoRegistry.RegisterString("gmRankUnlockText6", "Wave reward duration +20%", "战斗奖励持续时间增加20%");
+            ProtoRegistry.RegisterString("gmRankUnlockText7", "Wave reward: mining consumption -20% --> -50%", "采矿消耗降低的奖励强化为-50%消耗");
+            ProtoRegistry.RegisterString("gmRankUnlockText8", "Wave reward duration +20%", "战斗奖励持续时间增加20%");
+            ProtoRegistry.RegisterString("gmRankUnlockText9", "Star cannon charging speed +100%", "恒星炮充能速度增加100%");
+            ProtoRegistry.RegisterString("gmRankUnlockText10", "Droplet damage greatly increased. Wave reward duration +20%", "水滴伤害获得大幅度加强，战斗结束后的奖励持续时间增加20%");
+            ProtoRegistry.RegisterString("gmRankReward1", "Wave reward unlocked", "战斗结束后给予战斗奖励");
+            ProtoRegistry.RegisterString("gmRankReward7", "Additional wave reward: mining consumption -50%", "额外的战斗奖励：采矿消耗-50%");
+            ProtoRegistry.RegisterString("gmRankReward3", "Additional wave reward: mining consumption -20%", "额外的战斗奖励：采矿消耗-20%");
+            ProtoRegistry.RegisterString("gmRankReward5", "Additional wave reward: proliferator enhancement", "额外的战斗奖励：增产剂效果强化");
+            ProtoRegistry.RegisterString("gmRankReward2", "Wave reward duration +", "战斗奖励持续时间+");
+            ProtoRegistry.RegisterString("gmRankReward9", "Star cannon charging speed +100%", "恒星炮充能速度+100%");
+            ProtoRegistry.RegisterString("gmRankReward10", "Droplet damage +400%", "水滴伤害+400%");
+            ProtoRegistry.RegisterString("功勋阶级", "Merit Rank", "功勋阶级");
+            ProtoRegistry.RegisterString("当前阶级", "Current Rank", "当前等级");
+            ProtoRegistry.RegisterString("功勋点数", "Merit points", "功勋点数");
+            ProtoRegistry.RegisterString("已解锁gm", "Unlocked", "已解锁");
+            ProtoRegistry.RegisterString("下一功勋等级解锁", "Next rank unlocked", "下一功勋等级解锁");
 
             ProtoRegistry.RegisterString("行星护盾生成器", "Planet shield generator", "行星护盾生成器");
             ProtoRegistry.RegisterString("行星护盾生成器描述", "Using a large amount of energy to maintain a force field shield on the planet's surface, the encoding of the force field's resonant frequency allows allies to easily pass through the shield, while blocking the enemies. Multiple shield generators can speed up the shield recharge rate, and provide additional shield capacity. However, as the number of shield generators increases, each additional generator will provide less and less additional capacity.", 
@@ -1366,7 +1377,7 @@ namespace DSP_Battle
             if (tech == null || tech.Items == null) return true;
             for (int i = 0; i < tech.Items.Length; i++)
             {
-                if(tech.Items[i] >= 6003 && tech.Items[i] <= 6006 || tech.Items[i] == 8032)
+                if(tech.Items[i] >= 6003 && tech.Items[i] <= 6006 || tech.Items[i] == 8032 || tech.ID == 1901)
                 {
                     UIRealtimeTip.Popup("被深空来敌mod禁止".Translate(), true, 0);
                     return false;
@@ -1384,7 +1395,7 @@ namespace DSP_Battle
             if (tech == null || tech.Items == null) return;
             for (int i = 0; i < tech.Items.Length; i++)
             {
-                if (tech.Items[i] >= 6003 && tech.Items[i] <= 6006 || tech.Items[i] == 8032)
+                if (tech.Items[i] >= 6003 && tech.Items[i] <= 6006 || tech.Items[i] == 8032 || tech.ID == 1901)
                 {
                     __instance.buyoutButton.transitions[0].normalColor = __instance.buyoutNormalColor1;
                     __instance.buyoutButton.transitions[0].mouseoverColor = __instance.buyoutMouseOverColor1;
