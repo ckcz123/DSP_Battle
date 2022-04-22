@@ -828,5 +828,41 @@ namespace DSP_Battle
             }
         }
 
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UITechNode), "OnBuyoutButtonClick")]
+        public static bool BuyoutTechPrePatch(ref UITechNode __instance, int _data)
+        {
+            TechProto tech = __instance.techProto;
+            if (tech == null || tech.Items == null) return true;
+            for (int i = 0; i < tech.Items.Length; i++)
+            {
+                if (tech.Items[i] >= 6003 && tech.Items[i] <= 6006 || tech.Items[i] == 8032 || tech.ID == 1901)
+                {
+                    UIRealtimeTip.Popup("被深空来敌mod禁止".Translate(), true, 0);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UITechNode), "UpdateInfoDynamic")]
+        public static void UITechNodeUpdateInfoDynamicPostPatch(ref UITechNode __instance)
+        {
+            TechProto tech = __instance.techProto;
+            if (tech == null || tech.Items == null) return;
+            for (int i = 0; i < tech.Items.Length; i++)
+            {
+                if (tech.Items[i] >= 6003 && tech.Items[i] <= 6006 || tech.Items[i] == 8032 || tech.ID == 1901)
+                {
+                    __instance.buyoutButton.transitions[0].normalColor = __instance.buyoutNormalColor1;
+                    __instance.buyoutButton.transitions[0].mouseoverColor = __instance.buyoutMouseOverColor1;
+                    __instance.buyoutButton.transitions[0].pressedColor = __instance.buyoutPressedColor1;
+                    return;
+                }
+            }
+
+        }
     }
 }

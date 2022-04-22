@@ -54,6 +54,11 @@ Also welcome to anyone who'd like to contribute to the mod, better if you have e
 
 ## Update Log
 
+### 2022-04-03 V1.2.3
+
+ - Updated to work with game version 0.9.25.11985
+ - 更新以适配游戏版本0.9.25.11985
+
 ### 2022-04-03 V1.2.2
 
  - Miners won't be destroyed in Normal mode

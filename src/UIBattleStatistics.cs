@@ -84,12 +84,12 @@ namespace DSP_Battle
 
             //按钮
             statPanelLeftTabObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Statistics Window/panel-bg/horizontal-tab");
-            statPanelLeftTabObj.GetComponent<RectTransform>().sizeDelta = new Vector2(105, 416);
+            statPanelLeftTabObj.GetComponent<RectTransform>().sizeDelta = new Vector2(105, 468);
             GameObject oriAchButtonObj = statPanelLeftTabObj.transform.Find("achievement-btn").gameObject;
             battleStatButtonObj = GameObject.Instantiate(oriAchButtonObj);
             battleStatButtonObj.name = "battle-btn";
             battleStatButtonObj.transform.SetParent(statPanelLeftTabObj.transform, false);
-            battleStatButtonObj.transform.localPosition = new Vector3(-52, -364, 0);
+            battleStatButtonObj.transform.localPosition = new Vector3(-52, -416, 0);
 
             battleStatButtonObj.GetComponent<Button>().onClick.RemoveAllListeners();
             battleStatButtonObj.GetComponent<Button>().onClick.AddListener(() => { OnClickBattleStatButton(); });
@@ -401,6 +401,7 @@ namespace DSP_Battle
             UIStatWindowInstance.isDysonTab = false;
             UIStatWindowInstance.isAchievementTab = false;
             UIStatWindowInstance.isPerformanceTab = false;
+            UIStatWindowInstance.isPropertyTab = false;
             UIStatWindowInstance.tabIndex = 99;
             UIStatWindowInstance.RefreshAll();
         }
