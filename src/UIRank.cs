@@ -73,21 +73,18 @@ namespace DSP_Battle
             if (Rank.rank >= 0 && Rank.rank <= 10) ForceRefreshAll();
         }
 
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIButton), "OnPointerEnter")]
         public static void ForceRefreshAll()
         {
             if (rankObj == null) return;
             rankIconObj.SetActive(true);
             rankText.text = ("gmRank" + Rank.rank.ToString()).Translate();
             rankIcon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/rank" + Rank.rank.ToString());
-            if (uiBtn?.tip!=null)
-            {
-                tipTxtContent = uiBtn.tip.GetComponent<UIButtonTip>().subTextComp;
-                tipTxtTitle =uiBtn.tip.GetComponent<UIButtonTip>().titleComp;
-                tipTxtTitle.supportRichText = true;
-            }
-
+            uiBtn.tips.width = 260;
             uiBtn.tips.delay = 0.1f;
-            uiBtn.tips.offset = new Vector2(-150, 40);
+            uiBtn.tips.offset = new Vector2(-175, 40);
+            RefreshText();
             if (uiBtn.tipShowing)
             {
                 uiBtn.OnPointerExit(null);
@@ -141,11 +138,28 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(GameData), "GameTick")]
         public static void UIRankGameTick(ref GameData __instance, long time)
         {
+            //获取所需Text组件
+            if (uiBtn.tip != null && tipTxtTitle == null)
+            {
+                tipTxtContent = uiBtn.tip.GetComponent<UIButtonTip>().subTextComp;
+                tipTxtTitle = uiBtn.tip.GetComponent<UIButtonTip>().titleComp;
+                tipTxtTitle.supportRichText = true;
+                uiBtn.OnPointerExit(null);
+                uiBtn.OnPointerEnter(null);
+                uiBtn.enterTime = 1;
+            }
             if (promotionNoticeMainText == null)
                 promotionNoticeMainText = GameObject.Find("UI Root/Overlay Canvas/In Game/Top Tips/research-complete/main-text").GetComponent<Text>();
             if (promotionNoticeSubText == null)
                 promotionNoticeSubText = GameObject.Find("UI Root/Overlay Canvas/In Game/Top Tips/research-complete/sub-text").GetComponent<Text>();
 
+
+            RefreshText();
+        }
+
+        public static void RefreshText()
+        {
+            //刷新
             uiBtn.tips.tipTitle = ("gmRank" + Rank.rank.ToString()).Translate();
             if (Rank.rank < 10 && Rank.rank >= 0)
             {
@@ -157,7 +171,6 @@ namespace DSP_Battle
                 tipTxtTitle.text = uiBtn.tips.tipTitle;
                 tipTxtContent.text = uiBtn.tips.tipText;
             }
-
         }
 
         public static void UIPromotionNotify()

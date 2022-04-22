@@ -387,6 +387,12 @@ namespace DSP_Battle
 
             ProtoRegistry.RegisterString("异星矩阵", "Alien matrix", "异星矩阵");
             ProtoRegistry.RegisterString("异星矩阵描述", "A matrix containing high-density data accidentally dropped by invading swarms. Can be analyzed by mechs and used to unlock more advanced alien technologies.", "由入侵的虫群偶然掉落的载有高密度数据的矩阵。可以由机甲分析并用于解锁更高级的异星科技。");
+            ProtoRegistry.RegisterString("异星元数据", "Alien metadata", "异星元数据");
+            ProtoRegistry.RegisterString("异星元数据描述", "Having fully decoded the Alien Matrix, Icarus can now quickly decompile the Alien Matrix and obtain the alien metadata, which does not require as much computation as initially decoding the megastructure data in the Alien Matrix. The decoded alien metadata in mech will be automatically uploaded to the CenterBrain and shared with other pioneers in the sector, which will provide Icarus with additional <color=#c2853d>merit points</color>. But this metadata cannot be shared across archives like other metadata.",
+                "在完成了对异星矩阵的全面解码后，伊卡洛斯现在可以快速对异星矩阵进行反编译并获得异星元数据，这不需要像最初解码异星矩阵中的巨构数据那样消耗大量算力。机甲中的异星元数据将自动上传给主脑并共享给星区的其他开拓者，这同时也会为伊卡洛斯提供大量的<color=#c2853d>功勋点数</color>。但该元数据无法像其他元数据一样在存档间共享。");
+            ProtoRegistry.RegisterString("异星矩阵反编译", "Alien matrix decompile", "异星矩阵反编译");
+            ProtoRegistry.RegisterString("异星矩阵反编译 x10", "Alien matrix decompile x10", "异星矩阵反编译 x10"); 
+            ProtoRegistry.RegisterString("异星矩阵反编译 x100", "Alien matrix decompile x100", "异星矩阵反编译 x100");
             ProtoRegistry.RegisterString("掉落的异星矩阵", "Alien matrix dropped by enemies", "敌舰掉落的异星矩阵");
             ProtoRegistry.RegisterString("物质解压器科技描述", "Decoding a method from the alien matrices to build a Matter Decompressor.", "从异星矩阵中解码建造物质解压器的方法。");
             ProtoRegistry.RegisterString("科学枢纽科技描述", "Decoding a method from the alien matrices to build a Science Nexus.", "从异星矩阵中解码建造科学枢纽的方法。");
@@ -412,6 +418,7 @@ namespace DSP_Battle
             icondesc.solidAlpha = 0f;
             ItemProto alienMatrix = ProtoRegistry.RegisterItem(8032, "异星矩阵", "异星矩阵描述", "Assets/DSPBattle/alienmatrix", 2712 + pageBias, 1000000, EItemType.Matrix, icondesc);
             alienMatrix.missingTech = false;
+            ItemProto alienMeta = ProtoRegistry.RegisterItem(8033, "异星元数据", "异星元数据描述", "Assets/DSPBattle/alienmeta", 2711 + pageBias, 1000000000, EItemType.Matrix, icondesc);
 
             bullet1.DescFields = new int[] { 50, 51, 1 };
             bullet2.DescFields = new int[] { 50, 51, 1 };
@@ -511,7 +518,14 @@ namespace DSP_Battle
             ProtoRegistry.RegisterRecipe(816, ERecipeType.Assemble, 10, new int[] { 1101 }, new int[] { 1 }, new int[] { 8031 }, new int[] { 1 }, "测试用发动机描述",
                 1916, 2606 + hideMask + pageBias, "Assets/MegaStructureTab/shieldGen");
             ProtoRegistry.RegisterRecipe(817, ERecipeType.Research, 60, new int[] { 8032 }, new int[] { 1 }, new int[] { 8032 }, new int[] { 1 }, "异星矩阵描述",
-                1901, 9999 + pageBias, "Assets/MegaStructureTab/alienmatrix");
+                1901, 9999 + pageBias, "Assets/DSPBattle/alienmatrix");
+
+            RecipeProto decompileRecipe0 = ProtoRegistry.RegisterRecipe(818, ERecipeType.Research, 6, new int[] { 8032 }, new int[] { 1 }, new int[] { 8033 }, new int[] { 50 }, "异星元数据描述",
+                1924, 2711 + pageBias, "异星矩阵反编译", "Assets/DSPBattle/alienmetax10");
+            decompileRecipe0.Explicit = true;
+            RecipeProto decompileRecipe1 = ProtoRegistry.RegisterRecipe(819, ERecipeType.Research, 60, new int[] { 8032 }, new int[] { 10 }, new int[] { 8033 }, new int[] { 500 }, "异星元数据描述",
+                 1924, 2712 + pageBias, "异星矩阵反编译 x10", "Assets/DSPBattle/alienmetax100");
+            decompileRecipe1.Explicit = true;
 
 
             //给船染色用物品
@@ -600,7 +614,7 @@ namespace DSP_Battle
                 new int[] { 240 }, 27000, new int[] { 542 }, new Vector2(65, -19));
             techMegaCR.PreTechsImplicit = new int[] { 1522 };
             TechProto techMegaSN = ProtoRegistry.RegisterTech(1924, "科学枢纽", "科学枢纽科技描述", "科学枢纽科技结论", "Assets/DSPBattle/bosontech", new int[] { 1918, 1920, 1921, 1922, 1923 }, new int[] { 8032 },
-                new int[] { 200 }, 45000, new int[] { 539 }, new Vector2(69, -11));
+                new int[] { 200 }, 45000, new int[] { 539, 818, 819 }, new Vector2(69, -11));
             techMegaSN.PreTechsImplicit = new int[] { 1522 };
 
 

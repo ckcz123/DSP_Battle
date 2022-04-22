@@ -31,6 +31,11 @@ namespace DSP_Battle
             {
                 Promotion();
             }
+            int inc;
+            if(GameMain.mainPlayer.package.TakeItem(8033, 1, out inc)>0)
+            {
+                AddExp(Configs.expPerAlienMeta);
+            }
         }
 
         public static void AddExp(int num)
