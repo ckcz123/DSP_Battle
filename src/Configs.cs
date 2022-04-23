@@ -13,6 +13,7 @@ namespace DSP_Battle
         public static string qq = "694213906";
         public static bool developerMode = false; //发布前务必修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
 
+        public static bool enableProliferator4 = false;
         public static int versionWhenImporting = -1;
         public static int versionCode = 30220420;
 
@@ -122,7 +123,7 @@ namespace DSP_Battle
             new List<Tuple<int, int>> { new Tuple<int, int>(0, 5000000), new Tuple<int, int>(20000000, 2500000), new Tuple<int, int>(50000000, 500000), new Tuple<int, int>(80000000, 0) };
 
         //Rank信息
-        public static int[] expToNextRank = new int[] { 10, 100, 800, 3000, 20000, 100000, 300000, 500000, 1000000, 10000000, 0, 0, 0};
+        public static int[] expToNextRank = new int[] { 10, 100, 800, 3000, 20000, 100000, 500000, 1000000, 8000000, 30000000, 0, 0, 0};
         public static float[] rewardTimeRatio = new float[] { 1.0f, 1.0f, 1.2f, 1.2f, 1.4f, 1.4f, 1.6f, 1.6f, 1.8f, 1.8f, 2.0f, 2.0f, 2.0f, 2.0f };
         public static float[] expRatioByDifficulty = new float[] { 0.75f, 1f, 1.5f };
         public static int expPerAlienMeta = 32; //每个解码后的异星元数据上传提供的基础功勋点数
@@ -259,7 +260,7 @@ namespace DSP_Battle
             // config.Bind("config", "coldTime", defaultValue: "60,50,50,45,45,45,40,40,40,40,30,30,30,30,30,20,20,20,20,20,15,15,15,15,15,10", "相邻两波间隔时间").Value.Split(',').Select(e => int.Parse(e)).ToArray();
 
             expectationMatrices =
-                new int[] { 25, 35, 45, 55, 75, 100, 155, 205, 255, 305, 310, 315, 320, 325, 330, 335, 340, 345, 350, 355, 360, 365, 370, 375, 380, 385, 390, 395, 400 };
+                new int[] { 25, 35, 45, 55, 75, 100, 155, 205, 255, 305, 310, 315, 320, 325, 330, 335, 340, 345, 350, 355, 360, 380, 400, 425, 450, 500, 600, 700, 800 };
             //               2, 5, 10, 15, 20, 30,  50,  80,   100, 150, 250, 300, 400, 500, 600, 800, 1000, 1100, 1500, 1800, 2000, 2200, 2500, 3000, 3500, 4000
 
             IntoOtherSave();

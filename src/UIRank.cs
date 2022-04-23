@@ -81,9 +81,9 @@ namespace DSP_Battle
             rankIconObj.SetActive(true);
             rankText.text = ("gmRank" + Rank.rank.ToString()).Translate();
             rankIcon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/rank" + Rank.rank.ToString());
-            uiBtn.tips.width = 260;
+            uiBtn.tips.width = 270;
             uiBtn.tips.delay = 0.1f;
-            uiBtn.tips.offset = new Vector2(-175, 40);
+            uiBtn.tips.offset = new Vector2(-180, 40);
             RefreshText();
             if (uiBtn.tipShowing)
             {

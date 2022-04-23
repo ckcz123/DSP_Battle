@@ -52,6 +52,7 @@ namespace DSP_Battle
             Configs.nextWaveFrameIndex = time + deltaFrames + Configs.nextWaveDelay;
             Configs.nextWaveDelay = 0;
             Configs.nextWaveIntensity = Configs.intensity[Math.Min(Configs.intensity.Length - 1, Configs.wavePerStar[starId])];
+            int baseIntensity = Configs.nextWaveIntensity;
             Configs.nextWaveMatrixExpectation = (int)(Configs.expectationMatrices[Math.Min(Configs.expectationMatrices.Length - 1, Configs.wavePerStar[starId])] * (deltaFrames * 1.0 / 36000)); //每10分钟间隔均会增加100%期望矩阵掉落量，但手动使进攻提前到来则会减少这个值
             // Extra intensity
             int r1 = 1000;
@@ -81,6 +82,9 @@ namespace DSP_Battle
             if (energy > 300) // 300G
                 Configs.nextWaveIntensity += (int)(energy - 300) * r2;
             if (Configs.nextWaveIntensity > 30000) Configs.nextWaveIntensity = 30000;
+
+            //根据戴森球、矩阵上传量的额外加成，按比例加成预期掉落的异星矩阵数量
+            Configs.nextWaveMatrixExpectation += (Configs.nextWaveIntensity - baseIntensity) / 50;
 
             Configs.nextWaveStarIndex = starId;
             Configs.nextWaveState = 1;
