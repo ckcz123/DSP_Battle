@@ -162,19 +162,25 @@ namespace DSP_Battle
                     try //根据期望掉落矩阵
                     {
                         double dropExpectation = intensity * 1.0 / Configs.nextWaveIntensity * Configs.nextWaveMatrixExpectation;
+                        int dropItemId = 8032;
+                        if(GameMain.history.TechUnlocked(1924))
+                        {
+                            dropExpectation *= 50;
+                            dropItemId = 8033;
+                        }
                         if(dropExpectation > 1) //期望超过1的部分必然掉落
                         {
                             int guaranteed = (int)dropExpectation;
                             dropExpectation -= guaranteed;
 
-                            GameMain.mainPlayer.TryAddItemToPackage(8032, guaranteed, 0, true);
-                            UIItemup.Up(8032, guaranteed);
+                            GameMain.mainPlayer.TryAddItemToPackage(dropItemId, guaranteed, 0, true);
+                            UIItemup.Up(dropItemId, guaranteed);
                             UIBattleStatistics.RegisterAlienMatrixGain(guaranteed);
                         }
                         if (Utils.RandDouble() < dropExpectation) //根据概率决定是否掉落
                         {
-                            GameMain.mainPlayer.TryAddItemToPackage(8032, 1, 0, true);
-                            UIItemup.Up(8032, 1);
+                            GameMain.mainPlayer.TryAddItemToPackage(dropItemId, 1, 0, true);
+                            UIItemup.Up(dropItemId, 1);
                             UIBattleStatistics.RegisterAlienMatrixGain(1);
                         }
                     }

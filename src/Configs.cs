@@ -126,7 +126,7 @@ namespace DSP_Battle
         public static int[] expToNextRank = new int[] { 10, 100, 800, 3000, 20000, 100000, 500000, 1000000, 8000000, 30000000, 0, 0, 0};
         public static float[] rewardTimeRatio = new float[] { 1.0f, 1.0f, 1.2f, 1.2f, 1.4f, 1.4f, 1.6f, 1.6f, 1.8f, 1.8f, 2.0f, 2.0f, 2.0f, 2.0f };
         public static float[] expRatioByDifficulty = new float[] { 0.75f, 1f, 1.5f };
-        public static int expPerAlienMeta = 32; //每个解码后的异星元数据上传提供的基础功勋点数
+        public static int expPerAlienMeta = 20; //每个解码后的异星元数据上传提供的基础功勋点数
 
         public static int totalWave
         {

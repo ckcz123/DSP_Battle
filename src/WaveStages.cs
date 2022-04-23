@@ -204,15 +204,17 @@ namespace DSP_Battle
                 {
                     rewardByRank = string.Format("奖励提示3".Translate(), extraSpeedFrame / 60);
                 }
-
+                string dropMatrixStr = "异星矩阵自动转换提示".Translate();
+                if (!GameMain.history.TechUnlocked(1924))
+                    dropMatrixStr = "掉落的异星矩阵".Translate() + ": " + UIBattleStatistics.alienMatrixGain.ToString();
                 UIDialogPatch.ShowUIDialog("战斗已结束！".Translate(),
                     "战斗时间".Translate() + ": " + string.Format("{0:00}:{1:00}", new object[] { UIBattleStatistics.battleTime / 60 / 60, UIBattleStatistics.battleTime / 60 % 60 }) + "; " +
                     "歼灭敌人".Translate() + ": " + UIBattleStatistics.totalEnemyEliminated.ToString("N0") + "; " +
                     "输出伤害".Translate() + ": " + UIBattleStatistics.totalDamage.ToString("N0") + "; " +
                     "损失物流塔".Translate() + ": " + UIBattleStatistics.stationLost.ToString("N0") + "; " +
                     "损失其他建筑".Translate() + ": " + UIBattleStatistics.othersLost.ToString("N0") + "; " +
-                    "损失资源".Translate() + ": " + UIBattleStatistics.resourceLost.ToString("N0") + ";" +
-                    "掉落的异星矩阵".Translate() + ": " + UIBattleStatistics.alienMatrixGain.ToString() + "." +
+                    "损失资源".Translate() + ": " + UIBattleStatistics.resourceLost.ToString("N0") + "; " +
+                    dropMatrixStr + "." +
                     "\n\n<color=#c2853d>" + rewardByRank + "</color>\n\n" +
                     "查看更多战斗信息".Translate()
                     );
