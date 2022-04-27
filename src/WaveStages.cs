@@ -219,6 +219,7 @@ namespace DSP_Battle
                     "查看更多战斗信息".Translate()
                     );
 
+                BattleBGMController.SetWaveFinished();
             }
         }
 

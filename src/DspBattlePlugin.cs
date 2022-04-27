@@ -83,10 +83,17 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(PlanetEngine));
             Harmony.CreateAndPatchAll(typeof(UIRank));
             Harmony.CreateAndPatchAll(typeof(Rank));
+            Harmony.CreateAndPatchAll(typeof(BattleBGMController));
 
             LDBTool.PreAddDataAction += BattleProtos.AddProtos;
             LDBTool.PostAddDataAction += BattleProtos.PostDataAction;
             LDBTool.EditDataAction += BattleProtos.ChangeTabName;
+
+        }
+
+        public void Start()
+        {
+            BattleBGMController.InitAudioSources();
         }
 
         public void Update()
@@ -119,6 +126,7 @@ namespace DSP_Battle
                 if (ShieldGenerator.currentShield.ContainsKey(planetId))
                     ShieldGenerator.currentShield.AddOrUpdate(planetId, 100000, (x, y) => y + 100000);
             }
+            BattleBGMController.BGMLogicUpdate();
         }
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameMain), "OnDestroy")]

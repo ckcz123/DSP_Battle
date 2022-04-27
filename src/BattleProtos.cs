@@ -623,19 +623,19 @@ namespace DSP_Battle
                 new int[] { 24, 24, 24, 24, 24 }, 450000, new int[] { 566, 567, 568, 569, 573 }, new Vector2(57, -43));
 
 
-            TechProto techMegaMD = ProtoRegistry.RegisterTech(1920, "物质解压器", "物质解压器科技描述", "物质解压器科技结论", "Assets/DSPBattle/bosontech", new int[] {  }, new int[] { 8032 },
+            TechProto techMegaMD = ProtoRegistry.RegisterTech(1920, "物质解压器", "物质解压器科技描述", "物质解压器科技结论", "Assets/DSPBattle/techMD", new int[] {  }, new int[] { 8032 },
                 new int[] { 150 }, 36000, new int[] { 538 }, new Vector2(65, -7)); 
             techMegaMD.PreTechsImplicit = new int[] { 1522 };
-            TechProto techMegaWBA = ProtoRegistry.RegisterTech(1921, "折跃场广播阵列", "折跃场广播阵列科技描述", "折跃场广播阵列科技结论", "Assets/DSPBattle/bosontech", new int[] { }, new int[] { 8032 },
+            TechProto techMegaWBA = ProtoRegistry.RegisterTech(1921, "折跃场广播阵列", "折跃场广播阵列科技描述", "折跃场广播阵列科技结论", "Assets/DSPBattle/techWBA", new int[] { }, new int[] { 8032 },
                 new int[] { 240 }, 27000, new int[] { 540 }, new Vector2(65, -11));
             techMegaWBA.PreTechsImplicit = new int[] { 1522 };
-            TechProto techMegaIA = ProtoRegistry.RegisterTech(1922, "星际组装厂", "星际组装厂科技描述", "星际组装厂科技结论", "Assets/DSPBattle/bosontech", new int[] { }, new int[] { 8032 },
+            TechProto techMegaIA = ProtoRegistry.RegisterTech(1922, "星际组装厂", "星际组装厂科技描述", "星际组装厂科技结论", "Assets/DSPBattle/techIA", new int[] { }, new int[] { 8032 },
                 new int[] { 200 }, 36000, new int[] { 537, 541 }, new Vector2(65, -15));
             techMegaIA.PreTechsImplicit = new int[] { 1522 };
-            TechProto techMegaCR = ProtoRegistry.RegisterTech(1923, "晶体重构器", "晶体重构器科技描述", "晶体重构器科技结论", "Assets/DSPBattle/bosontech", new int[] { }, new int[] { 8032 },
+            TechProto techMegaCR = ProtoRegistry.RegisterTech(1923, "晶体重构器", "晶体重构器科技描述", "晶体重构器科技结论", "Assets/DSPBattle/techCR", new int[] { }, new int[] { 8032 },
                 new int[] { 240 }, 27000, new int[] { 542 }, new Vector2(65, -19));
             techMegaCR.PreTechsImplicit = new int[] { 1522 };
-            TechProto techMegaSN = ProtoRegistry.RegisterTech(1924, "科学枢纽", "科学枢纽科技描述", "科学枢纽科技结论", "Assets/DSPBattle/bosontech", new int[] { 1918, 1920, 1921, 1922, 1923 }, new int[] { 8032 },
+            TechProto techMegaSN = ProtoRegistry.RegisterTech(1924, "科学枢纽", "科学枢纽科技描述", "科学枢纽科技结论", "Assets/DSPBattle/techSN", new int[] { 1918, 1920, 1921, 1922, 1923 }, new int[] { 8032 },
                 new int[] { 200 }, 45000, new int[] { 539, 818, 819 }, new Vector2(69, -11));
             techMegaSN.PreTechsImplicit = new int[] { 1522 };
 
@@ -1155,7 +1155,7 @@ namespace DSP_Battle
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UITechTree), "RefreshDataValueText")]
-        public static void UnlockFuncTextPatch(ref UITechTree __instance)
+        public static void RefreshDataValueTextPatch(ref UITechTree __instance)
         {
             if (Configs.extraSpeedEnabled)
             {
@@ -1163,7 +1163,7 @@ namespace DSP_Battle
                 string final = "";
                 for (int i = 0; i < txt.Length - 1; i++)
                 {
-                    if (i == 21 || i == 23 || i == 24 || i == 26 || i == 27 || i == 28)
+                    if (i == 21 || i == 23 || i == 24 || (i == 26 && Rank.rank >= 3) || i == 27 || i == 28)
                     {
                         final += "<color=#61d8ffb4>" + "额外奖励gm".Translate() + txt[i].Trim() + "</color>\r\n";
                     }

@@ -182,7 +182,7 @@ namespace DSP_Battle
             gTips.researchCompleteTip.Stop();
             gTips.researchCompleteTip.Play();
             promotionNoticeSubText.text = "功勋阶级".Translate();
-            VFAudio.Create("mission-accomplished", null, Vector3.zero, true, 0, -1, -1L);
+            VFAudio.Create("research-complete", null, Vector3.zero, true, 0, -1, -1L);
 
             UIDialogPatch.ShowUIDialog(("gmRankNoColor" + Rank.rank.ToString()).Translate(), ("gmRankUnlockText" + Rank.rank.ToString()).Translate(), 1, rankIcon.sprite);
         }
