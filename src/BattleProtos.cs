@@ -312,7 +312,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("占比gm", "Percentage", "占比");
             ProtoRegistry.RegisterString("游戏提示gm", "Message", "游戏提示");
 
-            ProtoRegistry.RegisterString("gmRank0", "Icarus", "伊卡洛斯");
+            ProtoRegistry.RegisterString("gmRank0", "<color=#ffffff80>Icarus</color>", "<color=#ffffff80>伊卡洛斯</color>");
             ProtoRegistry.RegisterString("gmRank1", "<color=#61d8ffb4>Explorer I</color>", "<color=#61d8ffb4>探索者 I</color>");
             ProtoRegistry.RegisterString("gmRank2", "<color=#61d8ffb4>Explorer II</color>", "<color=#61d8ffb4>探索者 II</color>");
             ProtoRegistry.RegisterString("gmRank3", "<color=#61d8ffb4>Explorer III</color>", "<color=#61d8ffb4>探索者 III</color>");
@@ -533,7 +533,7 @@ namespace DSP_Battle
                 1916, 2605 + pageBias, "Assets/MegaStructureTab/shieldGen");
             ProtoRegistry.RegisterRecipe(816, ERecipeType.Assemble, 10, new int[] { 1101 }, new int[] { 1 }, new int[] { 8031 }, new int[] { 1 }, "测试用发动机描述",
                 1916, 2606 + hideMask + pageBias, "Assets/MegaStructureTab/shieldGen");
-            ProtoRegistry.RegisterRecipe(817, ERecipeType.Research, 60, new int[] { 8032 }, new int[] { 1 }, new int[] { 8032 }, new int[] { 2 }, "异星矩阵描述",
+            ProtoRegistry.RegisterRecipe(817, ERecipeType.Research, 60, new int[] { 8032 }, new int[] { 2 }, new int[] { 8032 }, new int[] { 1 }, "异星矩阵描述",
                 1901, 9999 + pageBias, "Assets/DSPBattle/alienmatrix");
 
             RecipeProto decompileRecipe0 = ProtoRegistry.RegisterRecipe(818, ERecipeType.Research, 60, new int[] { 8032 }, new int[] { 10 }, new int[] { 8033 }, new int[] { 500 }, "异星元数据描述",

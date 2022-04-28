@@ -12,6 +12,7 @@ namespace DSP_Battle
 {
     public class BattleBGMController
     {
+        /*
         public static int musicState = 0; 
         // 1战前, 每次播放完更换一个新的战前bgm继续播放； 2交战，从头播放，反复播放循环节。3接近结束（任意一方80%消灭），从头播放，反复播放循环节。 4之前阶段的音乐不再循环，要将其播放到结尾，之后变为0，切换回游戏原本bgm。
         public static int musicCnt = 0;
@@ -28,10 +29,10 @@ namespace DSP_Battle
         public static List<AudioSource> battleMusics = new List<AudioSource>();
         public static List<float> musicLoopBegin = new List<float> { 5.11f };
         public static List<float> musicLoopEnd = new List<float> { 101.1f };
-        /*
-DSP_Battle.BattleBGMController.musicLoopBegin[0] = 5.21f;
-DSP_Battle.BattleBGMController.musicLoopEnd[0] = 101.2f;
-         */
+        
+//DSP_Battle.BattleBGMController.musicLoopBegin[0] = 5.21f;
+//DSP_Battle.BattleBGMController.musicLoopEnd[0] = 101.2f;
+         
         public static void InitAudioSources()
         {
             if (!Configs.enableBattleBGM) return;
@@ -241,5 +242,6 @@ DSP_Battle.BattleBGMController.musicLoopEnd[0] = 101.2f;
                 battleMusics[currentMusic].loop = false;
             }
         }
+        */
     }
 }

@@ -15,6 +15,7 @@ namespace DSP_Battle
 
         public static bool enableProliferator4 = false;
         public static bool enableBattleBGM = false;
+        public static bool enableAlertTextGlowing = true;
         public static int versionWhenImporting = -1;
         public static int versionCode = 30220420;
 

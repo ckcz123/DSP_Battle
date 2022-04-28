@@ -93,7 +93,7 @@ namespace DSP_Battle
 
         public void Start()
         {
-            BattleBGMController.InitAudioSources();
+            ////////////////////////////////////////////////////////////////////////////BattleBGMController.InitAudioSources();
         }
 
         public void Update()
@@ -126,7 +126,7 @@ namespace DSP_Battle
                 if (ShieldGenerator.currentShield.ContainsKey(planetId))
                     ShieldGenerator.currentShield.AddOrUpdate(planetId, 100000, (x, y) => y + 100000);
             }
-            BattleBGMController.BGMLogicUpdate();
+            ///////////////////////////////////////////////////////////////////////////////////BattleBGMController.BGMLogicUpdate();
         }
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameMain), "OnDestroy")]

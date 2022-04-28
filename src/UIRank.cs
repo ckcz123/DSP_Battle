@@ -15,15 +15,23 @@ namespace DSP_Battle
         public static GameObject rankObj = null;
         public static GameObject rankTextObj;
         public static GameObject rankIconObj;
+        public static GameObject rankExpTextObj;
+        public static GameObject rankExpBarObj;
+        public static GameObject frontBarObj;
+        public static GameObject backBarObj;
         public static Image rankIcon;
+        public static Image expBarImg;
         public static Text rankText;
+        public static Text expText;
         static string color1Left = "<color=#c2853d>";
         static string colorRight = "</color>";
         public static Text promotionNoticeMainText = null;
         public static Text promotionNoticeSubText = null;
         public static UIButton uiBtn = null;
         public static Text tipTxtTitle = null;
-        public static Text tipTxtContent = null;
+        public static Color rank03Color = new Color(0.38f, 0.847f, 1f, 0.7f);
+        public static Color rank46Color = new Color(0.823f, 0.22f, 1f, 0.7f);
+        public static Color rank79Color = new Color(0.99f, 0.588f, 0.125f, 0.753f);
 
         public static void InitUI()
         {
@@ -58,10 +66,9 @@ namespace DSP_Battle
             uiBtn = rankIconObj.GetComponent<UIButton>();
 
             rankTextObj = GameObject.Instantiate(oriTextObj);
-            rankTextObj.name = "text";
+            rankTextObj.name = "text-title";
             rankTextObj.transform.SetParent(rankObj.transform);
             rankTextObj.transform.localPosition = new Vector3(0, -40, 0);
-            rankTextObj.AddComponent<Text>();
             rankTextObj.transform.localScale = new Vector3(1, 1, 1);
             rankText = rankTextObj.GetComponent<Text>();
             rankText.lineSpacing = 0.75f;
@@ -70,9 +77,67 @@ namespace DSP_Battle
             rankText.alignment = TextAnchor.UpperCenter;
             rankText.supportRichText = true;
             rankText.text = ("gmRank" + Rank.rank.ToString()).Translate();// + "\n" + exp.ToString() + "/" + Configs.expToNextRank[rank];
+
+            rankExpBarObj = new GameObject();
+            rankExpBarObj.transform.SetParent(rankObj.transform);
+            rankExpBarObj.name = "expbar";
+            rankExpBarObj.transform.localScale = new Vector3(1, 1, 1);
+            rankExpBarObj.transform.localPosition = new Vector3(0, 0, 0);
+            frontBarObj = GameObject.Instantiate(GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Dyson Sphere Editor/Dyson Editor Control Panel/inspector/sphere-group/sail-stat/bar-group/bar-blue"), rankExpBarObj.transform);
+            frontBarObj.name = "bar-front";
+            frontBarObj.transform.localPosition = new Vector3(0, -62, 0);
+            frontBarObj.GetComponent<RectTransform>().sizeDelta = new Vector2(80, 2);
+            frontBarObj.GetComponent<Image>().fillAmount = 1f;
+            expBarImg = frontBarObj.GetComponent<Image>();
+            expBarImg.fillAmount = 0f;
+            backBarObj = GameObject.Instantiate(GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Dyson Sphere Editor/Dyson Editor Control Panel/inspector/sphere-group/sail-stat/bar-group/bar-bg"), rankExpBarObj.transform);
+            backBarObj.name = "bar-bg";
+            backBarObj.transform.localPosition = new Vector3(0, -62, 0);
+            backBarObj.GetComponent<RectTransform>().sizeDelta = new Vector2(80, 2);
+            backBarObj.GetComponent<Image>().color = new Color(0.4f, 0.4f, 0.4f, 1f);
+
+            rankExpTextObj = GameObject.Instantiate(oriTextObj);
+            rankExpTextObj.name = "text-exp";
+            rankExpTextObj.transform.SetParent(rankObj.transform);
+            rankExpTextObj.transform.localPosition = new Vector3(0, -62, 0);
+            rankExpTextObj.transform.localScale = new Vector3(1, 1, 1);
+            expText = rankExpTextObj.GetComponent<Text>();
+            expText.lineSpacing = 0.75f;
+            expText.fontSize = 11;
+            expText.color = new Color(1, 1, 1, 0.5f);
+            expText.alignment = TextAnchor.UpperCenter;
+            expText.supportRichText = true;
+            expText.text = "";
+
             if (Rank.rank >= 0 && Rank.rank <= 10) ForceRefreshAll();
         }
 
+
+        /// <summary>
+        /// 在创建tip后，将需要设置的title设置为支持richtext
+        /// </summary>
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIButtonTip), "Create")]
+        public static void UIButtonTipTitleSetSupportRichText(string title, ref UIButtonTip __result)
+        {
+            if( title !=null && title.Length>0 && title[0] == '<') //对于<color=#>形式的标题，修改标题支持richtext
+            {
+                __result.titleComp.supportRichText = true;
+            }
+            //if (uiBtn?.tip != null)
+            //{
+            //    try
+            //    {
+            //        tipTxtTitle = uiBtn.tip.GetComponent<UIButtonTip>().titleComp;
+            //        tipTxtTitle.supportRichText = true;
+            //    }
+            //    catch (Exception) { }
+            //}
+        }
+
+        /// <summary>
+        /// 不需要每帧刷新的，但是鼠标移入、升级、读存档等时候需要刷新的
+        /// </summary>
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UIButton), "OnPointerEnter")]
         public static void ForceRefreshAll()
@@ -83,13 +148,40 @@ namespace DSP_Battle
             rankIcon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/rank" + Rank.rank.ToString());
             uiBtn.tips.width = 270;
             uiBtn.tips.delay = 0.1f;
-            uiBtn.tips.offset = new Vector2(-180, 40);
+            uiBtn.tips.offset = new Vector2(-190, 60);
             RefreshText();
+
             if (uiBtn.tipShowing)
             {
                 uiBtn.OnPointerExit(null);
                 uiBtn.OnPointerEnter(null);
                 uiBtn.enterTime = 1;
+            }
+
+            if (Rank.rank >= 10)
+            {
+                rankExpBarObj.SetActive(false);
+                rankExpTextObj.SetActive(false);
+            }
+            else
+            {
+                rankExpBarObj.SetActive(true);
+                rankExpTextObj.SetActive(true);
+                if (Rank.rank > 6)
+                {
+                    expBarImg.color = rank79Color;
+                    expText.color = rank79Color;
+                }
+                else if (Rank.rank > 3)
+                {
+                    expBarImg.color = rank46Color;
+                    expText.color = rank46Color;
+                }
+                else
+                {
+                    expBarImg.color = rank03Color;
+                    expText.color = rank03Color;
+                }
             }
         }
 
@@ -138,21 +230,24 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(GameData), "GameTick")]
         public static void UIRankGameTick(ref GameData __instance, long time)
         {
-            //获取所需Text组件
-            if (uiBtn.tip != null && tipTxtTitle == null)
+            if (Rank.rank >= 0 && Rank.rank < 10)
             {
-                tipTxtContent = uiBtn.tip.GetComponent<UIButtonTip>().subTextComp;
-                tipTxtTitle = uiBtn.tip.GetComponent<UIButtonTip>().titleComp;
-                tipTxtTitle.supportRichText = true;
-                uiBtn.OnPointerExit(null);
-                uiBtn.OnPointerEnter(null);
-                uiBtn.enterTime = 1;
+                float expProp = Rank.exp * 1.0f / Configs.expToNextRank[Rank.rank];
+                expBarImg.fillAmount = expProp < 1 ? expProp : 1;
+                if(uiBtn.tip != null && uiBtn.tipShowing)
+                {
+                    expText.text = Rank.exp.ToString() + " / " + Configs.expToNextRank[Rank.rank].ToString();
+                }
+                else
+                {
+                    expText.text = "";
+                }
             }
+
             if (promotionNoticeMainText == null)
                 promotionNoticeMainText = GameObject.Find("UI Root/Overlay Canvas/In Game/Top Tips/research-complete/main-text").GetComponent<Text>();
             if (promotionNoticeSubText == null)
                 promotionNoticeSubText = GameObject.Find("UI Root/Overlay Canvas/In Game/Top Tips/research-complete/sub-text").GetComponent<Text>();
-
 
             RefreshText();
         }
@@ -161,16 +256,7 @@ namespace DSP_Battle
         {
             //刷新
             uiBtn.tips.tipTitle = ("gmRank" + Rank.rank.ToString()).Translate();
-            if (Rank.rank < 10 && Rank.rank >= 0)
-            {
-                uiBtn.tips.tipTitle += "  [" + "功勋点数".Translate() + " " + Rank.exp.ToString() + " / " + Configs.expToNextRank[Rank.rank].ToString() + "]";
-            }
             uiBtn.tips.tipText = GetRankInfoText();
-            if (uiBtn.tipShowing && tipTxtTitle != null && tipTxtContent != null)
-            {
-                tipTxtTitle.text = uiBtn.tips.tipTitle;
-                tipTxtContent.text = uiBtn.tips.tipText;
-            }
         }
 
         public static void UIPromotionNotify()
