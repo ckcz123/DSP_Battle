@@ -316,7 +316,7 @@ namespace DSP_Battle
 
         public static void Import(BinaryReader r)
         {
-            if(Configs.versionWhenImporting >= 20220321)
+            if(Configs.versionWhenImporting >= 30220321)
             {
                 int length = r.ReadInt32();
                 for (int i = 0; i < length; i++)

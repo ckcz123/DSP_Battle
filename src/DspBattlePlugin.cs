@@ -52,7 +52,6 @@ namespace DSP_Battle
                     pagenum = MoreMegaStructure.MoreMegaStructure.pagenum;
                     BattleProtos.pageBias = (pagenum - 2) * 1000;
                     MoreMegaStructure.MoreMegaStructure.battlePagenum = pagenum;
-
                 }
             }
             catch (Exception)
