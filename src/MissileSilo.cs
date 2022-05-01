@@ -448,7 +448,7 @@ namespace DSP_Battle
                             }
 
                             double num28 = Math.Sqrt(vectorLF5.x * vectorLF5.x + vectorLF5.y * vectorLF5.y + vectorLF5.z * vectorLF5.z);
-                            if (num28 < dmgRange*0.5 && num28 < 400)
+                            if (num28 < dmgRange * 0.5 && num28 < 400)
                             {
                                 //借助太阳帆弹射的效果触发爆炸动画
                                 int bulletIndex0 = __instance.swarm.AddBullet(new SailBullet
@@ -501,14 +501,14 @@ namespace DSP_Battle
                                 //范围伤害和强制位移
                                 var shipsHit = EnemyShips.FindShipsInRange(dysonRocket.uPos, dmgRange);
 
-                                if(shipsHit.Count > 0) UIBattleStatistics.RegisterHit(missileId, 0, 1); //首先注册一下该导弹击中，但不注册伤害
+                                if (shipsHit.Count > 0) UIBattleStatistics.RegisterHit(missileId, 0, 1); //首先注册一下该导弹击中，但不注册伤害
                                 foreach (var item in shipsHit)
                                 {
                                     if (EnemyShips.ships.ContainsKey(item))
                                     {
                                         double distance = (dysonRocket.uPos - EnemyShips.ships[item].uPos).magnitude;
                                         int aoeDamage = damage;
-                                        if(distance > dmgRange*0.5)
+                                        if (distance > dmgRange * 0.5)
                                         {
                                             aoeDamage = (int)(damage * (1.0 - (2 * distance - dmgRange) / dmgRange));
                                         }
@@ -544,7 +544,7 @@ namespace DSP_Battle
                             //dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.2f);
                             if (vectorLF5.magnitude < Configs.missile1Speed * 0.5f) //如果离得很近，则增大转弯速度
                             {
-                                if(Quaternion.Angle(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5))< 60)
+                                if (Quaternion.Angle(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5)) < 60)
                                     dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 1f);
                                 else
                                     dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.6f);
@@ -624,8 +624,6 @@ namespace DSP_Battle
                             dysonRocket.uRot = astroPose.uRot * Quaternion.LookRotation(dysonRocket.launch);
                         }
                         __instance.rocketPool[i] = dysonRocket;
-
-
 
                     }
                     else if (isMissile)
@@ -1206,7 +1204,7 @@ namespace DSP_Battle
 
                                                 int realDamage = hitShip.BeAttacked(aoeDamage);
                                                 UIBattleStatistics.RegisterHit(missileId, realDamage, 0); //每个目标不再注册新的击中数量，只注册伤害
-                                                                                                          //引力导弹的强制位移
+                                                //引力导弹的强制位移
                                                 if (forceDisplacement)
                                                     hitShip.InitForceDisplacement(dysonRocket.uPos);
                                             }
@@ -1332,7 +1330,6 @@ namespace DSP_Battle
 
                         //Main.logger.LogInfo("Missile track error, might caused by multi-thread.");
                         //__instance.RemoveDysonRocket(i);
-
 
                     }
                     else if (isMissile)

@@ -31,6 +31,7 @@ namespace DSP_Battle
         public static ManualLogSource logger;
         private static ConfigFile config;
         public static ConfigEntry<int> starCannonRenderLevel;
+        public static ConfigEntry<bool> starCannonDirectionReverse;
 
         public static bool isControlDown = false;
         public void Awake()
@@ -59,6 +60,10 @@ namespace DSP_Battle
                 pagenum = 0;
             }
             starCannonRenderLevel = Config.Bind<int>("config", "StarCannonRenderLevel", 2, "[0-3] Higher Level will provide more star cannon effect and particles but might decrease the UPS and FPS when star cannon is firing. 更高的设置会提供更多的恒星炮特效，但可能会在恒星炮开火时降低帧率，反之则可能提高开火时的帧率。");
+            starCannonDirectionReverse = Config.Bind<bool>("config", "starCannonDirectionReverse", false, "Setting to true will cause all star cannons to fire from the South Pole instead of the North Pole. 设置为true将会使所有恒星炮的从南极而非北极开火。");
+            if(starCannonDirectionReverse.Value)
+                StarCannon.reverseDirection = -1;
+            
             StarCannon.renderLevel = starCannonRenderLevel.Value;
             StarCannon.renderLevel = StarCannon.renderLevel > 3 ? 3 : StarCannon.renderLevel;
             StarCannon.renderLevel = StarCannon.renderLevel < 0 ? 0 : StarCannon.renderLevel;

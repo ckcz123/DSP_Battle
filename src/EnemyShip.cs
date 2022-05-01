@@ -146,10 +146,11 @@ namespace DSP_Battle
 
         public int BeAttacked(int atk)
         {
+            int result = 0;
             lock (this)
             {
                 if (state != State.active) return 0;
-                int result = hp < atk ? hp : atk;
+                result = hp < atk ? hp : atk;
                 hp -= atk;
                 if (hp <= 0)
                 {
@@ -163,32 +164,32 @@ namespace DSP_Battle
                     {
                         double dropExpectation = intensity * 1.0 / Configs.nextWaveIntensity * Configs.nextWaveMatrixExpectation;
                         int dropItemId = 8032;
-                        if(GameMain.history.TechUnlocked(1924))
+                        if (GameMain.history.TechUnlocked(1924))
                         {
                             dropExpectation *= 50;
                             dropItemId = 8033;
                         }
-                        if(dropExpectation > 1) //期望超过1的部分必然掉落
+                        if (dropExpectation > 1) //期望超过1的部分必然掉落
                         {
                             int guaranteed = (int)dropExpectation;
                             dropExpectation -= guaranteed;
 
                             GameMain.mainPlayer.TryAddItemToPackage(dropItemId, guaranteed, 0, true);
-                            UIItemup.Up(dropItemId, guaranteed);
+                            Utils.UIItemUp(dropItemId, guaranteed, 180);
                             UIBattleStatistics.RegisterAlienMatrixGain(guaranteed);
                         }
                         if (Utils.RandDouble() < dropExpectation) //根据概率决定是否掉落
                         {
                             GameMain.mainPlayer.TryAddItemToPackage(dropItemId, 1, 0, true);
-                            UIItemup.Up(dropItemId, 1);
+                            Utils.UIItemUp(dropItemId, 1, 180);
                             UIBattleStatistics.RegisterAlienMatrixGain(1);
                         }
                     }
                     catch (Exception)
                     { }
                 }
-                return result;
             }
+            return result;
         }
 
         public void FindAnotherStation()
