@@ -455,14 +455,16 @@ namespace DSP_Battle
             ProtoRegistry.RegisterItem(8029, "彩蛋9", "彩蛋9描述", "Assets/DSPBattle/notes-of-pioneer-09", 9999, 100, EItemType.Material);
 
 
-            var Cannon = ProtoRegistry.RegisterItem(8011, "弹射器1", "弹射器1描述", "Assets/DSPBattle/cannon1", 2601 + pageBias, 50, EItemType.Production);
-            Cannon.BuildIndex = 607;
-            Cannon.BuildMode = 1;
-            Cannon.IsEntity = true;
-            Cannon.isRaw = false;
-            Cannon.CanBuild = true;
-            Cannon.Upgrades = new int[] { };
-            Cannon.DescFields = new int[] { 53, 11, 12, 1, 40 };
+            var Cannon1 = ProtoRegistry.RegisterItem(8011, "弹射器1", "弹射器1描述", "Assets/DSPBattle/cannon1", 2601 + pageBias, 50, EItemType.Production);
+            Cannon1.BuildIndex = 607;
+            Cannon1.BuildMode = 1;
+            Cannon1.IsEntity = true;
+            Cannon1.isRaw = false;
+            Cannon1.CanBuild = true;
+            Cannon1.Upgrades = new int[] { };
+            //Cannon1.Grade = 1;
+            //Cannon1.Upgrades = new int[] { 8011, 8012, 8014 };
+            Cannon1.DescFields = new int[] { 53, 11, 12, 1, 40 };
             var Cannon2 = ProtoRegistry.RegisterItem(8012, "弹射器2", "弹射器2描述", "Assets/DSPBattle/cannon2", 2602 + pageBias, 50, EItemType.Production);
             Cannon2.BuildIndex = 608;
             Cannon2.BuildMode = 1;
@@ -470,6 +472,8 @@ namespace DSP_Battle
             Cannon2.isRaw = false;
             Cannon2.CanBuild = true;
             Cannon2.Upgrades = new int[] { };
+            //Cannon2.Grade = 2;
+            //Cannon2.Upgrades = new int[] { 8011, 8012, 8014 };
             Cannon2.DescFields = new int[] { 53, 11, 12, 1, 40 };
             var Cannon3 = ProtoRegistry.RegisterItem(8014, "脉冲炮", "脉冲炮描述", "Assets/DSPBattle/cannon3", 2604 + pageBias, 50, EItemType.Production);
             Cannon3.BuildIndex = 609;
@@ -478,6 +482,8 @@ namespace DSP_Battle
             Cannon3.isRaw = false;
             Cannon3.CanBuild = true;
             Cannon3.Upgrades = new int[] { };
+            //Cannon3.Grade = 3;
+            //Cannon3.Upgrades = new int[] { 8011, 8012, 8014 };
             Cannon3.DescFields = new int[] { 50, 51, 53, 11, 12, 1, 40 };
 
 
@@ -854,8 +860,8 @@ namespace DSP_Battle
 
             var SiloModel = CopyModelProto(74, 313, Color.red);
             SiloModel.prefabDesc.siloBulletId = 8004; // 导弹的Id
-            SiloModel.prefabDesc.siloChargeFrame = 180;
-            SiloModel.prefabDesc.siloColdFrame = 120;
+            SiloModel.prefabDesc.siloChargeFrame = 120;
+            SiloModel.prefabDesc.siloColdFrame = 360;
             LDBTool.PreAddProto(SiloModel);
 
             var ShieldGenModel = CopyModelProto(45, 315, Color.blue);

@@ -108,8 +108,8 @@ namespace DSP_Battle
             else if (gmProtoId == 8014)
             {
                 __instance.bulletId = 8007;
+                __instance.bulletCount = 0;
             }
-
 
             if (__instance.needs == null)
             {
@@ -560,6 +560,13 @@ namespace DSP_Battle
             }
 
         }
+
+
+        //[HarmonyPostfix]
+        //[HarmonyPatch(typeof(PlanetFactory), "UpgradeEntityWithComponents")]
+        //public static void UpgradePostPatch()
+        //{
+        //}
 
         public static void Export(BinaryWriter w)
         {

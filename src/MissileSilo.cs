@@ -450,53 +450,44 @@ namespace DSP_Battle
                             double num28 = Math.Sqrt(vectorLF5.x * vectorLF5.x + vectorLF5.y * vectorLF5.y + vectorLF5.z * vectorLF5.z);
                             if (num28 < dmgRange * 0.5 && num28 < 400)
                             {
-                                //借助太阳帆弹射的效果触发爆炸动画
-                                int bulletIndex0 = __instance.swarm.AddBullet(new SailBullet
+                                try
                                 {
-                                    maxt = 0.000f,
-                                    lBegin = dysonRocket.uPos,
-                                    uEndVel = dysonRocket.uPos,
-                                    uBegin = dysonRocket.uPos,
-                                    uEnd = vectorLF5 + dysonRocket.uPos
-                                }, 1);
-
-                                __instance.swarm.bulletPool[bulletIndex0].state = 0;
-
-                                ////其他随机爆炸点，此方案已被废弃
-                                //for (int s = 0; s < dmgRange / 50; s++)
-                                //{
-                                //    VectorLF3 explodePoint = dysonRocket.uPos + new VectorLF3((DspBattlePlugin.randSeed.NextDouble() - 0.5) * dmgRange * 2, (DspBattlePlugin.randSeed.NextDouble() - 0.5) * dmgRange * 2, (DspBattlePlugin.randSeed.NextDouble() - 0.5) * dmgRange * 2);
-                                //    int bulletIndex = __instance.swarm.AddBullet(new SailBullet
-                                //    {
-                                //        maxt = 25f / dmgRange * s,
-                                //        lBegin = dysonRocket.uPos,
-                                //        uEndVel = dysonRocket.uPos,
-                                //        uBegin = explodePoint,
-                                //        uEnd = explodePoint
-                                //    }, 1);
-
-                                //    __instance.swarm.bulletPool[bulletIndex].state = 0;
-                                //}
-
-                                //持续爆炸，以及根据子弹爆炸范围决定爆炸效果
-                                for (int s = 0; s < 10; s++)
-                                {
-                                    for (int ss = 0; ss < (int)Math.Sqrt(dmgRange) - 15; ss++)
+                                    //借助太阳帆弹射的效果触发爆炸动画
+                                    int bulletIndex0 = __instance.swarm.AddBullet(new SailBullet
                                     {
-                                        VectorLF3 explodePoint = dysonRocket.uPos;
-                                        int bulletIndex = __instance.swarm.AddBullet(new SailBullet
+                                        maxt = 0.000f,
+                                        lBegin = dysonRocket.uPos,
+                                        uEndVel = dysonRocket.uPos,
+                                        uBegin = dysonRocket.uPos,
+                                        uEnd = vectorLF5 + dysonRocket.uPos
+                                    }, 1);
+
+                                    __instance.swarm.bulletPool[bulletIndex0].state = 0;
+
+
+                                    //持续爆炸，以及根据子弹爆炸范围决定爆炸效果
+                                    for (int s = 0; s < 10; s++)
+                                    {
+                                        for (int ss = 0; ss < (int)Math.Sqrt(dmgRange) - 15; ss++)
                                         {
-                                            maxt = 0.016666667f * s,
-                                            lBegin = dysonRocket.uPos,
-                                            uEndVel = dysonRocket.uPos,
-                                            uBegin = explodePoint,
-                                            uEnd = explodePoint
-                                        }, 1);
+                                            VectorLF3 explodePoint = dysonRocket.uPos;
+                                            int bulletIndex = __instance.swarm.AddBullet(new SailBullet
+                                            {
+                                                maxt = 0.016666667f * s,
+                                                lBegin = dysonRocket.uPos,
+                                                uEndVel = dysonRocket.uPos,
+                                                uBegin = explodePoint,
+                                                uEnd = explodePoint
+                                            }, 1);
 
-                                        __instance.swarm.bulletPool[bulletIndex].state = 0;
+                                            __instance.swarm.bulletPool[bulletIndex].state = 0;
 
+                                        }
                                     }
                                 }
+                                catch (Exception)
+                                { }
+                                
 
                                 //范围伤害和强制位移
                                 var shipsHit = EnemyShips.FindShipsInRange(dysonRocket.uPos, dmgRange);
@@ -530,11 +521,16 @@ namespace DSP_Battle
                             }
                             if (dysonRocket.uSpeed <= missileMaxSpeed)
                             {
-                                //离目标过远且没到满速度 或 速度少于1/2的最大速度 或 速度少于5000都会加速；而如果离目标过近且速度超过5000且速度超过1/2最大速度，则会减速
-                                if ((vectorLF5.magnitude > missileMaxSpeed && dysonRocket.uSpeed < missileMaxSpeed) || dysonRocket.uSpeed < missileMaxSpeed * 0.5f || dysonRocket.uSpeed < 5000)
+                                //离目标过远且没到满速度 或 速度少于1/2的最大速度 或 速度少于5000都会加速；而如果离目标过近且速度超过1/2最大速度，或离得过近的同时速度超过了10000，会减速
+                                if (vectorLF5.magnitude > Math.Min(missileMaxSpeed, 30000))
                                     dysonRocket.uSpeed += missileSpeedUp;
-                                else if (vectorLF5.magnitude < missileMaxSpeed && dysonRocket.uSpeed > missileMaxSpeed * 0.5 && dysonRocket.uSpeed > 5000)
-                                    dysonRocket.uSpeed -= missileSpeedUp;
+                                else
+                                {
+                                    if (dysonRocket.uSpeed > Math.Min(Math.Max(missileMaxSpeed * 0.5, 5000), 10000))
+                                        dysonRocket.uSpeed -= missileSpeedUp;
+                                    else if (dysonRocket.uSpeed < Math.Min(Math.Max(missileMaxSpeed * 0.5, 5000), 10000))
+                                        dysonRocket.uSpeed += missileSpeedUp;
+                                }
                             }
                             else
                             {
@@ -1128,54 +1124,45 @@ namespace DSP_Battle
                             double num28 = Math.Sqrt(vectorLF5.x * vectorLF5.x + vectorLF5.y * vectorLF5.y + vectorLF5.z * vectorLF5.z);
                             if (num28 < dmgRange * 0.5 && num28 < 400)
                             {
-                                //借助太阳帆弹射的效果触发爆炸动画
-                                int bulletIndex0 = __instance.swarm.AddBullet(new SailBullet
+                                try
                                 {
-                                    maxt = 0.000f,
-                                    lBegin = dysonRocket.uPos,
-                                    uEndVel = dysonRocket.uPos,
-                                    uBegin = dysonRocket.uPos,
-                                    uEnd = vectorLF5 + dysonRocket.uPos
-                                }, 1);
-
-                                __instance.swarm.bulletPool[bulletIndex0].state = 0;
-
-                                ////其他随机爆炸点，此方案已被废弃
-                                //for (int s = 0; s < dmgRange / 50; s++)
-                                //{
-                                //    VectorLF3 explodePoint = dysonRocket.uPos + new VectorLF3((DspBattlePlugin.randSeed.NextDouble() - 0.5) * dmgRange * 2, (DspBattlePlugin.randSeed.NextDouble() - 0.5) * dmgRange * 2, (DspBattlePlugin.randSeed.NextDouble() - 0.5) * dmgRange * 2);
-                                //    int bulletIndex = __instance.swarm.AddBullet(new SailBullet
-                                //    {
-                                //        maxt = 25f / dmgRange * s,
-                                //        lBegin = dysonRocket.uPos,
-                                //        uEndVel = dysonRocket.uPos,
-                                //        uBegin = explodePoint,
-                                //        uEnd = explodePoint
-                                //    }, 1);
-
-                                //    __instance.swarm.bulletPool[bulletIndex].state = 0;
-                                //}
-
-                                //持续爆炸，以及根据子弹爆炸范围决定爆炸效果
-                                for (int s = 0; s < 10; s++)
-                                {
-                                    for (int ss = 0; ss < (int)Math.Sqrt(dmgRange) - 15; ss++)
+                                    //借助太阳帆弹射的效果触发爆炸动画
+                                    int bulletIndex0 = __instance.swarm.AddBullet(new SailBullet
                                     {
-                                        VectorLF3 explodePoint = dysonRocket.uPos;
-                                        int bulletIndex = __instance.swarm.AddBullet(new SailBullet
+                                        maxt = 0.000f,
+                                        lBegin = dysonRocket.uPos,
+                                        uEndVel = dysonRocket.uPos,
+                                        uBegin = dysonRocket.uPos,
+                                        uEnd = vectorLF5 + dysonRocket.uPos
+                                    }, 1);
+
+                                    __instance.swarm.bulletPool[bulletIndex0].state = 0;
+
+                                    //持续爆炸，以及根据子弹爆炸范围决定爆炸效果
+                                    for (int s = 0; s < 10; s++)
+                                    {
+                                        for (int ss = 0; ss < (int)Math.Sqrt(dmgRange) - 15; ss++)
                                         {
-                                            maxt = 0.016666667f * s,
-                                            lBegin = dysonRocket.uPos,
-                                            uEndVel = dysonRocket.uPos,
-                                            uBegin = explodePoint,
-                                            uEnd = explodePoint
-                                        }, 1);
+                                            VectorLF3 explodePoint = dysonRocket.uPos;
+                                            int bulletIndex = __instance.swarm.AddBullet(new SailBullet
+                                            {
+                                                maxt = 0.016666667f * s,
+                                                lBegin = dysonRocket.uPos,
+                                                uEndVel = dysonRocket.uPos,
+                                                uBegin = explodePoint,
+                                                uEnd = explodePoint
+                                            }, 1);
 
-                                        __instance.swarm.bulletPool[bulletIndex].state = 0;
+                                            __instance.swarm.bulletPool[bulletIndex].state = 0;
 
+                                        }
                                     }
                                 }
+                                catch (Exception)
+                                {
 
+                                    throw;
+                                }
                                 //范围伤害和强制位移
                                 var shipsHit = EnemyShips.FindShipsInRange(dysonRocket.uPos, dmgRange);
                                 if (shipsHit.Count > 0) UIBattleStatistics.RegisterHit(missileId, 0, 1); //首先注册一下该导弹击中，但不注册伤害
@@ -1224,16 +1211,17 @@ namespace DSP_Battle
                             }
                             if (dysonRocket.uSpeed <= missileMaxSpeed)
                             {
-                                //离目标过远且没到满速度 或 速度少于1/2的最大速度 或 速度少于5000都会加速；而如果离目标过近且速度超过5000且速度超过1/2最大速度，则会减速
-                                if ((vectorLF5.magnitude > missileMaxSpeed && dysonRocket.uSpeed < missileMaxSpeed) || dysonRocket.uSpeed < missileMaxSpeed * 0.5f || dysonRocket.uSpeed < 5000)
+                                //离目标过远且没到满速度 或 速度少于1/2的最大速度 或 速度少于5000都会加速；而如果离目标过近且速度超过1/2最大速度，或离得过近的同时速度超过了10000，会减速
+                                if (vectorLF5.magnitude > Math.Min(missileMaxSpeed, 30000))
                                     dysonRocket.uSpeed += missileSpeedUp;
-                                else if (vectorLF5.magnitude < missileMaxSpeed && dysonRocket.uSpeed > missileMaxSpeed * 0.5 && dysonRocket.uSpeed > 5000)
-                                    dysonRocket.uSpeed -= missileSpeedUp;
+                                else
+                                {
+                                    if (dysonRocket.uSpeed > Math.Min(Math.Max(missileMaxSpeed * 0.5, 5000), 10000))
+                                        dysonRocket.uSpeed -= missileSpeedUp;
+                                    else if(dysonRocket.uSpeed < Math.Min(Math.Max(missileMaxSpeed * 0.5, 5000), 10000))
+                                        dysonRocket.uSpeed += missileSpeedUp;
+                                }
                             }
-                            //else if (dysonRocket.uSpeed > num29 + num4)
-                            //{
-                            //	dysonRocket.uSpeed -= num4;
-                            //}
                             else
                             {
                                 dysonRocket.uSpeed = missileMaxSpeed;

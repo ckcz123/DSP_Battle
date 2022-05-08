@@ -183,12 +183,12 @@ namespace DSP_Battle
                     GameMain.history.techSpeed *= 2;
                     GameMain.history.logisticDroneSpeedScale *= 1.5f;
                     GameMain.history.logisticShipSpeedScale *= 1.5f;
-                    if(Rank.rank>=3)
-                        GameMain.history.miningCostRate *= 0.8f;
                     if (Rank.rank >= 5)
                         ResetCargoAccIncTable(true);
                     if (Rank.rank >= 7)
                         GameMain.history.miningCostRate *= 0.5f;
+                    else if(Rank.rank >= 3)
+                        GameMain.history.miningCostRate *= 0.8f;
                 }
 
                 string rewardByRank = string.Format("奖励提示0".Translate(), extraSpeedFrame / 60);
