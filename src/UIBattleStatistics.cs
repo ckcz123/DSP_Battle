@@ -388,7 +388,7 @@ namespace DSP_Battle
                     PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
                     Vector3 stationPos = planetFactory.entityPool[ship.targetStation.entityId].pos;
                     int planetId = planetFactory.planetId;
-                    AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
+                    AstroData[] astroPoses = GameMain.galaxy.astrosData;
                     VectorLF3 stationUpos = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, stationPos);
                     distance = (stationUpos - ship.uPos).magnitude;
                 }

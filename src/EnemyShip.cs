@@ -50,11 +50,11 @@ namespace DSP_Battle
             get
             {
                 if (state != State.active) return -1;
-                AstroPose[] astroPoses = GameMain.data.galaxy.astroPoses;
+                AstroData[] astroPoses = GameMain.data.galaxy.astrosData;
                 StationComponent station = targetStation;
                 if (station == null) return -1;
 
-                AstroPose pose = astroPoses[shipData.planetB];
+                AstroData pose = astroPoses[shipData.planetB];
                 VectorLF3 targetUPos = pose.uPos + Maths.QRotateLF(pose.uRot, station.shipDockPos + station.shipDockPos.normalized * 25f);
                 return (targetUPos - uPos).magnitude;
             }
@@ -370,13 +370,13 @@ namespace DSP_Battle
             float num34 = shipSailSpeed * 0.12f * num32;
             float num35 = shipSailSpeed * 0.4f * num31;
             double dt = 0.016666666666666666;
-            AstroPose[] astroPoses = GameMain.data.galaxy.astroPoses;
+            AstroData[] astroPoses = GameMain.data.galaxy.astrosData;
 
             quaternion = Quaternion.identity;
             flag7 = false;
             StationComponent station = targetStation;
 
-            AstroPose astroPose2 = astroPoses[shipData.planetB];
+            AstroData astroPose2 = astroPoses[shipData.planetB];
             VectorLF3 lhs3 =
                 station == null ? Configs.nextWaveWormholes[wormholeIndex].uPos : 
                 (astroPose2.uPos + Maths.QRotateLF(astroPose2.uRot, station.shipDockPos + station.shipDockPos.normalized * 25f));
@@ -644,10 +644,10 @@ namespace DSP_Battle
             float shipSailSpeed = maxSpeed;
             float num31 = Mathf.Sqrt(shipSailSpeed / 600f);
             float num36 = num31 * 0.006f + 1E-05f;
-            AstroPose[] astroPoses = GameMain.data.galaxy.astroPoses;
+            AstroData[] astroPoses = GameMain.data.galaxy.astrosData;
             StationComponent station = targetStation;
 
-            AstroPose astroPose3 = astroPoses[shipData.planetB];
+            AstroData astroPose3 = astroPoses[shipData.planetB];
             float num78 = 0f;
             if (shipData.direction > 0)
             {

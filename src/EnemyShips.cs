@@ -327,7 +327,7 @@ namespace DSP_Battle
                     {
                         int planetId = planetFactory.planetId;
                         DysonSwarm swarm = RendererSphere.enemySpheres[starIndex].swarm;
-                        AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
+                        AstroData[] astroPoses = GameMain.galaxy.astrosData;
                         VectorLF3 stationUpos = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, stationPos);
                         VectorLF3 shipLocalPos = Maths.QInvRotateLF(astroPoses[planetId].uRot, ship.uPos - astroPoses[planetId].uPos);
                         //我不会再星球表面生成目标点，就用下面这种近似方法

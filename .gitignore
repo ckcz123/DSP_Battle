@@ -399,3 +399,4 @@ FodyWeavers.xsd
 *.sln.iml
 
 .idea/
+DSP_Battle.csproj

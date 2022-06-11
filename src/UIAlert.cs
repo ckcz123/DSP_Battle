@@ -287,7 +287,7 @@ namespace DSP_Battle
                         PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
                         Vector3 stationPos = planetFactory.entityPool[ship.targetStation.entityId].pos;
                         int planetId = planetFactory.planetId;
-                        AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
+                        AstroData[] astroPoses = GameMain.galaxy.astrosData;
                         VectorLF3 stationUpos = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, stationPos);
 
                         totalDistance += (stationUpos - ship.uPos).magnitude;
@@ -314,7 +314,7 @@ namespace DSP_Battle
                         PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
                         Vector3 stationPos = planetFactory.entityPool[ship.targetStation.entityId].pos;
                         int planetId = planetFactory.planetId;
-                        AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
+                        AstroData[] astroPoses = GameMain.galaxy.astrosData;
                         VectorLF3 stationUpos = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, stationPos);
 
                         curTotalDistance += (stationUpos - ship.uPos).magnitude;
@@ -437,11 +437,14 @@ namespace DSP_Battle
             totalStrength = 1;
             totalDistance = 1;
             elimPointRatio = 1.0f;
+            if (elimProgRT == null) Utils.Log("elimRT null");
+            if (invaProgRT == null) Utils.Log("invaRT null");
             elimProgRT.sizeDelta = new Vector2(0, 12);
             invaProgRT.sizeDelta = new Vector2(0, 12);
             isActive = false;
             if (alertUIObj != null)
             {
+                Utils.Log("not null");
                 float yPos = Mathf.Min(DSPGame.globalOption.resolution.height / 1080f * 500f, 500f);
                 alertUIObj.transform.localPosition = new Vector3(0, yPos, 0);
             }

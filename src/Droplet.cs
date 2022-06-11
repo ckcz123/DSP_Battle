@@ -261,7 +261,7 @@ namespace DSP_Battle
             if (GameMain.localPlanet!=null)
             {
                 int planetId = GameMain.localPlanet.id;
-                AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
+                AstroData[] astroPoses = GameMain.galaxy.astrosData;
                 beginUPos = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, GameMain.mainPlayer.position);
                 endUPos = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, GameMain.mainPlayer.position + GameMain.mainPlayer.position.normalized*300); //飞出地表的方向
                 beginLPos = GameMain.mainPlayer.position;
@@ -419,7 +419,7 @@ namespace DSP_Battle
                         if (GameMain.localPlanet != null)
                         {
                             int planetId = GameMain.localPlanet.id;
-                            AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
+                            AstroData[] astroPoses = GameMain.galaxy.astrosData;
                             newEnd = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, GameMain.mainPlayer.position);
                         }
                         RetargetAllBullet(newBegin, newEnd, 1, 0, 0, Configs.dropletSpd / 200.0);
@@ -449,7 +449,7 @@ namespace DSP_Battle
                         if (GameMain.localPlanet!=null) //如果玩家在星球上，水滴则不是直线往玩家身上飞，而是飞到玩家头顶星球上空，然后再飞回玩家（这是在state=5阶段）
                         {
                             int planetId = GameMain.localPlanet.id;
-                            AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
+                            AstroData[] astroPoses = GameMain.galaxy.astrosData;
                             newEnd = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, GameMain.mainPlayer.position * 2); 
                         }
                         RetargetAllBullet(newBegin, newEnd, bulletIds.Length, maxPosDelta, maxPosDelta, Configs.dropletSpd);
@@ -502,7 +502,7 @@ namespace DSP_Battle
                         if (GameMain.localPlanet != null) //如果玩家在星球上，水滴则不是直线往玩家身上飞，而是飞到玩家头顶星球上空，然后再飞回玩家（这是在state=5阶段）
                         {
                             int planetId = GameMain.localPlanet.id;
-                            AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
+                            AstroData[] astroPoses = GameMain.galaxy.astrosData;
                             newEnd = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, GameMain.mainPlayer.position * 2);
                         }
                         RetargetAllBullet(newBegin, newEnd, bulletIds.Length, maxPosDelta, maxPosDelta, Configs.dropletSpd);
@@ -522,7 +522,7 @@ namespace DSP_Battle
                 if (GameMain.localPlanet != null)
                 {
                     int planetId = GameMain.localPlanet.id;
-                    AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
+                    AstroData[] astroPoses = GameMain.galaxy.astrosData;
                     mechaUPos = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, GameMain.mainPlayer.position);
                     mechaUPos2 = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, GameMain.mainPlayer.position * 2);
                 }
@@ -582,7 +582,7 @@ namespace DSP_Battle
                 if (GameMain.localPlanet != null)
                 {
                     int planetId = GameMain.localPlanet.id;
-                    AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
+                    AstroData[] astroPoses = GameMain.galaxy.astrosData;
                     mechaUPos = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, GameMain.mainPlayer.position);
                 }
                 swarm.bulletPool[bulletIds[0]].t -= tickT * 2;

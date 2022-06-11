@@ -149,7 +149,7 @@ namespace DSP_Battle
                         __instance.time += num2;
                         if (__instance.time >= __instance.chargeSpend)
                         {
-                            AstroPose[] astroPoses = sphere.starData.galaxy.astroPoses;
+                            AstroData[] astroPoses = sphere.starData.galaxy.astrosData;
                             __instance.fired = true;
                             //DysonNode autoDysonNode = sphere.GetAutoDysonNode(__instance.autoIndex + __instance.id); //原本获取目标节点，现在已不需要
                             DysonRocket dysonRocket = default(DysonRocket);
@@ -211,7 +211,7 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(DysonSphere), "RocketGameTick", new Type[] { })]
         public static bool RocketGameTickNoThreadPatch(ref DysonSphere __instance)
         {
-            AstroPose[] astroPoses = __instance.starData.galaxy.astroPoses;
+            AstroData[] astroPoses = __instance.starData.galaxy.astrosData;
             double num = 0.016666666666666666;
             float num2 = Mathf.Max(1f, (float)Math.Pow((double)__instance.defOrbitRadius / 40000.0 * 4.0, 0.4));
             float num3 = 7.5f;
@@ -256,7 +256,7 @@ namespace DSP_Battle
 
 
                         //DysonSphereLayer dysonSphereLayer = __instance.layersIdBased[dysonRocket.node.layerId];
-                        AstroPose astroPose = astroPoses[dysonRocket.planetId];
+                        AstroData astroPose = astroPoses[dysonRocket.planetId];
                         VectorLF3 vectorLF = astroPose.uPos - dysonRocket.uPos;
                         double num8 = Math.Sqrt(vectorLF.x * vectorLF.x + vectorLF.y * vectorLF.y + vectorLF.z * vectorLF.z) - (double)astroPose.uRadius;
                         if (dysonRocket.t <= 0f) //如果离地面很近，是个加速从地面直线向上冲的过程
@@ -630,7 +630,7 @@ namespace DSP_Battle
                     {
 
                         DysonSphereLayer dysonSphereLayer = __instance.layersIdBased[dysonRocket.node.layerId];
-                        AstroPose astroPose = astroPoses[dysonRocket.planetId];
+                        AstroData astroPose = astroPoses[dysonRocket.planetId];
                         VectorLF3 vectorLF = astroPose.uPos - dysonRocket.uPos;
                         double num8 = Math.Sqrt(vectorLF.x * vectorLF.x + vectorLF.y * vectorLF.y + vectorLF.z * vectorLF.z) - (double)astroPose.uRadius;
                         if (dysonRocket.t <= 0f) //如果离地面很近，是个加速从地面直线向上冲的过程
@@ -870,7 +870,7 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(DysonSphere), "RocketGameTick", new Type[] { typeof(int), typeof(int), typeof(int) })]
         public static bool RocketGameTickThreadPatch(ref DysonSphere __instance, int _usedThreadCnt, int _curThreadIdx, int _minimumMissionCnt)
         {
-            AstroPose[] astroPoses = __instance.starData.galaxy.astroPoses;
+            AstroData[] astroPoses = __instance.starData.galaxy.astrosData;
             double num = 0.016666666666666666;
             float num2 = Mathf.Max(1f, (float)Math.Pow((double)__instance.defOrbitRadius / 40000.0 * 4.0, 0.4));
             float num3 = 7.5f;
@@ -921,7 +921,7 @@ namespace DSP_Battle
                         float missileSpeedUp = (float)missileMaxSpeed / 200f;
 
                         //DysonSphereLayer dysonSphereLayer = __instance.layersIdBased[dysonRocket.node.layerId];
-                        AstroPose astroPose = astroPoses[dysonRocket.planetId];
+                        AstroData astroPose = astroPoses[dysonRocket.planetId];
                         VectorLF3 vectorLF = astroPose.uPos - dysonRocket.uPos;
                         double num8 = Math.Sqrt(vectorLF.x * vectorLF.x + vectorLF.y * vectorLF.y + vectorLF.z * vectorLF.z) - (double)astroPose.uRadius;
                         if (dysonRocket.t <= 0f) //如果离地面很近，是个加速从地面直线向上冲的过程
@@ -1328,7 +1328,7 @@ namespace DSP_Battle
                     {
 
                         DysonSphereLayer dysonSphereLayer = __instance.layersIdBased[dysonRocket.node.layerId];
-                        AstroPose astroPose = astroPoses[dysonRocket.planetId];
+                        AstroData astroPose = astroPoses[dysonRocket.planetId];
                         VectorLF3 vectorLF = astroPose.uPos - dysonRocket.uPos;
                         double num8 = Math.Sqrt(vectorLF.x * vectorLF.x + vectorLF.y * vectorLF.y + vectorLF.z * vectorLF.z) - (double)astroPose.uRadius;
                         if (dysonRocket.t <= 0f) //如果离地面很近，是个加速从地面直线向上冲的过程

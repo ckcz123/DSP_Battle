@@ -90,7 +90,7 @@ namespace DSP_Battle
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(EjectorComponent), "InternalUpdate")]
-        public static bool EjectorPatch(ref EjectorComponent __instance, float power, DysonSwarm swarm, AstroPose[] astroPoses, AnimData[] animPool, int[] consumeRegister, ref uint __result)
+        public static bool EjectorPatch(ref EjectorComponent __instance, float power, DysonSwarm swarm, AstroData[] astroPoses, AnimData[] animPool, int[] consumeRegister, ref uint __result)
         {
             int planetId = __instance.planetId;
             int starIndex = planetId / 100 - 1;
