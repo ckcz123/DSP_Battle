@@ -1462,7 +1462,6 @@ namespace DSP_Battle
 
         }
 
-
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UISpraycoaterWindow), "RefreshSpraycoaterWindow")]
         public static void RefreshSpraycoaterWindowPostPatch(ref UISpraycoaterWindow __instance, SpraycoaterComponent spraycoater)
@@ -1483,6 +1482,5 @@ namespace DSP_Battle
 
             }
         }
-
     }
 }

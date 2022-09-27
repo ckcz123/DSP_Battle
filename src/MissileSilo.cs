@@ -919,7 +919,6 @@ namespace DSP_Battle
                             forceDisplacement = true;
                         }
                         float missileSpeedUp = (float)missileMaxSpeed / 200f;
-
                         //DysonSphereLayer dysonSphereLayer = __instance.layersIdBased[dysonRocket.node.layerId];
                         AstroData astroPose = astroPoses[dysonRocket.planetId];
                         VectorLF3 vectorLF = astroPose.uPos - dysonRocket.uPos;
@@ -1120,7 +1119,6 @@ namespace DSP_Battle
                             }
 
 
-
                             double num28 = Math.Sqrt(vectorLF5.x * vectorLF5.x + vectorLF5.y * vectorLF5.y + vectorLF5.z * vectorLF5.z);
                             if (num28 < dmgRange * 0.5 && num28 < 400)
                             {
@@ -1287,6 +1285,10 @@ namespace DSP_Battle
                             {
                                 toTarget = ship.uPos - dysonRocket.uPos;
 
+
+                                missileProtoIds[starIndex][i] = 0;
+                                __instance.RemoveDysonRocket(i);
+                                goto IL_BDF;
                             }
                             double distance = toTarget.magnitude;
                             if (distance < num33) //距离小于一帧的量
@@ -1306,6 +1308,11 @@ namespace DSP_Battle
                                 dysonRocket.uPos.z = dysonRocket.uPos.z + (double)dysonRocket.uVel.z * num33 + vectorLF6.z;
                             }
 
+                        VectorLF3 vectorLF6 = Vector3.zero;
+                        double num30 = (double)(2f - (float)num8 / 200f);
+                        if (num30 > 1.0)
+                        {
+                            num30 = 1.0;
                         }
                         vectorLF = astroPose.uPos - dysonRocket.uPos;
                         num8 = Math.Sqrt(vectorLF.x * vectorLF.x + vectorLF.y * vectorLF.y + vectorLF.z * vectorLF.z) - (double)astroPose.uRadius;
