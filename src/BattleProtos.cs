@@ -1,6 +1,7 @@
 ﻿using CommonAPI.Systems;
 using HarmonyLib;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,6 +14,9 @@ namespace DSP_Battle
         public static int pageBias = 0;
         public static void AddProtos()
         {
+            //官方星图界面 橙色高亮字体color=FD965EC0
+            //增产效果的蓝色高亮字体 0.3821 0.8455 1 0.7059 : 61d8ffb4
+
             ProtoRegistry.RegisterString("轨道防御", "Defense", "轨道防御");
 
             ProtoRegistry.RegisterString("子弹1", "Armour piercing", "穿甲磁轨弹");
@@ -22,29 +26,34 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("子弹2描述", "A powerful bullet by sulfuric acid.", "在对敌人进行分析和研究后，先驱者大胆将<color=#c2853d>硫酸</color>封装后制成了一种新的炮弹。爆破后可以对范围内敌人产生酸蚀，更加高效地杀伤敌人。");
             ProtoRegistry.RegisterString("子弹2结论", "You have unlocked acid bullet.", "你解锁了强酸磁轨弹，可以利用硫酸腐蚀外壳");
             ProtoRegistry.RegisterString("子弹3", "Deuterium nucleus", "氘核爆破弹");
+            ProtoRegistry.RegisterString("子弹3短", "D-nucleus", "氘核爆破弹");
             ProtoRegistry.RegisterString("子弹3描述", "A more powerful bullet with a micro-thermonuclear-boom in it.", "制造出<color=#c2853d>热核导弹</color>的先驱者想要让他更小更快，便试着把核弹微缩化封装进了子弹里。该武器可以在命中后发生聚变爆炸，对敌人造成大量伤害。");
             ProtoRegistry.RegisterString("子弹3结论", "You have unlocked deuterium nucleus", "你解锁了氘核爆破弹，可以利用核聚变进行破坏");
             ProtoRegistry.RegisterString("脉冲", "Phase-cracking beam", "相位裂解光束");
+            ProtoRegistry.RegisterString("脉冲短", "Cracking beam", "相位裂解光束");
             ProtoRegistry.RegisterString("脉冲描述", "The beam doesn't need to be produced, just provide enough energy for the <color=#c2853d>Phaser emitter</color> to eject.", "这种光束是不需要制作和提供的，只需给<color=#c2853d>相位裂解炮</color>提供足够电量即可无限发射。");
 
             ProtoRegistry.RegisterString("导弹1", "Thermonuclear missile", "热核导弹");
+            ProtoRegistry.RegisterString("导弹1短", "Nuclear missile", "热核导弹");
             ProtoRegistry.RegisterString("导弹1描述", "A powerful nuclear missile", "这天，百无聊赖的先驱者正在刷哔哩哔哩，突然刷到了一条《如何在卧室制造核弹》的视频，于是这种导弹便被制造了出来。这是一种重型武器，发射升空并命中敌人后产生核爆，造成大范围伤害。");
             ProtoRegistry.RegisterString("导弹1结论", "You have unlocked thermonuclear missile.", "你解锁了热核导弹，可以自动追踪敌人");
 
             ProtoRegistry.RegisterString("导弹2", "Antimatter missile", "反物质导弹");
+            ProtoRegistry.RegisterString("导弹2短", "A-M missile", "反物质导弹");
             ProtoRegistry.RegisterString("导弹2描述", "A missile has a bit of antimatter in it, turning anything into oblivion after explosion.", "先驱者在一次搬运货物时不慎手滑造成微量<color=#c2853d>反物质</color>泄露，这导致他辛辛苦苦拉好的产线毁于一旦。“为什么不让敌人尝尝这种痛苦呢？”他想到。于是这种将<color=#c2853d>反物质</color>封装入导弹的武器被制造了出来，命中敌人后会发生湮灭，将敌人彻底抹杀。");
             ProtoRegistry.RegisterString("导弹2结论", "You have unlocked antimatter missile.", "你解锁了反物质导弹，可以自动追踪敌人");
 
             ProtoRegistry.RegisterString("导弹3", "Gravitational collapse missile", "引力塌陷导弹");
-            ProtoRegistry.RegisterString("导弹3描述", "A missile can creates a micro-black-hole instantaneously after exposion.", "发明出<color=#c2853d>引力弹射炮</color>的先驱者一鼓作气，将微型黑洞封装进导弹，制成了这种超级武器。它能在爆炸后短暂生成一个微型黑洞将范围内的敌人吸入其中，简单高效。");
+            ProtoRegistry.RegisterString("导弹3短", "Grav-missile", "引力塌陷导弹");
+            ProtoRegistry.RegisterString("导弹3描述", "A missile can creates a micro-black-hole instantaneously after exposion.", "发明出<color=#c2853d>引力弹射炮</color>的先驱者一鼓作气，将微型黑洞封装进导弹，制成了这种超级武器。它能在爆炸后短暂生成一个微型黑洞将范围内的敌人聚拢，简单高效。");
             ProtoRegistry.RegisterString("导弹3结论", "You have unlocked gravitational collapse missile.", "你解锁了引力塌陷导弹，可以自动追踪敌人");
 
             ProtoRegistry.RegisterString("弹射器1", "Super railgun", "电磁轨道炮");
-            ProtoRegistry.RegisterString("弹射器1描述", "An giant railgun based on electromagnetic-ejection technology, ejecting any physical ammunition.", "制造出<color=#c2853d>穿甲磁轨弹</color>的先驱者不知道该如何把他们扔上天，直到他不小心把<color=#c2853d>太阳帆</color>误装成了炮弹。“好极了，现在我‘创造’了一种武器。”先驱者这样想着，“但是怎么区分他们呢？”。随后，先驱者默念着：“你指尖闪动的电光，是我此生不变的信仰……”给它装上了橙色氛围灯。该武器打击范围受到仰角限制。");
+            ProtoRegistry.RegisterString("弹射器1描述", "An giant railgun based on electromagnetic-ejection technology, ejecting any physical ammunition.", "制造出<color=#c2853d>穿甲磁轨弹</color>的先驱者不知道该如何把他们扔上天，直到他不小心把<color=#c2853d>太阳帆</color>误装成了炮弹。“好极了，现在我‘创造’了一种武器。”先驱者这样想着，“但是怎么区分他们呢？”。随后，先驱者默念着：“你指尖闪动的电光，是我此生不变的信仰……”给它装上了橙色氛围灯。该武器可以装入任何类型的子弹，且打击范围受到仰角限制。");
             ProtoRegistry.RegisterString("弹射器1结论", "You have unlocked super railgun.", "你解锁了电磁轨道炮，可以发射子弹攻击敌方");
 
             ProtoRegistry.RegisterString("弹射器2", "Gravitation Slingshot ejector", "引力弹射炮");
-            ProtoRegistry.RegisterString("弹射器2描述", "An giant ejector, speed up any physical ammunition by two micro-black-hole inside it.", "在黑洞杀了个七进七出之后，先驱者对引力操控有了深入见解，他终于决定自己开发一种武器。于是他拆除了<color=#c2853d>电磁轨道炮</color>的加速磁场，制造了一种利用微型黑洞制造引力弹弓的发生器，这使得发射炮弹获得了数倍于之前的动能。“这回可不是换个氛围灯那么简单了！”先驱者自我陶醉着。");
+            ProtoRegistry.RegisterString("弹射器2描述", "An giant ejector, speed up any physical ammunition by two micro-black-hole inside it.", "在黑洞杀了个七进七出之后，先驱者对引力操控有了深入见解，他终于决定自己开发一种武器。于是他拆除了<color=#c2853d>电磁轨道炮</color>的加速磁场，制造了一种利用微型黑洞制造引力弹弓的发生器，这使得发射炮弹获得了数倍于之前的动能。“这回可不是换个氛围灯那么简单了！”先驱者自我陶醉着。该武器能以更高的射速发射任何类型的子弹。");
             ProtoRegistry.RegisterString("弹射器2结论", "You have unlocked Gravitation Slingshot ejector.", "你解锁了引力弹射炮，可以发射子弹攻击敌方");
 
             ProtoRegistry.RegisterString("脉冲炮", "Phaser emitter", "相位裂解炮");
@@ -114,51 +123,84 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("彩蛋8", "Pioneer Diary #8", "先驱者日记#8");
             ProtoRegistry.RegisterString("彩蛋9", "Pioneer Diary #9", "先驱者日记#9");
 
-
-            ProtoRegistry.RegisterString("行星力场护盾", "Planet shield", "行星力场护盾");
+            //ProtoRegistry.RegisterString("行星力场护盾", "Planet shield", "行星力场护盾");
             ProtoRegistry.RegisterString("星际要塞", "Star fortress", "星际要塞");
-            ProtoRegistry.RegisterString("恒星炮", "Star cannon", "恒星炮");
-            ProtoRegistry.RegisterString("水滴gm", "Water-drop", "水滴");
+            ProtoRegistry.RegisterString("恒星炮gm2", "Star cannon", "恒星炮");
+            ProtoRegistry.RegisterString("水滴gm2", "Droplet", "水滴"); 
             ProtoRegistry.RegisterString("即将到来gm", "Coming soon", "即将推出");
 
+            ProtoRegistry.RegisterString("尼科尔戴森光束", "Nicoll-Dyson beam", "尼科尔-戴森光束");
+            ProtoRegistry.RegisterString("尼科尔戴森光束描述", "Decoding a method for building a Star Cannon from alien matrices, disintegrating wormholes with stellar energy.", "从异星矩阵中解码建造恒星炮的方法，利用恒星级能量瓦解虫洞。");
+            ProtoRegistry.RegisterString("尼科尔戴森光束结论", "You have unlocked the star cannon.", "你解锁了建造恒星炮的能力。");
+            ProtoRegistry.RegisterString("行星力场护盾", "Planetary force field shield", "行星力场护盾");
+            ProtoRegistry.RegisterString("行星力场护盾描述", "Maintain force field shields around planets.", "在行星周围构建力场护盾。");
+            ProtoRegistry.RegisterString("行星力场护盾结论", "You have unlocked the planet shield generator.", "你解锁了行星护盾生成器。");
+            ProtoRegistry.RegisterString("玻色子操控", "Boson control", "玻色子操控");
+            ProtoRegistry.RegisterString("玻色子操控描述", "Create powerful materials by manipulating various interacting forces.", "通过操控各种相互作用力来制造强大的材料。");
+            ProtoRegistry.RegisterString("玻色子操控结论", "You have unlocked the Boson control.", "你解锁了玻色子操控。");
+            ProtoRegistry.RegisterString("超距信号处理1", "Stellar-range signal processing", "超距信号处理");
+            ProtoRegistry.RegisterString("超距信号处理2", "Stellar-range signal processing", "超距信号处理");
+            ProtoRegistry.RegisterString("超距信号处理3", "Stellar-range signal processing", "超距信号处理");
+            ProtoRegistry.RegisterString("超距信号处理描述", "Enhance real-time control of droplets.", "强化对水滴的实时控制能力。");
+            ProtoRegistry.RegisterString("超距信号处理结论", "Drop control limit is increased.", "可同时操控的水滴上限提升。");
+            ProtoRegistry.RegisterString("水滴控制上限", "Droplet control limit", "水滴控制上限");
+
+            ProtoRegistry.RegisterString("恒星炮未规划", "Star Cannon Unplanned", "恒星炮未规划");
+            ProtoRegistry.RegisterString("恒星炮建设中", "Building In Progress", "恒星炮建设中");
+            ProtoRegistry.RegisterString("恒星炮冷却中", "Cooling Down", "恒星炮冷却中");
+            ProtoRegistry.RegisterString("恒星炮充能中", "Charging", "恒星炮充能中");
+            ProtoRegistry.RegisterString("恒星炮开火", "Star Cannon Open Fire", "恒星炮开火");
+            ProtoRegistry.RegisterString("瞄准中", "Aiming", "瞄准中");
+            ProtoRegistry.RegisterString("预热中", "Preheating", "预热中");
+            ProtoRegistry.RegisterString("正在开火", "Firing", "正在开火");
+            ProtoRegistry.RegisterString("没有规划的恒星炮", "Firing", "没有规划的恒星炮");
+            ProtoRegistry.RegisterString("恒星炮需要至少修建至第一阶段才能够开火！", "Firing", "恒星炮需要至少修建至第一阶段才能够开火！");
+            ProtoRegistry.RegisterString("恒星炮已经启动", "Star cannon has already launched.", "恒星炮已经启动。");
+            ProtoRegistry.RegisterString("恒星炮冷却中！", "Star cannon is cooling down.", "恒星炮冷却中！");
+            ProtoRegistry.RegisterString("恒星炮充能中！", "Star cannon is charging.", "恒星炮充能中！");
+            ProtoRegistry.RegisterString("没有目标！", "Can not find target.", "没有目标！");
+            ProtoRegistry.RegisterString("超出射程！", "Out of range.", "超出射程！");
+            ProtoRegistry.RegisterString("虫洞已完全稳定，无法被摧毁", "The wormholes are fully stabilized and cannot be destroyed.", "虫洞已完全稳定，无法被摧毁。");
+            ProtoRegistry.RegisterString("恒星炮已启动", "Launching.", "恒星炮已启动。");
+            
 
             ProtoRegistry.RegisterString("彩蛋1描述", "Seems like these enemies are a kind of space insect. They live in deep space, feed on the tides of power without vision. " +
                 "The interstellar station creates regular ripples in space, making itself a beacon in a dark universe that can easily be captured and attacked by the insects. " +
                 "In other words, <color=#c2853d>they will randomly choose an interstellar station, and attack its star system via wormholes. Stars with more interstellar stations will have a higher probability of being selected, and stars without any interstellar stations won't be attacked. </color>" +
-                "Obviously, I can't give up my interstellar stations as progress will slow without item transportation. Instead, I have to find a way to defend. Hope I still have time to think about 'The Answer to Life, the Universe, and Everything'.",
+                "Obviously, I can't give up my interstellar stations as progress will slow without item transportation. Instead, I have to find a way to defend. Hope I still have time to think about 'The Answer to Life, the Universe, and Everything'.", 
                 "这种生物似乎是一种虫类，靠进食宇宙中的各种能量潮汐为生，同时还具有虫洞制造能力，一旦发现食物就会直接在附近建立虫洞。" +
                 "星际物流塔产生的能量潮汐让它变成了宇宙中的一座灯塔，能被这些生物轻易捕捉并视作食物来源。" +
                 "换言之，<color=#c2853d>它们会随机选择全星区的任意一个星际物流塔，通过虫洞进攻该星系；物流塔越多的星系受到攻击概率越高，而只要不建设星际物流塔，那个星系就不会受到它们的侵扰。</color>" +
                 "但这显然行不通，不用星际物流塔将极大的延缓任务完成的速度，这是主脑不愿意看到的。看来我需要一些防御设施来保护星际物流塔。唉，本来还说抽空思考一下宇宙的终极答案的……");
             ProtoRegistry.RegisterString("彩蛋2描述", "Armour piercing rounds are still too inefficient, I have to find a better alternative. Anyway, they are real creatures, and acid erosion should do more damage to them.\n" +
-                "Besides, I found that <color=#c2853d>the wormholes will always establish when the warning timer reaches 5 minutes?</color> If my railgun can't destroy the invading enemies, maybe I can do something before then...",
+                "Besides, I found that <color=#c2853d>the wormholes will always establish when the warning timer reaches 5 minutes?</color> If my railgun can't destroy the invading enemies, maybe I can do something before then...", 
                 "穿甲弹的效率还是太低了，我得试试找到强力的替代品，最好是能产生更大的伤害。就目前的情况来看，硫酸是个不错的选择，我可以试着直接把他们投射向敌人。" +
                 "再怎么说他们也是实体生物，酸蚀也够他们喝一壶的。还好它们不是异形，不然就是够我喝一壶的了。\n" +
                 "另外我发现，<color=#c2853d>虫洞永远在预警五分钟时才生成？</color>" +
                 "要是我的磁轨炮打不到入侵的敌人，也许我可以提前做点什么...");
             ProtoRegistry.RegisterString("彩蛋3描述", "They are more powerful than I thought. With the expansion of pipelines and interstellar stations, their offensive has become more and more ferocious. " +
                 "The Near Earth Def-system had limited coverage and could no longer effectively resist them. Luckily I have learned to manufacture thermonuclear missiles on YouTube, and launching it will definitely solve this urgent need.\n" +
-                "In addition, I found that <color=#c2853d>every time they destroy an interstellar station, the next wave will be delayed! </color>Maybe I can find a way to get more time for building?",
+                "In addition, I found that <color=#c2853d>every time they destroy an interstellar station, the next wave will be delayed! </color>Maybe I can find a way to get more time for building?", 
                 "我还是把他们想的太简单了。随着产线扩张，物流塔的建设，他们的攻势越来越凶猛。大炮的覆盖范围有限，已经无法有效抵挡他们了。好在我这几天在B站上学会了造热核弹，把它发射上去肯定能解燃眉之急。" +
                 "至于怎么发射上去，那还真得研究研究了，炮管子实在是太细了，放不进去。赶快结束这一切吧，我还想去梦里数电子羊呢。\n" +
                 "另外我发现，<color=#c2853d>虫子每破坏一座星际物流塔，下一次进攻就会被推迟！</color>也许可以想想办法获得更多的发展时间呢？");
             ProtoRegistry.RegisterString("彩蛋4描述", "The thermonuclear missiles are very powerful, but the launch is too slow. How can I create a miniature version and integrate with bullets, so they can both have lethality and speed? What a genius I am!\n" +
-                "Another thing I found is, <color=#c2853d>the intensity of the attack on different stars is independent. The first attack on a new star will start from the lowest intensity...</color> It seems I don't need to worry about the safety of planets with only for miners now.",
+                "Another thing I found is, <color=#c2853d>the intensity of the attack on different stars is independent. The first attack on a new star will start from the lowest intensity...</color> It seems I don't need to worry about the safety of planets with only for miners now.", 
                 "热核导弹的杀伤力确实很大，但是发射也太慢了，我得研究研究怎么把热核导弹造成微缩版本塞进炮弹里面去，那不就既有杀伤力又有速度嘛。我可真是个天才！" +
                 "唉，你说我这天才为什么就不得伊卡拉姆妹妹的喜欢呢？我为她专门点亮了一片星系告白，但她居然说：“前天看到了小白兔，昨天是小鹿，今天是你。”这不是嘲讽我像个动物一样蠢吗。算了算了，不提了，女人只会影响我造戴森球的速度。\n" +
                 "另外我发现，<color=#c2853d>这些虫子攻击不同星系的强度是独立的啊，进攻全新星系的虫群似乎会重新从最低强度开始...</color> 看来暂时是不怎么需要担心矿星的安全性问题了。");
             ProtoRegistry.RegisterString("彩蛋5描述", "Damn it, a bit of antimatter leakage almost destroyed my pipelines, which took me a lot of time to repair. " +
-                "Wait, they can destroy my pipelines, why not insects? Good idea! Wait for me, fxxk insects, taste the antimatter and die!",
+                "Wait, they can destroy my pipelines, why not insects? Good idea! Wait for me, fxxk insects, taste the antimatter and die!", 
                 "倒霉透了，手滑泄露的那一点反物质差点把产线给扬了，害得我修复了好久。诶等等，能扬了我的产线为什么不能扬了那堆臭虫？思路打开了！" +
                 "死虫子你们给我等着，跟我轻型机甲拼你们有这个实力吗？我这就把反物质打上天，指定没有你们好果子吃！");
-            ProtoRegistry.RegisterString("彩蛋6描述", "Jesus! Why I limited myself to existing technologies? I'm Icarus, who can travel through black holes, hard landing with ultra-high speed, take a shower in lava and swim in sulfuric acid lake. " +
+            ProtoRegistry.RegisterString("彩蛋6描述", "Jesus! Why did I limit myself to existing technologies? I'm Icarus, who can travel through black holes, make a hard landing with ultra-high speed, take a shower in lava and swim in a sulfuric acid lake. " +
                 "Why can't I develop some outrageous weapons? Damn insects, can't be avoided and keep slowing down my progress, let me teach you a lesson! Come on!", 
                 "真是的，我为什么要局限于现有的武器技术啊。我可是伊卡洛斯啊，能穿越黑洞，能超高速硬着陆，能去岩浆里泡澡去硫酸里游泳，我为什么不能大胆开发点离谱的武器？" +
                 "反正也是闲着，不如给虫子看看我的真本事！TNND，杀又杀不完，躲也躲不掉，还一直拖慢我的进度，跟我玩阴的是吧？直接来吧！");
             ProtoRegistry.RegisterString("彩蛋7描述", "Sure enough, nothing will stop me if I really want something. I was too limited before, as I can build a Dyson sphere, why does the cannon need bullets? Just Phaser fission! " +
                 "Everything is good now, I don't need to be distracted by making bullets, so nice!\n" +
                 "By the way, I found <color=#c2853d>the intensity of attack has an upper limit. I really thought it would increase infinitely...</color> Now it's so easy for me to defend them! " +
-                "I don't know if uploading universe matrix or building Dyson sphere will change anything, let me find out.",
+                "I don't know if uploading universe matrix or building Dyson sphere will change anything, let me find out.", 
                 "果然只要我出手没什么办不到的，之前还是太局限了，戴森球都能造出来了为什么武器还需要弹药？直接相位裂解就完事了，要不是降维技术不可逆我都有心想丢二向箔过去。这下好啦，不用专门分心去造子弹了，我要继续去当第四天灾了。" +
                 "顺便说一句，这些虫子可比索林原虫差远了，虽然索林原虫也是渣渣~~日记。\n" +
                 "另外我发现，<color=#c2853d>强度攻击原来是有上限的啊，我还真以为是无限提升呢...</color> 现在已经游刃有余了嘿嘿... 不知道给主脑上传宇宙矩阵或者建成戴森球后会不会有什么额外影响，等到那一步再看吧。");
@@ -171,11 +213,13 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("彩蛋9描述", "<color=#c2853d>42</color>", "<color=#c2853d>42</color>");
 
 
-            ProtoRegistry.RegisterString("UI快捷键提示", "Press Backspace to hide/open this window. Press \"-\" key to advance the attack time by one minute.", "按下退格键开启或关闭此窗口，按下减号键使敌军进攻时间提前1分钟。");
-            ProtoRegistry.RegisterString("简单难度提示", "Difficulty: Easy (Station won't be destroyed; Reward duration * 0.75)", "当前难度：简单（物流塔不会被破坏；奖励持续时间*0.75）");
-            ProtoRegistry.RegisterString("普通难度提示", "Difficulty: Normal (Station attacked will turn to blueprint mode; Reward duration * 1.0)", "当前难度：普通（物流塔被破坏会进入蓝图模式；奖励持续时间*1.0）");
-            ProtoRegistry.RegisterString("困难难度提示", "Difficulty: Hard (Station will be dismantled; Enemy strength will increase; Reward duration * 2.0)", "当前难度：困难（物流塔会被破坏拆除，敌人战斗力大幅提升；奖励持续时间*2.0）");
-            ProtoRegistry.RegisterString("奖励倒计时：", "Reward time left: ", "奖励倒计时：");
+            ProtoRegistry.RegisterString("UI快捷键提示", "Press Backspace to hide/open this window. Press \"Ctrl\" + \"-\" to advance the attack time by 1 min. \n Advancing the attack time will also reduce the amount of dropped Alien Matrix in next wave.", "按下退格键开启或关闭此窗口，按下Ctrl+减号键使敌军进攻时间提前1分钟\n手动提前进攻会减少下一次进攻中敌军掉落异星矩阵的数量");
+
+            ProtoRegistry.RegisterString("简单难度提示", "Difficulty: Easy (Station won't be destroyed; Merit points earned *0.75)", "当前难度：简单（物流塔不会被破坏；功勋点数获得*0.75）");
+            ProtoRegistry.RegisterString("普通难度提示", "Difficulty: Normal (Station attacked will turn to blueprint mode)", "当前难度：普通（物流塔被破坏会进入蓝图模式）");
+            ProtoRegistry.RegisterString("困难难度提示", "Difficulty: Hard (Station will be dismantled; Enemy strength will increase; Merit points earned *1.5)", "当前难度：困难（物流塔会被破坏拆除，敌人战斗力大幅提升；功勋点数获得*1.5）");
+            ProtoRegistry.RegisterString("奖励倒计时：", "Reward time left: ", "奖励剩余时间：");
+
             ProtoRegistry.RegisterString("mod版本信息", "Current version: " + Configs.versionString, "当前版本：" + Configs.versionString + "          欢迎加入mod交流群：" + Configs.qq);
             ProtoRegistry.RegisterString("未探测到威胁", "No threat detected", "未探测到威胁");
             ProtoRegistry.RegisterString("预估数量", "Estimated quantity", "预估数量");
@@ -204,6 +248,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("导弹飞行速度", "Missile speed", "导弹飞行速度");
             ProtoRegistry.RegisterString("虫洞干扰半径", "Wormhole interference radius", "虫洞干扰半径");
             ProtoRegistry.RegisterString("效率gm", "Efficiency", "弹药效率");
+            ProtoRegistry.RegisterString("额外奖励gm", "★bonus ", "★奖励 ");
 
             ProtoRegistry.RegisterString("设定索敌最高优先级", "Set priority to eject", "设定索敌最高优先级");
             ProtoRegistry.RegisterString("最接近物流塔", "Nearest to station", "最接近物流塔");
@@ -212,6 +257,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("最低生命", "Lowest HP", "最低生命");
             ProtoRegistry.RegisterString("目标生命值", "Target HP", "目标生命值");
             ProtoRegistry.RegisterString("无攻击目标", "No target", "无攻击目标");
+            ProtoRegistry.RegisterString("开火中gm", "Firing", "开火中");
             ProtoRegistry.RegisterString("下一波攻击即将到来！", "Next wave is coming!", "下一波攻击即将到来！");
             ProtoRegistry.RegisterString("做好防御提示", "Please prepare next wave in <color=#c2853d>{0}</color>!", "请为<color=#c2853d>{0}</color>做好防御准备。");
             ProtoRegistry.RegisterString("虫洞已生成！", "Wormhole generated!", "虫洞已生成！");
@@ -223,7 +269,11 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("损失物流塔", "Station lost", "损失物流塔");
             ProtoRegistry.RegisterString("损失其他建筑", "Other buildings lost", "损失其他建筑");
             ProtoRegistry.RegisterString("损失资源", "Resource lost", "损失资源");
-            ProtoRegistry.RegisterString("奖励提示", "Got reward: mining speed * 2, tech speed * 2, vessel ship speed * 1.5, lasting for {0} seconds.", "获得奖励：采矿速率*2，研究速率*2，运输船速度*1.5，持续 {0} 秒。");
+            ProtoRegistry.RegisterString("奖励提示0", "Got reward: mining speed * 2, tech speed * 2, vessel ship speed * 1.5, lasting for {0} seconds.", "获得奖励：采矿速率*2，研究速率*2，运输船速度*1.5，持续 {0} 秒。");
+            ProtoRegistry.RegisterString("奖励提示3", "Got reward: ore consumption -20%, mining speed * 2, tech speed * 2, vessel ship speed * 1.5, lasting for {0} seconds.", "获得奖励：采矿消耗-20%，采矿速率*2，研究速率*2，运输船速度*1.5，持续 {0} 秒。");
+            ProtoRegistry.RegisterString("奖励提示5", "Got reward: ore consumption -20%, mining speed * 2, tech speed * 2, vessel ship speed * 1.5, proliferator's efficiency has been improved, lasting for {0} seconds.", "获得奖励：采矿消耗-20%，采矿速率*2，研究速率*2，运输船速度*1.5，增产剂效能全面提升，持续 {0} 秒。");
+            ProtoRegistry.RegisterString("奖励提示7", "Got reward: ore consumption -50%, mining speed * 2, tech speed * 2, vessel ship speed * 1.5, proliferator's efficiency has been improved, lasting for {0} seconds.", "获得奖励：采矿消耗-50%，采矿速率*2，研究速率*2，运输船速度*1.5，增产剂效能全面提升，持续 {0} 秒。");
+
             ProtoRegistry.RegisterString("查看更多战斗信息", "View more details of this wave in Statistics -> Battle Info", "在分析面板-战斗统计中，可以查看更为详细的战斗信息。");
             ProtoRegistry.RegisterString("火箭模式提示", "Current Mode: AUTO", "自动寻敌（无需设置）");
             ProtoRegistry.RegisterString("打开统计面板", "Open Statistics", "打开统计面板");
@@ -255,12 +305,113 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("护卫舰", "Frigate", "护卫舰");
             ProtoRegistry.RegisterString("驱逐舰", "Destroyer", "驱逐舰");
             ProtoRegistry.RegisterString("巡洋舰", "Cruiser", "巡洋舰");
+            ProtoRegistry.RegisterString("重型巡洋舰", "B-Cruiser", "重型巡洋舰");
             ProtoRegistry.RegisterString("战列舰", "Battleship", "战列舰");
             ProtoRegistry.RegisterString("已歼灭gm", "Eliminated", "已歼灭");
             ProtoRegistry.RegisterString("已产生gm", "Total", "已产生");
             ProtoRegistry.RegisterString("占比gm", "Percentage", "占比");
             ProtoRegistry.RegisterString("游戏提示gm", "Message", "游戏提示");
 
+            ProtoRegistry.RegisterString("gmRank0", "<color=#ffffff80>Icarus</color>", "<color=#ffffff80>伊卡洛斯</color>");
+            ProtoRegistry.RegisterString("gmRank1", "<color=#61d8ffb4>Explorer I</color>", "<color=#61d8ffb4>探索者 I</color>");
+            ProtoRegistry.RegisterString("gmRank2", "<color=#61d8ffb4>Explorer II</color>", "<color=#61d8ffb4>探索者 II</color>");
+            ProtoRegistry.RegisterString("gmRank3", "<color=#61d8ffb4>Explorer III</color>", "<color=#61d8ffb4>探索者 III</color>");
+            ProtoRegistry.RegisterString("gmRank4", "<color=#d238ffb4>Pioneer I</color>", "<color=#d238ffb4>开拓者 I</color>");
+            ProtoRegistry.RegisterString("gmRank5", "<color=#d238ffb4>Pioneer II</color>", "<color=#d238ffb4>开拓者 II</color>");
+            ProtoRegistry.RegisterString("gmRank6", "<color=#d238ffb4>Pioneer III</color>", "<color=#d238ffb4>开拓者 III</color>");
+            ProtoRegistry.RegisterString("gmRank7", "<color=#fd9620c0>Conqueror I</color>", "<color=#fd9620c0>征服者 I</color>");
+            ProtoRegistry.RegisterString("gmRank8", "<color=#fd9620c0>Conqueror II</color>", "<color=#fd9620c0>征服者 II</color>");
+            ProtoRegistry.RegisterString("gmRank9", "<color=#fd9620c0>Conqueror III</color>", "<color=#fd9620c0>征服者 III</color>");
+            ProtoRegistry.RegisterString("gmRank10", "<color=#ffc620c8>Galaxy Guardian</color>", "<color=#ffc620da>星河卫士</color>");
+            ProtoRegistry.RegisterString("gmRankNoColor0", "Icarus", "伊卡洛斯");
+            ProtoRegistry.RegisterString("gmRankNoColor1", "Explorer I", "探索者 I");
+            ProtoRegistry.RegisterString("gmRankNoColor2", "Explorer II", "探索者 II");
+            ProtoRegistry.RegisterString("gmRankNoColor3", "Explorer III", "探索者 III");
+            ProtoRegistry.RegisterString("gmRankNoColor4", "Pioneer I", "开拓者 I");
+            ProtoRegistry.RegisterString("gmRankNoColor5", "Pioneer II", "开拓者 II");
+            ProtoRegistry.RegisterString("gmRankNoColor6", "Pioneer III", "开拓者 III");
+            ProtoRegistry.RegisterString("gmRankNoColor7", "Conqueror I", "征服者 I");
+            ProtoRegistry.RegisterString("gmRankNoColor8", "Conqueror II", "征服者 II");
+            ProtoRegistry.RegisterString("gmRankNoColor9", "Conqueror III", "征服者 III");
+            ProtoRegistry.RegisterString("gmRankNoColor10", "Galaxy Guardian", "星河卫士");
+            ProtoRegistry.RegisterString("gmRankUnlockText0", "", "");
+            ProtoRegistry.RegisterString("gmRankUnlockText1", "Wave reward: mining speed * 2, tech speed * 2, vessel ship speed * 1.5. Lasts up to 5 minutes", "战斗结束后给予采矿速率*2，研究速率*2，运输船速度*1.5的奖励，持续5分钟");
+            ProtoRegistry.RegisterString("gmRankUnlockText2", "Wave reward duration +20%", "战斗奖励持续时间增加20%");
+            ProtoRegistry.RegisterString("gmRankUnlockText3", "New wave reward: mining consumption -20%", "战斗结束后额外获得采矿消耗-20%的奖励");
+            ProtoRegistry.RegisterString("gmRankUnlockText4", "Wave reward duration +20%", "战斗奖励持续时间增加20%");
+            ProtoRegistry.RegisterString("gmRankUnlockText5", "New wave reward: proliferator's efficiency has been improved", "战斗结束后额外获得增产剂效果全面加强的奖励");
+            ProtoRegistry.RegisterString("gmRankUnlockText6", "Wave reward duration +20%", "战斗奖励持续时间增加20%");
+            ProtoRegistry.RegisterString("gmRankUnlockText7", "Wave reward: mining consumption -20% --> -50%", "采矿消耗降低的奖励强化为-50%消耗");
+            ProtoRegistry.RegisterString("gmRankUnlockText8", "Wave reward duration +20%", "战斗奖励持续时间增加20%");
+            ProtoRegistry.RegisterString("gmRankUnlockText9", "Star cannon charging speed +100%", "恒星炮充能速度增加100%");
+            ProtoRegistry.RegisterString("gmRankUnlockText10", "Droplet damage greatly increased. Wave reward duration +20%", "水滴伤害获得大幅度加强，战斗结束后的奖励持续时间增加20%");
+            ProtoRegistry.RegisterString("gmRankReward1", "Wave reward unlocked", "战斗结束后给予战斗奖励");
+            ProtoRegistry.RegisterString("gmRankReward7", "Additional wave reward: mining consumption -50%", "额外的战斗奖励：采矿消耗-50%");
+            ProtoRegistry.RegisterString("gmRankReward3", "Additional wave reward: mining consumption -20%", "额外的战斗奖励：采矿消耗-20%");
+            ProtoRegistry.RegisterString("gmRankReward5", "Additional wave reward: proliferator enhancement", "额外的战斗奖励：增产剂效果强化");
+            ProtoRegistry.RegisterString("gmRankReward2", "Wave reward duration +", "战斗奖励持续时间+");
+            ProtoRegistry.RegisterString("gmRankReward9", "Star cannon charging speed +100%", "恒星炮充能速度+100%");
+            ProtoRegistry.RegisterString("gmRankReward10", "Droplet damage +400%", "水滴伤害+400%");
+            ProtoRegistry.RegisterString("功勋阶级", "Merit Rank", "功勋阶级");
+            ProtoRegistry.RegisterString("当前阶级", "Current Rank", "当前等级");
+            ProtoRegistry.RegisterString("功勋点数", "Merit points", "功勋点数");
+            ProtoRegistry.RegisterString("已解锁gm", "Unlocked", "已解锁");
+            ProtoRegistry.RegisterString("下一功勋等级解锁", "Next rank unlocked", "下一功勋等级解锁");
+
+            ProtoRegistry.RegisterString("行星护盾生成器", "Planet shield generator", "行星护盾生成器");
+            ProtoRegistry.RegisterString("行星护盾生成器描述", "Using a large amount of energy to maintain a force field shield on the planet's surface, the encoding of the force field's resonant frequency allows allies to easily pass through the shield, while blocking the enemies. Multiple shield generators can speed up the shield recharge rate, and provide additional shield capacity. However, as the number of shield generators increases, each additional generator will provide less and less additional capacity.", 
+                "使用大量能量在行星表面维持一个力场护盾，对力场谐振频率的编码能够使友方轻易穿过护盾，同时阻挡敌人的进入或攻击。多个护盾生成器能够加快护盾充能的速度，也能够提供额外的护盾容量上限。不过随着单个星球上护盾生成器数量的增加，每个生成器能够提供的额外护盾也将越来越少。");
+            ProtoRegistry.RegisterString("力场护盾", "Planet shield", "力场护盾");
+            ProtoRegistry.RegisterString("力场护盾短", "Shield", "力场护盾");
+            ProtoRegistry.RegisterString("护盾容量", "Shield capacity", "护盾容量");
+            ProtoRegistry.RegisterString("护盾容量短", "Max shield", "护盾容量");
+            ProtoRegistry.RegisterString("当前护盾", "Current shield", "当前护盾");
+            ProtoRegistry.RegisterString("护盾恢复", "Recharge speed", "护盾恢复");
+            ProtoRegistry.RegisterString("护盾生成器总数", "Generator amount", "护盾生成器总数");
+            ProtoRegistry.RegisterString("完全充能时间", "Fully recharged in", "完全充能时间");
+            ProtoRegistry.RegisterString("充能gm", "Charged", "已充能");
+            ProtoRegistry.RegisterString("关闭gm", "Shut down", "关闭");
+            ProtoRegistry.RegisterString("启动gm", "Activate", "启动");
+            ProtoRegistry.RegisterString("护盾生成器待机提示", "The Shield Generator will stop consuming energy, and will no longer provide shield capacity or recharge shields.", "护盾生成器将停止消耗能量，并不再提供最大护盾容量，也无法为护盾充能。");
+            ProtoRegistry.RegisterString("护盾生成器启动提示", "Shield generators will provide shield capacity, and speed up shield recharging.", "护盾生成器将提供护盾容量，并加快护盾充能速度。");
+            ProtoRegistry.RegisterString("耗电需求gm", "Consumption demand", "耗电需求");
+            ProtoRegistry.RegisterString("耗电需求短gm", "Consumption", "耗电需求");
+            ProtoRegistry.RegisterString("发电性能短gm", "Generation", "发电性能");
+
+            ProtoRegistry.RegisterString("护盾承受伤害", "Shield damage taken", "护盾承受伤害");
+            ProtoRegistry.RegisterString("护盾造成伤害", "Shield damage dealed", "护盾造成伤害");
+            ProtoRegistry.RegisterString("水滴伤害", "Droplet damage", "水滴伤害");
+            ProtoRegistry.RegisterString("最小发射能量", "Launch Energy Threshold", "发射能量阈值");
+            ProtoRegistry.RegisterString("水滴发射耗能", "Launch Consumption", "发射耗能");
+            ProtoRegistry.RegisterString("水滴工作功率", "Work Consumption", "工作功率");
+
+            ProtoRegistry.RegisterString("异星矩阵", "Alien matrix", "异星矩阵");
+            ProtoRegistry.RegisterString("异星矩阵描述", "A matrix containing high-density data accidentally dropped by invading swarms. Can be analyzed by mechs and used to unlock more advanced alien technologies. The matrix itself also seems to have potentially high-dimensional spatiotemporal properties", "由入侵的虫群偶然掉落的载有高密度数据的矩阵，可以由机甲分析并用于解锁更高级的异星科技。矩阵本身似乎还具有潜在的高维时空特性。");
+            ProtoRegistry.RegisterString("异星元数据", "Alien metadata", "异星元数据");
+            ProtoRegistry.RegisterString("异星元数据描述", "Having fully decoded the Alien Matrix, Icarus can now quickly decompile the Alien Matrix and obtain the alien metadata, which does not require as much computation as initially decoding the megastructure data in the Alien Matrix. The decoded alien metadata in mech will be automatically uploaded to the CenterBrain and shared with other pioneers in the sector, which will provide Icarus with additional <color=#c2853d>merit points</color>. But this metadata cannot be shared across archives like other metadata.",
+                "在完成了对异星矩阵的全面解码后，伊卡洛斯现在可以快速对异星矩阵进行反编译并获得异星元数据，这不需要像最初解码异星矩阵中的巨构数据那样消耗大量算力。机甲中的异星元数据将自动上传给主脑并共享给星区的其他开拓者，这同时也会为伊卡洛斯提供大量的<color=#c2853d>功勋点数</color>。但该元数据无法像其他元数据一样在存档间共享。");
+            ProtoRegistry.RegisterString("异星矩阵反编译", "Alien matrix decompile", "异星矩阵反编译");
+            ProtoRegistry.RegisterString("异星矩阵反编译 x10", "Alien matrix decompile x10", "异星矩阵反编译 x10"); 
+            ProtoRegistry.RegisterString("异星矩阵反编译 x100", "Alien matrix decompile x100", "异星矩阵反编译 x100");
+            ProtoRegistry.RegisterString("量子增产剂", "Quantum proliferator", "量子增产剂");
+            ProtoRegistry.RegisterString("量子增产剂描述", "Research has shown that matter with high-dimensional spatiotemporal properties can be used to produce more effective proliferators, but such matter does not seem to be directly accessible from the original universe.", "研究表明具有高维时空特性的物质可被用于生产更强效果的增产材料，但这类物质似乎无法从本源宇宙中直接获取。");
+            ProtoRegistry.RegisterString("量子增产剂科技描述", "Exploring how to make more efficient proliferators.", "对制造更高效增产剂进行探索。");
+            ProtoRegistry.RegisterString("量子增产剂科技结论", "You have unlocked quatum proliferator.", "你解锁了制作量子增产剂的技术。");
+            ProtoRegistry.RegisterString("掉落的异星矩阵", "Alien matrices dropped by enemies", "敌舰掉落的异星矩阵");
+            ProtoRegistry.RegisterString("异星矩阵自动转换提示", "The alien matrices dropped by enemies have been automatically decompiled into alien metadata", "敌舰掉落的异星矩阵已自动反编译为异星元数据");
+            
+            ProtoRegistry.RegisterString("物质解压器科技描述", "Decoding a method from the alien matrices to build a Matter Decompressor.", "从异星矩阵中解码建造物质解压器的方法。");
+            ProtoRegistry.RegisterString("科学枢纽科技描述", "Decoding a method from the alien matrices to build a Science Nexus.", "从异星矩阵中解码建造科学枢纽的方法。");
+            ProtoRegistry.RegisterString("折跃场广播阵列科技描述", "Decoding a method from the alien matrices to build a Warp Field Broadcast Array.", "从异星矩阵中解码建造折跃场广播阵列的方法。");
+            ProtoRegistry.RegisterString("星际组装厂科技描述", "Decoding a method from the alien matrices to build an Interstellar Assembly.", "从异星矩阵中解码建造星际组装厂的方法。");
+            ProtoRegistry.RegisterString("晶体重构器科技描述", "Decoding a method from the alien matrices to build a Crystal Reconstructor.", "从异星矩阵中解码建造晶体重构器的方法。");
+            ProtoRegistry.RegisterString("物质解压器科技结论", "You have successfully decoded the blueprint of Matter decompressor carrier rocket.", "你成功解码了物质解压器运载火箭的制造蓝图。");
+            ProtoRegistry.RegisterString("科学枢纽科技结论", "You have successfully decoded the blueprint of Science nexus carrier rocket.", "你成功解码了科学枢纽运载火箭的制造蓝图。");
+            ProtoRegistry.RegisterString("折跃场广播阵列科技结论", "You have successfully decoded the blueprint of Resonant generator carrier rocket.", "你成功解码了谐振发射器运载火箭的制造蓝图。");
+            ProtoRegistry.RegisterString("星际组装厂科技结论", "You have successfully decoded the blueprint of Interstellar assembly component and its carrier rocket.", "你成功解码了星际组装厂组件和运载火箭的制造蓝图。");
+            ProtoRegistry.RegisterString("晶体重构器科技结论", "You have successfully decoded the blueprint of Crystal reconstructor carrier rocket.", "你成功解码了晶体重构器运载火箭的制造蓝图。");
+
+            ProtoRegistry.RegisterString("被深空来敌mod禁止", "Banned by mod They Come From Void", "被深空来敌mod禁止");
 
             ItemProto bullet1 = ProtoRegistry.RegisterItem(8001, "子弹1", "子弹1描述", "Assets/DSPBattle/bullet1", 2701 + pageBias, 100, EItemType.Material);
             ItemProto bullet2 = ProtoRegistry.RegisterItem(8002, "子弹2", "子弹2描述", "Assets/DSPBattle/bullet2", 2702 + pageBias, 100, EItemType.Material);
@@ -269,6 +420,21 @@ namespace DSP_Battle
             ItemProto missile2 = ProtoRegistry.RegisterItem(8005, "导弹2", "导弹2描述", "Assets/DSPBattle/missile2", 2706 + pageBias, 100, EItemType.Material);
             ItemProto missile3 = ProtoRegistry.RegisterItem(8006, "导弹3", "导弹3描述", "Assets/DSPBattle/missile3", 2707 + pageBias, 100, EItemType.Material);
             ItemProto bullet4 = ProtoRegistry.RegisterItem(8007, "脉冲", "脉冲描述", "Assets/DSPBattle/bullet4", 9999, 100, EItemType.Material);
+            var icondesc = ProtoRegistry.GetDefaultIconDesc(Color.white, new Color(0f, 0.1f, 1f));
+            icondesc.solidAlpha = 0f;
+            ItemProto alienMatrix = ProtoRegistry.RegisterItem(8032, "异星矩阵", "异星矩阵描述", "Assets/DSPBattle/alienmatrix", 2712 + pageBias, 1000000, EItemType.Matrix, icondesc);
+            alienMatrix.Productive = true;
+            ItemProto alienMeta = ProtoRegistry.RegisterItem(8033, "异星元数据", "异星元数据描述", "Assets/DSPBattle/alienmeta", 2711 + pageBias, 1000000000, EItemType.Matrix, icondesc);
+            alienMeta.Productive = false;
+            if (Configs.enableProliferator4)
+            {
+                var icondesc2 = ProtoRegistry.GetDefaultIconDesc(new Color(1f, 1f, 1f), new Color(0f, 1f, 1f), new Color(0, 0.2f, 0.3f), new Color(0, 0.4f, 0.5f));
+                ItemProto proliferator4 = ProtoRegistry.RegisterItem(8034, "量子增产剂", "量子增产剂描述", "Assets/DSPBattle/accelerator4", 2710 + pageBias, 200, EItemType.Material, icondesc2);
+                proliferator4.Productive = true;
+                proliferator4.Ability = 6;
+                proliferator4.HpMax = 120;
+                proliferator4.DescFields = new int[] { 29, 41, 42, 43, 1, 40 };
+            }
 
             bullet1.DescFields = new int[] { 50, 51, 1 };
             bullet2.DescFields = new int[] { 50, 51, 1 };
@@ -289,14 +455,16 @@ namespace DSP_Battle
             ProtoRegistry.RegisterItem(8029, "彩蛋9", "彩蛋9描述", "Assets/DSPBattle/notes-of-pioneer-09", 9999, 100, EItemType.Material);
 
 
-            var Cannon = ProtoRegistry.RegisterItem(8011, "弹射器1", "弹射器1描述", "Assets/DSPBattle/cannon1", 2601 + pageBias, 50, EItemType.Production);
-            Cannon.BuildIndex = 607;
-            Cannon.BuildMode = 1;
-            Cannon.IsEntity = true;
-            Cannon.isRaw = false;
-            Cannon.CanBuild = true;
-            Cannon.Upgrades = new int[] { };
-            Cannon.DescFields = new int[] { 53, 11, 12, 1, 40 };
+            var Cannon1 = ProtoRegistry.RegisterItem(8011, "弹射器1", "弹射器1描述", "Assets/DSPBattle/cannon1", 2601 + pageBias, 50, EItemType.Production);
+            Cannon1.BuildIndex = 607;
+            Cannon1.BuildMode = 1;
+            Cannon1.IsEntity = true;
+            Cannon1.isRaw = false;
+            Cannon1.CanBuild = true;
+            Cannon1.Upgrades = new int[] { };
+            //Cannon1.Grade = 1;
+            //Cannon1.Upgrades = new int[] { 8011, 8012, 8014 };
+            Cannon1.DescFields = new int[] { 53, 11, 12, 1, 40 };
             var Cannon2 = ProtoRegistry.RegisterItem(8012, "弹射器2", "弹射器2描述", "Assets/DSPBattle/cannon2", 2602 + pageBias, 50, EItemType.Production);
             Cannon2.BuildIndex = 608;
             Cannon2.BuildMode = 1;
@@ -304,6 +472,8 @@ namespace DSP_Battle
             Cannon2.isRaw = false;
             Cannon2.CanBuild = true;
             Cannon2.Upgrades = new int[] { };
+            //Cannon2.Grade = 2;
+            //Cannon2.Upgrades = new int[] { 8011, 8012, 8014 };
             Cannon2.DescFields = new int[] { 53, 11, 12, 1, 40 };
             var Cannon3 = ProtoRegistry.RegisterItem(8014, "脉冲炮", "脉冲炮描述", "Assets/DSPBattle/cannon3", 2604 + pageBias, 50, EItemType.Production);
             Cannon3.BuildIndex = 609;
@@ -312,6 +482,8 @@ namespace DSP_Battle
             Cannon3.isRaw = false;
             Cannon3.CanBuild = true;
             Cannon3.Upgrades = new int[] { };
+            //Cannon3.Grade = 3;
+            //Cannon3.Upgrades = new int[] { 8011, 8012, 8014 };
             Cannon3.DescFields = new int[] { 50, 51, 53, 11, 12, 1, 40 };
 
 
@@ -323,6 +495,25 @@ namespace DSP_Battle
             Silo.CanBuild = true;
             Silo.Upgrades = new int[] { };
             Silo.DescFields = new int[] { 35, 11, 12, 1, 40 };
+
+
+            var ShieldGenerator = ProtoRegistry.RegisterItem(8030, "行星护盾生成器", "行星护盾生成器描述", "Assets/MegaStructureTab/shieldGen", 2605 + pageBias, 10, EItemType.Production);
+            ShieldGenerator.BuildMode = 1;
+            ShieldGenerator.IsEntity = true;
+            ShieldGenerator.isRaw = false;
+            ShieldGenerator.CanBuild = true;
+            ShieldGenerator.Upgrades = new int[] { };
+            ShieldGenerator.DescFields = new int[] { 11, 57, 58, 1, 40 };
+
+            int hideMask = 393;
+            if (Configs.developerMode) hideMask = 0;
+            var TestEngine = ProtoRegistry.RegisterItem(8031, "测试用发动机", "测试用发动机描述", "Assets/MegaStructureTab/shieldGen", 2606 + hideMask + pageBias, 10, EItemType.Production);
+            TestEngine.BuildMode = 1;
+            TestEngine.IsEntity = true;
+            TestEngine.isRaw = false;
+            TestEngine.CanBuild = true;
+            TestEngine.Upgrades = new int[] { };
+
 
             ProtoRegistry.RegisterRecipe(801, ERecipeType.Assemble, 60, new int[] { 1112, 1103 }, new int[] { 1, 1 }, new int[] { 8001 }, new int[] { 1 }, "子弹1描述",
                 1901, 2701 + pageBias, "Assets/DSPBattle/bullet1");
@@ -338,15 +529,59 @@ namespace DSP_Battle
                 1914, 2706 + pageBias, "Assets/DSPBattle/missile3");
             ProtoRegistry.RegisterRecipe(811, ERecipeType.Assemble, 360, new int[] { 1103, 1201, 1303, 1205 }, new int[] { 10, 10, 10, 5 }, new int[] { 8011 }, new int[] { 1 }, "弹射器1描述",
                 1901, 2601 + pageBias, "Assets/DSPBattle/cannon1");
-            ProtoRegistry.RegisterRecipe(812, ERecipeType.Assemble, 360, new int[] { 1107, 1206, 1303, 1209 }, new int[] { 10, 10, 10, 3 }, new int[] { 8012 }, new int[] { 1 }, "弹射器2描述",
+            ProtoRegistry.RegisterRecipe(812, ERecipeType.Assemble, 360, new int[] { 1107, 9480, 1303, 1209 }, new int[] { 10, 10, 10, 3 }, new int[] { 8012 }, new int[] { 1 }, "弹射器2描述",
                 1914, 2602 + pageBias, "Assets/DSPBattle/cannon2");
             ProtoRegistry.RegisterRecipe(813, ERecipeType.Assemble, 900, new int[] { 1107, 1125, 1209, 1305 }, new int[] { 40, 15, 5, 5 }, new int[] { 8013 }, new int[] { 1 }, "发射器1描述",
                 1911, 2603 + pageBias, "Assets/DSPBattle/missilesilo");
-            ProtoRegistry.RegisterRecipe(814, ERecipeType.Assemble, 900, new int[] { 1125, 1402, 1304, 1305 }, new int[] { 20, 10, 10, 5 }, new int[] { 8014 }, new int[] { 1 }, "脉冲炮描述",
+            ProtoRegistry.RegisterRecipe(814, ERecipeType.Assemble, 900, new int[] { 1125, 9481, 9486 }, new int[] { 20, 5, 2 }, new int[] { 8014 }, new int[] { 1 }, "脉冲炮描述",
                 1915, 2604 + pageBias, "Assets/DSPBattle/cannon3");
+            ProtoRegistry.RegisterRecipe(815, ERecipeType.Assemble, 900, new int[] { 9503, 1305, 1125 }, new int[] { 30, 20, 30 }, new int[] { 8030 }, new int[] { 1 }, "行星护盾生成器描述",
+                1916, 2605 + pageBias, "Assets/MegaStructureTab/shieldGen");
+            ProtoRegistry.RegisterRecipe(816, ERecipeType.Assemble, 10, new int[] { 1101 }, new int[] { 1 }, new int[] { 8031 }, new int[] { 1 }, "测试用发动机描述",
+                1916, 2606 + hideMask + pageBias, "Assets/MegaStructureTab/shieldGen");
+            ProtoRegistry.RegisterRecipe(817, ERecipeType.Research, 60, new int[] { 8032 }, new int[] { 2 }, new int[] { 8032 }, new int[] { 1 }, "异星矩阵描述",
+                1901, 9999 + pageBias, "Assets/DSPBattle/alienmatrix");
+
+            RecipeProto decompileRecipe0 = ProtoRegistry.RegisterRecipe(818, ERecipeType.Research, 60, new int[] { 8032 }, new int[] { 10 }, new int[] { 8033 }, new int[] { 500 }, "异星元数据描述",
+                1924, 2712 + pageBias, "异星矩阵反编译", "Assets/DSPBattle/alienmetax100");
+            decompileRecipe0.Explicit = true;
+            decompileRecipe0.NonProductive = true;
+            //RecipeProto decompileRecipe1 = ProtoRegistry.RegisterRecipe(819, ERecipeType.Research, 60, new int[] { 8032 }, new int[] { 10 }, new int[] { 8033 }, new int[] { 500 }, "异星元数据描述",
+            //     1924, 2712 + pageBias, "异星矩阵反编译 x10", "Assets/DSPBattle/alienmetax100");
+            //decompileRecipe1.Explicit = true;
+            if (Configs.enableProliferator4)
+            {
+                RecipeProto proliferator4Recipe = ProtoRegistry.RegisterRecipe(820, ERecipeType.Assemble, 240, new int[] { 1143, 8032 }, new int[] { 8, 1 }, new int[] { 8034 }, new int[] { 4 }, "量子增产剂描述",
+                     1925, 2711 + pageBias, "量子增产剂", "Assets/DSPBattle/accelerator4");
+            }
+
+
+            //给船染色用物品
+            ProtoRegistry.RegisterItem(8040, "侦查艇".Translate(), "敌船0".Translate(), "Assets/DSPBattle/enemyShip0", 9999, 200,
+                EItemType.Component, ProtoRegistry.GetDefaultIconDesc(new Color(0.8f, 0f, 0f), new Color(0.8f, 0f, 0f), new Color(0.8f, 0f, 0f), new Color(0.8f, 0f, 0f)));
+            ProtoRegistry.RegisterItem(8041, "护卫舰".Translate(), "敌船1".Translate(), "Assets/DSPBattle/enemyShip1", 9999, 200,
+                EItemType.Component, ProtoRegistry.GetDefaultIconDesc(new Color(0.5f, 0.2f, 0f), new Color(0.5f, 0.2f, 0f), new Color(0.5f, 0.2f, 0f), new Color(0.5f, 0.2f, 0f)));
+            ProtoRegistry.RegisterItem(8042, "驱逐舰".Translate(), "敌船2".Translate(), "Assets/DSPBattle/enemyShip2", 9999, 200,
+               
+                EItemType.Component, ProtoRegistry.GetDefaultIconDesc(new Color(1f, 0.8f, 0f), new Color(1f, 0.8f, 0f), new Color(1f, 0.7f, 0f), new Color(1f, 0.7f, 0f)));
+            ProtoRegistry.RegisterItem(8043, "重型巡洋舰".Translate(), "敌船3".Translate(), "Assets/DSPBattle/enemyShip3", 9999, 200,
+                EItemType.Component, ProtoRegistry.GetDefaultIconDesc(new Color(0f, 1f, 0f), new Color(0f, 1f, 0f), new Color(0f, 1f, 0f), new Color(0f, 1f, 0f)));
+            ProtoRegistry.RegisterItem(8044, "战列舰".Translate(), "敌船4".Translate(), "Assets/DSPBattle/enemyShip4", 9999, 200,
+                EItemType.Component, ProtoRegistry.GetDefaultIconDesc(new Color(1f, 0f, 0.6f), new Color(1f, 0f, 0.6f), new Color(1f, 0f, 0.6f), new Color(1f, 0f, 0.6f)));
+            //ProtoRegistry.RegisterRecipe(820, ERecipeType.Assemble, 1, new int[] { 1101 }, new int[] { 1 }, new int[] { 8040 }, new int[] { 1 }, "测试用1",
+            //    1901, 9999, "Assets/DSPBattle/enemyShip");
+            //ProtoRegistry.RegisterRecipe(821, ERecipeType.Assemble, 1, new int[] { 1101 }, new int[] { 1 }, new int[] { 8041 }, new int[] { 1 }, "测试用1",
+            //    1901, 9999, "Assets/DSPBattle/enemyShip");
+            //ProtoRegistry.RegisterRecipe(822, ERecipeType.Assemble, 1, new int[] { 1101 }, new int[] { 1 }, new int[] { 8042 }, new int[] { 1 }, "测试用1",
+            //    1901, 9999, "Assets/DSPBattle/enemyShip");
+            //ProtoRegistry.RegisterRecipe(823, ERecipeType.Assemble, 1, new int[] { 1101 }, new int[] { 1 }, new int[] { 8043 }, new int[] { 1 }, "测试用1",
+            //    1901, 9999, "Assets/DSPBattle/enemyShip");
+            //ProtoRegistry.RegisterRecipe(824, ERecipeType.Assemble, 1, new int[] { 1101 }, new int[] { 1 }, new int[] { 8044 }, new int[] { 1 }, "测试用1",
+            //    1901, 9999, "Assets/DSPBattle/enemyShip");
 
             TechProto techBullet1 = ProtoRegistry.RegisterTech(1901, "近地防卫系统", "近地防卫系统描述", "近地防卫系统结论", "Assets/DSPBattle/bullet1tech", new int[] { 1711 }, new int[] { 6001, 6002 }, new int[] { 20, 20 },
-                72000, new int[] { 801, 811 }, new Vector2(29, -43));
+                72000, new int[] { 801, 811, 817 }, new Vector2(29, -43));
+
             techBullet1.PreTechsImplicit = new int[] { 1503 };
             techBullet1.AddItems = new int[] { 8021 };
             techBullet1.AddItemCounts = new int[] { 1 };
@@ -376,23 +611,46 @@ namespace DSP_Battle
             techMissile3.AddItems = new int[] { 8026 };
             techMissile3.AddItemCounts = new int[] { 1 };
             TechProto techBullet4 = ProtoRegistry.RegisterTech(1915, "相位裂解技术", "相位裂解技术描述", "相位裂解技术结论", "Assets/DSPBattle/cannon3tech", new int[] { 1914 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 814 }, new Vector2(53, -43));
+                new int[] { 24, 24, 24, 24, 24 }, 300000, new int[] { 814 }, new Vector2(53, -43));
             techBullet4.AddItems = new int[] { 8027 };
             techBullet4.AddItemCounts = new int[] { 1 };
 
 
-            TechProto techShield1 = ProtoRegistry.RegisterTech(1916, "行星力场护盾", "即将到来gm", "即将到来gm", "Assets/DSPBattle/cannon3tech", new int[] { 1705 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { }, new Vector2(53, -31));
-            techShield1.Published = false;
-            TechProto techStellarFortress = ProtoRegistry.RegisterTech(1917, "星际要塞", "即将到来gm", "即将到来gm", "Assets/DSPBattle/cannon3tech", new int[] { 1903 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { }, new Vector2(41, -43));
+            TechProto techShield1 = ProtoRegistry.RegisterTech(1916, "行星力场护盾", "行星力场护盾描述", "行星力场护盾结论", "Assets/DSPBattle/shieldtech", new int[] { 1705 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+                new int[] { 24, 24, 24, 24, 24 }, 300000, new int[] { 565,815 }, new Vector2(53, -31));
+            
+            TechProto techStellarFortress = ProtoRegistry.RegisterTech(1917, "星际要塞", "星际要塞描述", "星际要塞结论", "Assets/DSPBattle/cannon3tech", new int[] { 1903 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 816 }, new Vector2(41, -43));
             techStellarFortress.Published = false;
-            TechProto techStarCannon = ProtoRegistry.RegisterTech(1918, "恒星炮", "即将到来gm", "即将到来gm", "Assets/DSPBattle/cannon3tech", new int[] { 1144 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { }, new Vector2(65, -3));
-            techStarCannon.Published = false;
-            TechProto techDrop = ProtoRegistry.RegisterTech(1919, "水滴gm", "即将到来gm", "即将到来gm", "Assets/DSPBattle/cannon3tech", new int[] { 1915 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { }, new Vector2(57, -43));
-            techDrop.Published = false;
+            TechProto techStarCannon = ProtoRegistry.RegisterTech(1918, "尼科尔戴森光束", "尼科尔戴森光束描述", "尼科尔戴森光束结论", "Assets/DSPBattle/starcannontech", new int[] { 1144 }, new int[] { 8032 },
+                new int[] { 200 }, 36000, new int[] { 570, 571, 572 }, new Vector2(65, -3));
+            
+            TechProto techDrop = ProtoRegistry.RegisterTech(1919, "玻色子操控", "玻色子操控描述", "玻色子操控结论", "Assets/DSPBattle/bosontech", new int[] { 1915 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+                new int[] { 24, 24, 24, 24, 24 }, 450000, new int[] { 566, 567, 568, 569, 573 }, new Vector2(57, -43));
+
+
+            TechProto techMegaMD = ProtoRegistry.RegisterTech(1920, "物质解压器", "物质解压器科技描述", "物质解压器科技结论", "Assets/DSPBattle/techMD", new int[] {  }, new int[] { 8032 },
+                new int[] { 150 }, 36000, new int[] { 538 }, new Vector2(65, -7)); 
+            techMegaMD.PreTechsImplicit = new int[] { 1522 };
+            TechProto techMegaWBA = ProtoRegistry.RegisterTech(1921, "折跃场广播阵列", "折跃场广播阵列科技描述", "折跃场广播阵列科技结论", "Assets/DSPBattle/techWBA", new int[] { }, new int[] { 8032 },
+                new int[] { 240 }, 27000, new int[] { 540 }, new Vector2(65, -11));
+            techMegaWBA.PreTechsImplicit = new int[] { 1522 };
+            TechProto techMegaIA = ProtoRegistry.RegisterTech(1922, "星际组装厂", "星际组装厂科技描述", "星际组装厂科技结论", "Assets/DSPBattle/techIA", new int[] { }, new int[] { 8032 },
+                new int[] { 200 }, 36000, new int[] { 537, 541 }, new Vector2(65, -15));
+            techMegaIA.PreTechsImplicit = new int[] { 1522 };
+            TechProto techMegaCR = ProtoRegistry.RegisterTech(1923, "晶体重构器", "晶体重构器科技描述", "晶体重构器科技结论", "Assets/DSPBattle/techCR", new int[] { }, new int[] { 8032 },
+                new int[] { 240 }, 27000, new int[] { 542 }, new Vector2(65, -19));
+            techMegaCR.PreTechsImplicit = new int[] { 1522 };
+            TechProto techMegaSN = ProtoRegistry.RegisterTech(1924, "科学枢纽", "科学枢纽科技描述", "科学枢纽科技结论", "Assets/DSPBattle/techSN", new int[] { 1918, 1920, 1921, 1922, 1923 }, new int[] { 8032 },
+                new int[] { 200 }, 45000, new int[] { 539, 818, 819 }, new Vector2(69, -11));
+            techMegaSN.PreTechsImplicit = new int[] { 1522 };
+
+            if (Configs.enableProliferator4)
+            {
+                TechProto techProliferator4 = ProtoRegistry.RegisterTech(1925, "量子增产剂", "量子增产剂科技描述", "量子增产剂科技结论", "Assets/DSPBattle/accelerator4tech", new int[] { 1153 }, new int[] { 6001, 6002, 6003, 6004 },
+                new int[] { 8, 6, 4, 4 }, 450000, new int[] { 820 }, new Vector2(37, -11));
+                techMegaSN.PreTechsImplicit = new int[] { 1522 };
+            }
 
             TechProto winGame = LDB.techs.Select(1508);
             winGame.AddItems = new int[] { 8028, 8029 };
@@ -479,16 +737,16 @@ namespace DSP_Battle
                 new int[] { 4, 4, 4, 4, 4 }, 1800000, new int[] { }, new Vector2(21, -51));
             techBulletSpeed4.UnlockFunctions = new int[] { 51 };
             techBulletSpeed4.UnlockValues = new double[] { 0.1 };
-            techBulletSpeed4.Level = 3;
-            techBulletSpeed4.MaxLevel = 3;
+            techBulletSpeed4.Level = 4;
+            techBulletSpeed4.MaxLevel = 4;
             techBulletSpeed4.LevelCoef1 = 0;
             techBulletSpeed4.LevelCoef2 = 0;
             TechProto techBulletSpeed5 = ProtoRegistry.RegisterTech(4915, "引力波引导5", "引力波引导描述", "引力波引导结论", "Assets/DSPBattle/bulletspeedtech5", new int[] { 4914 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
                 new int[] { 4, 4, 4, 4, 4 }, 2700000, new int[] { }, new Vector2(25, -51));
             techBulletSpeed5.UnlockFunctions = new int[] { 51 };
             techBulletSpeed5.UnlockValues = new double[] { 0.1 };
-            techBulletSpeed5.Level = 3;
-            techBulletSpeed5.MaxLevel = 3;
+            techBulletSpeed5.Level = 5;
+            techBulletSpeed5.MaxLevel = 5;
             techBulletSpeed5.LevelCoef1 = 0;
             techBulletSpeed5.LevelCoef2 = 0;
             TechProto techBulletSpeedInf = ProtoRegistry.RegisterTech(4916, "引力波引导6", "引力波引导描述", "引力波引导结论", "Assets/DSPBattle/bulletspeedtech0", new int[] { 4915 }, new int[] { 6006 },
@@ -551,6 +809,32 @@ namespace DSP_Battle
             techWormDistanceInf.LevelCoef2 = 1800000;
 
 
+            TechProto dorpletControll1 = ProtoRegistry.RegisterTech(4927, "超距信号处理1", "超距信号处理描述", "超距信号处理结论", "Assets/DSPBattle/dropletcontroltech1", new int[] { }, new int[] { 6001, 6002, 6003, 6004 },
+                 new int[] { 20, 20, 20, 20 }, 180000, new int[] { }, new Vector2(33, -47));
+            dorpletControll1.PreTechsImplicit = new int[] { 1919 };
+            dorpletControll1.UnlockFunctions = new int[] { 53 };
+            dorpletControll1.UnlockValues = new double[] { 1 };
+            dorpletControll1.Level = 1;
+            dorpletControll1.MaxLevel = 1;
+            dorpletControll1.LevelCoef1 = 0;
+            dorpletControll1.LevelCoef2 = 0;
+            TechProto dorpletControll2 = ProtoRegistry.RegisterTech(4928, "超距信号处理2", "超距信号处理描述", "超距信号处理结论", "Assets/DSPBattle/dropletcontroltech2", new int[] { 4927 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+                  new int[] { 20, 20, 20, 20, 20 }, 360000, new int[] { }, new Vector2(37, -47));
+            dorpletControll2.UnlockFunctions = new int[] { 53 };
+            dorpletControll2.UnlockValues = new double[] { 1 };
+            dorpletControll2.Level = 2;
+            dorpletControll2.MaxLevel = 2;
+            dorpletControll2.LevelCoef1 = 0;
+            dorpletControll2.LevelCoef2 = 0;
+            TechProto dorpletControll3 = ProtoRegistry.RegisterTech(4929, "超距信号处理3", "超距信号处理描述", "超距信号处理结论", "Assets/DSPBattle/dropletcontroltech3", new int[] { 4928 }, new int[] { 6006 },
+                  new int[] { 20 }, 900000, new int[] { }, new Vector2(41, -47));
+            dorpletControll3.UnlockFunctions = new int[] { 53 };
+            dorpletControll3.UnlockValues = new double[] { 1 };
+            dorpletControll3.Level = 3;
+            dorpletControll3.MaxLevel = 3;
+            dorpletControll3.LevelCoef1 = 0;
+            dorpletControll3.LevelCoef2 = 0;
+
 
             var CannonModel = CopyModelProto(72, 311, Color.red);
             CannonModel.prefabDesc.ejectorBulletId = 8001; //子弹的Id
@@ -576,15 +860,30 @@ namespace DSP_Battle
 
             var SiloModel = CopyModelProto(74, 313, Color.red);
             SiloModel.prefabDesc.siloBulletId = 8004; // 导弹的Id
-            SiloModel.prefabDesc.siloChargeFrame = 180;
-            SiloModel.prefabDesc.siloColdFrame = 120;
+            SiloModel.prefabDesc.siloChargeFrame = 120;
+            SiloModel.prefabDesc.siloColdFrame = 360;
             LDBTool.PreAddProto(SiloModel);
+
+            var ShieldGenModel = CopyModelProto(45, 315, Color.blue);
+            ShieldGenModel.prefabDesc.emptyId = 9999;
+            ShieldGenModel.prefabDesc.fullId = 1208;
+            ShieldGenModel.prefabDesc.exchangeEnergyPerTick = 1500000;
+            ShieldGenModel.prefabDesc.workEnergyPerTick = 1500000;
+            LDBTool.PreAddProto(ShieldGenModel);
+
+
+            ModelProto TestEngineModel = CopyModelProto(68, 316, new Color(0,1,1,1));
+            TestEngineModel.prefabDesc.idleEnergyPerTick = 500000; //卫星配电站只走idle耗电，数还需要改
+            LDBTool.PreAddProto(TestEngineModel);
 
 
             LDBTool.SetBuildBar(6, 7, 8011);
             LDBTool.SetBuildBar(6, 8, 8012);
             LDBTool.SetBuildBar(6, 9, 8014);
             LDBTool.SetBuildBar(6, 10, 8013);
+
+            
+            
         }
 
         private static ModelProto CopyModelProto(int oriId, int id, Color color)
@@ -658,6 +957,132 @@ namespace DSP_Battle
             LDB.items.Select(8013).ModelIndex = 313;
             LDB.items.Select(8013).prefabDesc = LDB.models.Select(313).prefabDesc;
 
+            LDB.models.Select(315).prefabDesc.modelIndex = 315;
+            LDB.items.Select(8030).ModelIndex = 315;
+            LDB.items.Select(8030).prefabDesc = LDB.models.Select(315).prefabDesc;
+
+            LDB.models.Select(316).prefabDesc.modelIndex = 316;
+            LDB.items.Select(8031).ModelIndex = 316;
+            LDB.items.Select(8031).prefabDesc = LDB.models.Select(316).prefabDesc;
+
+            if (Configs.enableProliferator4)
+            {
+                LDB.models.Select(120).prefabDesc.incItemId = new int[] { 1141, 1142, 1143, 8034 };
+                LDB.techs.Select(1132).Position = new Vector2(29, -19);
+                LDB.techs.Select(1416).Position = new Vector2(29, -15);
+                LDB.techs.Select(1153).Position = new Vector2(33, -11);
+            }
+
+            //以下为星球发动机模型修改
+            if (true)
+            {
+                var prefab = LDB.items.Select(8031).prefabDesc;
+                var oriPrefab = LDB.models.Select(68).prefabDesc;
+                var originalMeshVertices = new Vector3[prefab.lodCount][];
+                for (int i = 0; i < prefab.lodCount; i++)
+                {
+                    var vertices = prefab.lodMeshes[i].vertices;
+                    originalMeshVertices[i] = new Vector3[vertices.Length];
+                    for (int j = 0; j < vertices.Length; j++)
+                    {
+                        originalMeshVertices[i][j] = vertices[j];
+                    }
+                }
+                //碰撞
+                prefab.colliders = new ColliderData[oriPrefab.colliders.Length];
+                for (int i = 0; i < prefab.colliders.Length; i++)
+                {
+                    prefab.colliders[i] = oriPrefab.colliders[i];
+                    prefab.colliders[i].ext.x *= 2f;
+                    prefab.colliders[i].ext.y *= 3f;
+                    prefab.colliders[i].ext.z *= 2f;
+                }
+                prefab.buildColliders = new ColliderData[oriPrefab.buildColliders.Length];
+                for (int i = 0; i < prefab.buildColliders.Length; i++)
+                {
+                    prefab.buildColliders[i] = oriPrefab.buildColliders[i];
+                    prefab.buildColliders[i].ext.x *= 2f;
+                    prefab.buildColliders[i].ext.y *= 3f;
+                    prefab.buildColliders[i].ext.z *= 2f;
+                }
+                prefab.buildCollider.ext.x *= 1f;
+                prefab.buildCollider.ext.z *= 1f;
+                //静态顶点（prebuild）
+                for (int i = 0; i < prefab.lodCount; i++)
+                {
+                    var mesh = prefab.lodMeshes[i];
+                    var oriVerts = originalMeshVertices[i];
+                    var vertices = mesh.vertices;
+                    for (int j = 0; j < oriVerts.Length; j++)
+                    {
+                        Vector3 vert = oriVerts[j];
+                        vert.x *= 4;
+                        vert.y *= 2f;
+                        vert.z *= 4;
+                        if(vert.y <=3)
+                        {
+                            vert.x *= 1.7f;
+                            vert.z *= 1.7f;
+                        }
+                        else if(vert.y >= 4 && vert.y <= 6)
+                        {
+                            vert.x *= 2.2f;
+                            vert.z *= 2.2f;
+                        }
+                        else if (vert.y >= 7)
+                        {
+                            vert.x *= 0.5f;
+                            vert.z *= 0.5f;
+                        }
+                        vertices[j] = vert;
+                    }
+                    mesh.vertices = vertices;
+                }
+                //动画顶点
+                for (int i = 0; i < 1; i++)
+                {
+                    List<int> centerHighP = new List<int>();
+                    List<int> highP2 = new List<int>();
+                    int loop = (int)prefab.lodVertas[i].vertexType;
+                    if (loop == 0) loop = 12;
+                    //Utils.Log($"lodV index {i} have dataLength{prefab.lodVertas[i].dataLength} whose type is {prefab.lodVertas[i].vertexType}\n frame count is {prefab.lodVertas[i].frameCount} and frameStride is {prefab.lodVertas[i].frameStride} vertex count is {prefab.lodVertas[i].vertexCount} and vertex size is {prefab.lodVertas[i].vertexSize}");
+                    for (int j = 0; j < prefab.lodVertas[i].dataLength; j++)
+                    {
+                        if (j % loop == 2) //整体放大
+                        {
+                            prefab.lodVertas[i].data[j - 2] *= 4;
+                            prefab.lodVertas[i].data[j - 1] *= 3;
+                            prefab.lodVertas[i].data[j] *= 4;
+                        }
+                        if(j%loop == 2 && prefab.lodVertas[i].data[j - 1] <=3) //底座放大
+                        {
+                            prefab.lodVertas[i].data[j - 2] *= 1.75f;
+                            prefab.lodVertas[i].data[j] *= 1.75f;
+                        }
+                        if (j % loop == 2 && prefab.lodVertas[i].data[j - 1] >= 6 && prefab.lodVertas[i].data[j - 1] <= 8) //中间不再收紧
+                        {
+                            prefab.lodVertas[i].data[j - 2] *= 2.2f;
+                            prefab.lodVertas[i].data[j] *= 2.2f;
+                        }
+                        if (j % loop == 2 && j > 15318 * 60)//得到结果是j%15318>=4772的
+                        {
+                            if (prefab.lodVertas[i].data[j - 1] > 155 && !highP2.Contains(j % 15318))
+                                highP2.Add(j % 15318);
+                        }
+                    }
+                    for (int j = 0; j < prefab.lodVertas[i].dataLength; j++)
+                    {
+                        if (j % loop == 2 && highP2.Contains(j%15318))
+                        {
+                            prefab.lodVertas[i].data[j - 2] = 0f;
+                            prefab.lodVertas[i].data[j - 1] =400;
+                            prefab.lodVertas[i].data[j] = 0f;
+                        }
+                    }
+                }
+            }
+
+
             GameMain.gpuiManager.Init();
         }
 
@@ -675,6 +1100,9 @@ namespace DSP_Battle
                     break;
                 case 52:
                     Configs.wormholeRangeAdded += (int)value;
+                    break;
+                case 53:
+                    Droplets.maxDroplet += 0; //(int)value; // 改成了每帧根据科技等级刷新max数。就不存档了。
                     break;
                 default:
                     break;
@@ -697,6 +1125,8 @@ namespace DSP_Battle
             //    __result = "虫洞生成最近范围向10AU推进8%".Translate();
             else if (__instance.ID >= 4921 && __instance.ID <= 4926)
                 __result = "虫洞生成最近范围扩大0.25AU".Translate();
+            else if(__instance.ID >= 4927 && __instance.ID <= 4929)
+                __result = "水滴控制上限".Translate() + "+1";
         }
 
         public static Text infoLabel = null;
@@ -719,10 +1149,11 @@ namespace DSP_Battle
         {
             if (infoLabel == null)
                 InitTechInfoUIs();
+            
             if (infoLabel.text.Split('\n').Length < 35)
             {
                 infoLabel.text = infoLabel.text + "\r\n\r\n" + "子弹伤害".Translate() + "\r\n" + "相位裂解光束伤害".Translate() + "\r\n"
-                    + "导弹伤害".Translate() + "\r\n" + "子弹飞行速度".Translate() + "\r\n" + "导弹飞行速度".Translate() + "\r\n" + "虫洞干扰半径".Translate();
+                    + "导弹伤害".Translate() + "\r\n" + "子弹飞行速度".Translate() + "\r\n" + "导弹飞行速度".Translate() + "\r\n" + "虫洞干扰半径".Translate() + "\r\n" + "水滴控制上限".Translate();
             }
         }
 
@@ -730,13 +1161,31 @@ namespace DSP_Battle
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UITechTree), "RefreshDataValueText")]
-        public static void UnlockFuncTextPatch(ref UITechTree __instance)
+        public static void RefreshDataValueTextPatch(ref UITechTree __instance)
         {
-            
+            if (Configs.extraSpeedEnabled)
+            {
+                string[] txt = __instance.dataValueText.text.Split('\n');
+                string final = "";
+                for (int i = 0; i < txt.Length - 1; i++)
+                {
+                    if (i == 21 || i == 23 || i == 24 || (i == 26 && Rank.rank >= 3) || i == 27 || i == 28)
+                    {
+                        final += "<color=#61d8ffb4>" + "额外奖励gm".Translate() + txt[i].Trim() + "</color>\r\n";
+                    }
+                    else
+                    {
+                        final += txt[i].Trim() + "\r\n";
+                    }
+                }
+                final += txt[txt.Length - 1];
+                __instance.dataValueText.text = final;
+            }
+
             __instance.dataValueText.text = __instance.dataValueText.text + "\r\n\r\n" + Configs.bulletAtkScale.ToString("0%") + "\r\n"
                 + (1 + (Configs.bulletAtkScale - 1) * 2).ToString("0%") + "\r\n" + Configs.bulletAtkScale.ToString("0%")
-                + "\r\n" + Configs.bulletSpeedScale.ToString("0%") + "\r\n" + (1 + (Configs.bulletSpeedScale - 1) * 0.5).ToString("0%") + "\r\n" + (Configs.wormholeRange / 40000.0).ToString() + "AU";
-
+                + "\r\n" + Configs.bulletSpeedScale.ToString("0%") + "\r\n" + (1 + (Configs.bulletSpeedScale - 1) * 0.5).ToString("0%") + "\r\n" + (Configs.wormholeRange / 40000.0).ToString() + "AU" + "\r\n"
+                + Droplets.maxDroplet.ToString();
         }
 
 
@@ -763,6 +1212,21 @@ namespace DSP_Battle
                     return;
                 case 53:
                     __result = "射速".Translate();
+                    return;
+                case 54:
+                    __result = "水滴发射耗能".Translate();
+                    return;
+                case 55:
+                    __result = "水滴工作功率".Translate();
+                    return;
+                case 56:
+                    __result = "最小发射能量".Translate();
+                    return;
+                case 57:
+                    __result = "护盾容量".Translate();
+                    return;
+                case 58:
+                    __result = "护盾恢复".Translate();
                     return;
             }
         }
@@ -799,7 +1263,86 @@ namespace DSP_Battle
                         return;
                     }
                     return;
+                case 54:
+                    __result = Utils.KMGFormat(Droplets.energyComsumptionPerLaunch) + "J";
+                    return;
+                case 55:
+                    __result = Utils.KMGFormat(Droplets.energyComsumptionPerTick * 60) + "W";
+                    return;
+                case 56:
+                    __result = Utils.KMGFormat(Droplets.energyComsumptionPerLaunch * 2) + "J";
+                    return;
+                case 57:
+                    __result = "0 - " + Configs.capacityPerGenerator[0].Item2.ToString();
+                    return;
+                case 58:
+                    __result = (Configs.shieldGenPerTick * 60).ToString() + "/s";
+                    return;
             }
+        }
+
+
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(LabMatrixEffect), "Update")]
+        public static bool LabMatrixEffectUpdatePatch(ref LabMatrixEffect __instance)
+        {
+            __instance.time += (double)Time.deltaTime;
+            double num = __instance.time / 1000.0;
+            float num2 = (float)((num - Math.Floor(num)) * 1000.0);
+            Vector3 localEulerAngles = new Vector3(num2 * 37f, num2 * 101f, num2 * 23f);
+            __instance.matrixCube.localEulerAngles = localEulerAngles;
+            int currentTech = __instance.history.currentTech;
+            TechProto techProto = LDB.techs.Select(currentTech);
+            bool flag = false;
+            if (currentTech > 0 && techProto != null && techProto.IsLabTech && GameMain.history.techStates.ContainsKey(currentTech))
+            {
+                TechState techState = __instance.history.techStates[currentTech];
+                flag = true;
+            }
+            if (!flag)
+            {
+            }
+            __instance.techGroup.gameObject.SetActive(flag);
+            Array.Clear(__instance.techMatUse, 0, __instance.techMatUse.Length);
+            if (flag)
+            {
+                for (int i = 0; i < techProto.Items.Length; i++)
+                {
+                    int num3 = techProto.Items[i] - LabComponent.matrixIds[0];
+                    if (num3 < 0 || num3 > __instance.techMatUse.Length) continue;
+                    __instance.techMatUse[num3] = true;
+                }
+            }
+            for (int j = 0; j < __instance.techCubes.Length; j++)
+            {
+                __instance.techCubes[j].gameObject.SetActive(__instance.techMatUse[j]);
+            }
+            int num4 = 0;
+            for (int k = 0; k < __instance.techCubes.Length; k++)
+            {
+                if (__instance.techMatUse[k])
+                {
+                    num4++;
+                }
+            }
+            int num5 = 0;
+            for (int l = 0; l < __instance.techCubes.Length; l++)
+            {
+                if (__instance.techCubes[l].gameObject.activeSelf)
+                {
+                    float num6 = 360f * (float)num5 / (float)num4;
+                    float f = (num2 * 47f + num6) * 0.017453292f;
+                    float f2 = num2 * 121f * 0.017453292f;
+                    Vector3 localPosition = new Vector3(Mathf.Cos(f) * 0.7f, Mathf.Sin(f) * 0.7f, Mathf.Sin(f2) * 0.5f);
+                    __instance.techCubes[l].localPosition = localPosition;
+                    Vector3 localEulerAngles2 = new Vector3(num2 * 37f, num2 * 101f + num6, num2 * 23f);
+                    __instance.techCubes[l].localEulerAngles = localEulerAngles2;
+                    num5++;
+                }
+            }
+
+            return false;
         }
 
 
@@ -822,11 +1365,65 @@ namespace DSP_Battle
                 case 8007:
                 case 8014:
                     return new int[] { Configs.bullet4Atk, Mathf.RoundToInt((float)Configs.bullet4Speed), 0 };
-
+                case 9511: //水滴
+                    return new int[] { Configs.dropletAtk, Mathf.RoundToInt((float)Configs.dropletSpd), 0 };
                 default:
                     return new int[] { 0, 0, 0 };
             }
         }
+
+        public static void ChangeTabName(Proto proto)
+        {
+            if(proto is StringProto && proto.name == "MegaStructures")
+            {
+                var item = proto as StringProto;
+                item.ZHCN = "轨道防御";
+                item.ENUS = "Defense";
+                item.FRFR = "Defense";
+            }
+        }
+
+        public static void ReCheckTechUnlockRecipes()
+        {
+            if(!GameMain.history.TechState(1920).unlocked && GameMain.history.RecipeUnlocked(538))
+            {
+                GameMain.history.recipeUnlocked.Remove(538);
+            }
+            if (!GameMain.history.TechState(1921).unlocked && GameMain.history.RecipeUnlocked(540))
+            {
+                GameMain.history.recipeUnlocked.Remove(540);
+            }
+            if (!GameMain.history.TechState(1922).unlocked)
+            {
+                if (GameMain.history.RecipeUnlocked(537))
+                    GameMain.history.recipeUnlocked.Remove(537);
+                if (GameMain.history.RecipeUnlocked(541))
+                    GameMain.history.recipeUnlocked.Remove(541);
+            }
+            if (!GameMain.history.TechState(1923).unlocked && GameMain.history.RecipeUnlocked(542))
+            {
+                GameMain.history.recipeUnlocked.Remove(542);
+            }
+            if (!GameMain.history.TechState(1924).unlocked && GameMain.history.RecipeUnlocked(539))
+            {
+                GameMain.history.recipeUnlocked.Remove(539);
+            }
+        }
+
+
+        //[HarmonyPrefix]
+        //[HarmonyPatch(typeof(TechProto), "GenPropertyOverrideItems")]
+        //public static bool TechGenOverrideItemsPatch(ref TechProto __instance, TechProto proto)
+        //{
+        //    if (!Configs.developerMode) return true;
+        //    if (proto.PropertyOverrideItems != null) return true;
+        //    __instance.PropertyItemCounts = new int[] { 1 };
+        //    __instance.PropertyOverrideItems = new int[] { 6001 };
+        //    __instance.PropertyOverrideItemArray = new IDCNT[1];
+        //    __instance.PropertyOverrideItemArray[0] = new IDCNT(6001, 1);
+        //    return false;
+        //}
+
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(UITechNode), "OnBuyoutButtonClick")]
@@ -836,7 +1433,7 @@ namespace DSP_Battle
             if (tech == null || tech.Items == null) return true;
             for (int i = 0; i < tech.Items.Length; i++)
             {
-                if (tech.Items[i] >= 6003 && tech.Items[i] <= 6006 || tech.Items[i] == 8032 || tech.ID == 1901)
+                if(tech.Items[i] >= 6003 && tech.Items[i] <= 6006 || tech.Items[i] == 8032 || tech.ID == 1901)
                 {
                     UIRealtimeTip.Popup("被深空来敌mod禁止".Translate(), true, 0);
                     return false;
@@ -863,6 +1460,27 @@ namespace DSP_Battle
                 }
             }
 
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UISpraycoaterWindow), "RefreshSpraycoaterWindow")]
+        public static void RefreshSpraycoaterWindowPostPatch(ref UISpraycoaterWindow __instance, SpraycoaterComponent spraycoater)
+        {
+            if (Configs.enableProliferator4 && spraycoater.incItemId != 0 && spraycoater.incCount > 0)
+            {
+                ItemProto itemProto = LDB.items.Select(spraycoater.incItemId);
+                if (itemProto.Ability >= 6)
+                {
+                    Color color = new Color(0, 0.5f, 0.6f);
+                    __instance.tankFillOutlineImage.color = new Color(color.r, color.g, color.b, color.a * 4f);
+                    __instance.tankCountText.color = new Color(color.r, color.g, color.b, color.a * 4f);
+                    __instance.tankFillMaskImage.color = color;
+                    __instance.incInfoText1.color = new Color(color.r, color.g, color.b, color.a * 4f);
+                    __instance.incInfoText2.color = new Color(color.r, color.g, color.b, color.a * 4f);
+                    __instance.incInfoText3.color = new Color(color.r, color.g, color.b, color.a * 4f);
+                }
+
+            }
         }
     }
 }

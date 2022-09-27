@@ -205,6 +205,81 @@ namespace DSP_Battle
         {
             if (curEjectorIsCannon)
             {
+                if (__instance == null || __instance.factorySystem == null || __instance.factorySystem.ejectorPool == null) return;
+                EjectorComponent ejectorComponent = __instance.factorySystem.ejectorPool[__instance.ejectorId];
+                PowerConsumerComponent powerConsumerComponent = __instance.powerSystem.consumerPool[ejectorComponent.pcId];
+                int networkId = powerConsumerComponent.networkId;
+                PowerNetwork powerNetwork = __instance.powerSystem.netPool[networkId];
+                float num = (powerNetwork != null && networkId > 0) ? ((float)powerNetwork.consumerRatio) : 0f;
+
+                if (ejectorComponent.bulletId == 8007) //脉冲炮的子弹，即使是0也不显示缺少子弹
+                {
+                    if (num < 0.1f)
+                    {
+                        __instance.stateText.text = "电力不足".Translate();
+                        __instance.stateText.color = __instance.powerOffColor;
+                        __instance.valueText1.text = "-";
+                        __instance.valueText2.text = "-";
+                        __instance.valueText2.color = __instance.idleColor;
+                        __instance.valueText3.color = __instance.idleColor;
+                        __instance.chargeFg.color = __instance.powerOffColor * 0.5f;
+                    }
+                    else if (ejectorComponent.targetState == EjectorComponent.ETargetState.None)
+                    {
+                        __instance.stateText.text = "待机".Translate();
+                        __instance.stateText.color = __instance.workStoppedColor;
+                        __instance.valueText1.text = "-";
+                        __instance.valueText2.text = "-";
+                        __instance.valueText2.color = __instance.idleColor;
+                        __instance.valueText3.color = __instance.idleColor;
+                    }
+                    else if (ejectorComponent.targetState == EjectorComponent.ETargetState.Blocked)
+                    {
+                        __instance.stateText.text = "路径被遮挡".Translate();
+                        __instance.stateText.color = __instance.workStoppedColor;
+                        __instance.valueText1.text = (ejectorComponent.targetDist / 40000.0).ToString("0.00 AU");
+                        __instance.valueText2.text = "路径被遮挡".Translate();
+                        __instance.valueText2.color = __instance.workStoppedColor;
+                        __instance.valueText3.color = __instance.idleColor;
+                    }
+                    else if (ejectorComponent.targetState == EjectorComponent.ETargetState.AngleLimit)
+                    {
+                        __instance.stateText.text = "俯仰限制".Translate();
+                        __instance.stateText.color = __instance.workStoppedColor;
+                        __instance.valueText1.text = (ejectorComponent.targetDist / 40000.0).ToString("0.00 AU");
+                        __instance.valueText2.text = "俯仰限制".Translate();
+                        __instance.valueText2.color = __instance.workStoppedColor;
+                        __instance.valueText3.color = __instance.workStoppedColor;
+                    }
+                    else if (ejectorComponent.direction != 0)
+                    {
+                        if (num == 1f)
+                        {
+                            __instance.stateText.text = "开火中gm".Translate(); //此处原本是充能中和冷却中
+                            __instance.stateText.color = __instance.workNormalColor;
+                        }
+                        else
+                        {
+                            __instance.stateText.text = "电力不足".Translate();
+                            __instance.stateText.color = __instance.powerLowColor;
+                        }
+                        __instance.valueText1.text = (ejectorComponent.targetDist / 40000.0).ToString("0.00 AU");
+                        __instance.valueText2.text = "可弹射".Translate();
+                        __instance.valueText2.color = __instance.idleColor;
+                        __instance.valueText3.color = __instance.idleColor;
+                    }
+                    else
+                    {
+                        __instance.stateText.text = "待机".Translate();
+                        __instance.stateText.color = __instance.idleColor;
+                        __instance.valueText1.text = "-";
+                        __instance.valueText2.text = "-";
+                        __instance.valueText2.color = __instance.idleColor;
+                        __instance.valueText3.color = __instance.idleColor;
+                    }
+                }
+
+
                 if (curTarget != null && curTarget.state == EnemyShip.State.active)// && EnemyShips.ships.ContainsKey(curTarget.shipIndex)
                 {
                     SolarSailAmoutLabel.text = "目标生命值".Translate();
@@ -220,10 +295,10 @@ namespace DSP_Battle
                 remainEnemyShipsValue.text = EnemyShips.ships.Count.ToString();
                 //Main.logger.LogInfo($"cur orbit id is {curEjector.orbitId}");
 
-                EjectorComponent ejectorComponent = __instance.factorySystem.ejectorPool[__instance.ejectorId];
                 float num2 = 60f / (float)(ejectorComponent.chargeSpend + ejectorComponent.coldSpend) * 600000f;
                 num2 *= (float)(Cargo.incTableMilli[ejectorComponent.incLevel] + 1.0);
                 __instance.valueText5.text = num2.ToString("0.0") + "每分钟".Translate();
+
             }
             else
             {

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace DSP_Battle
 {
-    class Wormhole
+    public class Wormhole
     {
         public int planetId;
         public VectorLF3 vec;

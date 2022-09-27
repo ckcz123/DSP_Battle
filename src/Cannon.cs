@@ -90,7 +90,7 @@ namespace DSP_Battle
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(EjectorComponent), "InternalUpdate")]
-        public static bool EjectorPatch(ref EjectorComponent __instance, float power, DysonSwarm swarm, AstroPose[] astroPoses, AnimData[] animPool, int[] consumeRegister, ref uint __result)
+        public static bool EjectorPatch(ref EjectorComponent __instance, float power, DysonSwarm swarm, AstroData[] astroPoses, AnimData[] animPool, int[] consumeRegister, ref uint __result)
         {
             int planetId = __instance.planetId;
             int starIndex = planetId / 100 - 1;
@@ -108,8 +108,8 @@ namespace DSP_Battle
             else if (gmProtoId == 8014)
             {
                 __instance.bulletId = 8007;
+                __instance.bulletCount = 0;
             }
-
 
             if (__instance.needs == null)
             {
@@ -148,7 +148,11 @@ namespace DSP_Battle
             int calcOrbitId = __instance.orbitId;
             if (cannon)
             {
-                if (calcOrbitId <= 0 || calcOrbitId > 4) calcOrbitId = 1;
+                if (calcOrbitId <= 0 || calcOrbitId > 4)
+                {
+                    calcOrbitId = 1;
+                    __instance.orbitId = 1;
+                }
             }
             else
             {
@@ -492,6 +496,7 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(DysonSwarm), "GameTick")]
         public static void EarlyCalcBulletState(ref DysonSwarm __instance)
         {
+            if (__instance.dysonSphere.layerCount < 0) return; //专门用于渲染的swarm设置成layerCount=-1，不受这个patch影响
             int starIndex = __instance.starData.index;
 
             foreach (var i in bulletTargets[starIndex].Keys)
@@ -542,6 +547,7 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(DysonSwarm), "RemoveBullet")]
         public static void RemoveBulletThenRemoveSailMark(DysonSwarm __instance, int id)
         {
+            if (__instance.dysonSphere.layerCount < 0) return; //专门用于渲染的swarm设置成layerCount=-1，不受这个patch影响
             if (sailBulletsIndex[__instance.starData.index].ContainsKey(id))
             {
                 int v;
@@ -554,6 +560,13 @@ namespace DSP_Battle
             }
 
         }
+
+
+        //[HarmonyPostfix]
+        //[HarmonyPatch(typeof(PlanetFactory), "UpgradeEntityWithComponents")]
+        //public static void UpgradePostPatch()
+        //{
+        //}
 
         public static void Export(BinaryWriter w)
         {

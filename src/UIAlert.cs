@@ -114,20 +114,30 @@ namespace DSP_Battle
 
             statisticObj.transform.Find("cosmo").GetComponent<UIButton>().enabled = false;
 
-            eliminateProgressBar = GameObject.Instantiate(titleLeftBar);
-            invasionProgressBar = GameObject.Instantiate(titleRightBar);
-            eliminateProgressBar.transform.SetParent(titleObj.transform, false);
-            invasionProgressBar.transform.SetParent(titleObj.transform, false);
-            eliminateProgressBar.transform.localPosition = new Vector3(-500, -50, 0);
-            invasionProgressBar.transform.localPosition = new Vector3(500, -50, 0);
-            eliminateProgressBar.GetComponent<Image>().color = new Color(0.26f, 1f, 0.46f, 1f);
-            invasionProgressBar.GetComponent<Image>().color = new Color(1f, 0.08f, 0.08f, 1f);
+            eliminateProgressBar = GameObject.Instantiate(GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Dyson Sphere Editor/Dyson Editor Control Panel/inspector/sphere-group/sail-stat/bar-group/bar-blue")); //原来是titleleftbar
+            invasionProgressBar = GameObject.Instantiate(GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Dyson Sphere Editor/Dyson Editor Control Panel/inspector/sphere-group/sail-stat/bar-group/bar-orange"));
+            eliminateProgressBar.transform.SetParent(alertUIObj.transform, false);
+            invasionProgressBar.transform.SetParent(alertUIObj.transform, false);
+            eliminateProgressBar.name = "green-bar";
+            invasionProgressBar.name = "red-bar";
+            eliminateProgressBar.transform.localPosition = new Vector3(-498, -70, 0);
+            invasionProgressBar.transform.localPosition = new Vector3(498, -70, 0);
+            eliminateProgressBar.GetComponent<Image>().color = new Color(0.26f, 1f, 0.46f, 0.5f);
+            invasionProgressBar.GetComponent<Image>().color = new Color(1f, 0.08f, 0.08f, 0.5f);
+            eliminateProgressBar.GetComponent<Image>().fillAmount = 1;
+            invasionProgressBar.GetComponent<Image>().fillAmount = 1;
             elimProgRT = eliminateProgressBar.GetComponent<RectTransform>();
             invaProgRT = invasionProgressBar.GetComponent<RectTransform>();
-            elimProgRT.sizeDelta = new Vector2(0, 12);
-            invaProgRT.sizeDelta = new Vector2(0, 12);
-            elimProgRT.localScale = new Vector3(1, 2, 1);
-            invaProgRT.localScale = new Vector3(1, 2, 1);
+            elimProgRT.anchorMin = new Vector2(0, 0);
+            elimProgRT.anchorMax = new Vector2(0, 0);
+            elimProgRT.pivot = new Vector2(0, 1f);
+            invaProgRT.anchorMin = new Vector2(1, 0);
+            invaProgRT.anchorMax = new Vector2(1, 0);
+            invaProgRT.pivot = new Vector2(1, 1f);
+            elimProgRT.sizeDelta = new Vector2(0, 5);
+            invaProgRT.sizeDelta = new Vector2(0, 5);
+            elimProgRT.localScale = new Vector3(1, 1, 1); // 1, 2, 1
+            invaProgRT.localScale = new Vector3(1, 1, 1);
 
 
             alertMainText = titleObj.GetComponent<Text>();
@@ -143,13 +153,13 @@ namespace DSP_Battle
             GameObject myStat1LabelObj = sons.Find("dyson-cnt-label").gameObject;
             GameObject addHelpObj = GameObject.Instantiate(myStat1LabelObj);
             addHelpObj.transform.SetParent(titleObj.transform, false);
-            addHelpObj.transform.localPosition = new Vector3(500, -60, 0);
+            addHelpObj.transform.localPosition = new Vector3(500, -70, 0);
             addHelpObj.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 70);
             helpInfo = addHelpObj.GetComponent<Text>();
 
             GameObject rewardObj = GameObject.Instantiate(myStat1LabelObj);
             rewardObj.transform.SetParent(titleObj.transform, false);
-            rewardObj.transform.localPosition = new Vector3(500, -80, 0);
+            rewardObj.transform.localPosition = new Vector3(500, -100, 0);
             rewardObj.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 70);
             rewardInfo = rewardObj.GetComponent<Text>();
             rewardInfo.color = new Color(194 / 255f, 133 / 255f, 61 / 255f);
@@ -165,6 +175,16 @@ namespace DSP_Battle
             versionObj.transform.localPosition = new Vector3(-500, -80, 0);
             versionObj.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 70);
             versionInfo = versionObj.GetComponent<Text>();
+
+            if (Configs.enableAlertTextGlowing)
+            {
+                alertMainText.color = new Color(1, 1, 1, 0.7f);
+                alertMainText.material = stat1value.material;
+                rewardInfo.material = stat1value.material;
+                txtColorWarn1 = "<color=#ffa800c0>";
+                txtColorAlert1 = "<color=#e30000c0>";
+                txtColorAlert2 = "<color=#a10000d0>";
+            }
 
             isActive = false;
             alertUIObj.SetActive(false);
@@ -183,7 +203,7 @@ namespace DSP_Battle
 
         public static void RefreshUIAlert(long time, bool forceRefresh = false)
         {
-            
+
             if (DSPGame.IsMenuDemo)
             {
                 ShowAlert(false);
@@ -191,7 +211,7 @@ namespace DSP_Battle
             }
             if (time % 30 != 1 && !forceRefresh) return;
             helpInfo.text = "UI快捷键提示".Translate();
-            difficultyInfo.text = 
+            difficultyInfo.text =
                 Configs.difficulty == -1 ? "简单难度提示".Translate()
                    : Configs.difficulty == 1 ? "困难难度提示".Translate()
                    : "普通难度提示".Translate();
@@ -267,7 +287,7 @@ namespace DSP_Battle
                         PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
                         Vector3 stationPos = planetFactory.entityPool[ship.targetStation.entityId].pos;
                         int planetId = planetFactory.planetId;
-                        AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
+                        AstroData[] astroPoses = GameMain.galaxy.astrosData;
                         VectorLF3 stationUpos = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, stationPos);
 
                         totalDistance += (stationUpos - ship.uPos).magnitude;
@@ -294,7 +314,7 @@ namespace DSP_Battle
                         PlanetFactory planetFactory = GameMain.galaxy.PlanetById(ship.shipData.planetB).factory;
                         Vector3 stationPos = planetFactory.entityPool[ship.targetStation.entityId].pos;
                         int planetId = planetFactory.planetId;
-                        AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
+                        AstroData[] astroPoses = GameMain.galaxy.astrosData;
                         VectorLF3 stationUpos = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, stationPos);
 
                         curTotalDistance += (stationUpos - ship.uPos).magnitude;
@@ -307,19 +327,19 @@ namespace DSP_Battle
                     double totalPoint = elimPoint + invaPoint;
                     if (totalPoint <= 0)
                     {
-                        elimProgRT.sizeDelta = new Vector2(500, 12);
-                        invaProgRT.sizeDelta = new Vector2(500, 12);
+                        elimProgRT.sizeDelta = new Vector2(0, 5);
+                        invaProgRT.sizeDelta = new Vector2(0, 5);
                     }
                     else
                     {
                         float leftProp = (float)(elimPoint / totalPoint);
                         float deRatio = 1.0f;
-                        if(elimPoint > 0.99)//快消灭干净了，让绿条多填充，弥补一半之前建筑炸掉的比例减成
-                        {
-                            deRatio = 0.5f / elimPointRatio;
-                        }
-                        elimProgRT.sizeDelta = new Vector2(1000 * leftProp * elimPointRatio * deRatio + 2, 12);
-                        invaProgRT.sizeDelta = new Vector2(1000 * (1 - leftProp * elimPointRatio * deRatio) + 2, 12);
+                        //if(elimPoint > 0.99)//快消灭干净了，让绿条多填充，弥补一半之前建筑炸掉的比例减成
+                        //{
+                        //    deRatio = 0.5f / elimPointRatio;
+                        //}
+                        elimProgRT.sizeDelta = new Vector2(996 * leftProp * elimPointRatio * deRatio, 5);
+                        invaProgRT.sizeDelta = new Vector2(996 * (1 - leftProp * elimPointRatio * deRatio), 5);
                     }
                 }
             }
@@ -417,11 +437,14 @@ namespace DSP_Battle
             totalStrength = 1;
             totalDistance = 1;
             elimPointRatio = 1.0f;
+            if (elimProgRT == null) Utils.Log("elimRT null");
+            if (invaProgRT == null) Utils.Log("invaRT null");
             elimProgRT.sizeDelta = new Vector2(0, 12);
             invaProgRT.sizeDelta = new Vector2(0, 12);
             isActive = false;
             if (alertUIObj != null)
             {
+                Utils.Log("not null");
                 float yPos = Mathf.Min(DSPGame.globalOption.resolution.height / 1080f * 500f, 500f);
                 alertUIObj.transform.localPosition = new Vector3(0, yPos, 0);
             }

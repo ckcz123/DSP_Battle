@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace DSP_Battle
 {
@@ -21,7 +22,7 @@ namespace DSP_Battle
         public static List<Dictionary<int, List<EnemyShip>>> targetPlanetShips;
         public static List<List<EnemyShip>> maxThreatSortedShips;
         public static List<List<EnemyShip>> minHpSortedShips;
-
+        //public static string meshDir = "entities/models/space capsule/space-capsule"; //是十字外面一个圈，很小
         public static bool shouldDistroy = true;
 
         public static void Init()
@@ -232,6 +233,7 @@ namespace DSP_Battle
             }
         }
 
+
         public static void OnShipDistroyed(EnemyShip ship)
         {
             RemoveShip(ship);
@@ -262,15 +264,6 @@ namespace DSP_Battle
 
             WaveStages.Update(time);
 
-            if (time >= Configs.extraSpeedFrame && Configs.extraSpeedEnabled)
-            {
-                Configs.extraSpeedEnabled = false;
-                Configs.extraSpeedFrame = -1;
-                GameMain.history.miningSpeedScale /= 2;
-                GameMain.history.techSpeed /= 2;
-                GameMain.history.logisticDroneSpeedScale /= 1.5f;
-                GameMain.history.logisticShipSpeedScale /= 1.5f;
-            }
         }
 
         [HarmonyPrefix]
@@ -307,22 +300,21 @@ namespace DSP_Battle
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(LogisticShipRenderer), "Update")]
-        public static void LogisticShipRenderer_Update(ref LogisticShipRenderer __instance)
+        public static void LogisticShip_Update(ref LogisticShipRenderer __instance)
         {
+            
             if (ships.Count == 0 || UIRoot.instance.uiGame.starmap.active) return;
+            /*
             if (__instance.transport == null) return;
             while (__instance.capacity < __instance.shipCount + ships.Count)
             {
                 __instance.Expand2x();
-            }
+            }*/
 
             foreach (var ship in ships.Values)
             {
                 if (ship.state != EnemyShip.State.active) continue;
 
-                __instance.shipsArr[__instance.shipCount++] = ship.renderingData;
-                //if (ship.shipData.stage != 1)
-                //    continue;
                 if (ship.distanceToTarget > 250 || ship.shipData.planetB != GameMain.localPlanet?.id)
                     continue;
                 //飞船发射子弹轰击
@@ -334,8 +326,8 @@ namespace DSP_Battle
                     if (GameMain.data.dysonSpheres.Length > starIndex && GameMain.data.dysonSpheres[starIndex] != null && GameMain.data.dysonSpheres[starIndex].swarm != null && (GameMain.instance.timei + ship.shipIndex) % 20 == 0) 
                     {
                         int planetId = planetFactory.planetId;
-                        DysonSwarm swarm = GameMain.data.dysonSpheres[starIndex].swarm;
-                        AstroPose[] astroPoses = GameMain.galaxy.astroPoses;
+                        DysonSwarm swarm = RendererSphere.enemySpheres[starIndex].swarm;
+                        AstroData[] astroPoses = GameMain.galaxy.astrosData;
                         VectorLF3 stationUpos = astroPoses[planetId].uPos + Maths.QRotateLF(astroPoses[planetId].uRot, stationPos);
                         VectorLF3 shipLocalPos = Maths.QInvRotateLF(astroPoses[planetId].uRot, ship.uPos - astroPoses[planetId].uPos);
                         //我不会再星球表面生成目标点，就用下面这种近似方法
@@ -366,7 +358,7 @@ namespace DSP_Battle
                 }
                 
             }
-
+            /*
             if (!logisticShipRendererComputeBuffer.ContainsKey(__instance) || logisticShipRendererExpanded)
             {
                 logisticShipRendererComputeBuffer[__instance] = AccessTools.FieldRefAccess<LogisticShipRenderer, ComputeBuffer>(__instance, "shipsBuffer");
@@ -376,9 +368,9 @@ namespace DSP_Battle
             if (logisticShipRendererComputeBuffer[__instance] != null)
             {
                 logisticShipRendererComputeBuffer[__instance].SetData(__instance.shipsArr, 0, 0, __instance.shipCount);
-            }
+            }*/
         }
-
+        /* 
         private static Dictionary<LogisticShipUIRenderer, UIStarmap> logisticShipUIRendererUIStarmap = new Dictionary<LogisticShipUIRenderer, UIStarmap>();
         private static Dictionary<LogisticShipUIRenderer, ComputeBuffer> logisticShipUIRendererComputeBuffer = new Dictionary<LogisticShipUIRenderer, ComputeBuffer>();
         private static Dictionary<LogisticShipUIRenderer, ShipUIRenderingData[]> logisticShipUIRendererShipUIRenderingData = new Dictionary<LogisticShipUIRenderer, ShipUIRenderingData[]>();
@@ -392,39 +384,51 @@ namespace DSP_Battle
         {
             logisticShipUIRendererExpanded = true;
         }
-        
+
+        static List<LogisticShipUIRenderer> enemyShipsUIRenderers = new List<LogisticShipUIRenderer>(); //List是为了后续还能支持不同的敌舰大小或其他模型，目前只用第[0]个测试
+
+        public static void InitRenderers()
+        {
+            enemyShipsUIRenderers = new List<LogisticShipUIRenderer>();
+            for (int i = 0; i < 6; i++)
+            {
+                enemyShipsUIRenderers.Add(new LogisticShipUIRenderer(GameMain.data.galacticTransport));
+            }
+            enemyShipsUIRenderers[0].shipMesh = Resources.Load<Mesh>("test/tgs demo/enemy-base");
+            Mesh mesh = enemyShipsUIRenderers[0].shipMesh;
+            var oriVerts = mesh.vertices;
+            for (int i = 0; i < oriVerts.Length; i++)
+            {
+                Vector3 vert = oriVerts[i];
+                vert.x *= 2;
+                vert.y *= 2;
+                vert.z *= 2;
+                oriVerts[i] = vert;
+            }
+            mesh.vertices = oriVerts;
+        }
+
+
+
         [HarmonyPostfix]
         [HarmonyPatch(typeof(LogisticShipUIRenderer), "Update")]
         public static void LogisticShipUIRenderer_Update(ref LogisticShipUIRenderer __instance)
         {
             if (ships.Count == 0) return;
-
-            if (!logisticShipUIRendererUIStarmap.ContainsKey(__instance))
-            {
-                logisticShipUIRendererUIStarmap.Add(__instance, AccessTools.FieldRefAccess<LogisticShipUIRenderer, UIStarmap>(__instance, "uiStarmap"));
-                logisticShipUIRendererShipCount = AccessTools.Field(typeof(LogisticShipUIRenderer), "shipCount");
-            }
-
-            UIStarmap uiStarMap = logisticShipUIRendererUIStarmap[__instance];
+            UIStarmap uiStarMap = enemyShipsUIRenderers[0].uiStarmap;
 
             if (__instance.transport == null || uiStarMap == null || !uiStarMap.active) return;
 
-            int shipCount = (int)logisticShipUIRendererShipCount.GetValue(__instance);
+            enemyShipsUIRenderers[0].shipCount = 0; //我试了不归零貌似也不行
+            int shipCount = enemyShipsUIRenderers[0].shipCount;
 
-            while (__instance.capacity < shipCount + ships.Count)
+            while (enemyShipsUIRenderers[0].capacity < shipCount + ships.Count)
             {
-                __instance.Expand2x();
+                enemyShipsUIRenderers[0].Expand2x();
             }
 
-            if (!logisticShipUIRendererComputeBuffer.ContainsKey(__instance) || logisticShipUIRendererExpanded)
-            {
-                logisticShipUIRendererComputeBuffer[__instance] = AccessTools.FieldRefAccess<LogisticShipUIRenderer, ComputeBuffer>(__instance, "shipsBuffer");
-                logisticShipUIRendererShipUIRenderingData[__instance] = AccessTools.FieldRefAccess<LogisticShipUIRenderer, ShipUIRenderingData[]>(__instance, "shipsArr");
-                logisticShipUIRendererExpanded = false;
-            }
-
-            ComputeBuffer shipsBuffer = logisticShipUIRendererComputeBuffer[__instance];
-            ShipUIRenderingData[] shipsArr = logisticShipUIRendererShipUIRenderingData[__instance];
+            ComputeBuffer shipsBuffer = enemyShipsUIRenderers[0].shipsBuffer;
+            ShipUIRenderingData[] shipsArr = enemyShipsUIRenderers[0].shipsArr;
 
             foreach (var ship in ships.Values)
             {
@@ -432,14 +436,17 @@ namespace DSP_Battle
                 shipsArr[shipCount] = ship.renderingUIData;
                 shipsArr[shipCount].rpos = (shipsArr[shipCount].upos - uiStarMap.viewTargetUPos) * 0.00025;
                 shipCount++;
+                if (shipCount == 1)
+                    Utils.Log($"shipsarr pos =  {shipsArr[shipCount].upos} and real pos = {ship.shipData.uPos}");
             }
-
-            logisticShipUIRendererShipCount.SetValue(__instance, shipCount);
+            enemyShipsUIRenderers[0].shipCount = shipCount;
 
             if (shipsBuffer != null)
             {
                 shipsBuffer.SetData(shipsArr, 0, 0, shipCount);
             }
+            enemyShipsUIRenderers[0].shipsArr = shipsArr;
+            enemyShipsUIRenderers[0].shipsBuffer = shipsBuffer;
         }
 
         [HarmonyPrefix]
@@ -449,7 +456,51 @@ namespace DSP_Battle
             if (__instance.galacticTransport != null && ships.Count != 0)
             {
                 __instance.galacticTransport.shipRenderer.Update();
+                enemyShipsUIRenderers[0].Draw();
             }
+        }
+        */
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(LogisticShipUIRenderer), "Update")]
+        public static void LogisticShipUIRenderer_Update(ref LogisticShipUIRenderer __instance)
+        {
+            EnemyShipUIRenderer.Update(__instance.uiStarmap);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(LogisticShipUIRenderer), "Draw")]
+        public static void LogisticShipUIRenderer_Draw(ref LogisticShipUIRenderer __instance)
+        {
+            EnemyShipUIRenderer.Draw(__instance);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(LogisticShipRenderer), "Update")]
+        public static void LogisticShipRenderer_Update(ref LogisticShipRenderer __instance)
+        {
+            EnemyShipRenderer.Update();
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(LogisticShipRenderer), "Draw")]
+        public static void LogisticShipRenderer_Draw(ref LogisticShipRenderer __instance)
+        {
+            EnemyShipRenderer.Draw();
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(LogisticShipRenderer), "Destroy")]
+        public static void LogisticShipRenderer_Destroy(ref LogisticShipRenderer __instance)
+        {
+            EnemyShipRenderer.Destroy();
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(LogisticShipUIRenderer), "Destroy")]
+        public static void LogisticShipUIRenderer_Destroy(ref LogisticShipUIRenderer __instance)
+        {
+            EnemyShipUIRenderer.Destroy();
         }
 
         public static void Export(BinaryWriter w)
