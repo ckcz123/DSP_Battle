@@ -315,8 +315,10 @@ namespace DSP_Battle
             else if (shipData.stage == 1) UpdateStage1();
 
             PlanetData planet = GameMain.galaxy.PlanetById(shipData.planetB);
-            renderingData.SetPose(shipData.uPos, flag7 ? quaternion : shipData.uRot, GameMain.data.relativePos, GameMain.data.relativeRot, shipData.uVel * shipData.uSpeed, shipData.itemId);
-            renderingUIData.SetPose(shipData.uPos, flag7 ? quaternion : shipData.uRot, (float)(
+            Vector3 newUVel = shipData.uVel * shipData.uSpeed;
+            Quaternion newURot = flag7 ? quaternion : shipData.uRot;
+            renderingData.SetPose(ref shipData.uPos, ref newURot, ref GameMain.data.relativePos, ref GameMain.data.relativeRot, ref newUVel, shipData.itemId);
+            renderingUIData.SetPose(ref shipData.uPos, ref newURot, (float)(
                 planet.star.uPosition - (shipData.otherGId < 0 ? wormholePos : planet.uPosition)).magnitude, shipData.uSpeed, shipData.itemId);
             if (renderingData.anim.z < 0) renderingData.anim.z = 0;
 

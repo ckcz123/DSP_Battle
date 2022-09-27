@@ -125,7 +125,7 @@ namespace DSP_Battle
             station.energyPerTick = 0;
             station.warperCount = 0;
 
-            factory.transport.RefreshTraffic(station.id);
+            factory.transport.RefreshStationTraffic(station.id);
             GameMain.data.galacticTransport.RefreshTraffic(station.gid);
 
             bool freePhysics = false;

@@ -652,7 +652,8 @@ namespace DSP_Battle
                             }
                             else //离地面超过200
                             {
-                                VectorLF3 vectorLF2 = dysonSphereLayer.NodeEnterUPos(dysonRocket.node) - dysonRocket.uPos;
+                                dysonSphereLayer.NodeEnterUPos(dysonRocket.node, out VectorLF3 vectorLF2);
+                                vectorLF2 -= dysonRocket.uPos;
 
                                 double num11 = Math.Sqrt(vectorLF2.x * vectorLF2.x + vectorLF2.y * vectorLF2.y + vectorLF2.z * vectorLF2.z);
                                 if (num11 < 50.0)
@@ -761,7 +762,8 @@ namespace DSP_Battle
                         }
                         else
                         {
-                            VectorLF3 vectorLF5 = dysonSphereLayer.NodeSlotUPos(dysonRocket.node) - dysonRocket.uPos;
+                            dysonSphereLayer.NodeSlotUPos(dysonRocket.node, out VectorLF3 vectorLF5);
+                            vectorLF5 -= dysonRocket.uPos;
                             double num28 = Math.Sqrt(vectorLF5.x * vectorLF5.x + vectorLF5.y * vectorLF5.y + vectorLF5.z * vectorLF5.z);
                             if (num28 < 2.0)
                             {
@@ -866,6 +868,7 @@ namespace DSP_Battle
             return false;
         }
 
+
         [HarmonyPrefix]
         [HarmonyPatch(typeof(DysonSphere), "RocketGameTick", new Type[] { typeof(int), typeof(int), typeof(int) })]
         public static bool RocketGameTickThreadPatch(ref DysonSphere __instance, int _usedThreadCnt, int _curThreadIdx, int _minimumMissionCnt)
@@ -919,6 +922,7 @@ namespace DSP_Battle
                             forceDisplacement = true;
                         }
                         float missileSpeedUp = (float)missileMaxSpeed / 200f;
+
                         //DysonSphereLayer dysonSphereLayer = __instance.layersIdBased[dysonRocket.node.layerId];
                         AstroData astroPose = astroPoses[dysonRocket.planetId];
                         VectorLF3 vectorLF = astroPose.uPos - dysonRocket.uPos;
@@ -1119,6 +1123,7 @@ namespace DSP_Battle
                             }
 
 
+
                             double num28 = Math.Sqrt(vectorLF5.x * vectorLF5.x + vectorLF5.y * vectorLF5.y + vectorLF5.z * vectorLF5.z);
                             if (num28 < dmgRange * 0.5 && num28 < 400)
                             {
@@ -1216,7 +1221,7 @@ namespace DSP_Battle
                                 {
                                     if (dysonRocket.uSpeed > Math.Min(Math.Max(missileMaxSpeed * 0.5, 5000), 10000))
                                         dysonRocket.uSpeed -= missileSpeedUp;
-                                    else if(dysonRocket.uSpeed < Math.Min(Math.Max(missileMaxSpeed * 0.5, 5000), 10000))
+                                    else if (dysonRocket.uSpeed < Math.Min(Math.Max(missileMaxSpeed * 0.5, 5000), 10000))
                                         dysonRocket.uSpeed += missileSpeedUp;
                                 }
                             }
@@ -1285,10 +1290,6 @@ namespace DSP_Battle
                             {
                                 toTarget = ship.uPos - dysonRocket.uPos;
 
-
-                                missileProtoIds[starIndex][i] = 0;
-                                __instance.RemoveDysonRocket(i);
-                                goto IL_BDF;
                             }
                             double distance = toTarget.magnitude;
                             if (distance < num33) //距离小于一帧的量
@@ -1308,11 +1309,6 @@ namespace DSP_Battle
                                 dysonRocket.uPos.z = dysonRocket.uPos.z + (double)dysonRocket.uVel.z * num33 + vectorLF6.z;
                             }
 
-                        VectorLF3 vectorLF6 = Vector3.zero;
-                        double num30 = (double)(2f - (float)num8 / 200f);
-                        if (num30 > 1.0)
-                        {
-                            num30 = 1.0;
                         }
                         vectorLF = astroPose.uPos - dysonRocket.uPos;
                         num8 = Math.Sqrt(vectorLF.x * vectorLF.x + vectorLF.y * vectorLF.y + vectorLF.z * vectorLF.z) - (double)astroPose.uRadius;
@@ -1357,7 +1353,8 @@ namespace DSP_Battle
                             }
                             else //离地面超过200
                             {
-                                VectorLF3 vectorLF2 = dysonSphereLayer.NodeEnterUPos(dysonRocket.node) - dysonRocket.uPos;
+                                dysonSphereLayer.NodeEnterUPos(dysonRocket.node, out VectorLF3 vectorLF2);
+                                vectorLF2 -= dysonRocket.uPos;
 
                                 double num11 = Math.Sqrt(vectorLF2.x * vectorLF2.x + vectorLF2.y * vectorLF2.y + vectorLF2.z * vectorLF2.z);
                                 if (num11 < 50.0)
@@ -1466,7 +1463,8 @@ namespace DSP_Battle
                         }
                         else
                         {
-                            VectorLF3 vectorLF5 = dysonSphereLayer.NodeSlotUPos(dysonRocket.node) - dysonRocket.uPos;
+                            dysonSphereLayer.NodeSlotUPos(dysonRocket.node, out VectorLF3 vectorLF5);
+                            vectorLF5 -= dysonRocket.uPos;
                             double num28 = Math.Sqrt(vectorLF5.x * vectorLF5.x + vectorLF5.y * vectorLF5.y + vectorLF5.z * vectorLF5.z);
                             if (num28 < 2.0)
                             {
@@ -1570,7 +1568,6 @@ namespace DSP_Battle
 
             return false;
         }
-
 
         public static int AddDysonRockedGniMaerd(ref DysonSphere _this, ref DysonRocket rocket, DysonNode node = null)
         {
