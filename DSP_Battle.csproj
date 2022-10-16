@@ -40,6 +40,7 @@
     </Reference>
     <Reference Include="Assembly-CSharp-nstrip-allpublic20220927">
       <HintPath>dependencies\Assembly-CSharp-nstrip-allpublic20220927.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>..\..\..\Steam\steamapps\common\Dyson Sphere Program\BepInEx\core\BepInEx.dll</HintPath>
