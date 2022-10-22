@@ -164,10 +164,10 @@ namespace DSP_Battle
                     {
                         double dropExpectation = intensity * 1.0 / Configs.nextWaveIntensity * Configs.nextWaveMatrixExpectation;
                         int dropItemId = 8032;
-                        if (GameMain.history.TechUnlocked(1924))
+                        if (GameMain.history.TechUnlocked(1924)) // 由于异星矩阵有用，用于随机遗物，所以这里改了，其实可以改成遗物满8个直接给元数据，待定
                         {
-                            dropExpectation *= 50;
-                            dropItemId = 8033;
+                            //dropExpectation *= 50;
+                            //dropItemId = 8033;
                         }
                         if (dropExpectation > 1) //期望超过1的部分必然掉落
                         {

@@ -412,6 +412,12 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("晶体重构器科技结论", "You have successfully decoded the blueprint of Crystal reconstructor carrier rocket.", "你成功解码了晶体重构器运载火箭的制造蓝图。");
 
             ProtoRegistry.RegisterString("被深空来敌mod禁止", "Banned by mod They Come From Void", "被深空来敌mod禁止");
+            ProtoRegistry.RegisterString("发现异星圣物", "Alien Relic Found", "发现异星圣物");
+            ProtoRegistry.RegisterString("解译异星圣物提示", "English Translation Needed.", "从以下三个解码轨中选取一个进行解译以获取对应的圣物加成。\n可以使用异星矩阵重随解码轨来发现新的可用效果，每次重新随机会使圣物更加不稳定，从而使下次重新随机的消耗翻倍。");
+            ProtoRegistry.RegisterString("重新随机", "Roll", "重新随机");
+            ProtoRegistry.RegisterString("免费", "free", "免费");
+            ProtoRegistry.RegisterString("放弃解译", "Abort Study         +", "放弃解译         +");
+
 
             ItemProto bullet1 = ProtoRegistry.RegisterItem(8001, "子弹1", "子弹1描述", "Assets/DSPBattle/bullet1", 2701 + pageBias, 100, EItemType.Material);
             ItemProto bullet2 = ProtoRegistry.RegisterItem(8002, "子弹2", "子弹2描述", "Assets/DSPBattle/bullet2", 2702 + pageBias, 100, EItemType.Material);

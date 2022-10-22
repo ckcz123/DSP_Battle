@@ -124,12 +124,14 @@ namespace DSP_Battle
             }
             if(Configs.developerMode && Input.GetKeyDown(KeyCode.Z))
             {
+                Relic.PrepareNewRelic();
                 int planetId = 103;
                 if (GameMain.localPlanet != null)
                     planetId = GameMain.localPlanet.id;
                 if (ShieldGenerator.currentShield.ContainsKey(planetId))
                     ShieldGenerator.currentShield.AddOrUpdate(planetId, 100000, (x, y) => y + 100000);
             }
+            UIRelic.WindowAnimationUpdate();
             ///////////////////////////////////////////////////////////////////////////////////BattleBGMController.BGMLogicUpdate();
         }
         [HarmonyPostfix]
@@ -199,6 +201,7 @@ namespace DSP_Battle
             ShieldGenerator.Export(w);
             Droplets.Export(w);
             Rank.Export(w);
+            Relic.Export(w);
         }
 
         public void Import(BinaryReader r)
@@ -213,6 +216,7 @@ namespace DSP_Battle
             ShieldGenerator.Import(r);
             Droplets.Import(r);
             Rank.Import(r);
+            Relic.Import(r);
 
             WaveStages.ResetCargoAccIncTable(Configs.extraSpeedEnabled && Rank.rank>=5);
             UIBattleStatistics.InitAll();
@@ -234,6 +238,7 @@ namespace DSP_Battle
             ShieldGenerator.IntoOtherSave();
             Droplets.IntoOtherSave();
             Rank.IntoOtherSave();
+            Relic.IntoOtherSave();
 
             WaveStages.ResetCargoAccIncTable(Configs.extraSpeedEnabled && Rank.rank >= 5);
             UIBattleStatistics.InitAll();
