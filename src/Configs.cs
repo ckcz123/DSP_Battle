@@ -9,7 +9,7 @@ namespace DSP_Battle
 {
     public class Configs
     {
-        public static string versionString = "2.0.5";
+        public static string versionString = "2.0.7";
         public static string qq = "694213906";
         public static bool developerMode = false; //发布前务必修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
 
@@ -17,7 +17,7 @@ namespace DSP_Battle
         public static bool enableBattleBGM = false;
         public static bool enableAlertTextGlowing = true;
         public static int versionWhenImporting = -1;
-        public static int versionCode = 30220927;
+        public static int versionCode = 30221022;
 
 
         public static int difficulty = 0; // -1 easy, 0 normal, 1 hard
@@ -77,9 +77,9 @@ namespace DSP_Battle
 
         public static int[] enemyFireInterval = new int[] {120, 60, 60, int.MaxValue, 60 }; //每攻击一次间隔的tick0
 
-        public static int[] enemyFireRange = new int[] { 5000, 8000, 15000, 15000, 50000 }; //射程
+        public static int[] enemyFireRange = new int[] { 5000, 8000, 15000, 15000, 30000 }; //射程
 
-        public static int[] enemyDamagePerBullet = new int[] { 200, 200, 300, 20000, 1000 }; //dps = 100,200,300,-,1000, dps per intensity = 100,50,38,-,67
+        public static int[] enemyDamagePerBullet = new int[] { 500, 500, 700, 200000, 2000 }; //dps = 100,200,300,-,1000, dps per intensity = 100,50,38,-,67
         //public static int[] enemyDamagePerBullet = new int[] { 2, 2, 3, 200, 2 };
 
         //public static int[] enemyBulletSpeed = new int[] {20000, 30000, 50000, 80000, 150000 }; //虽然有speed设置，但是为了减少运算，子弹伤害是在发射时就结算的。speed应该设置的比较大来减少视觉上的误差
@@ -120,10 +120,14 @@ namespace DSP_Battle
         public static int[] wavePerStar;
 
         // --- 护盾信息
-        public static int shieldGenPerTick = 10; //每个生成器提供的回复速度不会因为护盾生成器数量变多而有削减，是线性的增长，回复速度如此之慢是为保留：可能加入的，回复护盾的，巨构的存在价值
-        //当现有capacity超过20M后（前四个），每个后续的生成器只提供50%Capacity，达到更高会有更严重的debuff
+        public static int shieldGenPerTick = 12; //每个生成器提供的回复速度不会因为护盾生成器数量变多而有削减，是线性的增长，回复速度如此之慢是为保留：可能加入的，回复护盾的，巨构的存在价值
         public static List<Tuple<int, int>> capacityPerGenerator =
-            new List<Tuple<int, int>> { new Tuple<int, int>(0, 5000000), new Tuple<int, int>(20000000, 2500000), new Tuple<int, int>(50000000, 500000), new Tuple<int, int>(80000000, 0) };
+            new List<Tuple<int, int>> {
+                new Tuple<int, int>(0, 5000000),
+                new Tuple<int, int>(5000000, 3000000),
+                new Tuple<int, int>(10000000, 2000000),
+                new Tuple<int, int>(30000000, 1000000),
+                new Tuple<int, int>(50000000, 0) };
 
         //Rank信息
         public static int[] expToNextRank = new int[] { 10, 100, 800, 3000, 20000, 100000, 500000, 1000000, 8000000, 30000000, 0, 0, 0};
@@ -224,27 +228,27 @@ namespace DSP_Battle
 
             enemyIntensity[0] = 1; // config.Bind("config", "enemy1Intensity", defaultValue: 1, "敌方飞船1强度").Value;
             enemyHp[0] = 4000; // config.Bind("config", "enemy1Hp", defaultValue: 4000, "敌方飞船1血量").Value;
-            enemySpeed[0] = 1500f; // config.Bind("config", "enemy1Speed", defaultValue: 1500f, "敌方飞船1速度（米每秒）").Value;
+            enemySpeed[0] = 1000f; // config.Bind("config", "enemy1Speed", defaultValue: 1500f, "敌方飞船1速度（米每秒）").Value;
             enemyRange[0] = 20; // config.Bind("config", "enemy1Range", defaultValue: 20, "敌方飞船1破坏范围").Value;
 
             enemyIntensity[1] = 4; // config.Bind("config", "enemy2Intensity", defaultValue: 4, "敌方飞船2强度").Value;
             enemyHp[1] = 20000; // config.Bind("config", "enemy2Hp", defaultValue: 20000, "敌方飞船2血量").Value;
-            enemySpeed[1] = 2000f; // config.Bind("config", "enemy2Speed", defaultValue: 2000f, "敌方飞船2速度（米每秒）").Value;
+            enemySpeed[1] = 1500f; // config.Bind("config", "enemy2Speed", defaultValue: 2000f, "敌方飞船2速度（米每秒）").Value;
             enemyRange[1] = 40; // config.Bind("config", "enemy2Range", defaultValue: 40, "敌方飞船2破坏范围").Value;
 
-            enemyIntensity[2] = 8; // config.Bind("config", "enemy3Intensity", defaultValue: 8, "敌方飞船3强度").Value;
+            enemyIntensity[2] = 6; // config.Bind("config", "enemy3Intensity", defaultValue: 8, "敌方飞船3强度").Value;
             enemyHp[2] = 10000; // config.Bind("config", "enemy3Hp", defaultValue: 10000, "敌方飞船3血量").Value;
-            enemySpeed[2] = 4000f; // config.Bind("config", "enemy3Speed", defaultValue: 5000f, "敌方飞船3速度（米每秒）").Value;
+            enemySpeed[2] = 3000f; // config.Bind("config", "enemy3Speed", defaultValue: 5000f, "敌方飞船3速度（米每秒）").Value;
             enemyRange[2] = 60; // config.Bind("config", "enemy3Range", defaultValue: 60, "敌方飞船3破坏范围").Value;
 
-            enemyIntensity[3] = 9; // config.Bind("config", "enemy4Intensity", defaultValue: 8, "敌方飞船4强度").Value;
-            enemyHp[3] = 120000; // config.Bind("config", "enemy4Hp", defaultValue: 120000, "敌方飞船4血量").Value;
+            enemyIntensity[3] = 12; // config.Bind("config", "enemy4Intensity", defaultValue: 8, "敌方飞船4强度").Value;
+            enemyHp[3] = 100000; // config.Bind("config", "enemy4Hp", defaultValue: 120000, "敌方飞船4血量").Value;
             enemySpeed[3] = 1000f; // config.Bind("config", "enemy4Speed", defaultValue: 1000f, "敌方飞船4速度（米每秒）").Value;
             enemyRange[3] = 120; // config.Bind("config", "enemy4Range", defaultValue: 80, "敌方飞船4破坏范围").Value;
 
             enemyIntensity[4] = 15; // config.Bind("config", "enemy5Intensity", defaultValue: 15, "敌方飞船5强度").Value;
             enemyHp[4] = 80000; // config.Bind("config", "enemy5Hp", defaultValue: 80000, "敌方飞船5血量").Value;
-            enemySpeed[4] = 1200f; // config.Bind("config", "enemy5Speed", defaultValue: 3000f, "敌方飞船5速度（米每秒）").Value;
+            enemySpeed[4] = 1500f; // config.Bind("config", "enemy5Speed", defaultValue: 3000f, "敌方飞船5速度（米每秒）").Value;
             enemyRange[4] = 100; // config.Bind("config", "enemy5Range", defaultValue: 100, "敌方飞船5破坏范围").Value;
 
             _wormholeRange = 20000; // config.Bind("config", "wormholeRange", defaultValue: 20000, "初始虫洞刷新范围，米为单位").Value;

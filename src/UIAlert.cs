@@ -86,8 +86,7 @@ namespace DSP_Battle
             alertUIObj = new GameObject();
             alertUIObj.name = "AlertUI";
             alertUIObj.transform.SetParent(inGameCanvas.transform, false);
-            float yPos = Mathf.Min(DSPGame.globalOption.resolution.height / 1080f * 500f, 500f);
-            alertUIObj.transform.localPosition = new Vector3(0, yPos, 0);
+            alertUIObj.transform.localPosition = new Vector3(0, getYPos(), 0);
 
             GameObject topTipsObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Top Tips");
             topTipsObj.transform.SetAsLastSibling();
@@ -153,13 +152,13 @@ namespace DSP_Battle
             GameObject myStat1LabelObj = sons.Find("dyson-cnt-label").gameObject;
             GameObject addHelpObj = GameObject.Instantiate(myStat1LabelObj);
             addHelpObj.transform.SetParent(titleObj.transform, false);
-            addHelpObj.transform.localPosition = new Vector3(500, -70, 0);
+            addHelpObj.transform.localPosition = new Vector3(500, -60, 0);
             addHelpObj.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 70);
             helpInfo = addHelpObj.GetComponent<Text>();
 
             GameObject rewardObj = GameObject.Instantiate(myStat1LabelObj);
             rewardObj.transform.SetParent(titleObj.transform, false);
-            rewardObj.transform.localPosition = new Vector3(500, -100, 0);
+            rewardObj.transform.localPosition = new Vector3(500, -80, 0);
             rewardObj.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 70);
             rewardInfo = rewardObj.GetComponent<Text>();
             rewardInfo.color = new Color(194 / 255f, 133 / 255f, 61 / 255f);
@@ -426,8 +425,7 @@ namespace DSP_Battle
             isActive = r.ReadBoolean();
             if(alertUIObj != null) //如果游戏中更改了分辨率需要重新加载一次游戏来刷新顶部UI位置
             {
-                float yPos = Mathf.Min(DSPGame.globalOption.resolution.height / 1080f * 500f, 500f);
-                alertUIObj.transform.localPosition = new Vector3(0, yPos, 0);
+                alertUIObj.transform.localPosition = new Vector3(0, getYPos(), 0);
             }
         }
 
@@ -445,9 +443,28 @@ namespace DSP_Battle
             if (alertUIObj != null)
             {
                 Utils.Log("not null");
-                float yPos = Mathf.Min(DSPGame.globalOption.resolution.height / 1080f * 500f, 500f);
-                alertUIObj.transform.localPosition = new Vector3(0, yPos, 0);
+                alertUIObj.transform.localPosition = new Vector3(0, getYPos(), 0);
             }
+        }
+
+        private static float getYPos()
+        {
+            float yPos = Mathf.Min(DSPGame.globalOption.resolution.height / 1080f * 500f, 500f);
+            return yPos;
+            /*
+            switch (DSPGame.globalOption.uiLayoutHeight)
+            {
+                case 900:
+                    return 300f;
+                case 1080:
+                    return 500f;
+                case 1440:
+                    return 800f;
+                default:
+                    break;
+            }
+            return Mathf.Min(DSPGame.globalOption.resolution.height / 1080f * 500f, 500f);
+            */
         }
     }
 }

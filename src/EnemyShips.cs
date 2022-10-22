@@ -19,9 +19,9 @@ namespace DSP_Battle
         public static System.Random random = new System.Random();
         public static List<List<EnemyShip>> minTargetDisSortedShips;
         public static List<Dictionary<int, List<EnemyShip>>> minPlanetDisSortedShips;
-        public static List<Dictionary<int, List<EnemyShip>>> targetPlanetShips;
-        public static List<List<EnemyShip>> maxThreatSortedShips;
-        public static List<List<EnemyShip>> minHpSortedShips;
+        // public static List<Dictionary<int, List<EnemyShip>>> targetPlanetShips;
+        // public static List<List<EnemyShip>> maxThreatSortedShips;
+        // public static List<List<EnemyShip>> minHpSortedShips;
         //public static string meshDir = "entities/models/space capsule/space-capsule"; //是十字外面一个圈，很小
         public static bool shouldDistroy = true;
 
@@ -90,21 +90,22 @@ namespace DSP_Battle
         {
             SortShipsMinTargetDis();
             SortShipsMinPlanetDis();
-            SortShipsMaxThreat();
-            SortShipsMinHp();
+            // SortShipsMaxThreat();
+            // SortShipsMinHp();
         }
 
         public static List<EnemyShip> sortedShips(int strategy, int starIndex, int planetId)
         {
             // 最接近物流塔
-            if (strategy == 1) return minTargetDisSortedShips[starIndex];
+            // if (strategy == 1) return minTargetDisSortedShips[starIndex];
             // 最大威胁
-            if (strategy == 2) return maxThreatSortedShips[starIndex];
+            // if (strategy == 2) return maxThreatSortedShips[starIndex];
             // 距自己最近
             if (strategy == 3) return minPlanetDisSortedShips[starIndex][planetId];
             // 最低生命
-            if (strategy == 4) return minHpSortedShips[starIndex];
-            return new List<EnemyShip>();
+            // if (strategy == 4) return minHpSortedShips[starIndex];
+            // return new List<EnemyShip>();
+            return minTargetDisSortedShips[starIndex];
         }
 
         public static void SortShipsMinTargetDis()
@@ -169,9 +170,9 @@ namespace DSP_Battle
                 }
             }
             minPlanetDisSortedShips = sortedShips;
-            targetPlanetShips = targetShips;
+            // targetPlanetShips = targetShips;
         }
-
+        /*
         public static void SortShipsMaxThreat()
         {
             var sortedShips = new List<List<EnemyShip>>(Configs.starCount);
@@ -207,7 +208,7 @@ namespace DSP_Battle
             }
             minHpSortedShips = sortedShips;
         }
-
+        */
         public static void OnShipLanded(EnemyShip ship)
         {
             DspBattlePlugin.logger.LogInfo("=========> Ship " + ship.shipIndex + " landed at station " + ship.shipData.otherGId);

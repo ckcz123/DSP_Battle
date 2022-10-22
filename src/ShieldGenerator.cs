@@ -20,7 +20,7 @@ namespace DSP_Battle
 
         //无需存档，每帧清零并重新计算
         public static ConcurrentDictionary<int, int> calcShieldCapacity = new ConcurrentDictionary<int, int>();
-        public static ConcurrentDictionary<int, int> calcShieldInc = new ConcurrentDictionary<int, int>();
+        public static ConcurrentDictionary<int, double> calcShieldInc = new ConcurrentDictionary<int, double>();
         public static ConcurrentDictionary<int, int> calcShieldGenCount = new ConcurrentDictionary<int, int>();
 
 
@@ -92,7 +92,7 @@ namespace DSP_Battle
             currentShield = new ConcurrentDictionary<int, int>();
             maxShieldCapacity = new ConcurrentDictionary<int, int>();
             calcShieldCapacity = new ConcurrentDictionary<int, int>();
-            calcShieldInc = new ConcurrentDictionary<int, int>();
+            calcShieldInc = new ConcurrentDictionary<int, double>();
             calcShieldGenCount = new ConcurrentDictionary<int, int>();
             shieldUIPlanetId = 0;
             curShieldIncUI = 0;
@@ -187,9 +187,23 @@ namespace DSP_Battle
             calcShieldCapacity.AddOrUpdate(planetId, capacityProvided, (x, y) => y + capacityProvided);
             maxShieldCapacity.AddOrUpdate(planetId, capacityProvided, (x, y) => y);
 
+            //计算护盾产生器总量
+            int existingCount = calcShieldGenCount.AddOrUpdate(planetId, 1, (x, y) => y + 1);
+
             //护盾回复
             int maxCap = maxShieldCapacity.GetOrAdd(planetId, 0);
-            int gen = (int)(Configs.shieldGenPerTick * (__instance.currEnergyPerTick * 1.0 / __instance.energyPerTick)); //电网供给只要不是100%就会按比例缩减护盾恢复速度
+            double gen = Configs.shieldGenPerTick * (__instance.currEnergyPerTick * 1.0 / __instance.energyPerTick); //电网供给只要不是100%就会按比例缩减护盾恢复速度
+            
+            // 护盾提供回复量： 1, 1/2, 1/2, 1/3, 1/3, 1/3, 1/4, 1/4, 1/4, 1/4, 1/5, ...
+            for (int j = 1; ; j++)
+            {
+                if (j * (j + 1)  / 2 >= existingCount)
+                {
+                    gen /= j;
+                    break;
+                }
+            }
+
             if (Configs.nextWaveStarIndex == __instance.fullId / 100 - 1 && Configs.nextWaveState == 3) //战斗中不回复护盾
             { 
                 gen = 0;
@@ -197,8 +211,6 @@ namespace DSP_Battle
             }
             calcShieldInc.AddOrUpdate(planetId, gen, (x, y) => y + gen);
 
-            //计算护盾产生器总量
-            calcShieldGenCount.AddOrUpdate(planetId, 1, (x, y) => y + 1);
         }
 
         [HarmonyPrefix]
@@ -234,27 +246,30 @@ namespace DSP_Battle
                 int planetId = item.Key;
                 maxShieldCapacity.AddOrUpdate(planetId, item.Value, (x, y) => calcShieldCapacity.GetOrAdd(planetId, 0));
                 //护盾值回复，或如果当前护盾值超出上限，则护盾值下降
-                int inc = 0;
+                double inc = 0;
                 if(calcShieldInc.TryGetValue(planetId, out inc) && currentShield.GetOrAdd(planetId,0) < item.Value)
                 {
-                    currentShield.AddOrUpdate(planetId, inc, (x, y) => y + inc);
+                    currentShield.AddOrUpdate(planetId, (int) inc, (x, y) => y + (int) inc);
                     if (currentShield[planetId] > item.Value)
                         currentShield.AddOrUpdate(planetId, item.Value, (x, y) => item.Value);
                 }
+                // 护盾不再削减
+                /*
                 if(currentShield.GetOrAdd(planetId, 0) > item.Value + 10000) //如果超出上限，通常为大停电或者拆掉护盾产生器，则每tick减少10000 + 1%的溢出护盾
                 {
-                    int dec = (int)((currentShield[planetId] - item.Value - 10000) * 0.01f) + 10000;
+                    int dec = Math.Max(200, currentShield[planetId] / 25000); // (int)((currentShield[planetId] - item.Value - 10000) * 0.01f) + 10000;
                     currentShield.AddOrUpdate(planetId, item.Value, (x, y) => y - dec);
                 }
                 else if(currentShield.GetOrAdd(planetId, 0) > item.Value) //超出不足10000直接设定为最大值
                 {
                     currentShield.AddOrUpdate(planetId, item.Value, (x, y) => item.Value);
                 }
+                */
             }
 
             if(shieldUIPlanetId!=0)
             {
-                curShieldIncUI = calcShieldInc.GetOrAdd(shieldUIPlanetId, 0);
+                curShieldIncUI = (int) calcShieldInc.GetOrAdd(shieldUIPlanetId, 0);
                 curShieldGenCntUI = calcShieldGenCount.GetOrAdd(shieldUIPlanetId, 0);
             }
 

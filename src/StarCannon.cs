@@ -32,7 +32,7 @@ namespace DSP_Battle
         public static int maxSideLaserIntensity = 5; //12束集束激光子弹数
         public static float sideLaserBulletLifeTime = 0.035f;
         public static VectorLF3 normDirection = new VectorLF3(0, 1, 0);
-        public static int reverseDirection = 1; //只能是1或者-1，1是北极为炮口，-1则是南极。相当于设计恒星炮时所有层级南北极互换
+        public static int reverseDirection = -1; //只能是1或者-1，1是北极为炮口，-1则是南极。相当于设计恒星炮时所有层级南北极互换
         public static int renderLevel = 2; // 默认是2，更小可以减少恒星炮渲染的光束数量
 
         //下面属性可能根据戴森球等级有变化，但并不需要存档        
@@ -85,6 +85,8 @@ namespace DSP_Battle
             laserBulletEndPosDelta = 75 * ratio;
             maxSideLaserIntensity = 2 * ratio + 1;
             sideLaserBulletLifeTime = 0.016f * ratio + 0.003f;
+
+            MoreMegaStructure.StarCannon.maxAimCountByLevel = new List<int> { 0, 6, 12, 18, 30, 99999 };
         }
         public static void InitUI()
         {
@@ -272,7 +274,7 @@ namespace DSP_Battle
                     return -2; //射程不足
                 }
 
-                int alreadyDestroyCount = WormholeProperties.initialWormholeCount - Configs.nextWaveWormCount;
+                int alreadyDestroyCount = WormholeProperties.initialWormholeCount - Configs.nextWaveWormCount; // WormholeProperties.totalDamage / WormholeProperties.wormholdMaxHp;
                 if (alreadyDestroyCount >= maxAimCount)
                 {
                     return -3; //达到连续开火次数上限
@@ -387,20 +389,26 @@ namespace DSP_Battle
 
                         if (fireStage == 1 && time <= 1) //原本第二个条件是是time==0，但可能会出现不进行瞄准动画的问题，因此改成了<=1，大不了瞄准两次
                         {
+                            float originAngularSpeed = layer.orbitAngularSpeed;
+                            layer.orbitAngularSpeed = reAimAngularSpeed;
+
+                            /*
                             layer.orbitAngularSpeed *= 10.0f; //加快轨道旋转速度，只在下面计算时用到一次，之后可以立刻还原
                             if(layer.orbitRadius > 20000)
                             {
                                 layer.orbitAngularSpeed *= layer.orbitRadius / 20000;
-                            }
+                            }*/
                             layer.InitOrbitRotation(layer.orbitRotation, final); //每个戴森壳层开始轨道旋转、对齐瞄准
                             float aimTimeNeed = Quaternion.Angle(layer.orbitRotation, final) / layer.orbitAngularSpeed * 60f;
                             endAimTime = Mathf.Max(endAimTime, (int)aimTimeNeed); //保存瞄准完成所需的最大时间
-
+                            /*
                             layer.orbitAngularSpeed /= 10.0f; //轨道旋转速度还原
                             if(layer.orbitRadius > 20000)
                             {
                                 layer.orbitAngularSpeed /= layer.orbitRadius / 20000;
                             }
+                            */
+                            layer.orbitAngularSpeed = originAngularSpeed;
                         }
 
                         //旋转
@@ -462,7 +470,8 @@ namespace DSP_Battle
                 double distance = (targetUPos - __instance.starData.uPosition).magnitude / 40000 / 60;
                 int realDamage = (int)(damagePerTick * 1.0f * (1 - 0.01f * damageReduction * distance));
                 realDamage = realDamage > damagePerTick * 0.5f ? realDamage : (int)(damagePerTick * 0.5f);
-                int hitResult = WormholeProperties.TryTakeDamage(realDamage);
+                int totalNumber = starCannonLevel;
+                int hitResult = WormholeProperties.TryTakeDamage(realDamage, starCannonLevel);
                 if(hitResult == 1)//代表摧毁了一个虫洞
                 {
                     int result = TrySetNextTarget();
@@ -549,7 +558,31 @@ namespace DSP_Battle
                     }
                 }
 
-                
+                // 溅射效果
+                if (targetSwarm != null)
+                {
+                    for (int j = 1; j < Math.Min(Configs.nextWaveWormCount, totalNumber); ++j)
+                    {
+                        VectorLF3 targetVPos = WormholeUIPatch.starData[Configs.nextWaveWormCount - j - 1].uPosition;
+                        // 设置起终点
+                        for (int i = 0; i < laserBulletNum / dec || i == 0; i++)
+                        {
+                            int bulletIndex = targetSwarm.AddBullet(new SailBullet
+                            {
+                                maxt = 0.3f,
+                                lBegin = targetUPos,
+                                uEndVel = targetVPos,
+                                uBegin = targetUPos, // + Utils.RandPosDelta() * (laserBulletEndPosDelta / dec),
+                                uEnd = targetVPos + Utils.RandPosDelta() * (laserBulletEndPosDelta / dec * 2)
+                            }, 0);
+                            targetSwarm.bulletPool[bulletIndex].state = 0;
+                            if (i >= 1)
+                            {
+                                noExplodeBullets.AddOrUpdate(bulletIndex, 1, (x, y) => 1);
+                            }
+                        }
+                    }
+                }
             }
 
             //结算阶段

@@ -17,6 +17,7 @@ namespace DSP_Battle
         public int wormholeIndex;
         public bool isFiring = false;
         public bool isBlockedByShield = false;
+        public long fireStart = 0;
         // 强制位移参数，时间很短不需要存档
         public VectorLF3 forceDisplacement;
         public int forceDisplacementTime = 0;
@@ -121,6 +122,7 @@ namespace DSP_Battle
             shipData.uSpeed = ((float)DspBattlePlugin.randSeed.NextDouble()) * 0.25f * maxSpeed;
             hp = Configs.enemyHp[enemyId];
             if (Configs.difficulty == 1) hp *= 2;
+            if (Configs.difficulty == -1) hp = hp * 3 / 4;
             damageRange = Configs.enemyRange[enemyId];
             intensity = Configs.enemyIntensity[enemyId];
             this.countDown = countDown;
@@ -136,6 +138,7 @@ namespace DSP_Battle
             renderingUIData.gid = gid;
 
             isFiring = false;
+            fireStart = 0;
             isBlockedByShield = false;
         }
 
@@ -257,7 +260,7 @@ namespace DSP_Battle
             int shipTypeNum = Configs.enemyIntensity2TypeMap[intensity];
             if (ShieldGenerator.currentShield.ContainsKey(planetId) && ShieldGenerator.currentShield[planetId] > 0 && distanceToTarget <= Configs.enemyFireRange[shipTypeNum] && shipData.otherGId >= 0)
             {
-                if (shipTypeNum != 3) //3号是自爆船，不能开火
+                if (shipTypeNum != 3) //3号是自爆船，不能开火 
                     isFiring = true;
                 else
                     isFiring = false;
@@ -308,6 +311,13 @@ namespace DSP_Battle
                 isFiring = false;
                 isBlockedByShield = false;
             }
+            if (isFiring)
+            {
+                if (fireStart == 0) fireStart = GameMain.instance.timei;
+            } else
+            {
+                fireStart = 0;
+            }
 
             Quaternion quaternion = Quaternion.identity;
             bool flag7 = false;
@@ -335,10 +345,12 @@ namespace DSP_Battle
                 {
                     //造成伤害
                     int planetId = shipData.planetB;
-                    ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => y - Configs.enemyDamagePerBullet[shipTypeNum]);
+                    if (fireStart == 0) fireStart = GameMain.instance.timei;
+                    int damage = (int)( Configs.enemyDamagePerBullet[shipTypeNum] * Math.Pow(2.0, (GameMain.instance.timei - fireStart) / 3600.0));
+                    ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => y - damage);
                     if (ShieldGenerator.currentShield[planetId] < 0) 
                         ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => 0);
-                    UIBattleStatistics.RegisterShieldTakeDamage(Configs.enemyDamagePerBullet[shipTypeNum]);
+                    UIBattleStatistics.RegisterShieldTakeDamage(damage);
                     //子弹
                     DysonSwarm swarm = RendererSphere.enemySpheres[planetId / 100 - 1]?.swarm;
                     if(swarm!=null)
@@ -360,7 +372,7 @@ namespace DSP_Battle
 
             //飞船移动
             // float shipSailSpeed = GameMain.history.logisticShipSailSpeedModified;
-            float shipSailSpeed = maxSpeed;
+            float shipSailSpeed = maxSpeed * (1 + (GameMain.instance.timei - Configs.nextWaveFrameIndex) / 3600f);
 
             float num31 = Mathf.Sqrt(shipSailSpeed / 600f);
             float num32 = num31;
@@ -643,7 +655,7 @@ namespace DSP_Battle
         }
         private void UpdateStage1()
         {
-            float shipSailSpeed = maxSpeed;
+            float shipSailSpeed = maxSpeed * (1 + (GameMain.instance.timei - Configs.nextWaveFrameIndex) / 3600f);
             float num31 = Mathf.Sqrt(shipSailSpeed / 600f);
             float num36 = num31 * 0.006f + 1E-05f;
             AstroData[] astroPoses = GameMain.data.galaxy.astrosData;
@@ -733,9 +745,9 @@ namespace DSP_Battle
             renderingUIData.SetEmpty();
             renderingUIData.gid = shipData.shipIndex;
             isFiring = false;
+            fireStart = 0;
             isBlockedByShield =false;
         }
 
     }
 }
-

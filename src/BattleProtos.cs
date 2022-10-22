@@ -213,7 +213,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("彩蛋9描述", "<color=#c2853d>42</color>", "<color=#c2853d>42</color>");
 
 
-            ProtoRegistry.RegisterString("UI快捷键提示", "Press Backspace to hide/open this window. Press \"Ctrl\" + \"-\" to advance the attack time by 1 min. \n Advancing the attack time will also reduce the amount of dropped Alien Matrix in next wave.", "按下退格键开启或关闭此窗口，按下Ctrl+减号键使敌军进攻时间提前1分钟\n手动提前进攻会减少下一次进攻中敌军掉落异星矩阵的数量");
+            ProtoRegistry.RegisterString("UI快捷键提示", "Press Backspace to hide/open this window. Press \"Ctrl\" + \"-\" to advance the attack time by 1 min.", "按下退格键开启或关闭此窗口，按下Ctrl+减号键使敌军进攻时间提前1分钟");
 
             ProtoRegistry.RegisterString("简单难度提示", "Difficulty: Easy (Station won't be destroyed; Merit points earned *0.75)", "当前难度：简单（物流塔不会被破坏；功勋点数获得*0.75）");
             ProtoRegistry.RegisterString("普通难度提示", "Difficulty: Normal (Station attacked will turn to blueprint mode)", "当前难度：普通（物流塔被破坏会进入蓝图模式）");
@@ -242,10 +242,12 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("子弹伤害", "Bullet damage", "子弹伤害");
             ProtoRegistry.RegisterString("导弹伤害", "Missile damage", "导弹伤害");
             ProtoRegistry.RegisterString("相位裂解光束伤害", "Phase-cracking beam damage", "相位裂解光束伤害");
+            ProtoRegistry.RegisterString("子弹相位伤害", "Bullet / Beam damage", "子弹/相位光束伤害");
             ProtoRegistry.RegisterString("子弹速度", "Bullet speed", "子弹速度");
             ProtoRegistry.RegisterString("导弹速度", "Missile speed", "导弹速度");
             ProtoRegistry.RegisterString("子弹飞行速度", "Bullet speed", "子弹飞行速度");
             ProtoRegistry.RegisterString("导弹飞行速度", "Missile speed", "导弹飞行速度");
+            ProtoRegistry.RegisterString("子弹导弹速度", "Bullet / Missile speed", "子弹/导弹速度");
             ProtoRegistry.RegisterString("虫洞干扰半径", "Wormhole interference radius", "虫洞干扰半径");
             ProtoRegistry.RegisterString("效率gm", "Efficiency", "弹药效率");
             ProtoRegistry.RegisterString("额外奖励gm", "★bonus ", "★奖励 ");
@@ -1152,12 +1154,12 @@ namespace DSP_Battle
             
             if (infoLabel.text.Split('\n').Length < 38)
             {
-                infoLabel.text = infoLabel.text + "\r\n\r\n" + "子弹伤害".Translate() + "\r\n" + "相位裂解光束伤害".Translate() + "\r\n"
-                    + "导弹伤害".Translate() + "\r\n" + "子弹飞行速度".Translate() + "\r\n" + "导弹飞行速度".Translate() + "\r\n" + "虫洞干扰半径".Translate() + "\r\n" + "水滴控制上限".Translate();
+                //infoLabel.text = infoLabel.text + "\r\n\r\n" + "子弹伤害".Translate() + "\r\n" + "相位裂解光束伤害".Translate() + "\r\n"
+                //    + "导弹伤害".Translate() + "\r\n" + "子弹飞行速度".Translate() + "\r\n" + "导弹飞行速度".Translate() + "\r\n" + "虫洞干扰半径".Translate() + "\r\n" + "水滴控制上限".Translate();
+                infoLabel.text = infoLabel.text + "\r\n\r\n" + "子弹相位伤害".Translate() + "\r\n" +
+                    "子弹导弹速度".Translate() + "\r\n" + "虫洞干扰半径".Translate() + "\r\n" + "水滴控制上限".Translate();
             }
         }
-
-
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UITechTree), "RefreshDataValueText")]
@@ -1181,13 +1183,18 @@ namespace DSP_Battle
                 final += txt[txt.Length - 1];
                 __instance.dataValueText.text = final;
             }
-
+            /*
             __instance.dataValueText.text = __instance.dataValueText.text + "\r\n\r\n" + Configs.bulletAtkScale.ToString("0%") + "\r\n"
                 + (1 + (Configs.bulletAtkScale - 1) * 2).ToString("0%") + "\r\n" + Configs.bulletAtkScale.ToString("0%")
                 + "\r\n" + Configs.bulletSpeedScale.ToString("0%") + "\r\n" + (1 + (Configs.bulletSpeedScale - 1) * 0.5).ToString("0%") + "\r\n" + (Configs.wormholeRange / 40000.0).ToString() + "AU" + "\r\n"
                 + Droplets.maxDroplet.ToString();
+            */
+            __instance.dataValueText.text = __instance.dataValueText.text + "\r\n\r\n" + Configs.bulletAtkScale.ToString("0%") + " / "
+                + (1 + (Configs.bulletAtkScale - 1) * 2).ToString("0%")
+                + "\r\n" + Configs.bulletSpeedScale.ToString("0%") + " / " + (1 + (Configs.bulletSpeedScale - 1) * 0.5).ToString("0%")
+                + "\r\n" + (Configs.wormholeRange / 40000.0).ToString() + "AU" + "\r\n"
+                + Droplets.maxDroplet.ToString();
         }
-
 
 
         [HarmonyPostfix]

@@ -41,10 +41,10 @@ namespace DSP_Battle
 
         private static void UpdateWaveStage0(long time)
         {
-            if (time % 1800 != 1 || time < Configs.nextWaveFrameIndex + 60 * 60 * 2) return;
-            DspBattlePlugin.logger.LogInfo("=====> Initializing next wave");
+            if (time % 300 != 1 || time < Configs.nextWaveFrameIndex + 60 * 60) return;
             StationComponent[] stations = GameMain.data.galacticTransport.stationPool.Where(EnemyShips.ValidStellarStation).ToArray();
             if (stations.Length == 0) return;
+            DspBattlePlugin.logger.LogInfo("=====> Initializing next wave");
             int starId = stations[EnemyShips.random.Next(0, stations.Length)].planetId / 100 - 1;
 
             // Gen next wave
@@ -52,6 +52,7 @@ namespace DSP_Battle
             Configs.nextWaveFrameIndex = time + deltaFrames + Configs.nextWaveDelay;
             Configs.nextWaveDelay = 0;
             Configs.nextWaveIntensity = Configs.intensity[Math.Min(Configs.intensity.Length - 1, Configs.wavePerStar[starId])];
+            // Configs.nextWaveIntensity = 6000;
             int baseIntensity = Configs.nextWaveIntensity;
             Configs.nextWaveMatrixExpectation = (int)(Configs.expectationMatrices[Math.Min(Configs.expectationMatrices.Length - 1, Configs.wavePerStar[starId])] * (deltaFrames * 1.0 / 36000)); //每10分钟间隔均会增加100%期望矩阵掉落量，但手动使进攻提前到来则会减少这个值
             // Extra intensity
@@ -90,14 +91,15 @@ namespace DSP_Battle
             Configs.nextWaveState = 1;
 
             int intensity = Configs.nextWaveIntensity;
+            int avg = Configs.nextWaveIntensity / (Configs.enemyIntensity[0] + Configs.enemyIntensity[1]
+                + Configs.enemyIntensity[2] + Configs.enemyIntensity[3] + Configs.enemyIntensity[4]);
             for (int i = 4; i >= 1; --i)
             {
-                double v = EnemyShips.random.NextDouble() / 2 + 0.25;
-                Configs.nextWaveEnemy[i] = (int)(intensity * v / Configs.enemyIntensity[i]);
+                Configs.nextWaveEnemy[i] = avg;
                 intensity -= Configs.nextWaveEnemy[i] * Configs.enemyIntensity[i];
             }
             Configs.nextWaveEnemy[0] = intensity / Configs.enemyIntensity[0];
-            Configs.nextWaveWormCount = EnemyShips.random.Next(Math.Min(Configs.nextWaveIntensity / 100, 40), Math.Min(80, Configs.nextWaveEnemy.Sum())) + 1;
+            Configs.nextWaveWormCount = EnemyShips.random.Next(Math.Min(Configs.nextWaveIntensity / 150, 60), Math.Min(95, Configs.nextWaveEnemy.Sum())) + 1;
             UIDialogPatch.ShowUIDialog("下一波攻击即将到来！".Translate(),
                 string.Format("做好防御提示".Translate(), GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName));
 
@@ -110,6 +112,8 @@ namespace DSP_Battle
             StarData star = GameMain.galaxy.stars[Configs.nextWaveStarIndex];
 
             StationComponent[] stations = GameMain.data.galacticTransport.stationPool.Where(e => e != null && e.isStellar && !e.isCollector && e.gid != 0 && e.id != 0 && e.planetId / 100 - 1 == Configs.nextWaveStarIndex).ToArray();
+
+            Wormhole[] tempholes = new Wormhole[Configs.nextWaveWormCount];
 
             for (int i = 0; i < Configs.nextWaveWormCount; ++i)
             {
@@ -124,9 +128,14 @@ namespace DSP_Battle
                     if ((star.uPosition - pos).magnitude < Configs.wormholeRange + star.radius - 10) continue;
                     if (star.planets.Any(planetData => planetData.type != EPlanetType.Gas && (planetData.uPosition - pos).magnitude < Configs.wormholeRange + planetData.radius - 10)) continue;
 
-                    Configs.nextWaveWormholes[i] = wormhole;
+                    tempholes[i] = wormhole;
                     break;
                 }
+            }
+            Array.Sort(tempholes, (x, y) => x.planetId - y.planetId);
+            for (int i = 0; i < Configs.nextWaveWormCount; ++i)
+            {
+                Configs.nextWaveWormholes[i] = tempholes[i];
             }
 
             Configs.nextWaveState = 2;
@@ -146,7 +155,7 @@ namespace DSP_Battle
             {
                 for (int j = 0; j < Configs.nextWaveEnemy[i]; ++j)
                 {
-                    EnemyShips.Create(Configs.nextWaveStarIndex, u % Configs.nextWaveWormCount, i, EnemyShips.random.Next(0, Math.Min(u + 1, 30)));
+                    EnemyShips.Create(Configs.nextWaveStarIndex, u % Configs.nextWaveWormCount, i, EnemyShips.random.Next(0, Math.Min(u + 1, 20)));
                     u++;
                 }
             }

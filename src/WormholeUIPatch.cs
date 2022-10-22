@@ -242,62 +242,71 @@ namespace DSP_Battle
         public static int[] wormholeHp = new int[100];
         public static int initialWormholeCount = -1; //初始的虫洞数量
         public static int initialIntensity = -1; //初始的强度
+        public static int wormholdMaxHp = 600000;
 
         public static void InitWormholeProperties()
         {
             //DspBattlePlugin.logger.LogInfo("Init wormhole properties");
+            wormholdMaxHp = Configs.nextWaveWormCount == 0 ? 600000 : Configs.nextWaveIntensity * 6000 / Configs.nextWaveWormCount;
             for (int i = 0; i < 100; i++)
             {
-                wormholeHp[i] = 1000000; //虫洞默认血量
+                wormholeHp[i] = wormholdMaxHp; //虫洞默认血量
             }
             initialWormholeCount = Configs.nextWaveWormCount;
             initialIntensity = Configs.nextWaveIntensity;
         }
 
-        public static int TryTakeDamage(int damage, int index=-1)
+        public static int TryTakeDamage(int damage, int totalNumber)
         {
-            if (index == -1) //默认攻击最后一个虫洞，暂时不考虑修改
-            {
-                index = Configs.nextWaveWormCount - 1;
-            }
-            if(initialWormholeCount <= 1 || Configs.nextWaveState >= 3) //只有一个虫洞时，无法对虫洞造成伤害。已经开始刷敌舰后，也无法造成伤害。
+            int index = Configs.nextWaveWormCount - 1;
+            if (Configs.nextWaveWormCount <= 1 || Configs.nextWaveState >= 3) //只有一个虫洞时，无法对虫洞造成伤害。已经开始刷敌舰后，也无法造成伤害。
             {
                 return -1;
             }
-            if(index<100 && index > 0)
+
+            int res = TakeDamage(damage, index);
+            for (int j = 1; j < totalNumber; j++)
             {
-                float ratio = (Configs.nextWaveWormCount - 1) * 1f / (initialWormholeCount - 1); //目前是线性减伤，因此消灭所需时间是反比例增长，且最后一个虫洞减伤是100%，不会被消灭
-                ratio = (float)Math.Pow(ratio, 1.5); //改成了n次函数减伤
-                damage = Mathf.RoundToInt(damage * ratio);
-                wormholeHp[index] -= damage;
-                if(wormholeHp[index] <= 0)
+                TakeDamage(Math.Max(0, damage / 2 - damage * (j - 1) / 10), index - j);
+            }
+            return res;
+        }
+
+        public static int TakeDamage(int damage, int index)
+        {
+            if (index < 0 || index >= 100) return 0;
+            double ratio = (Configs.nextWaveWormCount - 1) * 1.0 / (initialWormholeCount - 1); //目前是线性减伤，因此消灭所需时间是反比例增长，且最后一个虫洞减伤是100%，不会被消灭
+            // ratio = (float)Math.Pow(ratio, 1.5); //改成了n次函数减伤
+            ratio = Math.Pow(100.0, ratio) / 99.0;
+            damage = Mathf.RoundToInt(damage * (float) ratio);
+            wormholeHp[index] -= damage;
+            if (wormholeHp[index] <= 0)
+            {
+                Configs.nextWaveWormCount -= 1;
+                Configs.nextWaveIntensity = Mathf.RoundToInt(initialIntensity * (Configs.nextWaveWormCount * 1f / initialWormholeCount));
+
+                //显示更新，星图界面和实际界面
+                if (WormholeUIPatch.uiStar.Length > index && WormholeUIPatch.uiStar[index] != null)
                 {
-                    Configs.nextWaveWormCount -= 1;
-                    Configs.nextWaveIntensity = Mathf.RoundToInt(initialIntensity * (Configs.nextWaveWormCount * 1f / initialWormholeCount));
-
-                    //显示更新，星图界面和实际界面
-                    if (WormholeUIPatch.uiStar.Length > index && WormholeUIPatch.uiStar[index] != null)
-                    {
-                        WormholeUIPatch.uiStar[index]._Close();
-                        WormholeUIPatch.uiStar[index].starObject.gameObject.SetActive(false);
-                    }
-                    if (WormholeUIPatch.simulatorActive.Length > index && WormholeUIPatch.simulatorActive[index])
-                    {
-                        WormholeUIPatch.simulator[index].gameObject.SetActive(false);
-                        WormholeUIPatch.simulatorActive[index] = false;
-                    }
-
-                    //重新执行一遍敌舰数量设定
-                    int intensity = Configs.nextWaveIntensity;
-                    for (int i = 4; i >= 1; --i)
-                    {
-                        double v = EnemyShips.random.NextDouble() / 2 + 0.25;
-                        Configs.nextWaveEnemy[i] = (int)(intensity * v / Configs.enemyIntensity[i]);
-                        intensity -= Configs.nextWaveEnemy[i] * Configs.enemyIntensity[i];
-                    }
-                    Configs.nextWaveEnemy[0] = intensity / Configs.enemyIntensity[0];
-                    return 1; //代表摧毁了一个虫洞
+                    WormholeUIPatch.uiStar[index]._Close();
+                    WormholeUIPatch.uiStar[index].starObject.gameObject.SetActive(false);
                 }
+                if (WormholeUIPatch.simulatorActive.Length > index && WormholeUIPatch.simulatorActive[index])
+                {
+                    WormholeUIPatch.simulator[index].gameObject.SetActive(false);
+                    WormholeUIPatch.simulatorActive[index] = false;
+                }
+
+                //重新执行一遍敌舰数量设定
+                int intensity = Configs.nextWaveIntensity;
+                for (int i = 4; i >= 1; --i)
+                {
+                    double v = EnemyShips.random.NextDouble() / 2 + 0.25;
+                    Configs.nextWaveEnemy[i] = (int)(intensity * v / Configs.enemyIntensity[i]);
+                    intensity -= Configs.nextWaveEnemy[i] * Configs.enemyIntensity[i];
+                }
+                Configs.nextWaveEnemy[0] = intensity / Configs.enemyIntensity[0];
+                return 1; //代表摧毁了一个虫洞
             }
             return 0; //造成了伤害，但是还没摧毁
         }
