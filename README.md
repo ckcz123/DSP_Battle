@@ -12,7 +12,7 @@ A tower-defense-like combat system for Dyson Sphere Program. Prepare your defens
 
 ![Previews](https://raw.githubusercontent.com/ckcz123/DSP_Battle/master/previews/4.png)
 
-[![They Come From Void](https://raw.githubusercontent.com/ckcz123/DSP_Battle/master/previews/youtube.jpg)](https://www.youtube.com/watch?v=-EKDXbIcm_E "They Come From Void")
+[![They Come From Void](https://raw.githubusercontent.com/ckcz123/DSP_Battle/master/previews/youtube.jpg)](https://youtu.be/PKGK_TdQsDE "They Come From Void")
 
 或者可以在B站查看宣传视频： https://www.bilibili.com/video/BV1jR4y1F7t5/
 
@@ -36,7 +36,7 @@ Install BepInEx from [here](https://dsp.thunderstore.io/package/xiaoye97/BepInEx
 Install LDBTool from [here](https://dsp.thunderstore.io/package/xiaoye97/LDBTool/)<br/>
 Install DSPModSave from [here](https://dsp.thunderstore.io/package/CommonAPI/DSPModSave/)<br/>
 Install CommonAPI from [here](https://dsp.thunderstore.io/package/CommonAPI/CommonAPI/)<br/>
-
+Install MoreMegaStructure from [here](https://dsp.thunderstore.io/package/jinxOAO/MoreMegaStructure/)<br/>
 
 Then download the mod manully and unzip into `plugins` (including the `dll` and `dspbattletex` file). If you can see the new logo, then the mod is installed successfully.
 
@@ -54,6 +54,62 @@ Also welcome to anyone who'd like to contribute to the mod, better if you have e
 
 ## Update Log
 
+### 2022-10-22 V2.0.7
+
+ - The recovery efficiency of multiple shield generators will decrease in sequence
+ - 多个护盾发生器对护盾的回复效率将依次递减
+ - The shield energy won't decrease without power
+ - 护盾在断电情况下将不再逸散
+ - Increase the star cannon damage to wormhole; Increase the number of fire for early stages.
+ - 大幅提升恒星炮的伤害值；在前几个阶段大幅提升开火次数
+ - Star cannon can attack multiple wormhole one time.
+ - 恒星炮增加溅射效果，可以同时攻击多个虫洞
+ - Optimize the enemy generation logic, to keep almost same number for each enemty type.
+ - 优化了敌舰的生成逻辑，现在总强度不变时会尽量让每种敌舰数量保持一致
+ - Decrease the initial enemy speed, but they will accelerate during flying.
+ - 降低了敌舰的初始速度，但是敌舰会在飞行时匀加速运动
+ - Fix some UI issues
+ - 部分UI显示的优化
+
+### 2022-10-17 V2.0.6
+
+ - Enemy damage to planet shield will increase over time.
+ - 随着时间而提升敌人对护盾的伤害值
+ - Fix the issue that the planet shield disappear if there is no enough energy
+ - 修复没有足够能量时行星护盾立刻消失的问题
+
+### 2022-09-28 V2.0.5
+ - Updated to work with game version 0.9.27.14546
+ - 更新以适配游戏版本0.9.27.14546
+
+### 2022-06-16 V2.0.4
+ - Updated to work with game version 0.9.26.12891
+ - 更新以适配游戏版本0.9.26.12891
+
+### 2022-05-11 V2.0.3
+ - Fixed an issue where mining consumption rewards were stacking incorrectly.
+ - 修复采矿消耗奖励错误叠加的问题。  
+ - The maximum speed of the missile has been increased, but the firing frequency has been reduced to reduce missile waste.  
+ - 导弹的最大速度大幅提升，但发射频率降低，以减少导弹的浪费。  
+
+### 2022-04-29 V2.0.2
+ - Fixed the bug that the game crashes when enemy droped alien matrix under certain circumstances.
+ - 修复特定情况下敌人掉落物品闪退的bug。
+ - You can now reverse the muzzle direction of the star cannon in the config file.
+ - 现在你可以在config文件中让恒星炮的炮口方向反转。
+
+### 2022-04-29 V2.0.1
+ - Fix an import bug when loading old version archive.
+ - 修复一个读取老版存档时发生的问题。
+
+### 2022-04-29 V2.0.0
+ - Added Nicoll-Dyson Beam, Planet shield, Droplet.  
+ - 新增尼科尔戴森光束、行星护盾和水滴  
+ - Added Merit level system, which can unlock better battle rewards and industrial production bonuses by leveling up. More merit points (Experience) in higher difficulties.  
+ - 新增功勋等级系统，通过提升等级能够解锁更好的战斗奖励和工业生产加成，高难度下获得的功勋点数（经验值）更多   
+ - Enemy ships now use a different model than logistics vessels; Gravitational collapse missiles now have a forced displacement effect; new items have been added   
+ - 敌舰现在使用与物流船不同的模型；引力塌陷导弹现在具有强制位移（聚怪）效果；增添了全新的物品   
+
 ### 2022-04-03 V1.2.3
 
  - Updated to work with game version 0.9.25.11985
@@ -68,7 +124,7 @@ Also welcome to anyone who'd like to contribute to the mod, better if you have e
 
 ### 2022-03-25 v1.2.0
 
- - In normal mode, station attacked will turn into blueprint mode.
+ - In normal mode, station attacked will turn into blueprint mode
  - 普通模式下，被攻击的物流塔会进入蓝图待建筑状态。
  - Optimize the determination of missiles
  - 优化火箭的伤害范围判定

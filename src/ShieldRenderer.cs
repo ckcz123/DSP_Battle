@@ -26,11 +26,11 @@ namespace DSP_Battle
         public static Color shieldColor2 = new Color(0, 0.1f, 0.3f); //整个颜色，饱和度不能太高
         public static Color shieldColor3 = new Color(0.1f, 0.55f, 1f); //外环光晕
         public static int shieldRenderMin = 1; //低于这个护盾值不会渲染护盾
-        public static int shieldFullyRendered = 100000; //护盾值高于这个数量就渲染满护盾的饱和度，否则护盾量越少颜色越暗
+        public static int shieldFullyRendered = 250000; //护盾值高于这个数量就渲染满护盾的饱和度，否则护盾量越少颜色越暗
         public static bool activeProp1 = true;
         public static bool activeProp2 = true;
         public static bool activeProp3 = false;
-        public static float shieldRadius = 0.41f; //行星护盾的半径，0.4或以下会导致在地表时摄像机拉到最远会被护盾遮挡，使得整体有一层白雾的感觉
+        public static float shieldRadius = 0.43f; //行星护盾的半径，0.4或以下会导致在地表时摄像机拉到最远会被护盾遮挡，使得整体有一层白雾的感觉
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UniverseSimulator), "OnGameLoaded")]
@@ -284,17 +284,15 @@ namespace DSP_Battle
                 return;
 
             int planetId = uistarmapPlanet.planet.id;
-            if (ShieldGenerator.maxShieldCapacity.ContainsKey(planetId) && ShieldGenerator.maxShieldCapacity[planetId] > 0)
+            int curShield = 0;
+            int maxShield = 0;
+            ShieldGenerator.currentShield.TryGetValue(planetId, out curShield);
+            ShieldGenerator.maxShieldCapacity.TryGetValue(planetId, out maxShield);
+            if (curShield > 0)
             {
-                int curShield = 0;
-                int maxShield = 1;
-                if(ShieldGenerator.currentShield.TryGetValue(planetId, out curShield) && ShieldGenerator.maxShieldCapacity.TryGetValue(planetId, out maxShield))
-                {
-                    int length = __instance.cursorViewText.text.Length;
-                    if (length > 5 && __instance.cursorViewText.text[length-1] != 'k')
-                        __instance.cursorViewText.text += "\n" + "力场护盾短".Translate() + "  " + (curShield / 1000).ToString() + "k / " + (maxShield / 1000).ToString() + "k";
-                }
-                    
+                int length = __instance.cursorViewText.text.Length;
+                if (length > 5 && __instance.cursorViewText.text[length-1] != 'k')
+                    __instance.cursorViewText.text += "\n" + "力场护盾短".Translate() + "  " + (curShield / 1000).ToString() + "k / " + (maxShield / 1000).ToString() + "k";                    
             }
             __instance.cursorViewTrans.sizeDelta = new Vector2(__instance.cursorViewText.preferredWidth * 0.5f + 44f, __instance.cursorViewText.preferredHeight * 0.5f + 14f);
             __instance.cursorRightDeco.sizeDelta = new Vector2(__instance.cursorViewTrans.sizeDelta.y - 12f, 5f);
