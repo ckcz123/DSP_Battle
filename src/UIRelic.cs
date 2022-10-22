@@ -13,6 +13,7 @@ namespace DSP_Battle
         static int resolutionX = 1920;
         static int resolutionY = 1080;
 
+        // 以下为选择Relic的窗口
         static int closingMaxCountDown = 30;
         static int openingMaxCountDown = 30;
         static int closingCountDown = -1;
@@ -81,10 +82,13 @@ namespace DSP_Battle
             resolutionX = DSPGame.globalOption.resolution.width;
             resolutionY = DSPGame.globalOption.resolution.height;
             InitRelicSelectionWindowUI();
+            InitRelicSlotsWindowUI();
             relicSelectionWindowObj.SetActive(false);
         }
 
-        public static void WindowAnimationUpdate()
+
+
+        public static void SelectionWindowAnimationUpdate()
         {
             if (relicSelectionWindowObj == null) return;
             float r = -1;
@@ -325,8 +329,6 @@ namespace DSP_Battle
             selectedRelicInUI = -1; 
             CloseSelectionWindow(); // 先执行立刻全关（立刻体现在closingCountDown在之后手动置为-1）
             closingCountDown = -1;
-
-            Debug.Log("opening");
             closingCountDown = -1; // 取消任何正在关闭的动画
             openingCountDown = openingMaxCountDown; // 如果有打开动画则是=openingMaxCountDown以此开始倒数
             relicSelectionWindowObj.SetActive(true);
@@ -560,7 +562,7 @@ namespace DSP_Battle
                     if (rand <= Relic.relicTypeProbability[type] || (i == 0 && type == 2 && rand < Relic.firstRelicIsRare)) // 后面的判别条件是，第一个遗物至少是稀有以上的概率为独立的较大的一个概率
                     {
                         List<int> relicNotHave = new List<int>();
-                        for (int num = 0; num < Relic.maxRelic[i]; num++)
+                        for (int num = 0; num < Relic.maxRelic[type]; num++)
                         {
                             if (!Relic.HaveRelic(type, num) && !Relic.alternateRelics.Contains(type*100+num)) relicNotHave.Add(num); // 因为总共可以获取的遗物数量只有8个，小于任何一种遗物的数量，所以不会把单独一个稀有度拿干净
                         }
@@ -601,6 +603,124 @@ namespace DSP_Battle
             UIBattleStatistics.RegisterAlienMatrixGain(addCount);
 
             CloseSelectionWindow();
+        }
+
+
+        //  以下为左侧Relic 预览窗口
+        static GameObject relicSlotsWindowObj = null;
+        static List<GameObject> relicSlotObjs = new List<GameObject>();
+        static List<Image> relicSlotImgs = new List<Image>();
+        static List<UIButton> relicSlotUIBtns = new List<UIButton>();
+        static float targetX = -1065;
+        static float curX = -1065;
+
+        public static void InitRelicSlotsWindowUI()
+        {
+            if (relicSlotsWindowObj == null)
+            {
+                float slotDis = 90; // 每个遗物slot的竖向间隔（顶距离顶）
+
+                Transform parentTrans = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows").transform;
+                relicSlotsWindowObj = new GameObject("RelicPanel");
+                relicSlotsWindowObj.transform.SetParent(parentTrans);
+                relicSlotsWindowObj.transform.SetAsFirstSibling(); // 置于底层
+                relicSlotsWindowObj.AddComponent<RectTransform>();
+                RectTransform rt = relicSlotsWindowObj.GetComponent<RectTransform>();
+                rt.anchorMin = new Vector2(0, 0);
+                rt.anchorMax = new Vector2(0, 0);
+                rt.pivot = new Vector2(0, 0);
+                rt.sizeDelta = new Vector2(0, 0);
+                relicSlotsWindowObj.transform.localPosition = new Vector3(-0.5f*resolutionX - 105, 0, 0);
+                relicSlotsWindowObj.transform.localScale = new Vector3(1, 1, 1);
+                relicSlotsWindowObj.SetActive(true);
+                GameObject rightBarObj = GameObject.Instantiate(GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Dyson Sphere Editor/Dyson Editor Control Panel/inspector/sphere-group/sail-stat/bar-group/bar-orange"), relicSlotsWindowObj.transform);
+                rightBarObj.name = "right-bar";
+                rightBarObj.transform.localPosition = new Vector3(105, 0.5f * resolutionY - 40, 0);
+                rightBarObj.transform.localScale = new Vector3(1, 1, 1);
+                rightBarObj.GetComponent<RectTransform>().pivot = new Vector2(0, 1);
+                rightBarObj.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);
+                rightBarObj.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0);
+                rightBarObj.GetComponent<Image>().fillAmount = 1;
+                rightBarObj.GetComponent<RectTransform>().sizeDelta = new Vector2(8, slotDis*Relic.relicHoldMax);
+
+                // 创建relic的slot
+                GameObject oriIconWithTips = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Research Result Window/content/icon");
+                for (int i = 0; i < Relic.relicHoldMax; i++)
+                {
+                    GameObject iconObj = GameObject.Instantiate(oriIconWithTips);
+                    iconObj.name = "slot" + i.ToString();
+                    iconObj.transform.SetParent(relicSlotsWindowObj.transform);
+                    iconObj.transform.localPosition = new Vector3(50, 0.5f * resolutionY - 0.5f*slotDis - slotDis * i, 0);
+                    iconObj.transform.localScale = new Vector3(1, 1, 1);
+                    relicSlotObjs.Add(iconObj);
+                    relicSlotImgs.Add(iconObj.GetComponent<Image>());
+                    relicSlotImgs[i].sprite = Resources.Load<Sprite>("Assets/DSPBattle/alienmeta"); // 载入空遗物的图片
+                    relicSlotUIBtns.Add(iconObj.GetComponent<UIButton>());
+                    iconObj.SetActive(true);
+                }
+
+            }
+            else 
+            {
+                HideSlots();
+                RefreshSlotsWindowUI();
+            }
+
+        }
+
+        public static void RefreshSlotsWindowUI()
+        { 
+        
+        }
+
+        public static void CheckRelicSlotsWindowShowByMouse()
+        {
+            Vector3 mouseUIPos = Input.mousePosition;
+            if (mouseUIPos.x <= curX + 0.5f * resolutionX + 105 + 8)
+            {
+                ShowSlots();
+            }
+            else if(targetX != -0.5f * resolutionX - 105 && !Relic.canSelectNewRelic) // 第二个判据是：正在选择relic时不允许隐藏
+            {
+                HideSlots();
+            }
+        }
+
+        public static void SlotWindowAnimationUpdate()
+        {
+            if (curX != targetX)
+            {
+                float distance = Math.Abs(targetX - curX);
+                float move = Math.Max(distance * 0.2f, 0.5f);
+                if (move > distance)
+                {
+                    relicSlotsWindowObj.transform.localPosition = new Vector3(targetX, 0, 0);
+                }
+                else 
+                {
+                    move *= distance / (targetX - curX);
+                    relicSlotsWindowObj.transform.localPosition = new Vector3(curX + move, 0, 0);
+                }
+                curX = relicSlotsWindowObj.transform.localPosition.x;
+            }
+        }
+
+        public static void ShowSlots()
+        {
+            if (relicSlotsWindowObj != null)
+            {
+                curX = relicSlotsWindowObj.transform.localPosition.x;
+                targetX = -0.5f * resolutionX;
+            }
+        }
+
+        public static void HideSlots()
+        {
+            if (relicSlotsWindowObj != null)
+            {
+                curX = relicSlotsWindowObj.transform.localPosition.x;
+                targetX = -0.5f * resolutionX - 105;
+            }
         }
     }
 }

@@ -131,7 +131,9 @@ namespace DSP_Battle
                 if (ShieldGenerator.currentShield.ContainsKey(planetId))
                     ShieldGenerator.currentShield.AddOrUpdate(planetId, 100000, (x, y) => y + 100000);
             }
-            UIRelic.WindowAnimationUpdate();
+            UIRelic.SelectionWindowAnimationUpdate();
+            UIRelic.CheckRelicSlotsWindowShowByMouse();
+            UIRelic.SlotWindowAnimationUpdate();
             ///////////////////////////////////////////////////////////////////////////////////BattleBGMController.BGMLogicUpdate();
         }
         [HarmonyPostfix]

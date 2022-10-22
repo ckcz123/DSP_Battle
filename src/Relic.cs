@@ -14,12 +14,12 @@ namespace DSP_Battle
         public static int[] relics = { 0, 0, 0, 0 };
 
         public static int relicHoldMax = 8; // 最多可以持有的遗物数
-        public static int[] maxRelic = { 12, 15, 18, 0 }; // 当前版本各种类型的遗物各有多少种，每种类型均不能大于30
-        public static double[] relicTypeProbability = { 0.04, 0.08, 0.2, 1 }; // 各类型遗物刷新的概率，注意不是权重
+        public static int[] maxRelic = { 10, 12, 18, 19 }; // 当前版本各种类型的遗物各有多少种，每种类型均不能大于30
+        public static double[] relicTypeProbability = { 0.03, 0.08, 0.2, 1 }; // 各类型遗物刷新的概率，注意不是权重
         public static double firstRelicIsRare = 0.5; // 第一个遗物至少是稀有的概率
         public static bool canSelectNewRelic = false; // 当canSelectNewRelic为true时点按按钮才是有效的选择
         public static int[] alternateRelics = { -1, -1, -1 }; // 三个备选，百位数字代表稀有度类型，0代表传说，个位十位是遗物序号。
-        public static int basicMatrixCost = 1; // 除每次随机赠送的一次免费随机之外，从第二次开始需要消耗的矩阵的基础值（这个第二次以此基础值的2倍开始）
+        public static int basicMatrixCost = 10; // 除每次随机赠送的一次免费随机之外，从第二次开始需要消耗的矩阵的基础值（这个第二次以此基础值的2倍开始）
         public static int rollCount = 0;
         public static int AbortReward = 500; // 放弃解译圣物直接获取的矩阵数量
 
@@ -80,6 +80,7 @@ namespace DSP_Battle
             canSelectNewRelic = true;
 
             UIRelic.OpenSelectionWindow();
+            UIRelic.ShowSlots(); // 打开已有遗物栏
 
             return true;
         }
@@ -100,6 +101,12 @@ namespace DSP_Battle
 
             return false;
         }
+
+        public static double BonusDamage(double damage)
+        {
+            return damage;
+        }
+
 
         public static void Export(BinaryWriter w)
         {
