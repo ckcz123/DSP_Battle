@@ -17,7 +17,7 @@ namespace DSP_Battle
         public static bool enableBattleBGM = false;
         public static bool enableAlertTextGlowing = true;
         public static int versionWhenImporting = -1;
-        public static int versionCode = 30221022;
+        public static int versionCode = 30221024;
 
 
         public static int difficulty = 0; // -1 easy, 0 normal, 1 hard

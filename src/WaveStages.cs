@@ -95,7 +95,16 @@ namespace DSP_Battle
                 + Configs.enemyIntensity[2] + Configs.enemyIntensity[3] + Configs.enemyIntensity[4]);
             for (int i = 4; i >= 1; --i)
             {
-                Configs.nextWaveEnemy[i] = avg;
+                if (Configs.nextWaveIntensity <= 1000)
+                {
+                    double v = EnemyShips.random.NextDouble() / 2 + 0.25;
+                    Configs.nextWaveEnemy[i] = (int)(intensity * v / Configs.enemyIntensity[i]);
+                }
+                else
+                {
+                    Configs.nextWaveEnemy[i] = Math.Min(intensity / Configs.enemyIntensity[i], 
+                        avg + EnemyShips.random.Next(0, 50) - 25);
+                }
                 intensity -= Configs.nextWaveEnemy[i] * Configs.enemyIntensity[i];
             }
             Configs.nextWaveEnemy[0] = intensity / Configs.enemyIntensity[0];

@@ -197,8 +197,6 @@ namespace DSP_Battle
             }
         }
 
-
-
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UIEjectorWindow), "_OnUpdate")]
         public static void DisplayTargetShipHp(ref UIEjectorWindow __instance)

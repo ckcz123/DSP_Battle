@@ -168,6 +168,8 @@ namespace DSP_Battle
             if (__instance.emptyId != 9999)
                 return;
 
+            if (GameMain.instance.timei % 30 != 1) return;
+
             if (__instance.currPoolEnergy >= __instance.maxPoolEnergy - __instance.energyPerTick)
                 __instance.currPoolEnergy = 0;
 
@@ -240,6 +242,15 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(GameData), "GameTick")]
         public static void RefreshMaxShieldCapacity(long time)
         {
+            // 半秒更新一次！
+            if (GameMain.instance.timei % 30 != 1)
+            {
+                calcShieldCapacity.Clear();
+                calcShieldInc.Clear();
+                calcShieldGenCount.Clear();
+                return;
+            }
+
             //将这一帧刚算好的最大护盾承载量储存，由于计算calcShieldCapacity的过程中必定伴随着设置maxShieldCapacity，所以maxShieldCapacity一定包含了calc的所有键值对，不会漏掉。反之则不然。
             foreach (var item in maxShieldCapacity)
             {
@@ -249,22 +260,11 @@ namespace DSP_Battle
                 double inc = 0;
                 if(calcShieldInc.TryGetValue(planetId, out inc) && currentShield.GetOrAdd(planetId,0) < item.Value)
                 {
+                    inc *= 30;
                     currentShield.AddOrUpdate(planetId, (int) inc, (x, y) => y + (int) inc);
                     if (currentShield[planetId] > item.Value)
                         currentShield.AddOrUpdate(planetId, item.Value, (x, y) => item.Value);
                 }
-                // 护盾不再削减
-                /*
-                if(currentShield.GetOrAdd(planetId, 0) > item.Value + 10000) //如果超出上限，通常为大停电或者拆掉护盾产生器，则每tick减少10000 + 1%的溢出护盾
-                {
-                    int dec = Math.Max(200, currentShield[planetId] / 25000); // (int)((currentShield[planetId] - item.Value - 10000) * 0.01f) + 10000;
-                    currentShield.AddOrUpdate(planetId, item.Value, (x, y) => y - dec);
-                }
-                else if(currentShield.GetOrAdd(planetId, 0) > item.Value) //超出不足10000直接设定为最大值
-                {
-                    currentShield.AddOrUpdate(planetId, item.Value, (x, y) => item.Value);
-                }
-                */
             }
 
             if(shieldUIPlanetId!=0)
@@ -274,16 +274,10 @@ namespace DSP_Battle
             }
 
             //还原calc
-            foreach (var item in calcShieldCapacity)
-            {
-                calcShieldCapacity.Clear();
-                calcShieldInc.Clear();
-                calcShieldGenCount.Clear();
-            }
-
+            calcShieldCapacity.Clear();
+            calcShieldInc.Clear();
+            calcShieldGenCount.Clear();
         }
-
-
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UIPowerExchangerWindow), "_OnOpen")]

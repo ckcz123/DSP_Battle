@@ -557,7 +557,7 @@ namespace DSP_Battle
 
                 ammoValue1.text = "击中gm".Translate() + "/" + "发射gm".Translate() + "\n" +
                     $"{totalAmmoHit}/{totalAmmoUse}\n{Utils.KMGFormat(totalAmmoDamageHit)} / {Utils.KMGFormat(totalAmmoDamageOut)}\n\n" +
-                    $"{bAmmoHit}/{bAmmoUse}\n{ammoHit[8001]}/{ammoUse[8001]}\n {ammoHit[8002]}/{ammoUse[8002]}\n {ammoHit[8003]}/{ammoUse[8003]}\n {ammoHit[8007]}/{ammoUse[8007]}\n\n" + 
+                    $"{bAmmoHit}/{bAmmoUse}\n{ammoHit[8001]}/{ammoUse[8001]}\n {ammoHit[8002]}/{ammoUse[8002]}\n {ammoHit[8003]}/{ammoUse[8003]}\n {Utils.KMGFormat(ammoHit[8007])}/{Utils.KMGFormat(ammoUse[8007])}\n\n" + 
                     $"{mAmmoHit}/{mAmmoUse}\n{ammoHit[8004]}/{ammoUse[8004]}\n {ammoHit[8005]}/{ammoUse[8005]}\n {ammoHit[8006]}/{ammoUse[8006]}\n\n" +
                     $"{Utils.KMGFormat(bAmmoDamageHit)} / {Utils.KMGFormat(bAmmoDamageOut)} \n{Utils.KMGFormat(ammoDamageHit[8001])} / {Utils.KMGFormat(ammoDamageOutput[8001])} \n {Utils.KMGFormat(ammoDamageHit[8002])} / {Utils.KMGFormat(ammoDamageOutput[8002])} \n {Utils.KMGFormat(ammoDamageHit[8003])} / {Utils.KMGFormat(ammoDamageOutput[8003])} \n {Utils.KMGFormat(ammoDamageHit[8007])} / {Utils.KMGFormat(ammoDamageOutput[8007])} \n\n" +
                     $"{Utils.KMGFormat(mAmmoDamageHit)} / {Utils.KMGFormat(mAmmoDamageOut)} \n{Utils.KMGFormat(ammoDamageHit[8004])} / {Utils.KMGFormat(ammoDamageOutput[8004])} \n {Utils.KMGFormat(ammoDamageHit[8005])} / {Utils.KMGFormat(ammoDamageOutput[8005])} \n {Utils.KMGFormat(ammoDamageHit[8006])} / {Utils.KMGFormat(ammoDamageOutput[8006])} \n\n";
@@ -572,7 +572,7 @@ namespace DSP_Battle
                 enemyLabel.text = "\n" +
                     "总计gm".Translate() + "\n" + "  > " + "侦查艇".Translate() + "\n" + "  > " + "护卫舰".Translate() + "\n" + "  > " + "驱逐舰".Translate() + "\n" + "  > " + "巡洋舰".Translate() + "\n" + "  > " + "战列舰".Translate();
                 enemyValue1.text = "已歼灭gm".Translate() + "/" + "已产生gm".Translate() + "\n" +
-                    $"{totalEnemyEliminated}/{totalEnemyGen}\n{enemyEliminated[1]}/{enemyGen[1]}\n{enemyEliminated[4]}/{enemyGen[4]}\n{enemyEliminated[8]}/{enemyGen[8]}\n{enemyEliminated[9]}/{enemyGen[9]}\n{enemyEliminated[15]}/{enemyGen[15]}";
+                    $"{totalEnemyEliminated}/{totalEnemyGen}\n{enemyEliminated[1]}/{enemyGen[1]}\n{enemyEliminated[4]}/{enemyGen[4]}\n{enemyEliminated[6]}/{enemyGen[6]}\n{enemyEliminated[12]}/{enemyGen[12]}\n{enemyEliminated[15]}/{enemyGen[15]}";
                 enemyValue2.text = "占比gm".Translate() + "\n" +
                     $"{enemyEliminatedProps[0]:0.00%}\n{enemyEliminatedProps[1]:0.00%}\n{enemyEliminatedProps[4]:0.00%}\n{enemyEliminatedProps[8]:0.00%}\n{enemyEliminatedProps[9]:0.00%}\n{enemyEliminatedProps[15]:0.00%}\n";
             }
