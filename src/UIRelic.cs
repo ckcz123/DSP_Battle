@@ -270,6 +270,7 @@ namespace DSP_Battle
                 relicSelectionNoticeText.alignment = TextAnchor.UpperLeft;
                 relicSelectionNoticeText.horizontalOverflow = HorizontalWrapMode.Overflow;
                 relicSelectionNoticeText.text = "解译异星圣物提示".Translate();
+                relicSelectionNoticeText.fontSize = 14;
 
                 GameObject rollCostTextObj = GameObject.Instantiate(relic1DescObj, relicSelectionWindowObj.transform);
                 rollCostTextObj.name = "rollcost";
@@ -692,6 +693,8 @@ namespace DSP_Battle
                             relicSlotObjs[slotNum].GetComponent<UIButton>().tips.tipText = ("遗物描述" + type.ToString() + "-" + num.ToString()).Translate();
                             relicSlotObjs[slotNum].GetComponent<UIButton>().tips.offset = new Vector2(160, 0);
                             relicSlotObjs[slotNum].GetComponent<UIButton>().tips.width = 200;
+                            UIButtonTip uibtnt = relicSlotObjs[slotNum].GetComponent<UIButton>().tip as UIButtonTip;
+                            if (uibtnt != null) uibtnt.titleComp.supportRichText = true;
                             slotNum++;
                         }
                         else

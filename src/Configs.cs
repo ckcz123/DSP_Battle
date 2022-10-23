@@ -135,6 +135,12 @@ namespace DSP_Battle
         public static float[] expRatioByDifficulty = new float[] { 0.75f, 1f, 1.5f };
         public static int expPerAlienMeta = 20; //每个解码后的异星元数据上传提供的基础功勋点数
 
+        // 遗物信息 决定直接写入函数不再读取
+        //public static double[] relic0settings = { 0.1, -1, -1, 1, -1, 0.1, 500, 20, 1, -1 }; // 传说遗物的功能概率或数值设定，不涉及概率和数值的用任意数字占位（最好是-1）
+        //public static double[] relic1settings = { 0.1, -1, -1, 1, -1, 0.1, 500, 20, 1, -1 }; // 史诗遗物的功能概率或数值设定
+        //public static double[] relic2settings = { 0.1, -1, -1, 1, -1, 0.1, 500, 20, 1, -1 }; // 稀有遗物的功能概率或数值设定
+        //public static double[] relic3settings = { 0.1, -1, -1, 1, -1, 0.1, 500, 20, 1, -1 }; // 普通遗物的功能概率或数值设定
+
         public static int totalWave
         {
             get { return wavePerStar.Sum(); }

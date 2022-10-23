@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,6 +23,16 @@ namespace DSP_Battle
         public static int basicMatrixCost = 10; // 除每次随机赠送的一次免费随机之外，从第二次开始需要消耗的矩阵的基础值（这个第二次以此基础值的2倍开始）
         public static int rollCount = 0;
         public static int AbortReward = 500; // 放弃解译圣物直接获取的矩阵数量
+        public static List<int> starsWithMegaStructure = new List<int>(); // 每秒更新，具有巨构的星系。但无论如何，使用这些序号的戴森球时一定要检查是否为null，因为加载新存档后可能不是及时更新等情况。
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameData), "GameTick")]
+        public static void RelicGameTick(long time)
+        {
+            if (time % 60 == 7)
+                RefreshStarsWithMegaStructure();
+
+        }
 
         static int N(int num)
         {
@@ -92,11 +103,30 @@ namespace DSP_Battle
         }
 
 
-        public static bool Judge(double possibility)
+        // 刷新保存当前存在巨构的星系
+        public static void RefreshStarsWithMegaStructure()
+        {
+            starsWithMegaStructure.Clear();
+            for (int i = 0; i < GameMain.data.galaxy.starCount; i++)
+            {
+                if (GameMain.data.dysonSpheres.Length > i)
+                {
+                    DysonSphere sphere = GameMain.data.dysonSpheres[i];
+                    if (sphere != null)
+                    {
+                        starsWithMegaStructure.Add(i);
+                    }
+                }
+            }
+            
+        }
+
+
+        public static bool Verify(double possibility)
         {
             if (Utils.RandDouble() < possibility)
                 return true;
-            else if ((relics[0] & 1 << 8) > 0) // 具有增加幸运的遗物，则可以再判断一次
+            else if ((relics[0] & 1 << 9) > 0) // 具有增加幸运的遗物，则可以再判断一次
                 return (Utils.RandDouble() < possibility);
 
             return false;
@@ -105,6 +135,58 @@ namespace DSP_Battle
         public static double BonusDamage(double damage)
         {
             return damage;
+        }
+
+        // 有限制地建造某一(starIndex为-1时则是随机的)巨构的固定数量(amount)的进度，不因层数、节点数多少而改变一次函数建造的进度量
+        public static void AutoBuildMegaStructure(int starIndex = -1, int amount = 1)
+        {
+            if (starsWithMegaStructure.Count <= 0) 
+                return;
+            if (starIndex < 0)
+            {
+                starIndex = starsWithMegaStructure[Utils.RandInt(0, starsWithMegaStructure.Count)];
+            }
+            if (starIndex >= 0 && starIndex < GameMain.data.dysonSpheres.Length)
+            {
+                DysonSphere sphere = GameMain.data.dysonSpheres[starIndex];
+                if (sphere != null)
+                {
+                    for (int i = 0; i < sphere.layersIdBased.Length; i++)
+                    {
+                        DysonSphereLayer dysonSphereLayer = sphere.layersIdBased[i];
+                        if (dysonSphereLayer != null)
+                        {
+                            int num = dysonSphereLayer.nodePool.Length;
+                            for (int j = 0; j < num; j++)
+                            {
+                                DysonNode dysonNode = dysonSphereLayer.nodePool[j];
+                                if (dysonNode != null)
+                                {
+                                    for (int k = 0; k < Math.Min(6, amount); k++)
+                                    {
+                                        if (dysonNode.spReqOrder > 0)
+                                        {
+                                            sphere.OrderConstructSp(dysonNode);
+                                            sphere.ConstructSp(dysonNode);
+                                            amount--;
+                                        }
+                                    }
+                                    for (int l = 0; l < Math.Min(6, amount); l++)
+                                    {
+                                        if (dysonNode.cpReqOrder > 0)
+                                        {
+                                            dysonNode.cpOrdered++;
+                                            dysonNode.ConstructCp();
+                                            amount--;
+                                        }
+                                    }
+                                }
+                                if (amount <= 0) return;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
 
@@ -145,8 +227,5 @@ namespace DSP_Battle
         }
     }
 
-    class RelicData    
-    {
-        
-    }
+   
 }

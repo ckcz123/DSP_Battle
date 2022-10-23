@@ -190,6 +190,12 @@ namespace DSP_Battle
                     }
                     catch (Exception)
                     { }
+
+                    // relic0-0吞噬者效果
+                    if (Relic.HaveRelic(0, 0) && Relic.Verify(1))
+                    {
+                        Relic.AutoBuildMegaStructure(-1, 12 * intensity);
+                    }
                 }
             }
             return result;
