@@ -14,7 +14,7 @@ namespace DSP_Battle
         public static int[] relics = { 0, 0, 0, 0 };
 
         public static int relicHoldMax = 8; // 最多可以持有的遗物数
-        public static int[] maxRelic = { 10, 12, 18, 19 }; // 当前版本各种类型的遗物各有多少种，每种类型均不能大于30
+        public static int[] maxRelic = { 10, 12, 18, 18 }; // 当前版本各种类型的遗物各有多少种，每种类型均不能大于30
         public static double[] relicTypeProbability = { 0.03, 0.08, 0.2, 1 }; // 各类型遗物刷新的概率，注意不是权重
         public static double firstRelicIsRare = 0.5; // 第一个遗物至少是稀有的概率
         public static bool canSelectNewRelic = false; // 当canSelectNewRelic为true时点按按钮才是有效的选择

@@ -177,7 +177,8 @@ namespace DSP_Battle
                 relic1IconObj = relicSelectionContentObj.transform.Find("icon").gameObject;
                 relic1NameObj.transform.localPosition = new Vector3(-300, 180);
                 relic1DescObj.transform.localPosition = new Vector3(-300, -70);
-                relic1IconObj.transform.localPosition = new Vector3(-300, 80);
+                relic1IconObj.transform.localPosition = new Vector3(-300, 95);
+                relic1IconObj.GetComponent<RectTransform>().sizeDelta = new Vector3(120, 120);
                 relic1NameObj.name = "name1";
                 relic1DescObj.name = "desc1";
                 relic1IconObj.name = "icon1";
@@ -196,7 +197,8 @@ namespace DSP_Battle
                 relic2IconObj = relicSelectionContentObj.transform.Find("icon").gameObject;
                 relic2NameObj.transform.localPosition = new Vector3(0, 180);
                 relic2DescObj.transform.localPosition = new Vector3(0, -70);
-                relic2IconObj.transform.localPosition = new Vector3(0, 80);
+                relic2IconObj.transform.localPosition = new Vector3(0, 95);
+                relic2IconObj.GetComponent<RectTransform>().sizeDelta = new Vector3(120, 120);
                 relic2NameObj.name = "name2";
                 relic2DescObj.name = "desc2";
                 relic2IconObj.name = "icon2";
@@ -212,7 +214,8 @@ namespace DSP_Battle
                 relic3IconObj = relicSelectionContentObj.transform.Find("icon").gameObject;
                 relic3NameObj.transform.localPosition = new Vector3(300, 180);
                 relic3DescObj.transform.localPosition = new Vector3(300, -70);
-                relic3IconObj.transform.localPosition = new Vector3(300, 80);
+                relic3IconObj.transform.localPosition = new Vector3(300, 95);
+                relic3IconObj.GetComponent<RectTransform>().sizeDelta = new Vector3(120, 120);
                 relic3NameObj.name = "name3";
                 relic3DescObj.name = "desc3";
                 relic3IconObj.name = "icon3";
@@ -428,7 +431,7 @@ namespace DSP_Battle
             }
             relic1Name.text = ("遗物名称" + r1type.ToString() + "-" + r1num.ToString()).Translate();
             relic1Desc.text = ("遗物描述" + r1type.ToString() + "-" + r1num.ToString()).Translate();
-            //relic1Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/relic" + r1type.ToString() + "-" + r1num.ToString());
+            relic1Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/r" + r1type.ToString() + "-" + r1num.ToString());
 
             // Relic2
             int r2type = Relic.alternateRelics[1] / 100;
@@ -455,7 +458,7 @@ namespace DSP_Battle
             }
             relic2Name.text = ("遗物名称" + r2type.ToString() + "-" + r2num.ToString()).Translate();
             relic2Desc.text = ("遗物描述" + r2type.ToString() + "-" + r2num.ToString()).Translate();
-            //relic2Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/relic" + r2type.ToString() + "-" + r2num.ToString());
+            relic2Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/r" + r2type.ToString() + "-" + r2num.ToString());
 
             // Relic3
             int r3type = Relic.alternateRelics[2] / 100;
@@ -482,7 +485,7 @@ namespace DSP_Battle
             }
             relic3Name.text = ("遗物名称" + r3type.ToString() + "-" + r3num.ToString()).Translate();
             relic3Desc.text = ("遗物描述" + r3type.ToString() + "-" + r3num.ToString()).Translate();
-            //relic3Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/relic" + r3type.ToString() + "-" + r3num.ToString());
+            relic3Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/r" + r3type.ToString() + "-" + r3num.ToString());
 
             if (CheckEnoughMatrixToRoll())
             {
@@ -652,6 +655,7 @@ namespace DSP_Battle
                     iconObj.transform.SetParent(relicSlotsWindowObj.transform);
                     iconObj.transform.localPosition = new Vector3(50, 0.5f * resolutionY - 0.5f*slotDis - slotDis * i, 0);
                     iconObj.transform.localScale = new Vector3(1, 1, 1);
+                    iconObj.GetComponent<RectTransform>().sizeDelta = new Vector2(90, 90);
                     relicSlotObjs.Add(iconObj);
                     relicSlotImgs.Add(iconObj.GetComponent<Image>());
                     relicSlotImgs[i].sprite = Resources.Load<Sprite>("Assets/DSPBattle/alienmeta"); // 载入空遗物的图片
