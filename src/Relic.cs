@@ -118,7 +118,7 @@ namespace DSP_Battle
 
         public static void Import(BinaryReader r)
         {
-            if (Configs.versionWhenImporting >= 30221107)
+            if (Configs.versionWhenImporting >= 30221025)
             {
                 relics[0] = r.ReadInt32();
                 relics[1] = r.ReadInt32();
