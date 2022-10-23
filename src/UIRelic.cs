@@ -592,6 +592,7 @@ namespace DSP_Battle
             }
 
             CloseSelectionWindow();
+            RefreshSlotsWindowUI();
         }
 
         public static void AbortSelection()
@@ -606,6 +607,7 @@ namespace DSP_Battle
             UIBattleStatistics.RegisterAlienMatrixGain(addCount);
 
             CloseSelectionWindow();
+            RefreshSlotsWindowUI();
         }
 
 
@@ -625,15 +627,16 @@ namespace DSP_Battle
 
                 Transform parentTrans = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows").transform;
                 relicSlotsWindowObj = new GameObject("RelicPanel");
-                relicSlotsWindowObj.transform.SetParent(parentTrans);
+                relicSlotsWindowObj.transform.SetParent(parentTrans); 
                 relicSlotsWindowObj.transform.SetAsFirstSibling(); // 置于底层
+                GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Mini Lab Panel").transform.SetAsFirstSibling(); //否则UI Root/Overlay Canvas/In Game/Windows/Mini Lab Panel/这个会挡住relic
                 relicSlotsWindowObj.AddComponent<RectTransform>();
                 RectTransform rt = relicSlotsWindowObj.GetComponent<RectTransform>();
                 rt.anchorMin = new Vector2(0, 0);
                 rt.anchorMax = new Vector2(0, 0);
                 rt.pivot = new Vector2(0, 0);
                 rt.sizeDelta = new Vector2(0, 0);
-                relicSlotsWindowObj.transform.localPosition = new Vector3(-0.5f*resolutionX - 105, 0, 0);
+                relicSlotsWindowObj.transform.localPosition = new Vector3(-0.5f*resolutionX - 105, -50, 0);
                 relicSlotsWindowObj.transform.localScale = new Vector3(1, 1, 1);
                 relicSlotsWindowObj.SetActive(true);
                 GameObject rightBarObj = GameObject.Instantiate(GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Dyson Sphere Editor/Dyson Editor Control Panel/inspector/sphere-group/sail-stat/bar-group/bar-orange"), relicSlotsWindowObj.transform);
@@ -673,8 +676,36 @@ namespace DSP_Battle
         }
 
         public static void RefreshSlotsWindowUI()
-        { 
-        
+        {
+            int slotNum = 0;
+            for (int type = 0; type < 4; type++)
+            {
+                for (int num = 0; num < Relic.maxRelic[type]; num++)
+                {
+                    if (Relic.HaveRelic(type, num))
+                    {
+                        if (slotNum < relicSlotImgs.Count)
+                        {
+                            relicSlotImgs[slotNum].sprite = Resources.Load<Sprite>("Assets/DSPBattle/r" + type.ToString() + "-" + num.ToString());
+                            relicSlotObjs[slotNum].GetComponent<UIButton>().tips.tipTitle = ("遗物名称带颜色" + type.ToString() + "-" + num.ToString()).Translate();
+                            relicSlotObjs[slotNum].GetComponent<UIButton>().tips.tipText = ("遗物描述" + type.ToString() + "-" + num.ToString()).Translate();
+                            relicSlotObjs[slotNum].GetComponent<UIButton>().tips.offset = new Vector2(160, 0);
+                            slotNum++;
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                }
+            }
+            for (; slotNum < relicSlotImgs.Count ; slotNum++)
+            {
+                relicSlotImgs[slotNum].sprite = Resources.Load<Sprite>("Assets/DSPBattle/rEmpty");
+                relicSlotObjs[slotNum].GetComponent<UIButton>().tips.tipTitle = ("未获取遗物标题").Translate();
+                relicSlotObjs[slotNum].GetComponent<UIButton>().tips.tipText = ("未获取遗物描述");
+                relicSlotObjs[slotNum].GetComponent<UIButton>().tips.offset = new Vector2(160, 0);
+            }
         }
 
         public static void CheckRelicSlotsWindowShowByMouse()
@@ -698,12 +729,12 @@ namespace DSP_Battle
                 float move = Math.Max(distance * 0.2f, 0.5f);
                 if (move > distance)
                 {
-                    relicSlotsWindowObj.transform.localPosition = new Vector3(targetX, 0, 0);
+                    relicSlotsWindowObj.transform.localPosition = new Vector3(targetX, -50, 0);
                 }
                 else 
                 {
                     move *= distance / (targetX - curX);
-                    relicSlotsWindowObj.transform.localPosition = new Vector3(curX + move, 0, 0);
+                    relicSlotsWindowObj.transform.localPosition = new Vector3(curX + move, -50, 0);
                 }
                 curX = relicSlotsWindowObj.transform.localPosition.x;
             }
