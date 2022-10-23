@@ -260,18 +260,18 @@ namespace DSP_Battle
             int shipTypeNum = Configs.enemyIntensity2TypeMap[intensity];
             if (ShieldGenerator.currentShield.ContainsKey(planetId) && ShieldGenerator.currentShield[planetId] > 0 && distanceToTarget <= Configs.enemyFireRange[shipTypeNum] && shipData.otherGId >= 0)
             {
-                if (shipTypeNum != 3) //3号是自爆船，不能开火 
+                if (shipTypeNum != 2) //2号是自爆船，不能开火 
                     isFiring = true;
                 else
                     isFiring = false;
                 //目前设定是只要护盾量大于1就可以阻挡飞船，但是护盾没有战时回复。飞船被阻挡的位置约为其射程的90%。
                 if (ShieldGenerator.currentShield[planetId] > ShieldRenderer.shieldRenderMin && distanceToTarget <= Configs.enemyFireRange[shipTypeNum] * 0.9f)
                 {
-                    if (shipTypeNum != 3)
+                    if (shipTypeNum != 2)
                         isBlockedByShield = true;
                     else
                         isBlockedByShield = false;
-                    //如果在护盾>有效护盾（暂定50000）的情况下撞上了护盾，船承受巨量伤害，同时也会对护盾造成伤害。自爆船将会造成巨量伤害，暂定为intensity=9的3号船
+                    //如果在护盾>有效护盾（暂定50000）的情况下撞上了护盾，船承受巨量伤害，同时也会对护盾造成伤害。自爆船将会造成巨量伤害
                     if((GameMain.galaxy.PlanetById(planetId).uPosition - uPos).magnitude <= ShieldRenderer.shieldRadius * 810)
                     {
                         UIBattleStatistics.RegisterShieldAttack(BeAttacked(999999));
@@ -285,7 +285,7 @@ namespace DSP_Battle
                         if (swarm != null)
                         {
                             int maxi = 1;
-                            if (shipTypeNum == 3) maxi = 10;
+                            if (shipTypeNum == 2) maxi = 10;
                             for (int i = 0; i < maxi; i++)
                             {
                                 int bulletIndex = swarm.AddBullet(new SailBullet

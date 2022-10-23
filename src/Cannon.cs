@@ -331,21 +331,26 @@ namespace DSP_Battle
                     animPool[__instance.entityId].time = 10f;
                     VectorLF3 uBeginChange = vectorLF;
 
-                    //下面是添加子弹
-                    int bulletIndex = swarm.AddBullet(new SailBullet
-                    {
-                        maxt = (float)(__instance.targetDist / maxtDivisor),
-                        lBegin = vector,
-                        uEndVel = VectorLF3.Cross(vectorLF2 - uPos, swarm.orbits[calcOrbitId].up).normalized * Math.Sqrt((double)(swarm.dysonSphere.gravity / swarm.orbits[calcOrbitId].radius)), //至少影响着形成的太阳帆的初速度方向
-                        uBegin = uBeginChange,
-                        uEnd = vectorLF2
-                    }, calcOrbitId);
+                    int bulletIndex = -1;
 
+                    if (gmProtoId != 8014 || GameMain.instance.timei % 5 == 1) // 相位炮五帧才发一个，但是伤害x5
+                    {
+                        //下面是添加子弹
+                        bulletIndex = swarm.AddBullet(new SailBullet
+                        {
+                            maxt = (float)(__instance.targetDist / maxtDivisor),
+                            lBegin = vector,
+                            uEndVel = VectorLF3.Cross(vectorLF2 - uPos, swarm.orbits[calcOrbitId].up).normalized * Math.Sqrt((double)(swarm.dysonSphere.gravity / swarm.orbits[calcOrbitId].radius)), //至少影响着形成的太阳帆的初速度方向
+                            uBegin = uBeginChange,
+                            uEnd = vectorLF2
+                        }, calcOrbitId);
+                    }
 
                     //设定子弹目标以及伤害，并注册伤害
                     try
                     {
-                        swarm.bulletPool[bulletIndex].state = 0; //设置成0，该子弹将不会生成太阳帆
+                        if (bulletIndex != -1)
+                            swarm.bulletPool[bulletIndex].state = 0; //设置成0，该子弹将不会生成太阳帆
                     }
                     catch (Exception)
                     {
@@ -353,7 +358,8 @@ namespace DSP_Battle
                     }
 
                     UIBattleStatistics.RegisterShootOrLaunch(__instance.bulletId, damage);
-                    bulletTargets[swarm.starData.index].AddOrUpdate(bulletIndex, curTarget.shipIndex, (x, y) => curTarget.shipIndex);
+                    if (bulletIndex != -1)
+                        bulletTargets[swarm.starData.index].AddOrUpdate(bulletIndex, curTarget.shipIndex, (x, y) => curTarget.shipIndex);
 
                     //Main.logger.LogInfo("bullet info2 set error.");
 
@@ -361,7 +367,8 @@ namespace DSP_Battle
                     try
                     {
                         int bulletId = __instance.bulletId;
-                        bulletIds[swarm.starData.index].AddOrUpdate(bulletIndex, bulletId, (x, y) => bulletId);
+                        if (bulletIndex != -1)
+                            bulletIds[swarm.starData.index].AddOrUpdate(bulletIndex, bulletId, (x, y) => bulletId);
                         // bulletIds[swarm.starData.index][bulletIndex] = 1;//后续可以根据子弹类型/炮类型设定不同数值
                     }
                     catch (Exception)
@@ -457,13 +464,17 @@ namespace DSP_Battle
                                 case 8001: damage = Configs.bullet1Atk; break;
                                 case 8002: damage = Configs.bullet2Atk; break;
                                 case 8003: damage = Configs.bullet3Atk; break;
-                                case 8007: damage = Configs.bullet4Atk; break;
+                                case 8007: damage = Configs.bullet4Atk * 5; break;
                                 default:
                                     break;
                             }
 
                             int realDamage = EnemyShips.ships[bulletTargets[starIndex][i]].BeAttacked(damage); //击中造成伤害  //如果在RemoveBullet的postpatch写这个，可以不用每帧循环检测，但是伤害将在爆炸动画后结算，感觉不太合理
                             UIBattleStatistics.RegisterHit(bulletId, realDamage);
+                            if (bulletId == 8007)
+                            {
+                                for (int j = 1; j <= 4; ++j) UIBattleStatistics.RegisterHit(bulletId, 0);
+                            }
                         }
                         int v;
                         bulletIds[starIndex].TryRemove(i, out v); //该子弹已造成过伤害，或者因为飞船已经不存在了，这两种情况都要将子弹的未来还可造成的伤害设置成0
