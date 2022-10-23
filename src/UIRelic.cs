@@ -63,7 +63,7 @@ namespace DSP_Battle
         //static string colorEpicLeft = "<color=#9040d0>";
         //static string colorRareLeft = "<color=#2080d0>";
         //static string colorCommonLeft = "<color=#30b530>";
-        static string colorRight = "</color>";
+        //static string colorRight = "</color>";
         static Color colorBtnLegend = new Color(0.8f, 0.683f, 0.266f, 0.4f);
         static Color colorBtnEpic = new Color(0.66f, 0f, 0.875f, 0.178f);
         static Color colorBtnRare = new Color(0.183f, 0.426f, 0.811f, 0.178f);
@@ -186,6 +186,7 @@ namespace DSP_Battle
                 relic1Desc = relic1DescObj.GetComponent<Text>();
                 relic1Icon = relic1IconObj.GetComponent<Image>();
                 relic1IconObj.SetActive(true);
+                relic1Desc.fontSize = 16;
                 relic1Name.fontSize = 25;
                 relic1Name.supportRichText = true;
                 relic1Name.material = GameObject.Find("UI Root/Overlay Canvas/In Game/AlertUI/battle-alert-title/").GetComponent<Text>().material;
@@ -690,6 +691,7 @@ namespace DSP_Battle
                             relicSlotObjs[slotNum].GetComponent<UIButton>().tips.tipTitle = ("遗物名称带颜色" + type.ToString() + "-" + num.ToString()).Translate();
                             relicSlotObjs[slotNum].GetComponent<UIButton>().tips.tipText = ("遗物描述" + type.ToString() + "-" + num.ToString()).Translate();
                             relicSlotObjs[slotNum].GetComponent<UIButton>().tips.offset = new Vector2(160, 0);
+                            relicSlotObjs[slotNum].GetComponent<UIButton>().tips.width = 200;
                             slotNum++;
                         }
                         else
