@@ -79,7 +79,7 @@ namespace DSP_Battle
 
         public static int[] enemyFireRange = new int[] { 5000, 8000, 15000, 15000, 30000 }; //射程
 
-        public static int[] enemyDamagePerBullet = new int[] { 500, 500, 700, 200000, 2000 }; //dps = 100,200,300,-,1000, dps per intensity = 100,50,38,-,67
+        public static int[] enemyDamagePerBullet = new int[] { 500, 500, 200000, 1000, 1500 }; //dps = 100,200,300,-,1000, dps per intensity = 100,50,38,-,67
         //public static int[] enemyDamagePerBullet = new int[] { 2, 2, 3, 200, 2 };
 
         //public static int[] enemyBulletSpeed = new int[] {20000, 30000, 50000, 80000, 150000 }; //虽然有speed设置，但是为了减少运算，子弹伤害是在发射时就结算的。speed应该设置的比较大来减少视觉上的误差
