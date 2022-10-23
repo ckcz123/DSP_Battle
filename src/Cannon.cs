@@ -141,269 +141,274 @@ namespace DSP_Battle
 
             //下面是因为 炮需要用orbitId记录索敌模式，而orbitId有可能超出已设定的轨道数，为了避免溢出，炮的orbitalId在参与计算时需要独立指定为1。
             //后续所有的__instance.orbitId都被替换为此
-            int calcOrbitId = __instance.orbitId;
-            if (calcOrbitId <= 0 || calcOrbitId > 4)
+            if (__instance.orbitId <= 0 || __instance.orbitId > 4)
             {
-                calcOrbitId = 1;
                 __instance.orbitId = 1;
             }
 
+            if (power < 0.1f)
+            {
+                if (EjectorUIPatch.needToRefreshTarget) //如果需要刷新目标，又没电。必须告诉UI面板没有目标，而不能维持前一个选择的弹射器的状况
+                {
+                    if (EjectorUIPatch.curEjectorPlanetId == __instance.planetId && EjectorUIPatch.curEjectorEntityId == __instance.entityId)
+                    {
+                        EjectorUIPatch.curTarget = null;
+                    }
+                }
+
+                if (__instance.direction == 1)
+                {
+                    __instance.time = (int)((long)__instance.time * (long)__instance.coldSpend / (long)__instance.chargeSpend);
+                    __instance.direction = -1;
+                }
+                __result = 0U;
+                return false;
+            }
+            __result = CannonFire(ref __instance, power, swarm, astroPoses, animPool, consumeRegister, gmProtoId);
+            return false;
+        }
+
+        private static uint CannonFire(ref EjectorComponent __instance, float power, DysonSwarm swarm, AstroData[] astroPoses, AnimData[] animPool, int[] consumeRegister, int gmProtoId)
+        {
+            int planetId = __instance.planetId;
+            int starIndex = planetId / 100 - 1;
+            int calcOrbitId = __instance.orbitId;
+            uint result = 0;
+
             float num2 = (float)Cargo.incTableMilli[__instance.incLevel];
-
             int num3 = (int)(power * 10000f * (1f + num2) + 0.1f);
-            {  // 这个大括号好像必须需要，为什么？？？？？？？？？？？
-                if (power < 0.1f)
-                {
-                    if (EjectorUIPatch.needToRefreshTarget) //如果需要刷新目标，又没电。必须告诉UI面板没有目标，而不能维持前一个选择的弹射器的状况
-                    {
-                        if (EjectorUIPatch.curEjectorPlanetId == __instance.planetId && EjectorUIPatch.curEjectorEntityId == __instance.entityId)
-                        {
-                            EjectorUIPatch.curTarget = null;
-                        }
-                    }
 
-                    if (__instance.direction == 1)
-                    {
-                        __instance.time = (int)((long)__instance.time * (long)__instance.coldSpend / (long)__instance.chargeSpend);
-                        __instance.direction = -1;
-                    }
-                    __result = 0U;
-                    return false;
-                }
-                uint result = 0U;
+            __instance.targetState = EjectorComponent.ETargetState.OK;
+            bool flag = true;
+            int num4 = __instance.planetId / 100 * 100;
+            float num5 = __instance.localAlt + __instance.pivotY + (__instance.muzzleY - __instance.pivotY) / Mathf.Max(0.1f, Mathf.Sqrt(1f - __instance.localDir.y * __instance.localDir.y));
+            Vector3 vector = new Vector3(__instance.localPosN.x * num5, __instance.localPosN.y * num5, __instance.localPosN.z * num5);
+            VectorLF3 vectorLF = astroPoses[__instance.planetId].uPos + Maths.QRotateLF(astroPoses[__instance.planetId].uRot, vector);
+            Quaternion q = astroPoses[__instance.planetId].uRot * __instance.localRot;
+            VectorLF3 uPos = astroPoses[num4].uPos;
+            VectorLF3 b = uPos - vectorLF;
+
+            List<EnemyShip> sortedShips = EnemyShips.sortedShips(calcOrbitId, starIndex, __instance.planetId);
+
+            //下面的参数根据是否是炮还是太阳帆的弹射器有不同的修改
+            double maxtDivisor = 5000.0; //决定子弹速度
+            int damage = 0;
+            int loopNum = sortedShips.Count;
+            double cannonSpeedScale = 1;
+            if (gmProtoId == 8012)
+                cannonSpeedScale = 2;
+            EnemyShip curTarget = null;
+
+            if (__instance.bulletId == 8001)
+            {
+                maxtDivisor = Configs.bullet1Speed * cannonSpeedScale;
+                damage = (int)Configs.bullet1Atk; //只有这个子弹能够因为引力弹射器而强化伤害
+            }
+            else if (__instance.bulletId == 8002)
+            {
+                maxtDivisor = Configs.bullet2Speed * cannonSpeedScale;
+                damage = Configs.bullet2Atk;
+            }
+            else if (__instance.bulletId == 8003)
+            {
+                maxtDivisor = Configs.bullet3Speed * cannonSpeedScale;
+                damage = Configs.bullet3Atk;
+            }
+            else if (__instance.bulletId == 8007)
+            {
+                maxtDivisor = Configs.bullet4Speed; //没有速度加成
+                damage = Configs.bullet4Atk;
+            }
+
+            //不该参与循环的部分，换到循环前了
+
+            bool flag2 = __instance.bulletCount > 0;
+            if (gmProtoId == 8014) //脉冲炮不需要子弹
+                flag2 = true;
+            VectorLF3 vectorLF2 = VectorLF3.zero;
+
+            for (int gm = 0; gm < loopNum; gm++)
+            {
+
+                //新增的，每次循环开始必须重置
                 __instance.targetState = EjectorComponent.ETargetState.OK;
-                bool flag = true;
-                int num4 = __instance.planetId / 100 * 100;
-                float num5 = __instance.localAlt + __instance.pivotY + (__instance.muzzleY - __instance.pivotY) / Mathf.Max(0.1f, Mathf.Sqrt(1f - __instance.localDir.y * __instance.localDir.y));
-                Vector3 vector = new Vector3(__instance.localPosN.x * num5, __instance.localPosN.y * num5, __instance.localPosN.z * num5);
-                VectorLF3 vectorLF = astroPoses[__instance.planetId].uPos + Maths.QRotateLF(astroPoses[__instance.planetId].uRot, vector);
-                Quaternion q = astroPoses[__instance.planetId].uRot * __instance.localRot;
-                VectorLF3 uPos = astroPoses[num4].uPos;
-                VectorLF3 b = uPos - vectorLF;
-
-                List<EnemyShip> sortedShips = EnemyShips.sortedShips(calcOrbitId, starIndex, __instance.planetId);
-
-                //下面的参数根据是否是炮还是太阳帆的弹射器有不同的修改
-                double maxtDivisor = 5000.0; //决定子弹速度
-                int damage = 0;
-                int loopNum = sortedShips.Count;
-                double cannonSpeedScale = 1;
-                if (gmProtoId == 8012)
-                    cannonSpeedScale = 2;
-                EnemyShip curTarget = null;
-
-                if (__instance.bulletId == 8001)
-                {
-                    maxtDivisor = Configs.bullet1Speed * cannonSpeedScale;
-                    damage = (int)Configs.bullet1Atk; //只有这个子弹能够因为引力弹射器而强化伤害
-                }
-                else if (__instance.bulletId == 8002)
-                {
-                    maxtDivisor = Configs.bullet2Speed * cannonSpeedScale;
-                    damage = Configs.bullet2Atk;
-                }
-                else if (__instance.bulletId == 8003)
-                {
-                    maxtDivisor = Configs.bullet3Speed * cannonSpeedScale;
-                    damage = Configs.bullet3Atk;
-                }
-                else if (__instance.bulletId == 8007)
-                {
-                    maxtDivisor = Configs.bullet4Speed; //没有速度加成
-                    damage = Configs.bullet4Atk;
-                }
-
-                //不该参与循环的部分，换到循环前了
-
-                bool flag2 = __instance.bulletCount > 0;
+                flag = true;
+                flag2 = __instance.bulletCount > 0;
                 if (gmProtoId == 8014) //脉冲炮不需要子弹
                     flag2 = true;
-                VectorLF3 vectorLF2 = VectorLF3.zero;
 
-                for (int gm = 0; gm < loopNum; gm++)
+                int shipIdx = 0;//ship总表中的唯一标识：index
+                vectorLF2 = sortedShips[gm].uPos;
+                shipIdx = sortedShips[gm].shipIndex;
+                if (!EnemyShips.ships.ContainsKey(shipIdx)) continue;
+                VectorLF3 vectorLF3 = vectorLF2 - vectorLF;
+                __instance.targetDist = vectorLF3.magnitude;
+                vectorLF3.x /= __instance.targetDist;
+                vectorLF3.y /= __instance.targetDist;
+                vectorLF3.z /= __instance.targetDist;
+                Vector3 vector2 = Maths.QInvRotate(q, vectorLF3);
+                __instance.localDir.x = __instance.localDir.x * 0.9f + vector2.x * 0.1f;
+                __instance.localDir.y = __instance.localDir.y * 0.9f + vector2.y * 0.1f;
+                __instance.localDir.z = __instance.localDir.z * 0.9f + vector2.z * 0.1f;
+                if ((double)vector2.y < 0.08715574 || vector2.y > 0.8660254f)
                 {
-
-                    //新增的，每次循环开始必须重置
-                    __instance.targetState = EjectorComponent.ETargetState.OK;
-                    flag = true;
-                    flag2 = __instance.bulletCount > 0;
-                    if (gmProtoId == 8014) //脉冲炮不需要子弹
-                        flag2 = true;
-
-                    int shipIdx = 0;//ship总表中的唯一标识：index
-                    vectorLF2 = sortedShips[gm].uPos;
-                    shipIdx = sortedShips[gm].shipIndex;
-                    if (!EnemyShips.ships.ContainsKey(shipIdx)) continue;
-                    VectorLF3 vectorLF3 = vectorLF2 - vectorLF;
-                    __instance.targetDist = vectorLF3.magnitude;
-                    vectorLF3.x /= __instance.targetDist;
-                    vectorLF3.y /= __instance.targetDist;
-                    vectorLF3.z /= __instance.targetDist;
-                    Vector3 vector2 = Maths.QInvRotate(q, vectorLF3);
-                    __instance.localDir.x = __instance.localDir.x * 0.9f + vector2.x * 0.1f;
-                    __instance.localDir.y = __instance.localDir.y * 0.9f + vector2.y * 0.1f;
-                    __instance.localDir.z = __instance.localDir.z * 0.9f + vector2.z * 0.1f;
-                    if ((double)vector2.y < 0.08715574 || vector2.y > 0.8660254f)
+                    __instance.targetState = EjectorComponent.ETargetState.AngleLimit;
+                    flag = false;
+                }
+                if (flag2 && flag)
+                {
+                    for (int i = num4 + 1; i <= __instance.planetId + 2; i++)
                     {
-                        __instance.targetState = EjectorComponent.ETargetState.AngleLimit;
-                        flag = false;
-                    }
-                    if (flag2 && flag)
-                    {
-                        for (int i = num4 + 1; i <= __instance.planetId + 2; i++)
+                        if (i != __instance.planetId)
                         {
-                            if (i != __instance.planetId)
+                            double num6 = (double)astroPoses[i].uRadius;
+                            if (num6 > 1.0)
                             {
-                                double num6 = (double)astroPoses[i].uRadius;
-                                if (num6 > 1.0)
+                                VectorLF3 vectorLF4 = astroPoses[i].uPos - vectorLF;
+                                double num7 = vectorLF4.x * vectorLF4.x + vectorLF4.y * vectorLF4.y + vectorLF4.z * vectorLF4.z;
+                                double num8 = vectorLF4.x * vectorLF3.x + vectorLF4.y * vectorLF3.y + vectorLF4.z * vectorLF3.z;
+                                if (num8 > 0.0)
                                 {
-                                    VectorLF3 vectorLF4 = astroPoses[i].uPos - vectorLF;
-                                    double num7 = vectorLF4.x * vectorLF4.x + vectorLF4.y * vectorLF4.y + vectorLF4.z * vectorLF4.z;
-                                    double num8 = vectorLF4.x * vectorLF3.x + vectorLF4.y * vectorLF3.y + vectorLF4.z * vectorLF3.z;
-                                    if (num8 > 0.0)
+                                    double num9 = num7 - num8 * num8;
+                                    num6 += 120.0;
+                                    if (num9 < num6 * num6)
                                     {
-                                        double num9 = num7 - num8 * num8;
-                                        num6 += 120.0;
-                                        if (num9 < num6 * num6)
-                                        {
-                                            flag = false;
-                                            __instance.targetState = EjectorComponent.ETargetState.Blocked;
-                                            break;
-                                        }
+                                        flag = false;
+                                        __instance.targetState = EjectorComponent.ETargetState.Blocked;
+                                        break;
                                     }
                                 }
                             }
                         }
                     }
-                    if (EnemyShips.ships.ContainsKey(shipIdx) && EnemyShips.ships[shipIdx].state == EnemyShip.State.active && __instance.targetState != EjectorComponent.ETargetState.Blocked && __instance.targetState != EjectorComponent.ETargetState.AngleLimit)
+                }
+                if (EnemyShips.ships.ContainsKey(shipIdx) && EnemyShips.ships[shipIdx].state == EnemyShip.State.active && __instance.targetState != EjectorComponent.ETargetState.Blocked && __instance.targetState != EjectorComponent.ETargetState.AngleLimit)
+                {
+                    curTarget = EnemyShips.ships[shipIdx]; //设定目标
+                    if (EjectorUIPatch.needToRefreshTarget) //如果需要刷新目标
                     {
-                        curTarget = EnemyShips.ships[shipIdx]; //设定目标
-                        if (EjectorUIPatch.needToRefreshTarget) //如果需要刷新目标
+                        if (EjectorUIPatch.curEjectorPlanetId == __instance.planetId && EjectorUIPatch.curEjectorEntityId == __instance.entityId)
                         {
-                            if (EjectorUIPatch.curEjectorPlanetId == __instance.planetId && EjectorUIPatch.curEjectorEntityId == __instance.entityId)
-                            {
-                                EjectorUIPatch.curTarget = curTarget;
-                            }
+                            EjectorUIPatch.curTarget = curTarget;
                         }
-                        break;
                     }
+                    break;
                 }
+            }
 
-                //如果没有船/船没血了，就不打炮了
-                if (curTarget == null)
-                {
-                    flag = false; //本身是由于俯仰限制或路径被阻挡的判断，现在找不到目标而不打炮也算做里面
-                }
-                else if (curTarget != null && curTarget.hp <= 0)
-                {
-                    flag = false;
-                }
+            //如果没有船/船没血了，就不打炮了
+            if (curTarget == null)
+            {
+                flag = false; //本身是由于俯仰限制或路径被阻挡的判断，现在找不到目标而不打炮也算做里面
+            }
+            else if (curTarget != null && curTarget.hp <= 0)
+            {
+                flag = false;
+            }
 
-                bool flag3 = flag && flag2;
-                result = (flag2 ? (flag ? 4U : 3U) : 2U);
-                if (__instance.direction == 1)
+            bool flag3 = flag && flag2;
+            result = (flag2 ? (flag ? 4U : 3U) : 2U);
+            if (__instance.direction == 1)
+            {
+                if (!flag3)
                 {
-                    if (!flag3)
+                    __instance.time = (int)((long)__instance.time * (long)__instance.coldSpend / (long)__instance.chargeSpend);
+                    __instance.direction = -1;
+                }
+            }
+            else if (__instance.direction == 0 && flag3)
+            {
+                __instance.direction = 1;
+            }
+
+
+            if (__instance.direction == 1)
+            {
+                __instance.time += num3;
+                if (__instance.time >= __instance.chargeSpend)
+                {
+                    __instance.fired = true;
+                    animPool[__instance.entityId].time = 10f;
+                    VectorLF3 uBeginChange = vectorLF;
+
+                    //下面是添加子弹
+                    int bulletIndex = swarm.AddBullet(new SailBullet
                     {
-                        __instance.time = (int)((long)__instance.time * (long)__instance.coldSpend / (long)__instance.chargeSpend);
-                        __instance.direction = -1;
-                    }
-                }
-                else if (__instance.direction == 0 && flag3)
-                {
-                    __instance.direction = 1;
-                }
+                        maxt = (float)(__instance.targetDist / maxtDivisor),
+                        lBegin = vector,
+                        uEndVel = VectorLF3.Cross(vectorLF2 - uPos, swarm.orbits[calcOrbitId].up).normalized * Math.Sqrt((double)(swarm.dysonSphere.gravity / swarm.orbits[calcOrbitId].radius)), //至少影响着形成的太阳帆的初速度方向
+                        uBegin = uBeginChange,
+                        uEnd = vectorLF2
+                    }, calcOrbitId);
 
 
-                if (__instance.direction == 1)
-                {
-                    __instance.time += num3;
-                    if (__instance.time >= __instance.chargeSpend)
+                    //设定子弹目标以及伤害，并注册伤害
+                    try
                     {
-                        __instance.fired = true;
-                        animPool[__instance.entityId].time = 10f;
-                        VectorLF3 uBeginChange = vectorLF;
-
-                        //下面是添加子弹
-                        int bulletIndex = swarm.AddBullet(new SailBullet
-                        {
-                            maxt = (float)(__instance.targetDist / maxtDivisor),
-                            lBegin = vector,
-                            uEndVel = VectorLF3.Cross(vectorLF2 - uPos, swarm.orbits[calcOrbitId].up).normalized * Math.Sqrt((double)(swarm.dysonSphere.gravity / swarm.orbits[calcOrbitId].radius)), //至少影响着形成的太阳帆的初速度方向
-                            uBegin = uBeginChange,
-                            uEnd = vectorLF2
-                        }, calcOrbitId);
-
-
-                        //设定子弹目标以及伤害，并注册伤害
-                        try
-                        {
-                            swarm.bulletPool[bulletIndex].state = 0; //设置成0，该子弹将不会生成太阳帆
-                        }
-                        catch (Exception)
-                        {
-                            DspBattlePlugin.logger.LogInfo("bullet info1 set error.");
-                        }
-
-                        UIBattleStatistics.RegisterShootOrLaunch(__instance.bulletId, damage);
-                        bulletTargets[swarm.starData.index].AddOrUpdate(bulletIndex, curTarget.shipIndex, (x, y) => curTarget.shipIndex);
-
-                        //Main.logger.LogInfo("bullet info2 set error.");
-
-
-                        try
-                        {
-                            int bulletId = __instance.bulletId;
-                            bulletIds[swarm.starData.index].AddOrUpdate(bulletIndex, bulletId, (x, y) => bulletId);
-                            // bulletIds[swarm.starData.index][bulletIndex] = 1;//后续可以根据子弹类型/炮类型设定不同数值
-                        }
-                        catch (Exception)
-                        {
-                            DspBattlePlugin.logger.LogInfo("bullet info3 set error.");
-                        }
-
-                        if (__instance.bulletCount != 0)
-                        {
-                            __instance.bulletInc -= __instance.bulletInc / __instance.bulletCount;
-                        }
-                        __instance.bulletCount--;
-                        if (__instance.bulletCount <= 0)
-                        {
-                            __instance.bulletInc = 0;
-                            __instance.bulletCount = 0;
-                        }
-                        lock (consumeRegister)
-                        {
-                            consumeRegister[__instance.bulletId]++;
-                        }
-                        __instance.time = __instance.coldSpend;
-                        __instance.direction = -1;
-
-                        //if (gmProtoId == 8014) //激光炮为了视觉效果，取消冷却阶段每帧都发射（不能简单地将charge和cold的spend设置为0，因为会出现除以0的错误）
-                        //    __instance.direction = 1;
-
+                        swarm.bulletPool[bulletIndex].state = 0; //设置成0，该子弹将不会生成太阳帆
                     }
-                }
-
-                else if (__instance.direction == -1)
-                {
-
-                    __instance.time -= num3;
-                    if (__instance.time <= 0)
+                    catch (Exception)
                     {
-                        __instance.time = 0;
-                        __instance.direction = (flag3 ? 1 : 0);
+                        DspBattlePlugin.logger.LogInfo("bullet info1 set error.");
                     }
+
+                    UIBattleStatistics.RegisterShootOrLaunch(__instance.bulletId, damage);
+                    bulletTargets[swarm.starData.index].AddOrUpdate(bulletIndex, curTarget.shipIndex, (x, y) => curTarget.shipIndex);
+
+                    //Main.logger.LogInfo("bullet info2 set error.");
+
+
+                    try
+                    {
+                        int bulletId = __instance.bulletId;
+                        bulletIds[swarm.starData.index].AddOrUpdate(bulletIndex, bulletId, (x, y) => bulletId);
+                        // bulletIds[swarm.starData.index][bulletIndex] = 1;//后续可以根据子弹类型/炮类型设定不同数值
+                    }
+                    catch (Exception)
+                    {
+                        DspBattlePlugin.logger.LogInfo("bullet info3 set error.");
+                    }
+
+                    if (__instance.bulletCount != 0)
+                    {
+                        __instance.bulletInc -= __instance.bulletInc / __instance.bulletCount;
+                    }
+                    __instance.bulletCount--;
+                    if (__instance.bulletCount <= 0)
+                    {
+                        __instance.bulletInc = 0;
+                        __instance.bulletCount = 0;
+                    }
+                    lock (consumeRegister)
+                    {
+                        consumeRegister[__instance.bulletId]++;
+                    }
+                    __instance.time = __instance.coldSpend;
+                    __instance.direction = -1;
+
+                    //if (gmProtoId == 8014) //激光炮为了视觉效果，取消冷却阶段每帧都发射（不能简单地将charge和cold的spend设置为0，因为会出现除以0的错误）
+                    //    __instance.direction = 1;
+
                 }
-                else
+            }
+
+            else if (__instance.direction == -1)
+            {
+
+                __instance.time -= num3;
+                if (__instance.time <= 0)
                 {
                     __instance.time = 0;
-
+                    __instance.direction = (flag3 ? 1 : 0);
                 }
-
-                __result = result;
-                return false;
             }
+            else
+            {
+                __instance.time = 0;
+
+            }
+
+            return result;
         }
 
         private static bool isCannon(int protoId)

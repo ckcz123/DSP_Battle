@@ -368,6 +368,15 @@ namespace DSP_Battle
                 StopFiring(ref __instance);
                 return;
             }
+            if (Configs.nextWaveState == 2 && Configs.nextWaveIntensity >= 1000 && Configs.nextWaveFrameIndex - gameTick >= 3 * 60 * 60 && fireStage == 0 && starCannonLevel >= 3)
+            {
+                // 恒星炮三级以后，剩余时间3分钟以上，1000强度以后，自动开火
+                if (TrySetNextTarget() == 1)
+                {
+                    StartAiming();
+                }
+                return;
+            }
 
             //每帧更新目标虫洞的坐标，目前只打列表中的最后一个
             if(Configs.nextWaveWormCount > 0 && Configs.nextWaveWormCount < WormholeUIPatch.starData.Length)

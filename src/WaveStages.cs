@@ -45,7 +45,16 @@ namespace DSP_Battle
             StationComponent[] stations = GameMain.data.galacticTransport.stationPool.Where(EnemyShips.ValidStellarStation).ToArray();
             if (stations.Length == 0) return;
             DspBattlePlugin.logger.LogInfo("=====> Initializing next wave");
-            int starId = stations[EnemyShips.random.Next(0, stations.Length)].planetId / 100 - 1;
+            int starId = -1;
+            do
+            {
+                StationComponent targetComponent = stations[EnemyShips.random.Next(0, stations.Length)];
+                if (EnemyShips.random.Next(2) == 1 || targetComponent.energy > 0)
+                {
+                    starId = targetComponent.planetId / 100 - 1;
+                    break;
+                }
+            } while (true);
 
             // Gen next wave
             int deltaFrames = (Configs.coldTime[Math.Min(Configs.coldTime.Length - 1, Configs.totalWave)] + 1) * 3600;

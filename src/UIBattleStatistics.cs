@@ -574,7 +574,7 @@ namespace DSP_Battle
                 enemyValue1.text = "已歼灭gm".Translate() + "/" + "已产生gm".Translate() + "\n" +
                     $"{totalEnemyEliminated}/{totalEnemyGen}\n{enemyEliminated[1]}/{enemyGen[1]}\n{enemyEliminated[4]}/{enemyGen[4]}\n{enemyEliminated[6]}/{enemyGen[6]}\n{enemyEliminated[12]}/{enemyGen[12]}\n{enemyEliminated[15]}/{enemyGen[15]}";
                 enemyValue2.text = "占比gm".Translate() + "\n" +
-                    $"{enemyEliminatedProps[0]:0.00%}\n{enemyEliminatedProps[1]:0.00%}\n{enemyEliminatedProps[4]:0.00%}\n{enemyEliminatedProps[8]:0.00%}\n{enemyEliminatedProps[9]:0.00%}\n{enemyEliminatedProps[15]:0.00%}\n";
+                    $"{enemyEliminatedProps[0]:0.00%}\n{enemyEliminatedProps[1]:0.00%}\n{enemyEliminatedProps[4]:0.00%}\n{enemyEliminatedProps[6]:0.00%}\n{enemyEliminatedProps[12]:0.00%}\n{enemyEliminatedProps[15]:0.00%}\n";
             }
         }
 
