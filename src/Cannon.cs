@@ -178,6 +178,9 @@ namespace DSP_Battle
             float num2 = (float)Cargo.incTableMilli[__instance.incLevel];
             int num3 = (int)(power * 10000f * (1f + num2) + 0.1f);
 
+            bool relic0_6Activated = Relic.HaveRelic(0, 6) && __instance.bulletId == 8001; // relic0-6 京级巨炮如果激活并且当前子弹确实是穿甲磁轨弹
+            if (relic0_6Activated) num3 = (int)(num3 * 0.1);
+
             __instance.targetState = EjectorComponent.ETargetState.OK;
             bool flag = true;
             int num4 = __instance.planetId / 100 * 100;
@@ -202,7 +205,9 @@ namespace DSP_Battle
             if (__instance.bulletId == 8001)
             {
                 maxtDivisor = Configs.bullet1Speed * cannonSpeedScale;
-                damage = (int)Configs.bullet1Atk; //只有这个子弹能够因为引力弹射器而强化伤害
+                damage = (int)Configs.bullet1Atk; //只有这个子弹能够因为引力弹射器而强化伤害。这个强化是不是取消了？
+                if (relic0_6Activated) // relic0-6 京级巨炮效果
+                    damage = Relic.BonusDamage(damage, 500); 
             }
             else if (__instance.bulletId == 8002)
             {
@@ -236,6 +241,8 @@ namespace DSP_Battle
                 flag2 = __instance.bulletCount > 0;
                 if (gmProtoId == 8014) //脉冲炮不需要子弹
                     flag2 = true;
+                else if (relic0_6Activated) // relic0-6 京级巨炮效果 每次消耗五发弹药
+                    flag2 = __instance.bulletCount > 4;
 
                 int shipIdx = 0;//ship总表中的唯一标识：index
                 vectorLF2 = sortedShips[gm].uPos;
@@ -375,12 +382,12 @@ namespace DSP_Battle
                     {
                         DspBattlePlugin.logger.LogInfo("bullet info3 set error.");
                     }
-
+                    int bulletCost = relic0_6Activated ? 5 : 1;
                     if (__instance.bulletCount != 0)
                     {
-                        __instance.bulletInc -= __instance.bulletInc / __instance.bulletCount;
+                        __instance.bulletInc -= bulletCost * __instance.bulletInc / __instance.bulletCount;
                     }
-                    __instance.bulletCount--;
+                    __instance.bulletCount -= bulletCost;
                     if (__instance.bulletCount <= 0)
                     {
                         __instance.bulletInc = 0;
@@ -388,7 +395,7 @@ namespace DSP_Battle
                     }
                     lock (consumeRegister)
                     {
-                        consumeRegister[__instance.bulletId]++;
+                        consumeRegister[__instance.bulletId] += bulletCost;
                     }
                     __instance.time = __instance.coldSpend;
                     __instance.direction = -1;
@@ -438,6 +445,9 @@ namespace DSP_Battle
             if (__instance.dysonSphere.layerCount < 0) return; //专门用于渲染的swarm设置成layerCount=-1，不受这个patch影响
             int starIndex = __instance.starData.index;
 
+            // relic0-6 京级巨炮效果
+            int bullet1DamageWithRelic = Relic.HaveRelic(0, 6) ? Relic.BonusDamage(Configs.bullet1Atk, 500) : Configs.bullet1Atk;
+            int bullet1BonusDamage = bullet1DamageWithRelic - Configs.bullet1Atk;
             foreach (var i in bulletTargets[starIndex].Keys)
             {
                 if (__instance.bulletPool.Length > i && __instance.bulletPool[i].id == i) //后面的判断条件就是说只对攻击用的子弹生效，不对正常的太阳帆操作
@@ -461,7 +471,7 @@ namespace DSP_Battle
                             int bulletId = bulletIds[starIndex][i];
                             switch (bulletId)
                             {
-                                case 8001: damage = Configs.bullet1Atk; break;
+                                case 8001: damage = bullet1DamageWithRelic; break;
                                 case 8002: damage = Configs.bullet2Atk; break;
                                 case 8003: damage = Configs.bullet3Atk; break;
                                 case 8007: damage = Configs.bullet4Atk * 5; break;
@@ -471,6 +481,10 @@ namespace DSP_Battle
 
                             int realDamage = EnemyShips.ships[bulletTargets[starIndex][i]].BeAttacked(damage); //击中造成伤害  //如果在RemoveBullet的postpatch写这个，可以不用每帧循环检测，但是伤害将在爆炸动画后结算，感觉不太合理
                             UIBattleStatistics.RegisterHit(bulletId, realDamage);
+                            if (damage > 0) // relic0-8饮血剑 如果命中，计算吸血，根据大部分游戏吸血逻辑的基数不是实际伤害而是原本的输出期望，所以用damage而不是realDamage
+                            {
+                                if (bulletId == 8001) RelicFunctionPatcher.ForceApplyBloodthirster(damage - Configs.bullet1Atk);
+                            }
                             if (bulletId == 8007)
                             {
                                 for (int j = 1; j <= 4; ++j) UIBattleStatistics.RegisterHit(bulletId, 0);

@@ -58,6 +58,7 @@ namespace DSP_Battle
 
         public static bool HaveRelic(int type, int num)
         {
+            if (Configs.developerMode) return true;
             if (type > 3 || type < 0 || num > 30) return false;
             if ((relics[type] & (1<<num)) > 0 ) return true;
             return false;
@@ -114,7 +115,10 @@ namespace DSP_Battle
                     DysonSphere sphere = GameMain.data.dysonSpheres[i];
                     if (sphere != null)
                     {
-                        starsWithMegaStructure.Add(i);
+                        if (sphere.totalStructurePoint + sphere.totalCellPoint - sphere.totalConstructedStructurePoint - sphere.totalConstructedCellPoint > 0)
+                        {
+                            starsWithMegaStructure.Add(i);
+                        }
                     }
                 }
             }
@@ -132,9 +136,33 @@ namespace DSP_Battle
             return false;
         }
 
-        public static double BonusDamage(double damage)
+        // 任何额外伤害都需要经过此函数来计算并处理，dealDamage默认为false，代表只用这个函数计算而尚未实际造成伤害
+        public static int BonusDamage(double damage, double bonus, bool DealDamage = false)
         {
-            return damage;
+            if (HaveRelic(2, 13))
+            {
+                bonus = 2 * bonus * damage;
+                
+            }
+            else
+            {
+                bonus = bonus * damage;
+            }
+            if (HaveRelic(0, 8) && DealDamage) // relic0-8 饮血剑效果
+            {
+                int starIndex = Configs.nextWaveStarIndex;
+                if (starIndex > 0)
+                {
+                    int planetId = (starIndex + 1) * 100 + Utils.RandInt(1, GameMain.galaxy.stars[starIndex].planetCount + 1);
+                    int shieldRestore = (int)(bonus * 0.1);
+                    if (ShieldGenerator.currentShield.GetOrAdd(planetId, 0) < ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0) * 1.5)
+                    {
+                        ShieldGenerator.maxShieldCapacity.AddOrUpdate(planetId, shieldRestore, (x, y) => y + shieldRestore);
+                        UIBattleStatistics.RegisterShieldRestoreInBattle(shieldRestore);
+                    }
+                }
+            }
+            return (int)(damage + bonus);
         }
 
         // 有限制地建造某一(starIndex为-1时则是随机的)巨构的固定数量(amount)的进度，不因层数、节点数多少而改变一次函数建造的进度量
@@ -144,7 +172,7 @@ namespace DSP_Battle
                 return;
             if (starIndex < 0)
             {
-                starIndex = starsWithMegaStructure[Utils.RandInt(0, starsWithMegaStructure.Count)];
+                starIndex = starsWithMegaStructure[Utils.RandInt(0, starsWithMegaStructure.Count)]; // 可能会出现点数被浪费的情况，因为有的巨构就差一点cell完成，差的那些正在吸附，那么就不会立刻建造，这些amount就被浪费了，但完全建成的巨构不会被包含在这个列表中所以不会经常大量浪费
             }
             if (starIndex >= 0 && starIndex < GameMain.data.dysonSpheres.Length)
             {
@@ -227,5 +255,183 @@ namespace DSP_Battle
         }
     }
 
+
+    public class RelicFunctionPatcher
+    {
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameData), "GameTick")]
+        public static void RelicFunctionGameTick(long time)
+        {
+            if (time % 60 == 8)
+                CheckMegaStructureAttack();
+        }
+
+
+
+        /// <summary>
+        /// relic 0-1 0-2
+        /// </summary>
+        /// <param name="__instance"></param>
+        /// <param name="power"></param>
+        /// <param name="productRegister"></param>
+        /// <param name="consumeRegister"></param>
+        /// <returns></returns>
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(AssemblerComponent), "InternalUpdate")]
+        public static bool AssemblerInternalUpdatePatch(ref AssemblerComponent __instance, float power, int[] productRegister, int[] consumeRegister)
+        {
+            if (power < 0.1f)
+                return true;
+
+            if (__instance.recipeType == ERecipeType.Assemble)
+            {
+                // relic0-1 蓝buff效果
+                if (Relic.HaveRelic(0, 1) && __instance.requires.Length > 1)
+                {
+                    // 原材料未堆积过多才会返还，产物堆积未被取出则不返还
+                    if (__instance.served[0] < 10 * __instance.requireCounts[0])
+                    {
+                        // Utils.Log("time = " + __instance.time + " / " + __instance.timeSpend); 这里是能输出两个相等的值的
+                        // 不能直接用__instance.time >= __instance.timeSpend代替，必须-1，即便已经相等却无法触发，为什么？
+                        if (__instance.time >= __instance.timeSpend - 1 && __instance.produced[0] < 10 * __instance.productCounts[0])
+                        {
+                            if(__instance.served[0] > 0)
+                                __instance.incServed[0] += __instance.incServed[0] / __instance.served[0] * __instance.productCounts[0]; // 增产点数也要返还
+                            __instance.served[0] += __instance.productCounts[0]; // 注意效果是每产出一个产物返还一个1号材料而非每次产出
+                            int[] obj = consumeRegister;
+                            lock (obj)
+                            {
+                                consumeRegister[__instance.requires[0]] -= __instance.productCounts[0];
+                            }
+                        }
+                        if (__instance.extraTime >= __instance.extraTimeSpend - 1 && __instance.produced[0] < 10 * __instance.productCounts[0])
+                        {
+                            if (__instance.served[0] > 0)
+                                __instance.incServed[0] += __instance.incServed[0] / __instance.served[0] * __instance.productCounts[0];
+                            __instance.served[0] += __instance.productCounts[0]; 
+                            int[] obj = consumeRegister;
+                            lock (obj)
+                            {
+                                consumeRegister[__instance.requires[0]] -= __instance.productCounts[0];
+                            }
+                        }
+                        
+                    }
+                }
+            }
+            else if (__instance.recipeType == ERecipeType.Chemical)
+            {
+                // relic0-2 女神之泪效果
+                if (Relic.HaveRelic(0, 2) && __instance.requires.Length > 1)
+                {
+                    if (__instance.served[0] < 20 * __instance.requireCounts[0])
+                    {
+                        if (__instance.time >= __instance.timeSpend - 1 && __instance.produced[0] < 20 * __instance.productCounts[0])
+                        {
+                            if (__instance.served[0] > 0)
+                                __instance.incServed[0] += __instance.incServed[0] / __instance.served[0] * __instance.requireCounts[0];
+                            __instance.served[0] += __instance.requireCounts[0];
+                            int[] obj = consumeRegister;
+                            lock (obj)
+                            {
+                                consumeRegister[__instance.requires[0]] -= __instance.requireCounts[0];
+                            }
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// relic0-3
+        /// </summary>
+        /// <param name="__instance"></param>
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(PowerGeneratorComponent), "GameTick_Gamma")]
+        public static void GammaReceiverPatch(ref PowerGeneratorComponent __instance)
+        {
+            if (Relic.HaveRelic(0, 3) && __instance.catalystPoint < 3600)
+            {
+                __instance.catalystPoint = 3500; // 为什么不是3600，因为3600在锅盖消耗后会计算一个透镜消耗
+                __instance.catalystIncPoint = 14000; // 4倍是满增产
+            }    
+        }
+
+        /// <summary>
+        /// relic0-4
+        /// </summary>
+        /// <param name="__instance"></param>
+        /// <param name="eta"></param>
+        /// <param name="__result"></param>
+        /// <returns></returns>
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(PowerGeneratorComponent), "EnergyCap_Gamma_Req")]
+        public static bool EnergyCapGammaReqPatch(ref PowerGeneratorComponent __instance, float eta, ref long __result)
+        {
+            if (!Relic.HaveRelic(0, 4))
+                return true;
+
+            __instance.currentStrength = 1;
+            float num2 = (float)Cargo.accTableMilli[__instance.catalystIncLevel];
+            __instance.capacityCurrentTick = (long)(__instance.currentStrength * (1f + __instance.warmup * 1.5f) * ((__instance.catalystPoint > 0) ? (2f * (1f + num2)) : 1f) * ((__instance.productId > 0) ? 8f : 1f) * (float)__instance.genEnergyPerTick);
+            eta = 1f - (1f - eta) * (1f - __instance.warmup * __instance.warmup * 0.4f);
+            __instance.warmupSpeed = 0.25f * 4f * 1.3888889E-05f;
+            __result = (long)((double)__instance.capacityCurrentTick / (double)eta + 0.49999999);
+            return false;
+        }
+
+        /// <summary>
+        /// relic0-7
+        /// </summary>
+        public static void CheckMegaStructureAttack()
+        {
+            if (Configs.nextWaveState == 3 && Relic.HaveRelic(0,7) && Relic.starsWithMegaStructure.Contains(Configs.nextWaveStarIndex))
+            {
+                int starIndex = Configs.nextWaveStarIndex;
+                if (starIndex < GameMain.data.dysonSpheres.Length && starIndex >= 0) // 不用判断starIndex<1000了吧
+                {
+                    if (GameMain.data.dysonSpheres[starIndex] != null)
+                    {
+                        int damage = (int)(Math.Sqrt(Math.Max(0, GameMain.data.dysonSpheres[starIndex].energyGenCurrentTick)) / 100.0); // 伤害=每tick能量开平方后除以10
+                        if (Configs.developerMode) damage = damage * 10;
+                        damage = Relic.BonusDamage(damage, 1) - damage;
+                        if (MoreMegaStructure.MoreMegaStructure.StarMegaStructureType[starIndex] == 6) damage *= 3;
+                        foreach (var ship in EnemyShips.minTargetDisSortedShips[starIndex])
+                        {
+                            if (ship.state == EnemyShip.State.active)
+                            {
+                                ship.BeAttacked(damage);
+                                UIBattleStatistics.RegisterMegastructureAttack(damage);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// relic0-8 不方便在BonusDamage里面计算给护盾回复的（比如子弹、导弹等非即时命中的），命中时，在这里强制计算护盾回复
+        /// </summary>
+        /// <param name="bonusDamage"></param>
+        public static void ForceApplyBloodthirster(int bonusDamage)
+        {
+            if (Relic.HaveRelic(0, 8)) // relic0-8 饮血剑效果
+            {
+                int starIndex = Configs.nextWaveStarIndex;
+                if (starIndex > 0)
+                {
+                    int planetId = (starIndex + 1) * 100 + Utils.RandInt(1, GameMain.galaxy.stars[starIndex].planetCount + 1);
+                    int shieldRestore = (int)(bonusDamage * 0.1);
+                    if (ShieldGenerator.currentShield.GetOrAdd(planetId, 0) < ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0) * 1.5)
+                    {
+                        ShieldGenerator.maxShieldCapacity.AddOrUpdate(planetId, shieldRestore, (x, y) => y + shieldRestore);
+                        UIBattleStatistics.RegisterShieldRestoreInBattle(shieldRestore);
+                    }
+                }
+            }
+        }
+    }
    
 }

@@ -421,6 +421,8 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("重新随机", "Roll", "重新随机");
             ProtoRegistry.RegisterString("免费", "free", "免费");
             ProtoRegistry.RegisterString("放弃解译", "Abort Study         +", "放弃解译         +");
+            ProtoRegistry.RegisterString("移除遗物", "Remove Relic", "移除圣物");
+            ProtoRegistry.RegisterString("移除遗物描述", "English Translation Needed", "随机移除一个已拥有的最低稀有度的圣物，并返还该圣物所占用的圣物槽位");
 
             ProtoRegistry.RegisterString("遗物名称0-0", "", "吞噬者");
             ProtoRegistry.RegisterString("遗物名称0-1", "", "蓝buff");
@@ -487,11 +489,11 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物描述0-0", "", "每次击毁敌舰，根据敌舰强度有概率略微推进巨构的建造进度");
             ProtoRegistry.RegisterString("遗物描述0-1", "", "制造厂在制造原材料至少2种的配方时，每产出1个产物，会返还1个第1位置的原材料");
             ProtoRegistry.RegisterString("遗物描述0-2", "", "化工厂在生产原材料至少2种的配方时，不消耗第1位置的原材料");
-            ProtoRegistry.RegisterString("遗物描述0-3", "", "射线接受器消耗透镜速度-100%");
+            ProtoRegistry.RegisterString("遗物描述0-3", "", "射线接受器无需消耗透镜即可达到最大输出效率");
             ProtoRegistry.RegisterString("遗物描述0-4", "", "射线接受器不再受任何星球阻挡");
             ProtoRegistry.RegisterString("遗物描述0-5", "", "行星力场护盾会向伤害来源反弹10%受到的基础伤害作为<i>额外伤害</i>");
-            ProtoRegistry.RegisterString("遗物描述0-6", "", "穿甲磁轨弹造成50000%<i>额外伤害</i>，但每次消耗5发弹药");
-            ProtoRegistry.RegisterString("遗物描述0-7", "", "拥有巨构的星系在战斗时每秒会对最多20个敌舰造成<i>额外伤害</i>，伤害取决于巨构的能量水平\n如果巨构为充能就绪的恒星炮，该伤害增加200%");
+            ProtoRegistry.RegisterString("遗物描述0-6", "", "穿甲磁轨弹造成50000%<i>额外伤害</i>，但每次消耗5发弹药，且充能与冷却时间增加900%");
+            ProtoRegistry.RegisterString("遗物描述0-7", "", "拥有巨构的星系在战斗时每秒会对星系中所有敌舰造成<i>额外伤害</i>，伤害取决于巨构的能量水平\n如果巨构为恒星炮，该伤害增加200%");
             ProtoRegistry.RegisterString("遗物描述0-8", "", "造成的任何<i>额外伤害</i>时，会为正在发生战斗星系的一个随机行星立刻回复相当于<i>额外伤害</i>100%的护盾");
             ProtoRegistry.RegisterString("遗物描述0-9", "", "你会更加幸运");
 

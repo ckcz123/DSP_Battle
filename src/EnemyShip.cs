@@ -192,7 +192,7 @@ namespace DSP_Battle
                     { }
 
                     // relic0-0吞噬者效果
-                    if (Relic.HaveRelic(0, 0) && Relic.Verify(1))
+                    if (Relic.HaveRelic(0, 0))
                     {
                         Relic.AutoBuildMegaStructure(-1, 12 * intensity);
                     }
@@ -357,6 +357,13 @@ namespace DSP_Battle
                     if (ShieldGenerator.currentShield[planetId] < 0) 
                         ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => 0);
                     UIBattleStatistics.RegisterShieldTakeDamage(damage);
+                    // relic0-5 荆棘之甲 护盾反伤效果
+                    if (Relic.HaveRelic(0, 5))
+                    {
+                        int reboundDamage = Relic.BonusDamage(Configs.enemyDamagePerBullet[shipTypeNum], 0.1) - Configs.enemyDamagePerBullet[shipTypeNum]; // 注意是基础伤害而非被时间增幅过的伤害
+                        BeAttacked(reboundDamage);
+                        UIBattleStatistics.RegisterShieldAttack(reboundDamage);
+                    }
                     //子弹
                     DysonSwarm swarm = RendererSphere.enemySpheres[planetId / 100 - 1]?.swarm;
                     if(swarm!=null)

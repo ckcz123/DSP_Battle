@@ -89,6 +89,7 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(Rank));
             Harmony.CreateAndPatchAll(typeof(BattleBGMController));
             Harmony.CreateAndPatchAll(typeof(Relic));
+            Harmony.CreateAndPatchAll(typeof(RelicFunctionPatcher));
 
             LDBTool.PreAddDataAction += BattleProtos.AddProtos;
             LDBTool.PostAddDataAction += BattleProtos.PostDataAction;

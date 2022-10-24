@@ -64,8 +64,11 @@ namespace DSP_Battle
         public static long battleTime; // 当前战斗时间
 
         public static long shieldDamageTaken; //护盾承受伤害
+        public static long shieldDamageAvoid; //护盾减免伤害和规避伤害
+        public static long shieldRestoreInBattle; //护盾战时回复（relic0-8饮血剑、relic2-17不朽之守护）
         public static long shieldDamageMade; //护盾造成伤害
         public static long dropletDamage; //水滴造成伤害
+        public static long megastructureDamage; //巨构造成伤害（不含恒星炮）
 
         public static int alienMatrixGain; //获取的异星矩阵数
 
@@ -215,8 +218,11 @@ namespace DSP_Battle
                 totalEnemyEliminated = 0;
                 totalEnemyGen = 0;
                 shieldDamageMade = 0;
+                shieldDamageAvoid = 0;
+                shieldRestoreInBattle = 0;
                 shieldDamageTaken = 0;
                 dropletDamage = 0;
+                megastructureDamage = 0;
                 totalAmmoDamageHit = 0;
                 totalAmmoDamageOut = 0;
                 totalAmmoHit = 0;
@@ -404,6 +410,18 @@ namespace DSP_Battle
             Interlocked.Add(ref shieldDamageTaken, damage);
         }
 
+        //护盾减免与规避伤害
+        public static void RegisterShieldAvoidDamage(int damage)
+        {
+            Interlocked.Add(ref shieldDamageAvoid, damage);
+        }
+
+        //护盾战时回复
+        public static void RegisterShieldRestoreInBattle(int damage)
+        {
+            Interlocked.Add(ref shieldRestoreInBattle, damage);
+        }
+
         //护盾造成伤害
         public static void RegisterShieldAttack(int damage)
         {
@@ -415,6 +433,13 @@ namespace DSP_Battle
         public static void RegisterDropletAttack(int damage)
         {
             Interlocked.Add(ref dropletDamage, damage);
+            Interlocked.Add(ref totalDamage, damage);
+        }
+
+        //巨构对敌船造成伤害
+        public static void RegisterMegastructureAttack(int damage)
+        {
+            Interlocked.Add(ref megastructureDamage, damage);
             Interlocked.Add(ref totalDamage, damage);
         }
 
@@ -541,12 +566,15 @@ namespace DSP_Battle
 
                 briefLabel.text = "战斗时间".Translate() + "\n" + "歼灭敌人".Translate() + "\n" + "输出伤害".Translate() + "\n" + "损失物流塔".Translate() + "\n" +
                     "损失其他建筑".Translate() + "\n"  + "损失资源".Translate() + "\n\n" + 
-                    "平均拦截距离".Translate() + "\n" + "最小拦截距离".Translate() + "\n" + "护盾承受伤害".Translate() + "\n" + "护盾造成伤害".Translate() + "\n\n" + "水滴伤害".Translate();
+                    "平均拦截距离".Translate() + "\n" + "最小拦截距离".Translate() + "\n" +
+                    "护盾承受伤害".Translate() + "\n" + "护盾伤害减免与规避".Translate() + "\n" + "护盾战时回复".Translate() + "\n" + "护盾造成伤害".Translate() + "\n\n" + 
+                    "水滴伤害".Translate() + "\n" + "巨构伤害".Translate();
                 briefValue1.text = "";
-                briefValue2.text = 
+                briefValue2.text =
                     string.Format("{0:00}:{1:00}", new object[] { battleTime / 60 / 60, battleTime / 60 % 60 }) + "\n" +
-                    totalEnemyEliminated.ToString("N0") + "\n" + totalDamage.ToString("N0") + "\n" + stationLost.ToString("N0") + "\n" + othersLost.ToString("N0") + "\n" + resourceLost.ToString("N0") + "\n\n" + 
-                    avgInterDisStr + "\n" + minInterDisStr + "\n" + shieldDamageTaken.ToString("N0") + "\n" + shieldDamageMade.ToString("N0") + "\n\n" + dropletDamage.ToString("N0");
+                    totalEnemyEliminated.ToString("N0") + "\n" + totalDamage.ToString("N0") + "\n" + stationLost.ToString("N0") + "\n" + othersLost.ToString("N0") + "\n" + resourceLost.ToString("N0") + "\n\n" +
+                    avgInterDisStr + "\n" + minInterDisStr + "\n" + shieldDamageTaken.ToString("N0") + "\n" + shieldDamageAvoid.ToString("N0") + "(" + (shieldDamageAvoid * 100.0 / Math.Max((shieldDamageAvoid + shieldDamageTaken),1)).ToString("F1") + "%)\n" +
+                    shieldRestoreInBattle.ToString("N0") + "\n" + shieldDamageMade.ToString("N0") + "\n\n" + dropletDamage.ToString("N0") + "\n" + megastructureDamage.ToString("N0");
 
                 ammoLabel.text = "\n" + 
                     "数量总计".Translate() + "\n" + "伤害总计".Translate() + "\n\n" +
