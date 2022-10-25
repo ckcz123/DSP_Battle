@@ -153,8 +153,15 @@ namespace DSP_Battle
             lock (this)
             {
                 if (state != State.active) return 0;
+                double bonus = 0;
+                if (Configs.isEnemyWeakenedByRelic) // relic1-3 战斗最开始的1min受到伤害增加
+                    bonus += 0.3;
+                if (Relic.HaveRelic(2, 12) && Relic.Verify(0.1)) // relic2-12 有概率暴击
+                    bonus += 1;
+                atk = Relic.BonusDamage(atk, bonus);
                 result = hp < atk ? hp : atk;
                 hp -= atk;
+                RelicFunctionPatcher.ApplyBloodthirster(result);
                 if (hp <= 0)
                 {
                     UIBattleStatistics.RegisterEliminate(intensity); //记录某类型的敌人被摧毁
@@ -247,10 +254,11 @@ namespace DSP_Battle
                 double forceDispDistance = fullDistance * movePerTick + minForcedMove;
                 if (fullDistance <= minForcedMove)
                 {
-                    forceDisplacementTime = 1;
+                    //forceDisplacementTime = 1;
                     forceDispDistance = fullDistance;
                 }
-                shipData.uPos = shipData.uPos + direction.normalized * forceDispDistance;
+                if(fullDistance!=0)
+                    shipData.uPos = shipData.uPos + direction.normalized * forceDispDistance;
                 forceDisplacementTime -= 1;
             }
 
@@ -386,7 +394,7 @@ namespace DSP_Battle
             //飞船移动
             // float shipSailSpeed = GameMain.history.logisticShipSailSpeedModified;
             float shipSailSpeed = maxSpeed * (1 + (GameMain.instance.timei - Configs.nextWaveFrameIndex) / 3600f);
-
+            if (Configs.isEnemyWeakenedByRelic) shipSailSpeed *= 0.7f; // relic1-3 减移速debuff
             float num31 = Mathf.Sqrt(shipSailSpeed / 600f);
             float num32 = num31;
             if (num32 > 1f)
@@ -669,6 +677,7 @@ namespace DSP_Battle
         private void UpdateStage1()
         {
             float shipSailSpeed = maxSpeed * (1 + (GameMain.instance.timei - Configs.nextWaveFrameIndex) / 3600f);
+            if (Configs.isEnemyWeakenedByRelic) shipSailSpeed *= 0.7f; // relic1-3 减移速debuff
             float num31 = Mathf.Sqrt(shipSailSpeed / 600f);
             float num36 = num31 * 0.006f + 1E-05f;
             AstroData[] astroPoses = GameMain.data.galaxy.astrosData;

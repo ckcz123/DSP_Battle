@@ -456,7 +456,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物名称2-5", "", "多动症 II");
             ProtoRegistry.RegisterString("遗物名称2-6", "", "高效索敌");
             ProtoRegistry.RegisterString("遗物名称2-7", "", "仇敌");
-            ProtoRegistry.RegisterString("遗物名称2-8", "", "狄拉克辶变广");
+            ProtoRegistry.RegisterString("遗物名称2-8", "", "狄拉克辶辶变");
             ProtoRegistry.RegisterString("遗物名称2-9", "", "聚能环 II");
             ProtoRegistry.RegisterString("遗物名称2-10", "", "矩阵充能");
             ProtoRegistry.RegisterString("遗物名称2-11", "", "副产物提炼");
@@ -488,14 +488,14 @@ namespace DSP_Battle
 
             ProtoRegistry.RegisterString("遗物描述0-0", "", "每次击毁敌舰，根据敌舰强度有概率略微推进巨构的建造进度");
             ProtoRegistry.RegisterString("遗物描述0-1", "", "制造厂在制造原材料至少2种的配方时，每产出1个产物，会返还1个第1位置的原材料");
-            ProtoRegistry.RegisterString("遗物描述0-2", "", "化工厂在生产原材料至少2种的配方时，不消耗第1位置的原材料");
+            ProtoRegistry.RegisterString("遗物描述0-2", "", "化工厂在生产原材料至少2种的配方时，返还第1位置的全部原材料");
             ProtoRegistry.RegisterString("遗物描述0-3", "", "射线接受器无需消耗透镜即可达到最大输出效率");
             ProtoRegistry.RegisterString("遗物描述0-4", "", "射线接受器不再受任何星球阻挡");
             ProtoRegistry.RegisterString("遗物描述0-5", "", "行星力场护盾会向伤害来源反弹10%受到的基础伤害作为<i>额外伤害</i>");
-            ProtoRegistry.RegisterString("遗物描述0-6", "", "穿甲磁轨弹造成50000%<i>额外伤害</i>，但每次消耗5发弹药，且充能与冷却时间增加900%");
+            ProtoRegistry.RegisterString("遗物描述0-6", "", "穿甲磁轨弹造成50000%<i>额外伤害</i>，弹道速度大幅增加，但每次消耗5发弹药，且充能与冷却时间增加900%");
             ProtoRegistry.RegisterString("遗物描述0-7", "", "拥有巨构的星系在战斗时每秒会对星系中所有敌舰造成<i>额外伤害</i>，伤害取决于巨构的能量水平\n如果巨构为恒星炮，该伤害增加200%");
-            ProtoRegistry.RegisterString("遗物描述0-8", "", "造成的任何<i>额外伤害</i>时，会为正在发生战斗星系的一个随机行星立刻回复相当于<i>额外伤害</i>100%的护盾");
-            ProtoRegistry.RegisterString("遗物描述0-9", "", "你会更加幸运");
+            ProtoRegistry.RegisterString("遗物描述0-8", "", "我方对敌舰造成的任何伤害时，会为正在发生战斗星系的一个随机行星立刻回复相当于实际伤害10%的护盾");
+            ProtoRegistry.RegisterString("遗物描述0-9", "", "❤你会更加幸运❤");
 
             ProtoRegistry.RegisterString("遗物描述1-0", "", "每次入侵结束，根据来袭总强度少量推进巨构的建造进度");
             ProtoRegistry.RegisterString("遗物描述1-1", "", "导弹的范围伤害（以及范围效果）不再随距离衰减");
@@ -543,7 +543,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物描述3-11", "", "巨构的太阳帆吸附速度提升100%");
             ProtoRegistry.RegisterString("遗物描述3-12", "", "行星力场护盾有10%的概率完全规避伤害，在护盾量较低时，规避概率最高可提升至20%");
             ProtoRegistry.RegisterString("遗物描述3-13", "", "恒星炮充能速度提高25%");
-            ProtoRegistry.RegisterString("遗物描述3-14", "", "生产电动机、电磁马达时，每生产一个产物，回填1个磁线圈作为原材料");
+            ProtoRegistry.RegisterString("遗物描述3-14", "", "生产电动机、电磁涡轮时，每生产一个产物，回填1个磁线圈作为原材料");
             ProtoRegistry.RegisterString("遗物描述3-15", "", "伊卡洛斯机甲的研究速度+1000%");
             ProtoRegistry.RegisterString("遗物描述3-16", "", "恒星炮对主要目标造成10%<i>额外伤害</i>");
             ProtoRegistry.RegisterString("遗物描述3-17", "", "每次提升功勋阶级，显著推进各巨构的建造进度");
@@ -580,7 +580,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物名称带颜色2-5", "", "<color=#2080d0>多动症 II</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色2-6", "", "<color=#2080d0>高效索敌</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色2-7", "", "<color=#2080d0>仇敌</color>");
-            ProtoRegistry.RegisterString("遗物名称带颜色2-8", "", "<color=#2080d0>狄拉克辶变广</color>");
+            ProtoRegistry.RegisterString("遗物名称带颜色2-8", "", "<color=#2080d0>狄拉克辶辶变</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色2-9", "", "<color=#2080d0>聚能环 II</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色2-10", "", "<color=#2080d0>矩阵充能</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色2-11", "", "<color=#2080d0>副产物提炼</color>");

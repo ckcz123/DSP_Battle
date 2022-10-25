@@ -113,6 +113,7 @@ namespace DSP_Battle
         public static int nextWaveWormCount = 0;
         public static int[] nextWaveEnemy = new int[10];
         public static Wormhole[] nextWaveWormholes = new Wormhole[100];
+        public static bool isEnemyWeakenedByRelic = false;
 
         public static int nextWaveMatrixExpectation = 0;
 
@@ -229,7 +230,7 @@ namespace DSP_Battle
             missile2Range = 500; // config.Bind("config", "missile2Range", defaultValue: 500, "反物质导弹破坏范围").Value;
 
             _missile3Speed = 12000.0; // config.Bind("config", "missile3Speed", defaultValue: 8000.0, "引力塌陷导弹速度（米每秒）").Value;
-            _missile3Atk = 1500; // config.Bind("config", "missile3Atk", defaultValue: 2500, "引力塌陷导弹攻击力").Value;
+            _missile3Atk = 1500;//00; // config.Bind("config", "missile3Atk", defaultValue: 2500, "引力塌陷导弹攻击力").Value;
             missile3Range = 8000; // config.Bind("config", "missile3Range", defaultValue: 2000, "引力塌陷导弹破坏范围").Value;
 
             enemyIntensity[0] = 1; // config.Bind("config", "enemy1Intensity", defaultValue: 1, "敌方飞船1强度").Value;

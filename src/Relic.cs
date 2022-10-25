@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace DSP_Battle
 {
@@ -16,14 +17,15 @@ namespace DSP_Battle
 
         public static int relicHoldMax = 8; // 最多可以持有的遗物数
         public static int[] maxRelic = { 10, 12, 18, 18 }; // 当前版本各种类型的遗物各有多少种，每种类型均不能大于30
-        public static double[] relicTypeProbability = { 0.03, 0.08, 0.2, 1 }; // 各类型遗物刷新的概率，注意不是权重
+        public static double[] relicTypeProbability = { 0.03, 0.09, 0.2, 1 }; // 各类型遗物刷新的概率，注意不是权重，是有次序地判断随机数
         public static double firstRelicIsRare = 0.5; // 第一个遗物至少是稀有的概率
         public static bool canSelectNewRelic = false; // 当canSelectNewRelic为true时点按按钮才是有效的选择
         public static int[] alternateRelics = { -1, -1, -1 }; // 三个备选，百位数字代表稀有度类型，0代表传说，个位十位是遗物序号。
         public static int basicMatrixCost = 10; // 除每次随机赠送的一次免费随机之外，从第二次开始需要消耗的矩阵的基础值（这个第二次以此基础值的2倍开始）
         public static int rollCount = 0;
         public static int AbortReward = 500; // 放弃解译圣物直接获取的矩阵数量
-        public static List<int> starsWithMegaStructure = new List<int>(); // 每秒更新，具有巨构的星系。但无论如何，使用这些序号的戴森球时一定要检查是否为null，因为加载新存档后可能不是及时更新等情况。
+        public static List<int> starsWithMegaStructure = new List<int>(); // 每秒更新，具有巨构的星系。
+        public static List<int> starsWithMegaStructureUnfinished = new List<int>(); // 每秒更新，具有巨构且未完成建造的星系.
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameData), "GameTick")]
@@ -41,6 +43,8 @@ namespace DSP_Battle
 
         public static void InitAll()
         {
+            starsWithMegaStructure.Clear();
+            starsWithMegaStructureUnfinished.Clear();
             UIRelic.InitAll();
             canSelectNewRelic = false;
             rollCount = 0;
@@ -48,11 +52,21 @@ namespace DSP_Battle
 
         public static int AddRelic(int type, int num)
         {
-            if (num > 30) return -1;
-            if (type > 3 || type < 0) return -2;
-            if ((relics[type] & 1<<num ) > 0 ) return 0;
+            if (num > 30) return -1; // 序号不存在
+            if (type > 3 || type < 0) return -2; // 稀有度不存在
+            if ((relics[type] & 1<<num ) > 0 ) return 0; // 已有
+            if (GetRelicCount() >= relicHoldMax) return -3; // 超上限
 
-            relics[type] |= 1<<num;
+            // 下面是一些特殊的Relic在选择时不是简单地改一个拥有状态就行，需要单独对待
+            if (type == 1 && num == 4)
+            {
+                GameMain.mainPlayer.TryAddItemToPackage(9511, 1, 0, true);
+                relics[type] |= 1 << num;
+            }
+            else
+            {
+                relics[type] |= 1 << num;
+            }
             return 1;
         }
 
@@ -87,7 +101,7 @@ namespace DSP_Battle
         // 允许玩家选择一个新的遗物
         public static bool PrepareNewRelic()
         {
-            if (GetRelicCount() >= relicHoldMax) return false;
+            //if (GetRelicCount() >= relicHoldMax) return false;
             rollCount = -1; // 从-1开始是因为每次准备给玩家新的relic都要重新随机一次
             canSelectNewRelic = true;
 
@@ -108,6 +122,7 @@ namespace DSP_Battle
         public static void RefreshStarsWithMegaStructure()
         {
             starsWithMegaStructure.Clear();
+            starsWithMegaStructureUnfinished.Clear();
             for (int i = 0; i < GameMain.data.galaxy.starCount; i++)
             {
                 if (GameMain.data.dysonSpheres.Length > i)
@@ -115,16 +130,15 @@ namespace DSP_Battle
                     DysonSphere sphere = GameMain.data.dysonSpheres[i];
                     if (sphere != null)
                     {
+                        starsWithMegaStructure.Add(i);
                         if (sphere.totalStructurePoint + sphere.totalCellPoint - sphere.totalConstructedStructurePoint - sphere.totalConstructedCellPoint > 0)
                         {
-                            starsWithMegaStructure.Add(i);
+                            starsWithMegaStructureUnfinished.Add(i);
                         }
                     }
                 }
             }
-            
         }
-
 
         public static bool Verify(double possibility)
         {
@@ -166,13 +180,13 @@ namespace DSP_Battle
         }
 
         // 有限制地建造某一(starIndex为-1时则是随机的)巨构的固定数量(amount)的进度，不因层数、节点数多少而改变一次函数建造的进度量
-        public static void AutoBuildMegaStructure(int starIndex = -1, int amount = 1)
+        public static void AutoBuildMegaStructure(int starIndex = -1, int amount = 12)
         {
-            if (starsWithMegaStructure.Count <= 0) 
+            if (starsWithMegaStructureUnfinished.Count <= 0) 
                 return;
             if (starIndex < 0)
             {
-                starIndex = starsWithMegaStructure[Utils.RandInt(0, starsWithMegaStructure.Count)]; // 可能会出现点数被浪费的情况，因为有的巨构就差一点cell完成，差的那些正在吸附，那么就不会立刻建造，这些amount就被浪费了，但完全建成的巨构不会被包含在这个列表中所以不会经常大量浪费
+                starIndex = starsWithMegaStructureUnfinished[Utils.RandInt(0, starsWithMegaStructureUnfinished.Count)]; // 可能会出现点数被浪费的情况，因为有的巨构就差一点cell完成，差的那些正在吸附，那么就不会立刻建造，这些amount就被浪费了，但完全建成的巨构不会被包含在这个列表中，前面的情况也不会经常发生，所以不会经常大量浪费
             }
             if (starIndex >= 0 && starIndex < GameMain.data.dysonSpheres.Length)
             {
@@ -264,12 +278,19 @@ namespace DSP_Battle
         {
             if (time % 60 == 8)
                 CheckMegaStructureAttack();
+            else if (time % 60 == 9)
+                AutoChargeShieldByMegaStructure();
+            
+
+
+
+            AutoBuildMegaWhenWaveFinished();
         }
 
 
 
         /// <summary>
-        /// relic 0-1 0-2
+        /// relic 0-1 0-2 1-6
         /// </summary>
         /// <param name="__instance"></param>
         /// <param name="power"></param>
@@ -316,6 +337,30 @@ namespace DSP_Battle
                             }
                         }
                         
+                    }
+                }
+                if (Relic.HaveRelic(1, 6))
+                {
+                    if (__instance.time >= __instance.timeSpend - 1 && __instance.produced[0] < 10 * __instance.productCounts[0])
+                    {
+                        int rocketId = __instance.products[0];
+                        int rodNum = -1;
+                        if (rocketId >= 9488 && rocketId <= 9490)
+                            rodNum = 2;
+                        else if (rocketId == 9491 || rocketId == 9492 || rocketId == 9510)
+                            rodNum = 1;
+
+                        if (rodNum > 0 && __instance.served[rodNum] < 10 * __instance.requireCounts[rodNum])
+                        {
+                            if (__instance.served[rodNum] > 0)
+                                __instance.incServed[rodNum] += __instance.incServed[rodNum] / __instance.served[rodNum] * 2; // 增产点数也要返还
+                            __instance.served[rodNum] += 2; // 注意效果是每产出一个产物返还一个1号材料而非每次产出
+                            int[] obj = consumeRegister;
+                            lock (obj)
+                            {
+                                consumeRegister[__instance.requires[rodNum]] -= 2;
+                            }
+                        }
                     }
                 }
             }
@@ -394,7 +439,7 @@ namespace DSP_Battle
                 {
                     if (GameMain.data.dysonSpheres[starIndex] != null)
                     {
-                        int damage = (int)(Math.Sqrt(Math.Max(0, GameMain.data.dysonSpheres[starIndex].energyGenCurrentTick)) / 100.0); // 伤害=每tick能量开平方后除以10
+                        int damage = (int)(Math.Sqrt(Math.Max(0, GameMain.data.dysonSpheres[starIndex].energyGenCurrentTick_Layers)) / 100.0); // 伤害=每tick能量开平方后除以10
                         if (Configs.developerMode) damage = damage * 10;
                         damage = Relic.BonusDamage(damage, 1) - damage;
                         if (MoreMegaStructure.MoreMegaStructure.StarMegaStructureType[starIndex] == 6) damage *= 3;
@@ -412,10 +457,10 @@ namespace DSP_Battle
         }
 
         /// <summary>
-        /// relic0-8 不方便在BonusDamage里面计算给护盾回复的（比如子弹、导弹等非即时命中的），命中时，在这里强制计算护盾回复
+        /// relic0-8 命中时，在这里强制计算护盾回复。
         /// </summary>
         /// <param name="bonusDamage"></param>
-        public static void ForceApplyBloodthirster(int bonusDamage)
+        public static void ApplyBloodthirster(int damage)
         {
             if (Relic.HaveRelic(0, 8)) // relic0-8 饮血剑效果
             {
@@ -423,7 +468,7 @@ namespace DSP_Battle
                 if (starIndex > 0)
                 {
                     int planetId = (starIndex + 1) * 100 + Utils.RandInt(1, GameMain.galaxy.stars[starIndex].planetCount + 1);
-                    int shieldRestore = (int)(bonusDamage * 0.1);
+                    int shieldRestore = (int)(damage * 0.1);
                     if (ShieldGenerator.currentShield.GetOrAdd(planetId, 0) < ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0) * 1.5)
                     {
                         ShieldGenerator.maxShieldCapacity.AddOrUpdate(planetId, shieldRestore, (x, y) => y + shieldRestore);
@@ -432,6 +477,81 @@ namespace DSP_Battle
                 }
             }
         }
+
+        /// <summary>
+        /// relic1-0
+        /// </summary>
+        public static void AutoBuildMegaWhenWaveFinished()
+        {
+            if (Configs.nextWaveState == 0 && Relic.HaveRelic(1, 0) && Configs.nextWaveIntensity > 0)
+            {
+                Configs.nextWaveIntensity -= 20;
+                Relic.AutoBuildMegaStructure(-1,120);
+            }
+        }
+
+        /// <summary>
+        /// relic1-2
+        /// </summary>
+        public static void AutoChargeShieldByMegaStructure()
+        {
+            foreach (var starIndex in Relic.starsWithMegaStructure)
+            {
+                if (starIndex >= 0 && starIndex < GameMain.data.dysonSpheres.Length)
+                {
+                    if (GameMain.data.dysonSpheres[starIndex] != null)
+                    {
+                        long energyPerTick = GameMain.data.dysonSpheres[starIndex].energyGenCurrentTick_Layers;
+                        if (energyPerTick > 0)
+                        {
+                            for (int i = 0; i < GameMain.galaxy.stars[starIndex].planetCount; i++)
+                            {
+                                int planetId = (starIndex + 1) * 100 + i + 1;
+                                if (ShieldGenerator.currentShield.GetOrAdd(planetId, 0) < ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0))
+                                    ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => y + (int)(energyPerTick / 200000));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        /// <summary>
+        /// relic1-7 relic3-11
+        /// </summary>
+        /// <param name="__instance"></param>
+        /// <param name="gameTick"></param>
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(DysonSphereLayer), "GameTick")]
+        public static void DysonLayerGameTickPostPatchToAccAbsorb(ref DysonSphereLayer __instance, long gameTick)
+        {
+            DysonSwarm swarm = __instance.dysonSphere.swarm;
+            if (Relic.HaveRelic(1, 7))
+            {
+                int num = (int)(gameTick % 40L);
+                for (int i = 1; i < __instance.nodeCursor; i++)
+                {
+                    DysonNode dysonNode = __instance.nodePool[i];
+                    if (dysonNode != null && dysonNode.id == i && dysonNode.id % 40 == num && dysonNode.sp == dysonNode.spMax)
+                    {
+                        dysonNode.OrderConstructCp(gameTick, swarm);
+                    }
+                }
+            }
+            if (Relic.HaveRelic(3, 1))
+            {
+                int num = (int)(gameTick % 120L);
+                for (int i = 1; i < __instance.nodeCursor; i++)
+                {
+                    DysonNode dysonNode = __instance.nodePool[i];
+                    if (dysonNode != null && dysonNode.id == i && dysonNode.id % 120 == num && dysonNode.sp == dysonNode.spMax)
+                    {
+                        dysonNode.OrderConstructCp(gameTick, swarm);
+                    }
+                }
+            }
+        }
+
     }
    
 }

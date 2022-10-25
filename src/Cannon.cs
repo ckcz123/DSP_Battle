@@ -204,10 +204,10 @@ namespace DSP_Battle
 
             if (__instance.bulletId == 8001)
             {
-                maxtDivisor = Configs.bullet1Speed * cannonSpeedScale;
+                maxtDivisor = relic0_6Activated ? Configs.bullet4Speed : Configs.bullet1Speed * cannonSpeedScale; // relic0-6京级巨炮 还会大大加速此子弹速度
                 damage = (int)Configs.bullet1Atk; //只有这个子弹能够因为引力弹射器而强化伤害。这个强化是不是取消了？
-                if (relic0_6Activated) // relic0-6 京级巨炮效果
-                    damage = Relic.BonusDamage(damage, 500); 
+                //if (relic0_6Activated) // relic0-6 京级巨炮效果，由于这个伤害只在统计中计算为发射伤害，实际造成上海市还要再重新计算，因此这里不计算了，统计中记为发射了基础的伤害
+                //    damage = Relic.BonusDamage(damage, 500); 
             }
             else if (__instance.bulletId == 8002)
             {
@@ -337,6 +337,7 @@ namespace DSP_Battle
                     __instance.fired = true;
                     animPool[__instance.entityId].time = 10f;
                     VectorLF3 uBeginChange = vectorLF;
+                    int bulletCost = relic0_6Activated ? 5 : 1;
 
                     int bulletIndex = -1;
 
@@ -363,8 +364,8 @@ namespace DSP_Battle
                     {
                         DspBattlePlugin.logger.LogInfo("bullet info1 set error.");
                     }
+                    UIBattleStatistics.RegisterShootOrLaunch(__instance.bulletId, damage, bulletCost);
 
-                    UIBattleStatistics.RegisterShootOrLaunch(__instance.bulletId, damage);
                     if (bulletIndex != -1)
                         bulletTargets[swarm.starData.index].AddOrUpdate(bulletIndex, curTarget.shipIndex, (x, y) => curTarget.shipIndex);
 
@@ -382,7 +383,6 @@ namespace DSP_Battle
                     {
                         DspBattlePlugin.logger.LogInfo("bullet info3 set error.");
                     }
-                    int bulletCost = relic0_6Activated ? 5 : 1;
                     if (__instance.bulletCount != 0)
                     {
                         __instance.bulletInc -= bulletCost * __instance.bulletInc / __instance.bulletCount;
@@ -447,7 +447,8 @@ namespace DSP_Battle
 
             // relic0-6 京级巨炮效果
             int bullet1DamageWithRelic = Relic.HaveRelic(0, 6) ? Relic.BonusDamage(Configs.bullet1Atk, 500) : Configs.bullet1Atk;
-            int bullet1BonusDamage = bullet1DamageWithRelic - Configs.bullet1Atk;
+            int bullet1Count = Relic.HaveRelic(0, 6) ? 5 : 1; // 实际消耗过的穿甲弹数量
+
             foreach (var i in bulletTargets[starIndex].Keys)
             {
                 if (__instance.bulletPool.Length > i && __instance.bulletPool[i].id == i) //后面的判断条件就是说只对攻击用的子弹生效，不对正常的太阳帆操作
@@ -469,9 +470,10 @@ namespace DSP_Battle
                         {
                             int damage = 0;
                             int bulletId = bulletIds[starIndex][i];
+                            int bulletCount = 1;
                             switch (bulletId)
                             {
-                                case 8001: damage = bullet1DamageWithRelic; break;
+                                case 8001: damage = bullet1DamageWithRelic; bulletCount = bullet1Count; break;
                                 case 8002: damage = Configs.bullet2Atk; break;
                                 case 8003: damage = Configs.bullet3Atk; break;
                                 case 8007: damage = Configs.bullet4Atk * 5; break;
@@ -480,11 +482,7 @@ namespace DSP_Battle
                             }
 
                             int realDamage = EnemyShips.ships[bulletTargets[starIndex][i]].BeAttacked(damage); //击中造成伤害  //如果在RemoveBullet的postpatch写这个，可以不用每帧循环检测，但是伤害将在爆炸动画后结算，感觉不太合理
-                            UIBattleStatistics.RegisterHit(bulletId, realDamage);
-                            if (damage > 0) // relic0-8饮血剑 如果命中，计算吸血，根据大部分游戏吸血逻辑的基数不是实际伤害而是原本的输出期望，所以用damage而不是realDamage
-                            {
-                                if (bulletId == 8001) RelicFunctionPatcher.ForceApplyBloodthirster(damage - Configs.bullet1Atk);
-                            }
+                            UIBattleStatistics.RegisterHit(bulletId, realDamage, bulletCount);
                             if (bulletId == 8007)
                             {
                                 for (int j = 1; j <= 4; ++j) UIBattleStatistics.RegisterHit(bulletId, 0);

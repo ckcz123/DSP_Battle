@@ -569,7 +569,8 @@ namespace DSP_Battle
                         List<int> relicNotHave = new List<int>();
                         for (int num = 0; num < Relic.maxRelic[type]; num++)
                         {
-                            if (!Relic.HaveRelic(type, num) && !Relic.alternateRelics.Contains(type*100+num)) relicNotHave.Add(num); // 因为总共可以获取的遗物数量只有8个，小于任何一种遗物的数量，所以不会把单独一个稀有度拿干净
+                            if (Configs.developerMode) relicNotHave.Add(num);
+                            else if (!Relic.HaveRelic(type, num) && !Relic.alternateRelics.Contains(type*100+num)) relicNotHave.Add(num); // 因为总共可以获取的遗物数量只有8个，小于任何一种遗物的数量，所以不会把单独一个稀有度拿干净
                         }
                         Relic.alternateRelics[i] = type * 100 + relicNotHave[Utils.RandInt(0, relicNotHave.Count)];
                         break;
