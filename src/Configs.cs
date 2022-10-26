@@ -9,7 +9,7 @@ namespace DSP_Battle
 {
     public class Configs
     {
-        public static string versionString = "2.0.9";
+        public static string versionString = "2.0.10";
         public static string qq = "694213906";
         public static bool developerMode = false; //发布前务必修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
 

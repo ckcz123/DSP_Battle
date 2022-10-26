@@ -973,6 +973,14 @@ namespace DSP_Battle
             LDB.items.Select(8031).ModelIndex = 316;
             LDB.items.Select(8031).prefabDesc = LDB.models.Select(316).prefabDesc;
 
+            // LDB.items.Select(2206).prefabDesc.ener
+            LDB.items.Select(2206).prefabDesc.inputEnergyPerTick = 150000;
+            LDB.items.Select(2206).prefabDesc.outputEnergyPerTick = 150000;
+            LDB.items.Select(2206).prefabDesc.maxAcuEnergy = 540000000;
+            LDB.items.Select(2207).prefabDesc.inputEnergyPerTick = 150000;
+            LDB.items.Select(2207).prefabDesc.outputEnergyPerTick = 150000;
+            LDB.items.Select(2207).prefabDesc.maxAcuEnergy = 540000000;
+
             if (Configs.enableProliferator4)
             {
                 LDB.models.Select(120).prefabDesc.incItemId = new int[] { 1141, 1142, 1143, 8034 };
@@ -982,7 +990,7 @@ namespace DSP_Battle
             }
 
             //以下为星球发动机模型修改
-            if (true)
+            if (Configs.developerMode)
             {
                 var prefab = LDB.items.Select(8031).prefabDesc;
                 var oriPrefab = LDB.models.Select(68).prefabDesc;
