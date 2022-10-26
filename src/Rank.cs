@@ -35,6 +35,10 @@ namespace DSP_Battle
             if(GameMain.mainPlayer.package.TakeItem(8033, 1, out inc)>0)
             {
                 AddExp(Configs.expPerAlienMeta);
+                if (time % 60 == 10 && Relic.HaveRelic(2,1)) // relic2-1 互惠互利 上传元数据的时候建造巨构，每60帧建造12个点数。由于异星元数据很多，一般会连续上传数十秒，因此不怕判定点不在第10帧的微小损失
+                {
+                    Relic.AutoBuildMegaStructure();
+                }
             }
         }
 

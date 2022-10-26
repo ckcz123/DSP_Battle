@@ -276,6 +276,7 @@ namespace DSP_Battle
         {
             if (index < 0 || index >= 100) return 0;
             double ratio = (Configs.nextWaveWormCount - 1) * 1.0 / (initialWormholeCount - 1); //目前是线性减伤，因此消灭所需时间是反比例增长，且最后一个虫洞减伤是100%，不会被消灭
+            if (Relic.HaveRelic(1, 10) && Configs.nextWaveWormCount > 1) ratio = 1; // relic1-10 真实伤害 恒星跑无视虫洞被摧毁而逐渐强化的减伤效果
             // ratio = (float)Math.Pow(ratio, 1.5); //改成了n次函数减伤
             ratio = Math.Pow(100.0, ratio) / 99.0;
             damage = Mathf.RoundToInt(damage * (float) ratio);

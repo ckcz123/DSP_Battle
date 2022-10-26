@@ -211,6 +211,7 @@ namespace DSP_Battle
                 gen = 0;
                 __instance.currPoolEnergy -= __instance.energyPerTick;
             }
+            if (Relic.HaveRelic(2, 1)) gen = gen * 1.5;
             calcShieldInc.AddOrUpdate(planetId, gen, (x, y) => y + gen);
 
         }

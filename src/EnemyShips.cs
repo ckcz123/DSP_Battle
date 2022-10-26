@@ -213,7 +213,7 @@ namespace DSP_Battle
         {
             DspBattlePlugin.logger.LogInfo("=========> Ship " + ship.shipIndex + " landed at station " + ship.shipData.otherGId);
 
-            if (shouldDistroy)
+            if (shouldDistroy && Configs.relic1_8Protection > 10) // relic1-8前十个不被摧毁。这个值在每次开始战斗时如果有该遗物则重置为0，但是每次读档设定为99
             {
                 StationComponent station = ship.targetStation;
                 if (ValidStellarStation(station))
@@ -224,9 +224,9 @@ namespace DSP_Battle
                     Configs.nextWaveDelay += 5 * 3600;
                     if (Configs.nextWaveDelay > 30 * 3600) Configs.nextWaveDelay = 30 * 3600;
                 }
-
             }
 
+            Interlocked.Add(ref Configs.relic1_8Protection, 1); // relic1-8前十个不被摧毁 计数
             ship.shipData.inc--;
             if (ship.shipData.inc > 0)
             {

@@ -113,12 +113,15 @@ namespace DSP_Battle
         public static int nextWaveWormCount = 0;
         public static int[] nextWaveEnemy = new int[10];
         public static Wormhole[] nextWaveWormholes = new Wormhole[100];
-        public static bool isEnemyWeakenedByRelic = false;
 
         public static int nextWaveMatrixExpectation = 0;
 
         public static int starCount = 100;
         public static int[] wavePerStar;
+
+        public static bool isEnemyWeakenedByRelic = false; // relic1-3此项每帧更新，不存档，也不在读档时重置
+        public static bool relic2_17Activated = false; // 下个护盾在被摧毁时立刻回填50%上限的护盾量。此项在战斗开始时刷新，读档时设置为false，不存档
+        public static int relic1_8Protection = 99; // 前十个降落的敌舰不摧毁建筑。此项在战斗开始时刷新,此项读档时设置为99，不存档
 
         // --- 护盾信息
         public static int shieldGenPerTick = 12; //每个生成器提供的回复速度不会因为护盾生成器数量变多而有削减，是线性的增长，回复速度如此之慢是为保留：可能加入的，回复护盾的，巨构的存在价值

@@ -220,6 +220,8 @@ namespace DSP_Battle
             float num5 = 2800f * num2;
             bool relic1_1Activated = Relic.HaveRelic(1, 1); // relic 是否拥有
             bool relic1_11Activated = Relic.HaveRelic(1, 11);
+            bool relic2_7Activated = Relic.HaveRelic(2, 7);
+            bool relic2_15Activated = Relic.HaveRelic(2, 15);
             for (int i = 1; i < __instance.rocketCursor; i++)
             {
                 if (__instance.rocketPool[i].id == i)
@@ -494,34 +496,54 @@ namespace DSP_Battle
 
                                 //范围伤害和强制位移
                                 var shipsHit = EnemyShips.FindShipsInRange(dysonRocket.uPos, dmgRange);
-
                                 if (shipsHit.Count > 0) UIBattleStatistics.RegisterHit(missileId, 0, 1); //首先注册一下该导弹击中，但不注册伤害
-                                foreach (var item in shipsHit)
+                                EnemyShip target = null;
+                                if (!EnemyShips.ships.TryGetValue(MissileTargets[starIndex][i], out target)) target = null;
+
+                                if (target != null && (target.uPos - GameMain.galaxy.PlanetById(target.shipData.planetB).uPosition).magnitude < 2000) //如果离地表过近，则不造成范围伤害，否则在护盾强大时过于imba。目前单线程没有这个修正，感觉可以先忽略
                                 {
-                                    if (EnemyShips.ships.ContainsKey(item))
+                                    double bonus = 0;
+                                    if (relic2_7Activated) bonus += 1;
+                                    if (relic2_15Activated && missileId == 8006) bonus += 9;
+                                    damage = Relic.BonusDamage(damage, bonus);
+                                    UIBattleStatistics.RegisterHit(missileId, target.BeAttacked(damage), 0);
+                                }
+                                else
+                                {
+                                    foreach (var item in shipsHit)
                                     {
-                                        double distance = (dysonRocket.uPos - EnemyShips.ships[item].uPos).magnitude;
-                                        int aoeDamage = damage;
-                                        if (distance > dmgRange * 0.5 && !relic1_1Activated)
+                                        if (EnemyShips.ships.ContainsKey(item))
                                         {
-                                            aoeDamage = (int)(damage * (1.0 - (2 * distance - dmgRange) / dmgRange));
-                                        }
-                                        int realDamage = EnemyShips.ships[item].BeAttacked(aoeDamage);
-                                        UIBattleStatistics.RegisterHit(missileId, realDamage, 0); //每个目标不再注册新的击中数量，只注册伤害
-                                        //引力导弹的强制位移
-                                        if (forceDisplacement)
-                                        {
-                                            EnemyShip hitShip = EnemyShips.ships[item];
-                                            if (relic1_11Activated) // relic1-11 冰封陵墓 冻结效果
+                                            double distance = (dysonRocket.uPos - EnemyShips.ships[item].uPos).magnitude;
+                                            int aoeDamage = damage;
+                                            if (distance > dmgRange * 0.5 && !relic1_1Activated)
                                             {
-                                                if (relic1_1Activated) // relic1-1无视范围衰减
-                                                    hitShip.InitForceDisplacement(hitShip.uPos, 180, 1);
-                                                else
-                                                    hitShip.InitForceDisplacement(hitShip.uPos, (int)(180 * (1.0 - (2 * distance - dmgRange) / dmgRange)), 1);
+                                                aoeDamage = (int)(damage * (1.0 - (2 * distance - dmgRange) / dmgRange));
                                             }
-                                            else
+                                            if (EnemyShips.ships[item] == target) // 对首要目标造成额外伤害
                                             {
-                                                hitShip.InitForceDisplacement(dysonRocket.uPos);
+                                                double bonus = 0;
+                                                if (relic2_7Activated) bonus += 1;
+                                                if (relic2_15Activated && missileId == 8006) bonus += 9;
+                                                aoeDamage = Relic.BonusDamage(aoeDamage, bonus);
+                                            }
+                                            int realDamage = EnemyShips.ships[item].BeAttacked(aoeDamage);
+                                            UIBattleStatistics.RegisterHit(missileId, realDamage, 0); //每个目标不再注册新的击中数量，只注册伤害
+                                            //引力导弹的强制位移
+                                            if (forceDisplacement)
+                                            {
+                                                EnemyShip hitShip = EnemyShips.ships[item];
+                                                if (relic1_11Activated) // relic1-11 冰封陵墓 冻结效果
+                                                {
+                                                    if (relic1_1Activated) // relic1-1无视范围衰减
+                                                        hitShip.InitForceDisplacement(hitShip.uPos, 180, 1);
+                                                    else
+                                                        hitShip.InitForceDisplacement(hitShip.uPos, (int)(180 * (1.0 - (2 * distance - dmgRange) / dmgRange)), 1);
+                                                }
+                                                else
+                                                {
+                                                    hitShip.InitForceDisplacement(dysonRocket.uPos);
+                                                }
                                             }
                                         }
                                     }
@@ -899,6 +921,8 @@ namespace DSP_Battle
             int num7;
             bool relic1_1Activated = Relic.HaveRelic(1, 1); // relic 是否拥有
             bool relic1_11Activated = Relic.HaveRelic(1, 11);
+            bool relic2_7Activated = Relic.HaveRelic(2, 7);
+            bool relic2_15Activated = Relic.HaveRelic(2, 15);
             if (!WorkerThreadExecutor.CalculateMissionIndex(1, __instance.rocketCursor - 1, _usedThreadCnt, _curThreadIdx, _minimumMissionCnt, out num6, out num7))
             {
                 return false;
@@ -1192,6 +1216,10 @@ namespace DSP_Battle
 
                                 if (target != null && (target.uPos - GameMain.galaxy.PlanetById(target.shipData.planetB).uPosition).magnitude < 2000) //如果离地表过近，则不造成范围伤害，否则在护盾强大时过于imba。目前单线程没有这个修正，感觉可以先忽略
                                 {
+                                    double bonus = 0;
+                                    if (relic2_7Activated) bonus += 1;
+                                    if (relic2_15Activated && missileId == 8006) bonus += 9;
+                                    damage = Relic.BonusDamage(damage, bonus);
                                     UIBattleStatistics.RegisterHit(missileId, target.BeAttacked(damage), 0);
                                 }
                                 else
@@ -1209,7 +1237,13 @@ namespace DSP_Battle
                                                 {
                                                     aoeDamage = (int)(damage * (1.0 - (2 * distance - dmgRange) / dmgRange));
                                                 }
-
+                                                if (hitShip == target) // 对首要目标造成额外伤害
+                                                {
+                                                    double bonus = 0;
+                                                    if (relic2_7Activated) bonus += 1;
+                                                    if (relic2_15Activated && missileId == 8006) bonus += 9;
+                                                    aoeDamage = Relic.BonusDamage(aoeDamage, bonus);
+                                                }
                                                 int realDamage = hitShip.BeAttacked(aoeDamage);
                                                 UIBattleStatistics.RegisterHit(missileId, realDamage, 0); //每个目标不再注册新的击中数量，只注册伤害
                                                 //引力导弹的强制位移

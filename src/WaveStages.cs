@@ -177,7 +177,8 @@ namespace DSP_Battle
                     u++;
                 }
             }
-
+            Configs.relic1_8Protection = Relic.HaveRelic(1, 8) ? 0 : 99;
+            Configs.relic2_17Activated = Relic.HaveRelic(2, 17) ? true : false;
             Configs.nextWaveState = 3;
         }
 

@@ -692,7 +692,7 @@ namespace DSP_Battle
                             relicSlotImgs[slotNum].sprite = Resources.Load<Sprite>("Assets/DSPBattle/r" + type.ToString() + "-" + num.ToString());
                             relicSlotObjs[slotNum].GetComponent<UIButton>().tips.tipTitle = ("遗物名称带颜色" + type.ToString() + "-" + num.ToString()).Translate();
                             relicSlotObjs[slotNum].GetComponent<UIButton>().tips.tipText = ("遗物描述" + type.ToString() + "-" + num.ToString()).Translate();
-                            relicSlotObjs[slotNum].GetComponent<UIButton>().tips.offset = new Vector2(160, 0);
+                            relicSlotObjs[slotNum].GetComponent<UIButton>().tips.offset = new Vector2(160, 70);
                             relicSlotObjs[slotNum].GetComponent<UIButton>().tips.width = 200;
                             UIButtonTip uibtnt = relicSlotObjs[slotNum].GetComponent<UIButton>().tip as UIButtonTip;
                             if (uibtnt != null) uibtnt.titleComp.supportRichText = true;
@@ -710,7 +710,7 @@ namespace DSP_Battle
                 relicSlotImgs[slotNum].sprite = Resources.Load<Sprite>("Assets/DSPBattle/rEmpty");
                 relicSlotObjs[slotNum].GetComponent<UIButton>().tips.tipTitle = ("未获取遗物标题").Translate();
                 relicSlotObjs[slotNum].GetComponent<UIButton>().tips.tipText = ("未获取遗物描述");
-                relicSlotObjs[slotNum].GetComponent<UIButton>().tips.offset = new Vector2(160, 0);
+                relicSlotObjs[slotNum].GetComponent<UIButton>().tips.offset = new Vector2(160, 70);
             }
         }
 

@@ -449,7 +449,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物名称1-11", "", "冰封陵墓");
 
             ProtoRegistry.RegisterString("遗物名称2-0", "", "超充能器");
-            ProtoRegistry.RegisterString("遗物名称2-1", "", "量化杀手");
+            ProtoRegistry.RegisterString("遗物名称2-1", "", "互惠互利");
             ProtoRegistry.RegisterString("遗物名称2-2", "", "极限一换一");
             ProtoRegistry.RegisterString("遗物名称2-3", "", "回声 I");
             ProtoRegistry.RegisterString("遗物名称2-4", "", "听说有人缺氢");
@@ -500,7 +500,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物描述1-0", "", "每次入侵结束，根据来袭总强度少量推进巨构的建造进度");
             ProtoRegistry.RegisterString("遗物描述1-1", "", "导弹的范围伤害（以及范围效果）不再随距离衰减");
             ProtoRegistry.RegisterString("遗物描述1-2", "", "拥有巨构的星系会自动缓慢充能该星系全部星球的护盾，充能速度取决于巨构能量水平");
-            ProtoRegistry.RegisterString("遗物描述1-3", "", "拥有巨构的星系在战斗开始的前1min对所有敌舰施加30%减速效果，并使他们受到任何来源的30%<i>额外伤害</i>");
+            ProtoRegistry.RegisterString("遗物描述1-3", "", "拥有巨构的星系在战斗开始的前60秒对所有敌舰施加30%减速效果，并使他们在这期间受到30%的<i>额外伤害</i>");
             ProtoRegistry.RegisterString("遗物描述1-4", "", "立刻获得一个水滴，水滴能量消耗-50%");
             ProtoRegistry.RegisterString("遗物描述1-5", "", "导弹发射井在每次发射后向本体回填一发免费弹药");
             ProtoRegistry.RegisterString("遗物描述1-6", "", "生产巨构火箭时，每个产出返还2个氘核燃料棒");
@@ -510,12 +510,12 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物描述1-10", "", "虫洞不再随着被连续摧毁的数量增加而提升伤害减免（最后一个除外）");
             ProtoRegistry.RegisterString("遗物描述1-11", "", "引力塌陷导弹不再聚拢敌舰，而是使他们在原地冻结3s，距离爆心越远受到的影响越小");
 
-            ProtoRegistry.RegisterString("遗物描述2-0", "", "行星力场护盾充能速度提升50%");
-            ProtoRegistry.RegisterString("遗物描述2-1", "", "生产弹药时，每次产出分别有50%、25%的概率回填1个第1位置、第2位置的原材料");
+            ProtoRegistry.RegisterString("遗物描述2-0", "", "来自行星护盾生成器的护盾充能速度提升50%");
+            ProtoRegistry.RegisterString("遗物描述2-1", "", "将异星元数据上传给主脑时，略微推进巨构的建造进度");
             ProtoRegistry.RegisterString("遗物描述2-2", "", "建筑被敌舰摧毁时，获得大量功勋点数，被毁物流塔内的贵重资源会增加获取的功勋点数");
             ProtoRegistry.RegisterString("遗物描述2-3", "", "引力炮台有75%概率在发射后回填一颗弹药");
             ProtoRegistry.RegisterString("遗物描述2-4", "", "生产燃料棒时，每次产出会回填5个第2位置的原材料（氢、重氢）");
-            ProtoRegistry.RegisterString("遗物描述2-5", "", "每过一秒，如果伊卡洛斯在上一秒移动过，就有12%的概率获得一个多功能集成组件");
+            ProtoRegistry.RegisterString("遗物描述2-5", "", "每过一秒，如果伊卡洛斯处于行星上并且在上一秒进行过移动，就有8%的概率获得一个多功能集成组件");
             ProtoRegistry.RegisterString("遗物描述2-6", "", "水滴能量消耗-40%");
             ProtoRegistry.RegisterString("遗物描述2-7", "", "所有导弹对首要目标造成100%<i>额外伤害</i>");
             ProtoRegistry.RegisterString("遗物描述2-8", "", "分解临界光子时，不再产出氢，但产出的反物质增加50%");
@@ -539,7 +539,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物描述3-7", "", "任何子弹命中时会对一个随机其他敌舰造成相当于20%的<i>额外伤害</i>");
             ProtoRegistry.RegisterString("遗物描述3-8", "", "基于已解锁的科技，立刻获得大量普通矩阵（异星矩阵和宇宙矩阵除外），不会占用圣物槽位");
             ProtoRegistry.RegisterString("遗物描述3-9", "", "敌舰降落时，立刻少量推进各巨构的建造进度");
-            ProtoRegistry.RegisterString("遗物描述3-10", "", "每过一秒，如果伊卡洛斯移动过，就有5%的概率获得一个多功能集成组件");
+            ProtoRegistry.RegisterString("遗物描述3-10", "", "每过一秒，如果伊卡洛斯处于行星上并且在上一秒进行过移动，就有3%的概率获得一个多功能集成组件");
             ProtoRegistry.RegisterString("遗物描述3-11", "", "巨构的太阳帆吸附速度提升100%");
             ProtoRegistry.RegisterString("遗物描述3-12", "", "行星力场护盾有10%的概率完全规避伤害，在护盾量较低时，规避概率最高可提升至20%");
             ProtoRegistry.RegisterString("遗物描述3-13", "", "恒星炮充能速度提高25%");
@@ -573,7 +573,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物名称带颜色1-11", "", "<color=#9040d0>冰封陵墓</color>");
 
             ProtoRegistry.RegisterString("遗物名称带颜色2-0", "", "<color=#2080d0>超充能器</color>");
-            ProtoRegistry.RegisterString("遗物名称带颜色2-1", "", "<color=#2080d0>量化杀手</color>");
+            ProtoRegistry.RegisterString("遗物名称带颜色2-1", "", "<color=#2080d0>互惠互利</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色2-2", "", "<color=#2080d0>极限一换一</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色2-3", "", "<color=#2080d0>回声 I</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色2-4", "", "<color=#2080d0>听说有人缺氢</color>");

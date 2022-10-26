@@ -194,6 +194,21 @@ namespace DSP_Battle
                             Utils.UIItemUp(dropItemId, 1, 180);
                             UIBattleStatistics.RegisterAlienMatrixGain(1);
                         }
+                        // relic 2-14 每次击杀有概率获得黑棒或者翘曲器 概率为（5+0.1*舰船强度）%
+                        if (Relic.HaveRelic(2, 14) && Relic.Verify(0.05 + 0.001 * intensity))
+                        {
+                            if (Utils.RandInt(0, 2) == 0)
+                            {
+                                GameMain.mainPlayer.TryAddItemToPackage(1803, 1, 0, true);
+                                Utils.UIItemUp(1803, 1, 180);
+                            }
+                            else
+                            {
+                                GameMain.mainPlayer.TryAddItemToPackage(1210, 1, 0, true);
+                                Utils.UIItemUp(1210, 1, 180);
+                            }
+
+                        }
                     }
                     catch (Exception)
                     { }
@@ -360,12 +375,32 @@ namespace DSP_Battle
                     //造成伤害
                     int planetId = shipData.planetB;
                     if (fireStart == 0) fireStart = GameMain.instance.timei;
-                    int damage = (int)( Configs.enemyDamagePerBullet[shipTypeNum] * Math.Pow(2.0, (GameMain.instance.timei - fireStart) / 3600.0));
-                    ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => y - damage);
-                    if (ShieldGenerator.currentShield[planetId] < 0) 
-                        ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => 0);
-                    UIBattleStatistics.RegisterShieldTakeDamage(damage);
-                    // relic0-5 荆棘之甲 护盾反伤效果
+                    double rootNum = Relic.HaveRelic(2, 16) ? 1.5 : 2.0; // relic2-16 效果
+                    int damage = (int)(Configs.enemyDamagePerBullet[shipTypeNum] * Math.Pow(rootNum, (GameMain.instance.timei - fireStart) / 3600.0));
+                    if (Relic.HaveRelic(1, 9) && GameMain.mainPlayer.mecha.coreEnergy >= GameMain.mainPlayer.mecha.coreEnergyCap * 0.2 && GameMain.mainPlayer.mecha.coreEnergy >= damage * 2000) // relic1-9 骑士之誓用机甲能量替代护盾伤害
+                    {
+                        GameMain.mainPlayer.mecha.coreEnergy -= damage * 2000;
+                        GameMain.mainPlayer.mecha.MarkEnergyChange(8, -damage * 2000);
+                        UIBattleStatistics.RegisterShieldAvoidDamage(damage);
+                    }
+                    else
+                    {
+                        ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => y - damage);
+                        UIBattleStatistics.RegisterShieldTakeDamage(damage);
+                        if (ShieldGenerator.currentShield[planetId] <= 0)
+                        {
+                            if (Configs.relic2_17Activated)
+                            {
+                                Configs.relic2_17Activated = false;
+                                ShieldGenerator.currentShield.AddOrUpdate(planetId, ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0) / 2, (x, y) => ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0) / 2);
+                            }
+                            else
+                            {
+                                ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => 0);
+                            }
+                        }
+                    }
+                    // relic0-5 荆棘之甲 护盾反伤效果，无论是否被机甲能量替代（relic1-9），都会反伤。有combo是好事
                     if (Relic.HaveRelic(0, 5))
                     {
                         int reboundDamage = Relic.BonusDamage(Configs.enemyDamagePerBullet[shipTypeNum], 0.1) - Configs.enemyDamagePerBullet[shipTypeNum]; // 注意是基础伤害而非被时间增幅过的伤害

@@ -388,6 +388,8 @@ namespace DSP_Battle
                         __instance.bulletInc -= bulletCost * __instance.bulletInc / __instance.bulletCount;
                     }
                     __instance.bulletCount -= bulletCost;
+                    if(gmProtoId==8012 && Relic.HaveRelic(2,3) && Relic.Verify(0.75)) // relic2-3 回声 概率回填弹药
+                        __instance.bulletCount += 1;
                     if (__instance.bulletCount <= 0)
                     {
                         __instance.bulletInc = 0;
