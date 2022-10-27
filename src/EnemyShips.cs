@@ -225,7 +225,8 @@ namespace DSP_Battle
                     if (Configs.nextWaveDelay > 30 * 3600) Configs.nextWaveDelay = 30 * 3600;
                 }
             }
-
+            if (Relic.HaveRelic(3, 9)) // relic3-9 开摆 敌舰降落时推进一个随机巨构的建造进度
+                Relic.AutoBuildMegaStructure();
             Interlocked.Add(ref Configs.relic1_8Protection, 1); // relic1-8前十个不被摧毁 计数
             ship.shipData.inc--;
             if (ship.shipData.inc > 0)

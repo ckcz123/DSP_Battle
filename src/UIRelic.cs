@@ -68,10 +68,12 @@ namespace DSP_Battle
         static Color colorBtnEpic = new Color(0.66f, 0f, 0.875f, 0.178f);
         static Color colorBtnRare = new Color(0.183f, 0.426f, 0.811f, 0.178f);
         static Color colorBtnCommon = new Color(0.5f, 0.943f, 0.5f, 0.117f);
+        static Color colorBtnDelete = new Color(0.5f, 0.19f, 0.1f, 0.2f);
         static Color colorTextLegend = new Color(0.82f, 0.52f, 0.238f, 1f);
         static Color colorTextEpic = new Color(0.563f, 0.25f, 0.813f, 1f);
         static Color colorTextRare = new Color(0.125f, 0.5f, 0.813f, 1f);
         static Color colorTextCommon = new Color(0.188f, 0.609f, 0.188f, 1f);
+        static Color colorTextDelete = new Color(0.5f, 0.5f, 0.5f, 1f);
         static Color btnDisableColor = new Color(0.4f, 0.4f, 0.4f, 1f);
         static Color btnAbleColor = new Color(0f, 0.499f, 0.824f, 1f);
         public static void InitAll()
@@ -408,86 +410,108 @@ namespace DSP_Battle
             abortBtnText.text = "放弃解译".Translate() + "500";
             Color white = new Color(1, 1, 1);
 
-            // Relic1
-            int r1type = Relic.alternateRelics[0] / 100;
-            int r1num = Relic.alternateRelics[0] % 100;
-            if (r1type == 0)
+            // 如果是删除遗物的按钮
+            if (Relic.alternateRelics[0] == 999)
             {
-                relic1Name.color = colorTextLegend;
-                relic1BtnImg.color = colorBtnLegend;
-            }
-            else if (r1type == 1)
-            {
-                relic1Name.color = colorTextEpic;
-                relic1BtnImg.color = colorBtnEpic;
-            }
-            else if (r1type == 2)
-            {
-                relic1Name.color = colorTextRare;
-                relic1BtnImg.color = colorBtnRare;
+                relic1Name.color = colorTextDelete;
+                relic1BtnImg.color = colorBtnDelete;
+                relic1Name.text = "删除遗物名称".Translate();
+                relic1Desc.text = "删除遗物描述".Translate();
+                relic1Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/rNULL");
+                relic2Name.color = colorTextDelete;
+                relic2BtnImg.color = colorBtnDelete;
+                relic2Name.text = "删除遗物名称".Translate();
+                relic2Desc.text = "删除遗物描述".Translate();
+                relic2Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/rNULL");
+                relic3Name.color = colorTextDelete;
+                relic3BtnImg.color = colorBtnDelete;
+                relic3Name.text = "删除遗物名称".Translate();
+                relic3Desc.text = "删除遗物描述".Translate();
+                relic3Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/rNULL");
             }
             else
             {
-                relic1Name.color = colorTextCommon;
-                relic1BtnImg.color = colorBtnCommon;
-            }
-            relic1Name.text = ("遗物名称" + r1type.ToString() + "-" + r1num.ToString()).Translate();
-            relic1Desc.text = ("遗物描述" + r1type.ToString() + "-" + r1num.ToString()).Translate();
-            relic1Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/r" + r1type.ToString() + "-" + r1num.ToString());
+                // Relic1
+                int r1type = Relic.alternateRelics[0] / 100;
+                int r1num = Relic.alternateRelics[0] % 100;
+                if (r1type == 0)
+                {
+                    relic1Name.color = colorTextLegend;
+                    relic1BtnImg.color = colorBtnLegend;
+                }
+                else if (r1type == 1)
+                {
+                    relic1Name.color = colorTextEpic;
+                    relic1BtnImg.color = colorBtnEpic;
+                }
+                else if (r1type == 2)
+                {
+                    relic1Name.color = colorTextRare;
+                    relic1BtnImg.color = colorBtnRare;
+                }
+                else
+                {
+                    relic1Name.color = colorTextCommon;
+                    relic1BtnImg.color = colorBtnCommon;
+                }
+                relic1Name.text = ("遗物名称" + r1type.ToString() + "-" + r1num.ToString()).Translate();
+                relic1Desc.text = ("遗物描述" + r1type.ToString() + "-" + r1num.ToString()).Translate();
+                relic1Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/r" + r1type.ToString() + "-" + r1num.ToString());
 
-            // Relic2
-            int r2type = Relic.alternateRelics[1] / 100;
-            int r2num = Relic.alternateRelics[1] % 100;
-            if (r2type == 0)
-            {
-                relic2Name.color = colorTextLegend;
-                relic2BtnImg.color = colorBtnLegend;
-            }
-            else if (r2type == 1)
-            {
-                relic2Name.color = colorTextEpic;
-                relic2BtnImg.color = colorBtnEpic;
-            }
-            else if (r2type == 2)
-            {
-                relic2Name.color = colorTextRare;
-                relic2BtnImg.color = colorBtnRare;
-            }
-            else
-            {
-                relic2Name.color = colorTextCommon;
-                relic2BtnImg.color = colorBtnCommon;
-            }
-            relic2Name.text = ("遗物名称" + r2type.ToString() + "-" + r2num.ToString()).Translate();
-            relic2Desc.text = ("遗物描述" + r2type.ToString() + "-" + r2num.ToString()).Translate();
-            relic2Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/r" + r2type.ToString() + "-" + r2num.ToString());
+                // Relic2
+                int r2type = Relic.alternateRelics[1] / 100;
+                int r2num = Relic.alternateRelics[1] % 100;
+                if (r2type == 0)
+                {
+                    relic2Name.color = colorTextLegend;
+                    relic2BtnImg.color = colorBtnLegend;
+                }
+                else if (r2type == 1)
+                {
+                    relic2Name.color = colorTextEpic;
+                    relic2BtnImg.color = colorBtnEpic;
+                }
+                else if (r2type == 2)
+                {
+                    relic2Name.color = colorTextRare;
+                    relic2BtnImg.color = colorBtnRare;
+                }
+                else
+                {
+                    relic2Name.color = colorTextCommon;
+                    relic2BtnImg.color = colorBtnCommon;
+                }
+                relic2Name.text = ("遗物名称" + r2type.ToString() + "-" + r2num.ToString()).Translate();
+                relic2Desc.text = ("遗物描述" + r2type.ToString() + "-" + r2num.ToString()).Translate();
+                relic2Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/r" + r2type.ToString() + "-" + r2num.ToString());
 
-            // Relic3
-            int r3type = Relic.alternateRelics[2] / 100;
-            int r3num = Relic.alternateRelics[2] % 100;
-            if (r3type == 0)
-            {
-                relic3Name.color = colorTextLegend;
-                relic3BtnImg.color = colorBtnLegend;
+                // Relic3
+                int r3type = Relic.alternateRelics[2] / 100;
+                int r3num = Relic.alternateRelics[2] % 100;
+                if (r3type == 0)
+                {
+                    relic3Name.color = colorTextLegend;
+                    relic3BtnImg.color = colorBtnLegend;
+                }
+                else if (r3type == 1)
+                {
+                    relic3Name.color = colorTextEpic;
+                    relic3BtnImg.color = colorBtnEpic;
+                }
+                else if (r3type == 2)
+                {
+                    relic3Name.color = colorTextRare;
+                    relic3BtnImg.color = colorBtnRare;
+                }
+                else
+                {
+                    relic3Name.color = colorTextCommon;
+                    relic3BtnImg.color = colorBtnCommon;
+                }
+                relic3Name.text = ("遗物名称" + r3type.ToString() + "-" + r3num.ToString()).Translate();
+                relic3Desc.text = ("遗物描述" + r3type.ToString() + "-" + r3num.ToString()).Translate();
+                relic3Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/r" + r3type.ToString() + "-" + r3num.ToString());
             }
-            else if (r3type == 1)
-            {
-                relic3Name.color = colorTextEpic;
-                relic3BtnImg.color = colorBtnEpic;
-            }
-            else if (r3type == 2)
-            {
-                relic3Name.color = colorTextRare;
-                relic3BtnImg.color = colorBtnRare;
-            }
-            else
-            {
-                relic3Name.color = colorTextCommon;
-                relic3BtnImg.color = colorBtnCommon;
-            }
-            relic3Name.text = ("遗物名称" + r3type.ToString() + "-" + r3num.ToString()).Translate();
-            relic3Desc.text = ("遗物描述" + r3type.ToString() + "-" + r3num.ToString()).Translate();
-            relic3Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/r" + r3type.ToString() + "-" + r3num.ToString());
 
             if (CheckEnoughMatrixToRoll())
             {
@@ -556,28 +580,35 @@ namespace DSP_Battle
                 int inc = 0;
                 GameMain.mainPlayer.package.TakeTailItems(ref itemId, ref need, out inc, false);
             }
-
-            // 重随三个遗物
-            for (int i = 0; i < 3; i++)
+            if (Relic.GetRelicCount() >= 8) // 如果遗物已满，则刷新的都是删除随机低稀有度遗物的按钮
             {
-                double rand = Utils.RandDouble();
-                // 幸运草可以让这个rand再随机一次并取最小值，也可以不加这个功能
-                for (int type = 0; type < 4; type++)
+                Relic.alternateRelics[0] = 999;
+                Relic.alternateRelics[1] = 999;
+                Relic.alternateRelics[2] = 999;
+            }
+            else
+            {
+                // 重随三个遗物
+                for (int i = 0; i < 3; i++)
                 {
-                    if (rand <= Relic.relicTypeProbability[type] || (i == 0 && type == 2 && rand < Relic.firstRelicIsRare)) // 后面的判别条件是，第一个遗物至少是稀有以上的概率为独立的较大的一个概率
+                    double rand = Utils.RandDouble();
+                    // 幸运草可以让这个rand再随机一次并取最小值，也可以不加这个功能
+                    for (int type = 0; type < 4; type++)
                     {
-                        List<int> relicNotHave = new List<int>();
-                        for (int num = 0; num < Relic.maxRelic[type]; num++)
+                        if (rand <= Relic.relicTypeProbability[type] || (i == 0 && type == 2 && rand < Relic.firstRelicIsRare)) // 后面的判别条件是，第一个遗物至少是稀有以上的概率为独立的较大的一个概率
                         {
-                            if (Configs.developerMode) relicNotHave.Add(num);
-                            else if (!Relic.HaveRelic(type, num) && !Relic.alternateRelics.Contains(type*100+num)) relicNotHave.Add(num); // 因为总共可以获取的遗物数量只有8个，小于任何一种遗物的数量，所以不会把单独一个稀有度拿干净
+                            List<int> relicNotHave = new List<int>();
+                            for (int num = 0; num < Relic.maxRelic[type]; num++)
+                            {
+                                if (Configs.developerMode) relicNotHave.Add(num);
+                                if (!Relic.HaveRelic(type, num) && !Relic.alternateRelics.Contains(type * 100 + num)) relicNotHave.Add(num); // 因为总共可以获取的遗物数量只有8个，小于任何一种遗物的数量，所以不会把单独一个稀有度拿干净
+                            }
+                            Relic.alternateRelics[i] = type * 100 + relicNotHave[Utils.RandInt(0, relicNotHave.Count)];
+                            break;
                         }
-                        Relic.alternateRelics[i] = type * 100 + relicNotHave[Utils.RandInt(0, relicNotHave.Count)];
-                        break;
                     }
                 }
             }
-
             Relic.rollCount = Math.Min(Relic.rollCount+1, 8); // 记录本次重随次数，重随消耗有上限
             RefreshSelectionWindowUI();
         }
@@ -593,9 +624,11 @@ namespace DSP_Battle
                 int num = Relic.alternateRelics[selection] % 100;
                 Relic.AddRelic(type, num);
             }
-
-            CloseSelectionWindow();
-            RefreshSlotsWindowUI();
+            if (Relic.alternateRelics[selection] != 999) // 如果是删除relic的按钮，玩家可能返回，因此不能在按下按钮后立刻关闭窗口
+            {
+                CloseSelectionWindow();
+                RefreshSlotsWindowUI();
+            }
         }
 
         public static void AbortSelection()
@@ -694,6 +727,7 @@ namespace DSP_Battle
                             relicSlotObjs[slotNum].GetComponent<UIButton>().tips.tipText = ("遗物描述" + type.ToString() + "-" + num.ToString()).Translate();
                             relicSlotObjs[slotNum].GetComponent<UIButton>().tips.offset = new Vector2(160, 70);
                             relicSlotObjs[slotNum].GetComponent<UIButton>().tips.width = 200;
+                            relicSlotObjs[slotNum].GetComponent<UIButton>().tips.delay = 0.05f;
                             UIButtonTip uibtnt = relicSlotObjs[slotNum].GetComponent<UIButton>().tip as UIButtonTip;
                             if (uibtnt != null) uibtnt.titleComp.supportRichText = true;
                             slotNum++;
@@ -711,6 +745,7 @@ namespace DSP_Battle
                 relicSlotObjs[slotNum].GetComponent<UIButton>().tips.tipTitle = ("未获取遗物标题").Translate();
                 relicSlotObjs[slotNum].GetComponent<UIButton>().tips.tipText = ("未获取遗物描述");
                 relicSlotObjs[slotNum].GetComponent<UIButton>().tips.offset = new Vector2(160, 70);
+                relicSlotObjs[slotNum].GetComponent<UIButton>().tips.delay = 0.05f;
             }
         }
 

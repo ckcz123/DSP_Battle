@@ -174,7 +174,8 @@ namespace DSP_Battle
                     {
                         double dropExpectation = intensity * 1.0 / Configs.nextWaveIntensity * Configs.nextWaveMatrixExpectation;
                         int dropItemId = 8032;
-                        if (GameMain.history.TechUnlocked(1924)) // 由于异星矩阵有用，用于随机遗物，所以这里改了，其实可以改成遗物满8个直接给元数据，待定
+                        if (Relic.HaveRelic(3, 1)) dropExpectation *= 1.3; // relic1-3 窃法之刃获得额外掉落
+                        if (GameMain.history.TechUnlocked(1924)) // 由于异星矩阵有用，用于随机遗物，所以这里改了
                         {
                             //dropExpectation *= 50;
                             //dropItemId = 8033;
@@ -208,6 +209,11 @@ namespace DSP_Battle
                                 Utils.UIItemUp(1210, 1, 180);
                             }
 
+                        }
+                        // relic3-3 掘墓人击杀敌舰给沙子
+                        if (Relic.HaveRelic(3, 3))
+                        {
+                            GameMain.mainPlayer.SetSandCount(GameMain.mainPlayer.sandCount + 500 * (int)Math.Sqrt(intensity));
                         }
                     }
                     catch (Exception)
@@ -377,36 +383,45 @@ namespace DSP_Battle
                     if (fireStart == 0) fireStart = GameMain.instance.timei;
                     double rootNum = Relic.HaveRelic(2, 16) ? 1.5 : 2.0; // relic2-16 效果
                     int damage = (int)(Configs.enemyDamagePerBullet[shipTypeNum] * Math.Pow(rootNum, (GameMain.instance.timei - fireStart) / 3600.0));
-                    if (Relic.HaveRelic(1, 9) && GameMain.mainPlayer.mecha.coreEnergy >= GameMain.mainPlayer.mecha.coreEnergyCap * 0.2 && GameMain.mainPlayer.mecha.coreEnergy >= damage * 2000) // relic1-9 骑士之誓用机甲能量替代护盾伤害
+                    if (!Relic.HaveRelic(3, 12) || !Relic.Verify(0.15)) // relic3-12 灵动巨物 有概率完全规避伤害
                     {
-                        GameMain.mainPlayer.mecha.coreEnergy -= damage * 2000;
-                        GameMain.mainPlayer.mecha.MarkEnergyChange(8, -damage * 2000);
-                        UIBattleStatistics.RegisterShieldAvoidDamage(damage);
-                    }
-                    else
-                    {
-                        ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => y - damage);
-                        UIBattleStatistics.RegisterShieldTakeDamage(damage);
-                        if (ShieldGenerator.currentShield[planetId] <= 0)
+                        if (Relic.HaveRelic(1, 9) && GameMain.mainPlayer.mecha.coreEnergy >= GameMain.mainPlayer.mecha.coreEnergyCap * 0.2 && GameMain.mainPlayer.mecha.coreEnergy >= damage * 2000) // relic1-9 骑士之誓用机甲能量替代护盾伤害
                         {
-                            if (Configs.relic2_17Activated)
+                            GameMain.mainPlayer.mecha.coreEnergy -= damage * 2000;
+                            GameMain.mainPlayer.mecha.MarkEnergyChange(8, -damage * 2000);
+                            UIBattleStatistics.RegisterShieldAvoidDamage(damage);
+                        }
+                        else
+                        {
+                            ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => y - damage);
+                            UIBattleStatistics.RegisterShieldTakeDamage(damage);
+                            if (ShieldGenerator.currentShield[planetId] <= 0)
                             {
-                                Configs.relic2_17Activated = false;
-                                ShieldGenerator.currentShield.AddOrUpdate(planetId, ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0) / 2, (x, y) => ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0) / 2);
-                            }
-                            else
-                            {
-                                ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => 0);
+                                if (Configs.relic2_17Activated)
+                                {
+                                    Configs.relic2_17Activated = false;
+                                    ShieldGenerator.currentShield.AddOrUpdate(planetId, ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0) / 2, (x, y) => ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0) / 2);
+                                }
+                                else
+                                {
+                                    ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => 0);
+                                }
                             }
                         }
+
+                        // relic0-5 荆棘之甲 护盾反伤效果，无论是否被机甲能量替代（relic1-9），都会反伤。有combo是好事。但如果被闪避了，那就没反伤了。
+                        if (Relic.HaveRelic(0, 5))
+                        {
+                            int reboundDamage = Relic.BonusDamage(Configs.enemyDamagePerBullet[shipTypeNum], 0.1) - Configs.enemyDamagePerBullet[shipTypeNum]; // 注意是基础伤害而非被时间增幅过的伤害
+                            BeAttacked(reboundDamage);
+                            UIBattleStatistics.RegisterShieldAttack(reboundDamage);
+                        }
                     }
-                    // relic0-5 荆棘之甲 护盾反伤效果，无论是否被机甲能量替代（relic1-9），都会反伤。有combo是好事
-                    if (Relic.HaveRelic(0, 5))
+                    else 
                     {
-                        int reboundDamage = Relic.BonusDamage(Configs.enemyDamagePerBullet[shipTypeNum], 0.1) - Configs.enemyDamagePerBullet[shipTypeNum]; // 注意是基础伤害而非被时间增幅过的伤害
-                        BeAttacked(reboundDamage);
-                        UIBattleStatistics.RegisterShieldAttack(reboundDamage);
+                        UIBattleStatistics.RegisterShieldAvoidDamage(damage);
                     }
+                    
                     //子弹
                     DysonSwarm swarm = RendererSphere.enemySpheres[planetId / 100 - 1]?.swarm;
                     if(swarm!=null)

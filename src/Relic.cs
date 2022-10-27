@@ -51,10 +51,15 @@ namespace DSP_Battle
             rollCount = 0;
             Configs.relic1_8Protection = 99;
             Configs.relic2_17Activated = false;
+            RelicFunctionPatcher.CheckSolarSailLife();
         }
 
         public static int AddRelic(int type, int num)
         {
+            if (type == 9 && num == 99) // 玩家准备删除一个低稀有度的遗物
+            {
+                AskRemoveRandomRelic();
+            }
             if (num > 30) return -1; // 序号不存在
             if (type > 3 || type < 0) return -2; // 稀有度不存在
             if ((relics[type] & 1<<num ) > 0 ) return 0; // 已有
@@ -66,6 +71,33 @@ namespace DSP_Battle
                 GameMain.mainPlayer.TryAddItemToPackage(9511, 1, 0, true);
                 relics[type] |= 1 << num;
             }
+            else if (type == 3 && num == 5)
+            {
+                RelicFunctionPatcher.ReInitBattleRoundAndDiff();
+            }
+            else if (type == 3 && num == 8)
+            {
+                if (GameMain.history.techStates.ContainsKey(1002) && GameMain.history.techStates[1002].unlocked)
+                {
+                    GameMain.mainPlayer.ThrowTrash(6001, 1000, 0, 0);
+                }
+                if (GameMain.history.techStates.ContainsKey(1111) && GameMain.history.techStates[1111].unlocked)
+                {
+                    GameMain.mainPlayer.ThrowTrash(6002, 800, 0, 0);
+                }
+                if (GameMain.history.techStates.ContainsKey(1124) && GameMain.history.techStates[1124].unlocked)
+                {
+                    GameMain.mainPlayer.ThrowTrash(6003, 600, 0, 0);
+                }
+                if (GameMain.history.techStates.ContainsKey(1312) && GameMain.history.techStates[1312].unlocked)
+                {
+                    GameMain.mainPlayer.ThrowTrash(6004, 400, 0, 0);
+                }
+                if (GameMain.history.techStates.ContainsKey(1705) && GameMain.history.techStates[1705].unlocked)
+                {
+                    GameMain.mainPlayer.ThrowTrash(6001, 400, 0, 0);
+                }
+            }
             else
             {
                 relics[type] |= 1 << num;
@@ -73,16 +105,72 @@ namespace DSP_Battle
             return 1;
         }
 
+        public static void AskRemoveRandomRelic()
+        {
+            UIMessageBox.Show("删除遗物确认标题".Translate(), "删除遗物确认警告".Translate(),
+            "否".Translate(), "是".Translate(), 1, new UIMessageBox.Response(RegretRemoveRelic), new UIMessageBox.Response(() =>
+            {
+                int removeType = -1;
+                int removeNum = -1;
+                if (Relic.GetRelicCount(3) > 0)
+                {
+                    List<int> canRemove = new List<int>();
+                    for (int i = 0; i < maxRelic[3]; i++)
+                    {
+                        if (HaveRelic(3, i)) canRemove.Add(i);
+                    }
+                    if (canRemove.Count > 0)
+                    {
+                        removeType = 3;
+                        removeNum = canRemove[Utils.RandInt(0, canRemove.Count)];
+                        relics[3] = relics[3] ^ 1 << removeNum;
+                    }
+                }
+                else
+                {
+                    List<int> canRemove = new List<int>();
+                    for (int i = 0; i < maxRelic[2]; i++)
+                    {
+                        if (HaveRelic(2, i)) canRemove.Add(i);
+                    }
+                    if (canRemove.Count > 0)
+                    {
+                        removeType = 2;
+                        removeNum = canRemove[Utils.RandInt(0, canRemove.Count)];
+                        relics[2] = relics[2] ^ 1 << removeNum;
+                    }
+                }
+                if (removeType == 2 || removeType == 3)
+                {
+                    UIMessageBox.Show("成功移除！".Translate(), "已移除遗物描述".Translate() + ("遗物名称" + removeType.ToString() + "-" + removeNum.ToString()).Translate().Split('\n')[0], "确定".Translate(), 1);
+
+                    UIRelic.CloseSelectionWindow();
+                    UIRelic.RefreshSlotsWindowUI();
+                }
+                else
+                {
+                    UIMessageBox.Show("未能移除！".Translate(), "未能移除遗物描述".Translate(), "确定".Translate(), 1);
+                    RegretRemoveRelic();
+                }
+            }));
+        }
+
+        public static void RegretRemoveRelic()
+        {
+            canSelectNewRelic = true;
+        }
+
         public static bool HaveRelic(int type, int num)
         {
-            if (Configs.developerMode && type>1) return true;
+            //if (Configs.developerMode && type == 0 && num == 6) return true;
+            //if (Configs.developerMode && type>1) return true;
             if (type > 3 || type < 0 || num > 30) return false;
             if ((relics[type] & (1<<num)) > 0 ) return true;
             return false;
         }
 
         // 输出遗物数量，type输入-1为获取全部类型的遗物数量总和
-        static int GetRelicCount(int type = -1)
+        public static int GetRelicCount(int type = -1)
         {
             if (type < 0 || type > 3)
             {
@@ -164,20 +252,6 @@ namespace DSP_Battle
             else
             {
                 bonus = bonus * damage;
-            }
-            if (HaveRelic(0, 8) && DealDamage) // relic0-8 饮血剑效果
-            {
-                int starIndex = Configs.nextWaveStarIndex;
-                if (starIndex > 0)
-                {
-                    int planetId = (starIndex + 1) * 100 + Utils.RandInt(1, GameMain.galaxy.stars[starIndex].planetCount + 1);
-                    int shieldRestore = (int)(bonus * 0.1);
-                    if (ShieldGenerator.currentShield.GetOrAdd(planetId, 0) < ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0) * 1.5)
-                    {
-                        ShieldGenerator.maxShieldCapacity.AddOrUpdate(planetId, shieldRestore, (x, y) => y + shieldRestore);
-                        UIBattleStatistics.RegisterShieldRestoreInBattle(shieldRestore);
-                    }
-                }
             }
             return (int)(damage + bonus);
         }
@@ -294,7 +368,7 @@ namespace DSP_Battle
 
 
         /// <summary>
-        /// relic 0-1 0-2 1-6 2-4 2-11
+        /// relic 0-1 0-2 1-6 2-4 2-11 2-8 3-0 3-6 3-14
         /// </summary>
         /// <param name="__instance"></param>
         /// <param name="power"></param>
@@ -310,41 +384,6 @@ namespace DSP_Battle
 
             if (__instance.recipeType == ERecipeType.Assemble)
             {
-                // relic0-1 蓝buff效果
-                if (Relic.HaveRelic(0, 1) && __instance.requires.Length > 1)
-                {
-                    // 原材料未堆积过多才会返还，产物堆积未被取出则不返还
-                    if (__instance.served[0] < 10 * __instance.requireCounts[0])
-                    {
-                        // Utils.Log("time = " + __instance.time + " / " + __instance.timeSpend); 这里是能输出两个相等的值的
-                        // 不能直接用__instance.time >= __instance.timeSpend代替，必须-1，即便已经相等却无法触发，为什么？
-                        if (__instance.time >= __instance.timeSpend - 1 && __instance.produced[0] < 10 * __instance.productCounts[0])
-                        {
-                            //if(__instance.served[0] > 0)
-                            //    __instance.incServed[0] += __instance.incServed[0] / __instance.served[0] * __instance.productCounts[0]; // 增产点数也要返还
-                            __instance.incServed[0] += 4 * __instance.productCounts[0]; // 返还满级增产点数
-                            __instance.served[0] += __instance.productCounts[0]; // 注意效果是每产出一个产物返还一个1号材料而非每次产出，因此还需要在extraTime里再判断回填原料
-                            int[] obj = consumeRegister;
-                            lock (obj)
-                            {
-                                consumeRegister[__instance.requires[0]] -= __instance.productCounts[0];
-                            }
-                        }
-                        if (__instance.extraTime >= __instance.extraTimeSpend - 1 && __instance.produced[0] < 10 * __instance.productCounts[0])
-                        {
-                            //if (__instance.served[0] > 0)
-                            //    __instance.incServed[0] += __instance.incServed[0] / __instance.served[0] * __instance.productCounts[0];
-                            __instance.incServed[0] += 4 * __instance.productCounts[0]; // 返还满级增产点数
-                            __instance.served[0] += __instance.productCounts[0];
-                            int[] obj = consumeRegister;
-                            lock (obj)
-                            {
-                                consumeRegister[__instance.requires[0]] -= __instance.productCounts[0];
-                            }
-                        }
-
-                    }
-                }
                 // relic1-6
                 if (Relic.HaveRelic(1, 6))
                 {
@@ -403,6 +442,99 @@ namespace DSP_Battle
                         }
                     }
                 }
+                else if (__instance.products[0] == 1501 && Relic.HaveRelic(3, 0)) // relic3-0
+                {
+                    if (__instance.time >= __instance.timeSpend - 1 && __instance.produced[0] < 10 * __instance.productCounts[0])
+                    {
+                        __instance.produced[0]++;
+                        int[] obj = productRegister;
+                        lock (obj)
+                        {
+                            productRegister[1501] += 1;
+                        }
+                    }
+                    if (__instance.extraTime >= __instance.extraTimeSpend - 1 && __instance.produced[0] < 10 * __instance.productCounts[0])
+                    {
+                        __instance.produced[0]++;
+                        int[] obj = productRegister;
+                        lock (obj)
+                        {
+                            productRegister[1501] += 1;
+                        }
+                    }
+                }
+                else if ((__instance.products[0] == 1303 || __instance.products[0] == 1305) && Relic.HaveRelic(3, 6)) // relic3-6
+                {
+                    if (__instance.replicating)
+                    {
+                        __instance.extraTime += (int)(0.5 * __instance.extraSpeed);
+                    }
+                }
+                else if ((__instance.products[0] == 1203 || __instance.products[0] == 1204) && Relic.HaveRelic(3, 14)) // relic3-14
+                {
+                    int reloadNum = __instance.products[0] == 1203 ? 2 : 1;
+                    if (__instance.served[reloadNum] < 10 * __instance.requireCounts[reloadNum])
+                    {
+                        if (__instance.time >= __instance.timeSpend - 1 && __instance.produced[0] < 10 * __instance.productCounts[0])
+                        {
+                            __instance.incServed[reloadNum] += 4;
+                            __instance.served[reloadNum] += 1;
+                            int[] obj = consumeRegister;
+                            lock (obj)
+                            {
+                                consumeRegister[__instance.requires[reloadNum]] -= 1;
+                            }
+                        }
+                        if (__instance.extraTime >= __instance.extraTimeSpend - 1 && __instance.produced[0] < 10 * __instance.productCounts[0])
+                        {
+                            __instance.incServed[reloadNum] += 4;
+                            __instance.served[reloadNum] += 1;
+                            int[] obj = consumeRegister;
+                            lock (obj)
+                            {
+                                consumeRegister[__instance.requires[reloadNum]] -= 1;
+                            }
+                        }
+
+                    }
+                }
+
+                // relic0-1 蓝buff效果 要放在最后面，因为前面有加time的遗物，所以这个根据time结算的要放在最后
+                if (Relic.HaveRelic(0, 1) && __instance.requires.Length > 1)
+                {
+                    // 原材料未堆积过多才会返还，产物堆积未被取出则不返还
+                    if (__instance.served[0] < 10 * __instance.requireCounts[0])
+                    {
+                        // Utils.Log("time = " + __instance.time + " / " + __instance.timeSpend); 这里是能输出两个相等的值的
+                        // 不能直接用__instance.time >= __instance.timeSpend代替，必须-1，即便已经相等却无法触发，为什么？
+                        if (__instance.time >= __instance.timeSpend - 1 && __instance.produced[0] < 10 * __instance.productCounts[0])
+                        {
+                            //if(__instance.served[0] > 0)
+                            //    __instance.incServed[0] += __instance.incServed[0] / __instance.served[0] * __instance.productCounts[0]; // 增产点数也要返还
+                            __instance.incServed[0] += 4 * __instance.productCounts[0]; // 返还满级增产点数
+                            __instance.served[0] += __instance.productCounts[0]; // 注意效果是每产出一个产物返还一个1号材料而非每次产出，因此还需要在extraTime里再判断回填原料
+                            int[] obj = consumeRegister;
+                            lock (obj)
+                            {
+                                consumeRegister[__instance.requires[0]] -= __instance.productCounts[0];
+                            }
+                        }
+                        if (__instance.extraTime >= __instance.extraTimeSpend - 1 && __instance.produced[0] < 10 * __instance.productCounts[0])
+                        {
+                            //if (__instance.served[0] > 0)
+                            //    __instance.incServed[0] += __instance.incServed[0] / __instance.served[0] * __instance.productCounts[0];
+                            __instance.incServed[0] += 4 * __instance.productCounts[0]; // 返还满级增产点数
+                            __instance.served[0] += __instance.productCounts[0];
+                            int[] obj = consumeRegister;
+                            lock (obj)
+                            {
+                                consumeRegister[__instance.requires[0]] -= __instance.productCounts[0];
+                            }
+                        }
+
+                    }
+                }
+
             }
             else if (__instance.recipeType == ERecipeType.Chemical)
             {
@@ -452,21 +584,7 @@ namespace DSP_Battle
 
                 }
             }
-            return true;
-        }
-
-        /// <summary>
-        /// relic 2-8
-        /// </summary>
-        /// <param name="__instance"></param>
-        /// <param name="power"></param>
-        /// <param name="productRegister"></param>
-        /// <param name="consumeRegister"></param>
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(AssemblerComponent), "InternalUpdate")]
-        public static void AssemblerInternalUpdatePostPatch(ref AssemblerComponent __instance, float power, int[] productRegister, int[] consumeRegister)
-        {
-            if (__instance.recipeType == ERecipeType.Particle && Relic.HaveRelic(2, 8))
+            else if (__instance.recipeType == ERecipeType.Particle && Relic.HaveRelic(2, 8)) // relic2-8
             {
                 if (__instance.products.Length > 1 && __instance.products[0] == 1122)
                 {
@@ -478,13 +596,14 @@ namespace DSP_Battle
                 }
 
             }
+            return true;
         }
 
 
-            /// <summary>
-            /// relic0-3
-            /// </summary>
-            /// <param name="__instance"></param>
+        /// <summary>
+        /// relic0-3
+        /// </summary>
+        /// <param name="__instance"></param>
         [HarmonyPostfix]
         [HarmonyPatch(typeof(PowerGeneratorComponent), "GameTick_Gamma")]
         public static void GammaReceiverPatch(ref PowerGeneratorComponent __instance)
@@ -672,8 +791,100 @@ namespace DSP_Battle
                     Relic.playerLastPos = new Vector3(pos.x, pos.y, pos.z);
                 }
             }
-            
         }
+
+
+        /// <summary>
+        /// relic3-0 解锁科技时调用重新计算太阳帆寿命并覆盖
+        /// </summary>
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameHistoryData), "UnlockTechFunction")]
+        public static void UnlockTechPostPatch()
+        {
+            CheckSolarSailLife();
+        }
+
+        /// <summary>
+        /// relic3-0 重新计算太阳帆寿命
+        /// </summary>
+        public static void CheckSolarSailLife()
+        {
+            if (!Relic.HaveRelic(3, 0)) return;
+            float solarSailLife = 540;
+            if (GameMain.history.techStates.ContainsKey(3106) && GameMain.history.techStates[3106].unlocked)
+            {
+                solarSailLife += 360;
+            }
+            else if (GameMain.history.techStates.ContainsKey(3105) && GameMain.history.techStates[3105].unlocked)
+            {
+                solarSailLife += 270;
+            }
+            else if (GameMain.history.techStates.ContainsKey(3104) && GameMain.history.techStates[3104].unlocked)
+            {
+                solarSailLife += 180;
+            }
+            else if (GameMain.history.techStates.ContainsKey(3103) && GameMain.history.techStates[3103].unlocked)
+            {
+                solarSailLife += 120;
+            }
+            else if (GameMain.history.techStates.ContainsKey(3102) && GameMain.history.techStates[3102].unlocked)
+            {
+                solarSailLife += 60;
+            }
+            else if (GameMain.history.techStates.ContainsKey(3101) && GameMain.history.techStates[3101].unlocked)
+            {
+                solarSailLife += 30;
+            }
+            GameMain.history.solarSailLife = solarSailLife;
+        }
+
+        /// <summary>
+        /// relic
+        /// </summary>
+        /// <param name="__instance"></param>
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(Mecha), "GenerateEnergy")]
+        public static void MechaEnergyBonusRestore(ref Mecha __instance)
+        {
+            if (Relic.HaveRelic(3, 2))
+            {
+                __instance.coreEnergy += __instance.reactorPowerGen * 0.5;
+                if (__instance.coreEnergy > __instance.coreEnergyCap) __instance.coreEnergy = __instance.coreEnergyCap;
+            }
+        }
+
+        /// <summary>
+        /// relic3-4
+        /// </summary>
+        public static void ReInitBattleRoundAndDiff()
+        {
+            for (int i = 0; i < Configs.wavePerStar.Length; i++)
+            {
+                Configs.wavePerStar[i] = 0;
+            }
+            Configs.difficulty = 0;
+            UIBattleStatistics.InitSelectDifficulty();
+        }
+
+        /// <summary>
+        /// relic3-15
+        /// </summary>
+        /// <param name="__instance"></param>
+        /// <param name="time"></param>
+        /// <param name="dt"></param>
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(Mecha), "GameTick")]
+        public static void MechaGameTickPostPatch(Mecha __instance, long time, float dt)
+        {
+            if (Relic.HaveRelic(3, 15))
+            {
+                __instance.lab.GameTick(time, dt);
+                __instance.lab.GameTick(time, dt);
+                __instance.lab.GameTick(time, dt);
+                __instance.lab.GameTick(time, dt);
+            }
+        }
+
     }
    
 }

@@ -264,7 +264,9 @@ namespace DSP_Battle
                 return -1;
             }
 
-            int res = TakeDamage(damage, index);
+            int bonusMainDamage = damage;
+            if (Relic.HaveRelic(3, 16)) bonusMainDamage = Relic.BonusDamage(damage, 0.1);
+            int res = TakeDamage(bonusMainDamage, index);
             for (int j = 1; j < totalNumber; j++)
             {
                 TakeDamage(Math.Max(0, damage / 2 - damage * (j - 1) / 10), index - j);
