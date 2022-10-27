@@ -592,10 +592,11 @@ namespace DSP_Battle
                 for (int i = 0; i < 3; i++)
                 {
                     double rand = Utils.RandDouble();
-                    // 幸运草可以让这个rand再随机一次并取最小值，也可以不加这个功能
+                    double rollRatio = Relic.HaveRelic(0, 9) ? 1.5 : 1;
+                    // relic0-9 五叶草 可以让更高稀有度的遗物刷新概率提高
                     for (int type = 0; type < 4; type++)
                     {
-                        if (rand <= Relic.relicTypeProbability[type] || (i == 0 && type == 2 && rand < Relic.firstRelicIsRare)) // 后面的判别条件是，第一个遗物至少是稀有以上的概率为独立的较大的一个概率
+                        if (rand <= Relic.relicTypeProbability[type] * rollRatio || (i == 0 && type == 2 && rand < Relic.firstRelicIsRare)) // 后面的判别条件是，第一个遗物至少是稀有以上的概率为独立的较大的一个概率
                         {
                             List<int> relicNotHave = new List<int>();
                             for (int num = 0; num < Relic.maxRelic[type]; num++)
