@@ -51,7 +51,8 @@ namespace DSP_Battle
             
             rankObj.name = "BattleRank";
             rankObj.transform.SetParent(inGameObj.transform);
-            rankObj.transform.localPosition = new Vector3(DSPGame.globalOption.resolution.width / 2 - 80, DSPGame.globalOption.resolution.height / 2 - 120);
+            // rankObj.transform.localPosition = new Vector3(DSPGame.globalOption.resolution.width / 2 - 80, DSPGame.globalOption.resolution.height / 2 - 120);
+            rankObj.transform.localPosition = new Vector3(DSPGame.globalOption.resolution.width * 1.0f * DSPGame.globalOption.uiLayoutHeight / DSPGame.globalOption.resolution.height / 2 - 80, DSPGame.globalOption.uiLayoutHeight / 2 - 120);
             rankObj.transform.SetAsFirstSibling();
             rankObj.transform.localScale = new Vector3(1, 1, 1);
 

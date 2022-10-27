@@ -1,4 +1,4 @@
-﻿# They Come From Void / 深空来敌
+# They Come From Void / 深空来敌
 
 A tower-defense-like combat system for Dyson Sphere Program. Prepare your defense system, build your weapons and bullets, and... FIRE!!!!!
 
@@ -53,6 +53,32 @@ Also welcome to anyone who'd like to contribute to the mod, better if you have e
 欢迎任何向为此mod进行贡献的人，我们尤其需要有Unity经验或者会建模的大佬。
 
 ## Update Log
+
+### 2022-10-27 V2.0.10
+
+ - Increase the acculumator capacity and charging speed
+ - 大幅增加电池的蓄电量和放在地上的充放电速度
+ - Optimize the performance in battle
+ - 小幅优化战斗过程中的游戏性能
+ - Fix beam still consuming power after battle end
+ - 修复相位裂解炮在战斗结束后仍然耗电的问题
+ - Fix rank badge UI hidden in some resolution
+ - 修复徽章在一些分辨率夏不可见的问题
+
+### 2022-10-24 V2.0.9
+ - Tiny fix
+ - 修复一些错误
+
+### 2022-10-23 V2.0.8
+
+ - Star cannon will auto fire after phase 3
+ - 恒星炮在阶段三后将自动开火
+ - Optimize performance when battle is not on-going
+ - 大幅优化非战斗状态下的游戏性能
+ - Optimize performance of beam
+ - 优化相位裂解光束的性能
+ - Other balance adjustment
+ - 其他的平衡性调整
 
 ### 2022-10-22 V2.0.7
 
@@ -109,6 +135,7 @@ Also welcome to anyone who'd like to contribute to the mod, better if you have e
  - 新增功勋等级系统，通过提升等级能够解锁更好的战斗奖励和工业生产加成，高难度下获得的功勋点数（经验值）更多   
  - Enemy ships now use a different model than logistics vessels; Gravitational collapse missiles now have a forced displacement effect; new items have been added   
  - 敌舰现在使用与物流船不同的模型；引力塌陷导弹现在具有强制位移（聚怪）效果；增添了全新的物品   
+
 
 ### 2022-04-03 V1.2.3
 
