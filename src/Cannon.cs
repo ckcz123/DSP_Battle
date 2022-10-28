@@ -137,7 +137,7 @@ namespace DSP_Battle
                 animPool[__instance.entityId].time = 0f;
             }
 
-            if (Configs.nextWaveState != 3) return false; // 非战斗下就不索敌，且不执行原本的函数
+            if (Configs.nextWaveState == 1 || Configs.nextWaveState == 2) return false; // 非战斗下就不索敌，且不执行原本的函数
 
             //下面是因为 炮需要用orbitId记录索敌模式，而orbitId有可能超出已设定的轨道数，为了避免溢出，炮的orbitalId在参与计算时需要独立指定为1。
             //后续所有的__instance.orbitId都被替换为此

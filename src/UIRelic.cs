@@ -647,7 +647,7 @@ namespace DSP_Battle
             RefreshSlotsWindowUI();
         }
 
-
+        /*
         //  以下为左侧Relic 预览窗口
         static GameObject relicSlotsWindowObj = null;
         static List<GameObject> relicSlotObjs = new List<GameObject>();
@@ -655,9 +655,11 @@ namespace DSP_Battle
         static List<UIButton> relicSlotUIBtns = new List<UIButton>();
         static float targetX = -1065;
         static float curX = -1065;
+        */
 
         public static void InitRelicSlotsWindowUI()
         {
+            /*
             if (relicSlotsWindowObj == null)
             {
                 float slotDis = 90; // 每个遗物slot的竖向间隔（顶距离顶）
@@ -709,11 +711,13 @@ namespace DSP_Battle
                 HideSlots();
                 RefreshSlotsWindowUI();
             }
+            */
 
         }
 
         public static void RefreshSlotsWindowUI()
         {
+            /*
             int slotNum = 0;
             for (int type = 0; type < 4; type++)
             {
@@ -748,10 +752,12 @@ namespace DSP_Battle
                 relicSlotObjs[slotNum].GetComponent<UIButton>().tips.offset = new Vector2(160, 70);
                 relicSlotObjs[slotNum].GetComponent<UIButton>().tips.delay = 0.05f;
             }
+            */
         }
 
         public static void CheckRelicSlotsWindowShowByMouse()
         {
+            /*
             Vector3 mouseUIPos = Input.mousePosition;
             if (mouseUIPos.x <= curX + 0.5f * resolutionX + 105 + 8)
             {
@@ -761,10 +767,12 @@ namespace DSP_Battle
             {
                 HideSlots();
             }
+            */
         }
 
         public static void SlotWindowAnimationUpdate()
         {
+            /*
             if (curX != targetX)
             {
                 float distance = Math.Abs(targetX - curX);
@@ -780,24 +788,29 @@ namespace DSP_Battle
                 }
                 curX = relicSlotsWindowObj.transform.localPosition.x;
             }
+            */
         }
-
+        
         public static void ShowSlots()
         {
+            /*
             if (relicSlotsWindowObj != null)
             {
                 curX = relicSlotsWindowObj.transform.localPosition.x;
                 targetX = -0.5f * resolutionX;
             }
+            */
         }
 
         public static void HideSlots()
         {
+            /*
             if (relicSlotsWindowObj != null)
             {
                 curX = relicSlotsWindowObj.transform.localPosition.x;
                 targetX = -0.5f * resolutionX - 105;
             }
+            */
         }
     }
 }
