@@ -27,6 +27,7 @@ namespace DSP_Battle
         public static List<int> starsWithMegaStructure = new List<int>(); // 每秒更新，具有巨构的星系。
         public static List<int> starsWithMegaStructureUnfinished = new List<int>(); // 每秒更新，具有巨构且未完成建造的星系.
         public static Vector3 playerLastPos = new VectorLF3(0, 0, 0); // 上一秒玩家的位置
+        public static bool alreadyRecalcDysonStarLumin = false; // 不需要存档，如果需要置false则会在读档时以及选择特定遗物时自动完成
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameData), "GameTick")]
@@ -39,7 +40,7 @@ namespace DSP_Battle
 
         static int N(int num)
         {
-            return (int)Math.Pow(2,num);
+            return (int)Math.Pow(2, num);
         }
 
         public static void InitAll()
@@ -62,11 +63,16 @@ namespace DSP_Battle
             }
             if (num > 30) return -1; // 序号不存在
             if (type > 3 || type < 0) return -2; // 稀有度不存在
-            if ((relics[type] & 1<<num ) > 0 ) return 0; // 已有
+            if ((relics[type] & 1 << num) > 0) return 0; // 已有
             if (GetRelicCount() >= relicHoldMax) return -3; // 超上限
 
             // 下面是一些特殊的Relic在选择时不是简单地改一个拥有状态就行，需要单独对待
-            if (type == 1 && num == 4)
+            if (type == 0 && num == 3)
+            {
+                relics[type] |= 1 << num;
+                RelicFunctionPatcher.CheckAndModifyStarLuminosity();
+            }
+            else if (type == 1 && num == 4)
             {
                 GameMain.mainPlayer.TryAddItemToPackage(9511, 1, 0, true);
                 relics[type] |= 1 << num;
@@ -165,7 +171,7 @@ namespace DSP_Battle
             //if (Configs.developerMode && type == 0 && num == 6) return true;
             //if (Configs.developerMode && type>1) return true;
             if (type > 3 || type < 0 || num > 30) return false;
-            if ((relics[type] & (1<<num)) > 0 ) return true;
+            if ((relics[type] & (1 << num)) > 0) return true;
             return false;
         }
 
@@ -247,7 +253,7 @@ namespace DSP_Battle
             if (HaveRelic(2, 13))
             {
                 bonus = 2 * bonus * damage;
-                
+
             }
             else
             {
@@ -259,7 +265,7 @@ namespace DSP_Battle
         // 有限制地建造某一(starIndex为-1时则是随机的)巨构的固定数量(amount)的进度，不因层数、节点数多少而改变一次函数建造的进度量
         public static void AutoBuildMegaStructure(int starIndex = -1, int amount = 12)
         {
-            if (starsWithMegaStructureUnfinished.Count <= 0) 
+            if (starsWithMegaStructureUnfinished.Count <= 0)
                 return;
             if (starIndex < 0)
             {
@@ -325,6 +331,7 @@ namespace DSP_Battle
                 relics[1] = r.ReadInt32();
                 relics[2] = r.ReadInt32();
                 relics[3] = r.ReadInt32();
+                RelicFunctionPatcher.CheckAndModifyStarLuminosity();
             }
             else
             {
@@ -360,8 +367,7 @@ namespace DSP_Battle
             else if (time % 60 == 10)
                 CheckPlayerHasaki();
 
-
-
+            TryRecalcDysonLumin();
             AutoBuildMegaWhenWaveFinished();
         }
 
@@ -601,18 +607,18 @@ namespace DSP_Battle
 
 
         /// <summary>
-        /// relic0-3
+        /// relic0-4
         /// </summary>
         /// <param name="__instance"></param>
         [HarmonyPostfix]
         [HarmonyPatch(typeof(PowerGeneratorComponent), "GameTick_Gamma")]
         public static void GammaReceiverPatch(ref PowerGeneratorComponent __instance)
         {
-            if (Relic.HaveRelic(0, 3) && __instance.catalystPoint < 3600)
+            if (Relic.HaveRelic(0, 4) && __instance.catalystPoint < 3600)
             {
                 __instance.catalystPoint = 3500; // 为什么不是3600，因为3600在锅盖消耗后会计算一个透镜消耗
                 __instance.catalystIncPoint = 14000; // 4倍是满增产
-            }    
+            }
         }
 
         /// <summary>
@@ -643,7 +649,7 @@ namespace DSP_Battle
         /// </summary>
         public static void CheckMegaStructureAttack()
         {
-            if (Configs.nextWaveState == 3 && Relic.HaveRelic(0,7) && Relic.starsWithMegaStructure.Contains(Configs.nextWaveStarIndex))
+            if (Configs.nextWaveState == 3 && Relic.HaveRelic(0, 7) && Relic.starsWithMegaStructure.Contains(Configs.nextWaveStarIndex))
             {
                 int starIndex = Configs.nextWaveStarIndex;
                 if (starIndex < GameMain.data.dysonSpheres.Length && starIndex >= 0) // 不用判断starIndex<1000了吧
@@ -697,7 +703,7 @@ namespace DSP_Battle
             if (Configs.nextWaveState == 0 && Relic.HaveRelic(1, 0) && Configs.nextWaveIntensity > 0)
             {
                 Configs.nextWaveIntensity -= 20;
-                Relic.AutoBuildMegaStructure(-1,120);
+                Relic.AutoBuildMegaStructure(-1, 120);
             }
         }
 
@@ -729,7 +735,7 @@ namespace DSP_Battle
                 }
             }
         }
-        
+
         /// <summary>
         /// relic1-7 relic3-11
         /// </summary>
@@ -839,7 +845,7 @@ namespace DSP_Battle
         }
 
         /// <summary>
-        /// relic
+        /// relic3-2
         /// </summary>
         /// <param name="__instance"></param>
         [HarmonyPostfix]
@@ -885,6 +891,48 @@ namespace DSP_Battle
             }
         }
 
+        /// <summary>
+        /// relic0-3
+        /// </summary>
+        public static void CheckAndModifyStarLuminosity()
+        {
+            if (Relic.HaveRelic(0, 3))
+            {
+                for (int i = 0; i < GameMain.galaxy.starCount; i++)
+                {
+                    StarData starData = GameMain.galaxy.stars[i];
+                    if (starData != null)
+                        starData.luminosity = (float)(Math.Pow((Mathf.Round((float)Math.Pow((double)starData.luminosity, 0.33000001311302185) * 1000f) / 1000f + 1.0), 1.0 / 0.33000001311302185) - starData.luminosity);
+
+                    //还要重新计算并赋值每个戴森球之前已初始化好的属性
+                    Relic.alreadyRecalcDysonStarLumin = false;
+                }
+
+            }
+        }
+
+        /// <summary>
+        /// 每帧调用检查，不能在import的时候调用，会因为所需的DysonSphere是null而无法完成重新计算和赋值
+        /// </summary>
+
+        public static void TryRecalcDysonLumin()
+        {
+            if (!Relic.alreadyRecalcDysonStarLumin && Relic.HaveRelic(0, 3))
+            {
+                for (int i = 0; i < GameMain.galaxy.starCount; i++)
+                {
+                    if (i < GameMain.data.dysonSpheres.Length && GameMain.data.dysonSpheres[i] != null)
+                    {
+                        DysonSphere sphere = GameMain.data.dysonSpheres[i];
+                        double num5 = (double)sphere.starData.dysonLumino;
+                        sphere.energyGenPerSail = (long)(400.0 * num5);
+                        sphere.energyGenPerNode = (long)(1500.0 * num5);
+                        sphere.energyGenPerFrame = (long)(1500 * num5);
+                        sphere.energyGenPerShell = (long)(300 * num5);
+                    }
+                }
+                Relic.alreadyRecalcDysonStarLumin = true;
+            }
+        }
     }
-   
 }

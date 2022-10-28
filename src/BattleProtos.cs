@@ -433,7 +433,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物名称0-0", "", "吞噬者\n<size=18>- 传说 -</size>");
             ProtoRegistry.RegisterString("遗物名称0-1", "", "蓝buff\n<size=18>- 传说 -</size>");
             ProtoRegistry.RegisterString("遗物名称0-2", "", "女神之泪\n<size=18>- 传说 -</size>");
-            ProtoRegistry.RegisterString("遗物名称0-3", "", "坚固透镜\n<size=18>- 传说 -</size>");
+            ProtoRegistry.RegisterString("遗物名称0-3", "", "永恒之盘\n<size=18>- 传说 -</size>");
             ProtoRegistry.RegisterString("遗物名称0-4", "", "黑百合\n<size=18>- 传说 -</size>");
             ProtoRegistry.RegisterString("遗物名称0-5", "", "虚空荆棘\n<size=18>- 传说 -</size>");
             ProtoRegistry.RegisterString("遗物名称0-6", "", "京级巨炮\n<size=18>- 传说 -</size>");
@@ -495,7 +495,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物描述0-0", "", "每次击毁敌舰，根据敌舰强度有概率略微推进巨构的建造进度");
             ProtoRegistry.RegisterString("遗物描述0-1", "", "制造厂在制造原材料至少2种的配方时，每产出1个产物，会返还1个第1位置的原材料");
             ProtoRegistry.RegisterString("遗物描述0-2", "", "化工厂在生产原材料至少2种的配方时，返还第1位置的全部原材料");
-            ProtoRegistry.RegisterString("遗物描述0-3", "", "射线接受器无需消耗透镜即可达到最大输出效率");
+            ProtoRegistry.RegisterString("遗物描述0-3", "", "巨构在计算能量水平时，视作拥有更高的恒星光度修正");
             ProtoRegistry.RegisterString("遗物描述0-4", "", "射线接受器不再受任何星球阻挡");
             ProtoRegistry.RegisterString("遗物描述0-5", "", "行星力场护盾会向伤害来源反弹10%受到的基础伤害作为<i>额外伤害</i>");
             ProtoRegistry.RegisterString("遗物描述0-6", "", "穿甲磁轨弹造成50000%<i>额外伤害</i>，弹道速度大幅增加，但每次消耗5发弹药，且充能与冷却时间增加900%");
@@ -557,7 +557,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物名称带颜色0-0", "", "<color=#d2853d>吞噬者  [传说]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色0-1", "", "<color=#d2853d>蓝buff  [传说]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色0-2", "", "<color=#d2853d>女神之泪  [传说]</color>");
-            ProtoRegistry.RegisterString("遗物名称带颜色0-3", "", "<color=#d2853d>坚固透镜  [传说]</color>");
+            ProtoRegistry.RegisterString("遗物名称带颜色0-3", "", "<color=#d2853d>永恒之盘  [传说]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色0-4", "", "<color=#d2853d>黑百合  [传说]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色0-5", "", "<color=#d2853d>虚空荆棘  [传说]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色0-6", "", "<color=#d2853d>京级巨炮  [传说]</color>");
