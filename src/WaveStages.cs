@@ -177,13 +177,27 @@ namespace DSP_Battle
                     u++;
                 }
             }
-
+            Configs.relic1_8Protection = Relic.HaveRelic(1, 8) ? 0 : 99;
+            Configs.relic2_17Activated = Relic.HaveRelic(2, 17) ? true : false;
             Configs.nextWaveState = 3;
         }
 
         private static void UpdateWaveStage3(long time)
         {
             UIBattleStatistics.RegisterBattleTime(time);
+            Configs.isEnemyWeakenedByRelic = false;
+            if (Relic.HaveRelic(1, 3) && UIBattleStatistics.battleTime <= 3600) // relic1-3 效果是否触发，暂时保存以便后续直接读取
+            {
+                int starIndex = Configs.nextWaveStarIndex;
+                if (Relic.starsWithMegaStructure.Contains(starIndex))
+                {
+                    if (GameMain.data.dysonSpheres[starIndex] != null)
+                    {
+                        if (GameMain.data.dysonSpheres[starIndex].energyGenCurrentTick_Layers >= 100000000)
+                            Configs.isEnemyWeakenedByRelic = true;
+                    }
+                }
+            }
             if (EnemyShips.ships.Count == 0)
             {
                 Configs.wavePerStar[Configs.nextWaveStarIndex]++;

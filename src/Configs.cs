@@ -119,6 +119,10 @@ namespace DSP_Battle
         public static int starCount = 100;
         public static int[] wavePerStar;
 
+        public static bool isEnemyWeakenedByRelic = false; // relic1-3此项每帧更新，不存档，也不在读档时重置
+        public static bool relic2_17Activated = false; // 下个护盾在被摧毁时立刻回填50%上限的护盾量。此项在战斗开始时刷新，读档时设置为false，不存档
+        public static int relic1_8Protection = 99; // 前十个降落的敌舰不摧毁建筑。此项在战斗开始时刷新,此项读档时设置为99，不存档
+
         // --- 护盾信息
         public static int shieldGenPerTick = 12; //每个生成器提供的回复速度不会因为护盾生成器数量变多而有削减，是线性的增长，回复速度如此之慢是为保留：可能加入的，回复护盾的，巨构的存在价值
         public static List<Tuple<int, int>> capacityPerGenerator =
@@ -134,6 +138,12 @@ namespace DSP_Battle
         public static float[] rewardTimeRatio = new float[] { 1.0f, 1.0f, 1.2f, 1.2f, 1.4f, 1.4f, 1.6f, 1.6f, 1.8f, 1.8f, 2.0f, 2.0f, 2.0f, 2.0f };
         public static float[] expRatioByDifficulty = new float[] { 0.75f, 1f, 1.5f };
         public static int expPerAlienMeta = 20; //每个解码后的异星元数据上传提供的基础功勋点数
+
+        // 遗物信息 决定直接写入函数不再读取
+        //public static double[] relic0settings = { 0.1, -1, -1, 1, -1, 0.1, 500, 20, 1, -1 }; // 传说遗物的功能概率或数值设定，不涉及概率和数值的用任意数字占位（最好是-1）
+        //public static double[] relic1settings = { 0.1, -1, -1, 1, -1, 0.1, 500, 20, 1, -1 }; // 史诗遗物的功能概率或数值设定
+        //public static double[] relic2settings = { 0.1, -1, -1, 1, -1, 0.1, 500, 20, 1, -1 }; // 稀有遗物的功能概率或数值设定
+        //public static double[] relic3settings = { 0.1, -1, -1, 1, -1, 0.1, 500, 20, 1, -1 }; // 普通遗物的功能概率或数值设定
 
         public static int totalWave
         {
@@ -223,7 +233,7 @@ namespace DSP_Battle
             missile2Range = 500; // config.Bind("config", "missile2Range", defaultValue: 500, "反物质导弹破坏范围").Value;
 
             _missile3Speed = 12000.0; // config.Bind("config", "missile3Speed", defaultValue: 8000.0, "引力塌陷导弹速度（米每秒）").Value;
-            _missile3Atk = 1500; // config.Bind("config", "missile3Atk", defaultValue: 2500, "引力塌陷导弹攻击力").Value;
+            _missile3Atk = 1500;//00; // config.Bind("config", "missile3Atk", defaultValue: 2500, "引力塌陷导弹攻击力").Value;
             missile3Range = 8000; // config.Bind("config", "missile3Range", defaultValue: 2000, "引力塌陷导弹破坏范围").Value;
 
             enemyIntensity[0] = 1; // config.Bind("config", "enemy1Intensity", defaultValue: 1, "敌方飞船1强度").Value;

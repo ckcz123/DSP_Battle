@@ -211,6 +211,7 @@ namespace DSP_Battle
                 gen = 0;
                 __instance.currPoolEnergy -= __instance.energyPerTick;
             }
+            if (Relic.HaveRelic(2, 1)) gen = gen * 1.5;
             calcShieldInc.AddOrUpdate(planetId, gen, (x, y) => y + gen);
 
         }
@@ -255,7 +256,20 @@ namespace DSP_Battle
             foreach (var item in maxShieldCapacity)
             {
                 int planetId = item.Key;
-                maxShieldCapacity.AddOrUpdate(planetId, item.Value, (x, y) => calcShieldCapacity.GetOrAdd(planetId, 0));
+                if (Relic.HaveRelic(2, 10) && Relic.starsWithMegaStructure.Contains(planetId / 100 - 1)) // relic2-10 矩阵充能提升护盾上限
+                {
+                    int shieldCap = calcShieldCapacity.GetOrAdd(planetId, 0);
+                    int starIndex = planetId / 100 - 1;
+                    if (starIndex > 0 && starIndex < GameMain.data.dysonSpheres.Length && GameMain.data.dysonSpheres[starIndex] != null)
+                    {
+                        double bonus = Math.Min(0.5, GameMain.data.dysonSpheres[starIndex].energyGenCurrentTick_Layers * 1.0 / 2000000000); // 60GW达到加成上限：50%
+                        shieldCap = (int)(shieldCap * (1 + bonus));
+                        if (Configs.developerMode && shieldCap <= 1000) shieldCap = 1000000000;
+                    }
+                    maxShieldCapacity.AddOrUpdate(planetId, item.Value, (x, y) => shieldCap);
+                }
+                else
+                    maxShieldCapacity.AddOrUpdate(planetId, item.Value, (x, y) => calcShieldCapacity.GetOrAdd(planetId, 0));
                 //护盾值回复，或如果当前护盾值超出上限，则护盾值下降
                 double inc = 0;
                 if(calcShieldInc.TryGetValue(planetId, out inc) && currentShield.GetOrAdd(planetId,0) < item.Value)

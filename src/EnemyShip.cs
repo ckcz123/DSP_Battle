@@ -153,8 +153,15 @@ namespace DSP_Battle
             lock (this)
             {
                 if (state != State.active) return 0;
+                double bonus = 0;
+                if (Configs.isEnemyWeakenedByRelic) // relic1-3 战斗最开始的1min受到伤害增加
+                    bonus += 0.3;
+                if (Relic.HaveRelic(2, 12) && Relic.Verify(0.1)) // relic2-12 有概率暴击
+                    bonus += 1;
+                atk = Relic.BonusDamage(atk, bonus);
                 result = hp < atk ? hp : atk;
                 hp -= atk;
+                RelicFunctionPatcher.ApplyBloodthirster(result);
                 if (hp <= 0)
                 {
                     UIBattleStatistics.RegisterEliminate(intensity); //记录某类型的敌人被摧毁
@@ -167,7 +174,8 @@ namespace DSP_Battle
                     {
                         double dropExpectation = intensity * 1.0 / Configs.nextWaveIntensity * Configs.nextWaveMatrixExpectation;
                         int dropItemId = 8032;
-                        if (GameMain.history.TechUnlocked(1924)) // 由于异星矩阵有用，用于随机遗物，所以这里改了，其实可以改成遗物满8个直接给元数据，待定
+                        if (Relic.HaveRelic(3, 1)) dropExpectation *= 1.3; // relic1-3 窃法之刃获得额外掉落
+                        if (GameMain.history.TechUnlocked(1924)) // 由于异星矩阵有用，用于随机遗物，所以这里改了
                         {
                             //dropExpectation *= 50;
                             //dropItemId = 8033;
@@ -187,9 +195,35 @@ namespace DSP_Battle
                             Utils.UIItemUp(dropItemId, 1, 180);
                             UIBattleStatistics.RegisterAlienMatrixGain(1);
                         }
+                        // relic 2-14 每次击杀有概率获得黑棒或者翘曲器 概率为（5+0.1*舰船强度）%
+                        if (Relic.HaveRelic(2, 14) && Relic.Verify(0.05 + 0.001 * intensity))
+                        {
+                            if (Utils.RandInt(0, 2) == 0)
+                            {
+                                GameMain.mainPlayer.TryAddItemToPackage(1803, 1, 0, true);
+                                Utils.UIItemUp(1803, 1, 180);
+                            }
+                            else
+                            {
+                                GameMain.mainPlayer.TryAddItemToPackage(1210, 1, 0, true);
+                                Utils.UIItemUp(1210, 1, 180);
+                            }
+
+                        }
+                        // relic3-3 掘墓人击杀敌舰给沙子
+                        if (Relic.HaveRelic(3, 3))
+                        {
+                            GameMain.mainPlayer.SetSandCount(GameMain.mainPlayer.sandCount + 500 * (int)Math.Sqrt(intensity));
+                        }
                     }
                     catch (Exception)
                     { }
+
+                    // relic0-0吞噬者效果
+                    if (Relic.HaveRelic(0, 0))
+                    {
+                        Relic.AutoBuildMegaStructure(-1, 12 * intensity);
+                    }
                 }
             }
             return result;
@@ -241,10 +275,11 @@ namespace DSP_Battle
                 double forceDispDistance = fullDistance * movePerTick + minForcedMove;
                 if (fullDistance <= minForcedMove)
                 {
-                    forceDisplacementTime = 1;
+                    //forceDisplacementTime = 1;
                     forceDispDistance = fullDistance;
                 }
-                shipData.uPos = shipData.uPos + direction.normalized * forceDispDistance;
+                if(fullDistance!=0)
+                    shipData.uPos = shipData.uPos + direction.normalized * forceDispDistance;
                 forceDisplacementTime -= 1;
             }
 
@@ -346,11 +381,47 @@ namespace DSP_Battle
                     //造成伤害
                     int planetId = shipData.planetB;
                     if (fireStart == 0) fireStart = GameMain.instance.timei;
-                    int damage = (int)( Configs.enemyDamagePerBullet[shipTypeNum] * Math.Pow(2.0, (GameMain.instance.timei - fireStart) / 3600.0));
-                    ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => y - damage);
-                    if (ShieldGenerator.currentShield[planetId] < 0) 
-                        ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => 0);
-                    UIBattleStatistics.RegisterShieldTakeDamage(damage);
+                    double rootNum = Relic.HaveRelic(2, 16) ? 1.5 : 2.0; // relic2-16 效果
+                    int damage = (int)(Configs.enemyDamagePerBullet[shipTypeNum] * Math.Pow(rootNum, (GameMain.instance.timei - fireStart) / 3600.0));
+                    if (!Relic.HaveRelic(3, 12) || !Relic.Verify(0.15)) // relic3-12 灵动巨物 有概率完全规避伤害
+                    {
+                        if (Relic.HaveRelic(1, 9) && GameMain.mainPlayer.mecha.coreEnergy >= GameMain.mainPlayer.mecha.coreEnergyCap * 0.2 && GameMain.mainPlayer.mecha.coreEnergy >= damage * 2000) // relic1-9 骑士之誓用机甲能量替代护盾伤害
+                        {
+                            GameMain.mainPlayer.mecha.coreEnergy -= damage * 2000;
+                            GameMain.mainPlayer.mecha.MarkEnergyChange(8, -damage * 2000);
+                            UIBattleStatistics.RegisterShieldAvoidDamage(damage);
+                        }
+                        else
+                        {
+                            ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => y - damage);
+                            UIBattleStatistics.RegisterShieldTakeDamage(damage);
+                            if (ShieldGenerator.currentShield[planetId] <= 0)
+                            {
+                                if (Configs.relic2_17Activated)
+                                {
+                                    Configs.relic2_17Activated = false;
+                                    ShieldGenerator.currentShield.AddOrUpdate(planetId, ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0) / 2, (x, y) => ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0) / 2);
+                                }
+                                else
+                                {
+                                    ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => 0);
+                                }
+                            }
+                        }
+
+                        // relic0-5 荆棘之甲 护盾反伤效果，无论是否被机甲能量替代（relic1-9），都会反伤。有combo是好事。但如果被闪避了，那就没反伤了。
+                        if (Relic.HaveRelic(0, 5))
+                        {
+                            int reboundDamage = Relic.BonusDamage(Configs.enemyDamagePerBullet[shipTypeNum], 0.1) - Configs.enemyDamagePerBullet[shipTypeNum]; // 注意是基础伤害而非被时间增幅过的伤害
+                            BeAttacked(reboundDamage);
+                            UIBattleStatistics.RegisterShieldAttack(reboundDamage);
+                        }
+                    }
+                    else 
+                    {
+                        UIBattleStatistics.RegisterShieldAvoidDamage(damage);
+                    }
+                    
                     //子弹
                     DysonSwarm swarm = RendererSphere.enemySpheres[planetId / 100 - 1]?.swarm;
                     if(swarm!=null)
@@ -373,7 +444,7 @@ namespace DSP_Battle
             //飞船移动
             // float shipSailSpeed = GameMain.history.logisticShipSailSpeedModified;
             float shipSailSpeed = maxSpeed * (1 + (GameMain.instance.timei - Configs.nextWaveFrameIndex) / 3600f);
-
+            if (Configs.isEnemyWeakenedByRelic) shipSailSpeed *= 0.7f; // relic1-3 减移速debuff
             float num31 = Mathf.Sqrt(shipSailSpeed / 600f);
             float num32 = num31;
             if (num32 > 1f)
@@ -656,6 +727,7 @@ namespace DSP_Battle
         private void UpdateStage1()
         {
             float shipSailSpeed = maxSpeed * (1 + (GameMain.instance.timei - Configs.nextWaveFrameIndex) / 3600f);
+            if (Configs.isEnemyWeakenedByRelic) shipSailSpeed *= 0.7f; // relic1-3 减移速debuff
             float num31 = Mathf.Sqrt(shipSailSpeed / 600f);
             float num36 = num31 * 0.006f + 1E-05f;
             AstroData[] astroPoses = GameMain.data.galaxy.astrosData;

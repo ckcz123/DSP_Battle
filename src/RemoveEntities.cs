@@ -98,7 +98,15 @@ namespace DSP_Battle
 
             for (int slot = 0; slot < station.storage.Length; slot++) //资源损失
             {
+                if (Relic.HaveRelic(2, 2)) // relic2-2 极限一换一加经验
+                {
+                    Rank.AddExp(station.storage[slot].count / 100);
+                }
                 UIBattleStatistics.RegisterResourceLost(station.storage[slot].count);
+            }
+            if (Relic.HaveRelic(2, 2) && Configs.difficulty >= 0) // relic2-2 极限一换一加经验 物流塔被毁 简单模式无效因为没被毁
+            {
+                Rank.AddExp(200);
             }
             UIBattleStatistics.RegisterResourceLost(station.warperCount + station.idleShipCount + station.workShipCount + station.idleDroneCount + station.workDroneCount);
             distroyedStation[station.gid] = 0;
@@ -146,7 +154,6 @@ namespace DSP_Battle
                 UIBattleStatistics.RegisterStationLost();
                 RemoveEntity(factory, station.entityId);
             }
-
             if (freePhysics)
             {
                 factory.planet.physics.Free();

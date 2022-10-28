@@ -339,7 +339,10 @@ namespace DSP_Battle
 
             //如果至少进入过预热阶段（fireStage=2的阶段），则必须经过完整的冷却和再充能过程，才能再次瞄准、开火
             fireStage = -2;
-            time = -cooldownTimeNeed - chargingTimeNeed;
+            float rechargeSpeed = 1;
+            if (Relic.HaveRelic(2, 9)) rechargeSpeed += 0.5f;
+            if (Relic.HaveRelic(3, 13)) rechargeSpeed += 1.75f;
+            time = -cooldownTimeNeed - (int)(chargingTimeNeed * 1.0f / rechargeSpeed);
             noExplodeBullets.Clear();
         }
 

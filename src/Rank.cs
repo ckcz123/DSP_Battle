@@ -16,6 +16,8 @@ namespace DSP_Battle
         public static int rank = 0;
         public static int exp = 0;
 
+        public static int autoConstructMegaStructureCountDown = 0; // relic3-17 逐渐推进巨构建造的剩余帧数倒数，无需存档，读档时设置为0
+
         public static void InitRank()
         {
             rank = 0;
@@ -35,6 +37,15 @@ namespace DSP_Battle
             if(GameMain.mainPlayer.package.TakeItem(8033, 1, out inc)>0)
             {
                 AddExp(Configs.expPerAlienMeta);
+                if (time % 60 == 10 && Relic.HaveRelic(2,1)) // relic2-1 互惠互利 上传元数据的时候建造巨构，每60帧建造12个点数。由于异星元数据很多，一般会连续上传数十秒，因此不怕判定点不在第10帧的微小损失
+                {
+                    Relic.AutoBuildMegaStructure();
+                }
+            }
+            if (autoConstructMegaStructureCountDown > 0) // relic3-17 荣誉晋升每次提升功勋阶级显著推荐巨构建造进度
+            {
+                Relic.AutoBuildMegaStructure(-1, 120);
+                autoConstructMegaStructureCountDown--;
             }
         }
 
@@ -64,6 +75,8 @@ namespace DSP_Battle
                     GameMain.history.miningCostRate *= 0.625f;
                 }
             }
+            if (Relic.HaveRelic(3, 17))
+                autoConstructMegaStructureCountDown = 120;
             UIRank.ForceRefreshAll();
             UIRank.UIPromotionNotify();
         }
@@ -87,6 +100,7 @@ namespace DSP_Battle
             {
                 InitRank();
             }
+            autoConstructMegaStructureCountDown = 0;
             UIRank.InitUI();
         }
 
@@ -94,6 +108,7 @@ namespace DSP_Battle
         {
             rank = 0;
             exp = 0;
+            autoConstructMegaStructureCountDown = 0;
             UIRank.InitUI();
         }
 
