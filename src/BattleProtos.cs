@@ -440,6 +440,8 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("已移除遗物描述", "You've removed relic ", "你已移除");
             ProtoRegistry.RegisterString("未能移除！", "No relic can be removed", "没有可移除的圣物");
             ProtoRegistry.RegisterString("未能移除遗物描述", "No matched relic can be removed", "你没有稀有度匹配的圣物可供移除");
+            ProtoRegistry.RegisterString("未获取遗物标题", "Unknown relic", "未知圣物");
+            ProtoRegistry.RegisterString("未获取遗物描述", "This slot can place a decrypted relic", "此位置可供已解译的圣物放置");
 
             ProtoRegistry.RegisterString("遗物名称0-0", "Swallower\n<size=18>- Legend -</size>", "吞噬者\n<size=18>- 传说 -</size>");
             ProtoRegistry.RegisterString("遗物名称0-1", "Blue Buff\n<size=18>- Legend -</size>", "蓝buff\n<size=18>- 传说 -</size>");

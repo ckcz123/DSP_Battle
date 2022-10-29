@@ -745,7 +745,7 @@ namespace DSP_Battle
             {
                 relicSlotImgs[slotNum].sprite = Resources.Load<Sprite>("Assets/DSPBattle/rEmpty");
                 relicSlotObjs[slotNum].GetComponent<UIButton>().tips.tipTitle = ("未获取遗物标题").Translate();
-                relicSlotObjs[slotNum].GetComponent<UIButton>().tips.tipText = ("未获取遗物描述");
+                relicSlotObjs[slotNum].GetComponent<UIButton>().tips.tipText = ("未获取遗物描述").Translate();
                 relicSlotObjs[slotNum].GetComponent<UIButton>().tips.offset = new Vector2(160, 70);
                 relicSlotObjs[slotNum].GetComponent<UIButton>().tips.delay = 0.05f;
             }
