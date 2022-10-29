@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using UnityEngine;
 
 namespace DSP_Battle
@@ -413,9 +414,9 @@ namespace DSP_Battle
                             UIBattleStatistics.RegisterShieldTakeDamage(damage);
                             if (ShieldGenerator.currentShield[planetId] <= 0)
                             {
-                                if (Configs.relic2_17Activated)
+                                if (Configs.relic2_17Activated > 0)
                                 {
-                                    Configs.relic2_17Activated = false;
+                                    Interlocked.Exchange(ref Configs.relic2_17Activated, 0);
                                     ShieldGenerator.currentShield.AddOrUpdate(planetId, ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0) / 2, (x, y) => ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0) / 2);
                                 }
                                 else

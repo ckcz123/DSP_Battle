@@ -125,7 +125,7 @@ namespace DSP_Battle
         public static int[] wavePerStar;
 
         public static bool isEnemyWeakenedByRelic = false; // relic1-3此项每帧更新，不存档，也不在读档时重置
-        public static bool relic2_17Activated = false; // 下个护盾在被摧毁时立刻回填50%上限的护盾量。此项在战斗开始时刷新，读档时设置为false，不存档
+        public static int relic2_17Activated = 0; // 下个护盾在被摧毁时立刻回填50%上限的护盾量。此项在战斗开始时刷新，读档时设置为false，不存档
         public static int relic1_8Protection = 99; // 前十个降落的敌舰不摧毁建筑。此项在战斗开始时刷新,此项读档时设置为99，不存档
 
         // --- 护盾信息

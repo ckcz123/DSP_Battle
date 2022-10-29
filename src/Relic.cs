@@ -51,7 +51,7 @@ namespace DSP_Battle
             canSelectNewRelic = false;
             rollCount = 0;
             Configs.relic1_8Protection = 99;
-            Configs.relic2_17Activated = false;
+            Configs.relic2_17Activated = 0;
             RelicFunctionPatcher.CheckSolarSailLife();
         }
 
