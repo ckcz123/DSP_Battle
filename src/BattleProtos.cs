@@ -230,6 +230,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("剩余强度", "Remaining strength", "剩余强度");
             ProtoRegistry.RegisterString("已被摧毁", "Eliminated enemies", "已被摧毁");
             ProtoRegistry.RegisterString("入侵抵达提示", "The next wave will arrive in {0} on {1}", "下一次入侵预计于{0}后抵达{1}");
+            ProtoRegistry.RegisterString("精英入侵抵达提示", "The next <color=#ffa800dd>strong wave</color> will arrive in {0} on {1}", "下一次<color=#ffa800dd>强大的入侵</color>预计于{0}后抵达{1}");
             ProtoRegistry.RegisterString("约gm", "", "约");
             ProtoRegistry.RegisterString("小时gm", "h", "小时");
             ProtoRegistry.RegisterString("分gm", "m", "分");
@@ -262,6 +263,10 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("开火中gm", "Firing", "开火中");
             ProtoRegistry.RegisterString("下一波攻击即将到来！", "Next wave is coming!", "下一波攻击即将到来！");
             ProtoRegistry.RegisterString("做好防御提示", "Please prepare next wave in <color=#c2853d>{0}</color>!", "请为<color=#c2853d>{0}</color>做好防御准备。");
+            ProtoRegistry.RegisterString("下一波精英攻击即将到来！", "Next ★elite wave★ is coming!", "下一波 ★精英攻击★ 即将到来！");
+            ProtoRegistry.RegisterString("做好防御提示精英",
+                "Please prepare next wave in <color=#c2853d>{0}</color>!\n The enemy's attack will not stop for 3 minutes\nthe ships will obtain different buff.\nFrigate: 90% chance to evade bullet damage\nCruiser: reduce 90% damage from any aoe effects, immune crowd control\nBattleship: reduce 80% damage from energy weapons and shields",
+                "请为<color=#c2853d>{0}</color>做好防御准备！\n 敌人将在三分钟内持续进攻\n敌舰将获得额外的加成效果\n护卫舰：有90%概率闪避来自子弹的伤害\n巡洋舰：减免90%受到的范围伤害，免疫任何控制效果\n战列舰：对能量武器和来自护盾的伤害减少80%");
             ProtoRegistry.RegisterString("虫洞已生成！", "Wormhole generated!", "虫洞已生成！");
             ProtoRegistry.RegisterString("虫洞生成提示", "Use starmap or fly to <color=#c2853d>{0}</color> to view details.", "可通过星图或飞往<color=#c2853d>{0}</color>查看具体信息。");
             ProtoRegistry.RegisterString("战斗已结束！", "Wave ended!", "战斗已结束！");
@@ -687,7 +692,7 @@ namespace DSP_Battle
             Cannon3.Upgrades = new int[] { };
             //Cannon3.Grade = 3;
             //Cannon3.Upgrades = new int[] { 8011, 8012, 8014 };
-            Cannon3.DescFields = new int[] { 50, 51, 53, 11, 12, 1, 40 };
+            Cannon3.DescFields = new int[] { 50, 51, 53, 59, 11, 12, 1, 40 };
 
 
             var Silo = ProtoRegistry.RegisterItem(8013, "发射器1", "发射器1描述", "Assets/DSPBattle/missilesilo", 2603 + pageBias, 50, EItemType.Production);
@@ -1444,6 +1449,9 @@ namespace DSP_Battle
                 case 58:
                     __result = "护盾恢复".Translate();
                     return;
+                case 59:
+                    __result = "伤害衰减".Translate();
+                    return;
             }
         }
 
@@ -1493,6 +1501,9 @@ namespace DSP_Battle
                     return;
                 case 58:
                     __result = (Configs.shieldGenPerTick * 60).ToString() + "/s";
+                    return;
+                case 59:
+                    __result = ((int)(Configs.laserDamageReducePerAU * 100)).ToString() + "%/AU";
                     return;
             }
         }

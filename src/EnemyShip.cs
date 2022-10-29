@@ -147,7 +147,7 @@ namespace DSP_Battle
             return (pos - uPos).magnitude;
         }
 
-        public int BeAttacked(int atk)
+        public int BeAttacked(int atk, DamageType dmgType = DamageType.others)
         {
             int result = 0;
             lock (this)
@@ -159,6 +159,19 @@ namespace DSP_Battle
                 if (Relic.HaveRelic(2, 12) && Relic.Verify(0.1)) // relic2-12 有概率暴击
                     bonus += 1;
                 atk = Relic.BonusDamage(atk, bonus);
+
+                // 精英波次减伤
+                if (Configs.nextWaveElite == 1)
+                {
+                    int shipType = Configs.enemyIntensity2TypeMap[intensity];
+                    if (shipType == 1 && dmgType == DamageType.bullet && Utils.RandDouble() > 0.1)
+                        atk = 0;
+                    else if (shipType == 3 && (dmgType == DamageType.missileAoe || dmgType == DamageType.mega))
+                        atk = (int)(0.1 * atk);
+                    else if(shipType == 4 && (dmgType == DamageType.laser || dmgType == DamageType.mega || dmgType == DamageType.shield))
+                        atk = (int)(0.2 * atk);
+                }
+
                 result = hp < atk ? hp : atk;
                 hp -= atk;
                 RelicFunctionPatcher.ApplyBloodthirster(result);
@@ -168,11 +181,12 @@ namespace DSP_Battle
                     UIBattleStatistics.RegisterIntercept(this); //记录拦截距离
                     hp = 0;
                     state = State.distroyed;
-                    EnemyShips.OnShipDistroyed(this);
+                    EnemyShips.OnShipDestroyed(this);
                     Rank.AddExp(intensity * 10); //获得经验
                     try //根据期望掉落矩阵
                     {
                         double dropExpectation = intensity * 1.0 / Configs.nextWaveIntensity * Configs.nextWaveMatrixExpectation;
+                        if (UIBattleStatistics.alienMatrixGain >= Configs.nextWaveMatrixExpectation) dropExpectation *= 0.1; // 对于精英波次，如果已经获得了等同于期望以上的矩阵，接下来的获得量只有10%。可以通过存读档刷新，但是不改了，就好像sl玩家想这样就这样吧
                         int dropItemId = 8032;
                         if (Relic.HaveRelic(3, 1)) dropExpectation *= 1.3; // relic1-3 窃法之刃获得额外掉落
                         if (GameMain.history.TechUnlocked(1924)) // 由于异星矩阵有用，用于随机遗物，所以这里改了
@@ -249,6 +263,7 @@ namespace DSP_Battle
 
         public void InitForceDisplacement(VectorLF3 targetUPos, int needTime = 40, float moveFactor = 0.04f)
         {
+            if (Configs.nextWaveElite == 1 && Configs.enemyIntensity2TypeMap[intensity] == 3) return; // 3号敌舰在精英波次免疫控制
             forceDisplacement = targetUPos;
             forceDisplacementTime = needTime;
             movePerTick = moveFactor;
@@ -261,9 +276,10 @@ namespace DSP_Battle
             {
                 shipData.uPos = wormholePos;
                 if (time % 60 != 0) return;
-                countDown--;
                 if (countDown <= 0) state = State.active;
             }
+            if(time % 60 == 0)
+                countDown--;
 
             if (state != State.active) return;
 
@@ -309,8 +325,8 @@ namespace DSP_Battle
                     //如果在护盾>有效护盾（暂定50000）的情况下撞上了护盾，船承受巨量伤害，同时也会对护盾造成伤害。自爆船将会造成巨量伤害
                     if((GameMain.galaxy.PlanetById(planetId).uPosition - uPos).magnitude <= ShieldRenderer.shieldRadius * 810)
                     {
-                        UIBattleStatistics.RegisterShieldAttack(BeAttacked(999999));
-                        ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => y - Configs.enemyDamagePerBullet[shipTypeNum]);
+                        UIBattleStatistics.RegisterShieldAttack(BeAttacked(9999999)); // 无需伤害类型，必死
+                        ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => y - Configs.enemyDamagePerBullet[shipTypeNum]); // 无法因relic效果而闪避和被减免
                         if(ShieldGenerator.currentShield.GetOrAdd(planetId, 0) < 0)
                             ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => 0);
                         UIBattleStatistics.RegisterShieldTakeDamage(Configs.enemyDamagePerBullet[shipTypeNum]);
@@ -413,8 +429,7 @@ namespace DSP_Battle
                         if (Relic.HaveRelic(0, 5))
                         {
                             int reboundDamage = Relic.BonusDamage(Configs.enemyDamagePerBullet[shipTypeNum], 0.1) - Configs.enemyDamagePerBullet[shipTypeNum]; // 注意是基础伤害而非被时间增幅过的伤害
-                            BeAttacked(reboundDamage);
-                            UIBattleStatistics.RegisterShieldAttack(reboundDamage);
+                            UIBattleStatistics.RegisterShieldAttack(BeAttacked(reboundDamage, DamageType.shield));
                         }
                     }
                     else 
@@ -443,7 +458,7 @@ namespace DSP_Battle
 
             //飞船移动
             // float shipSailSpeed = GameMain.history.logisticShipSailSpeedModified;
-            float shipSailSpeed = maxSpeed * (1 + (GameMain.instance.timei - Configs.nextWaveFrameIndex) / 3600f);
+            float shipSailSpeed = maxSpeed * (1 + (-countDown) / 60f);
             if (Configs.isEnemyWeakenedByRelic) shipSailSpeed *= 0.7f; // relic1-3 减移速debuff
             float num31 = Mathf.Sqrt(shipSailSpeed / 600f);
             float num32 = num31;
@@ -726,7 +741,7 @@ namespace DSP_Battle
         }
         private void UpdateStage1()
         {
-            float shipSailSpeed = maxSpeed * (1 + (GameMain.instance.timei - Configs.nextWaveFrameIndex) / 3600f);
+            float shipSailSpeed = maxSpeed * (1 + (-countDown) / 60f);
             if (Configs.isEnemyWeakenedByRelic) shipSailSpeed *= 0.7f; // relic1-3 减移速debuff
             float num31 = Mathf.Sqrt(shipSailSpeed / 600f);
             float num36 = num31 * 0.006f + 1E-05f;
@@ -791,6 +806,42 @@ namespace DSP_Battle
             renderingData.anim.z = num78 * 1.7f - 0.7f;
         }
 
+        public void Revive()
+        {
+            countDown = 5;
+            int enemyId = Configs.enemyIntensity2TypeMap[intensity];
+
+            shipData.direction = 1;
+            shipData.stage = 0;
+
+            shipData.direction = 1;
+            shipData.stage = 0;
+            shipData.uAngularVel = Vector3.zero;
+            shipData.uAngularSpeed = 0;
+
+            int stationId = EnemyShips.FindNearestPlanetStation(GameMain.galaxy.stars[starIndex], Configs.nextWaveWormholes[wormholeIndex].uPos);
+            shipData.otherGId = stationId;
+            shipData.planetB = GameMain.data.galacticTransport.stationPool[stationId].planetId;
+
+            shipData.uPos = Configs.nextWaveWormholes[wormholeIndex].uPos;
+            shipData.uRot = new Quaternion((float)DspBattlePlugin.randSeed.NextDouble(), (float)DspBattlePlugin.randSeed.NextDouble(), (float)DspBattlePlugin.randSeed.NextDouble(), (float)DspBattlePlugin.randSeed.NextDouble());
+            shipData.uRot.Normalize();
+
+            shipData.uSpeed = ((float)DspBattlePlugin.randSeed.NextDouble()) * 0.25f * maxSpeed;
+            hp = Configs.enemyHp[enemyId];
+            if (Configs.difficulty == 1) hp *= 2;
+            if (Configs.difficulty == -1) hp = hp * 3 / 4;
+            damageRange = Configs.enemyRange[enemyId];
+            intensity = Configs.enemyIntensity[enemyId];
+
+            state = countDown > 0 ? State.uninitialized : State.active;
+
+            isFiring = false;
+            fireStart = 0;
+            isBlockedByShield = false;
+        }
+
+
         public void Export(BinaryWriter w)
         {
             shipData.Export(w);
@@ -821,5 +872,16 @@ namespace DSP_Battle
             isBlockedByShield =false;
         }
 
+    }
+
+    public enum DamageType
+    {
+        bullet, // 穿甲、强酸和聚变子弹
+        laser, // 专指相位子弹
+        missileMain, // 导弹的直接命中
+        missileAoe, // 导弹的非主要目标范围伤
+        shield, // 护盾造成的伤害
+        mega, // 巨构伤害
+        others, // 其他类型的伤害
     }
 }

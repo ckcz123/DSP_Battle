@@ -249,10 +249,19 @@ namespace DSP_Battle
                 else
                     alertMainText.text = txtColorAlert2 + "敌人正在入侵".Translate() + GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName + "!" + txtColorRight;
 
-                stat1label.text = "剩余敌人".Translate();
+                if (Configs.nextWaveElite == 1 && GameMain.instance.timei < Configs.nextWaveFrameIndex + Configs.eliteDurationFrames)
+                {
+                    stat1label.text = "剩余时间".Translate();
+                    long framesUntilEnd = Configs.nextWaveFrameIndex + Configs.eliteDurationFrames - GameMain.instance.timei;
+                    stat1value.text = string.Format("{0:00}:{1:00}", new object[] { framesUntilEnd / 60 / 60, framesUntilEnd / 60 % 60 });
+                }
+                else
+                {
+                    stat1label.text = "剩余敌人".Translate();
+                    stat1value.text = EnemyShips.ships.Count.ToString();
+                }
                 stat2label.text = "剩余强度".Translate();
                 stat3label.text = "已被摧毁".Translate();
-                stat1value.text = EnemyShips.ships.Count.ToString();
                 stat2value.text = EnemyShips.ships.Values.ToList().Sum(e => e.intensity).ToString();
                 stat3value.text = UIBattleStatistics.totalEnemyEliminated.ToString();
             }
@@ -261,6 +270,9 @@ namespace DSP_Battle
                 int seconds = (int)framesUntilNextWave / 60;
                 alertMainText.text =
                     string.Format("入侵抵达提示".Translate(), new object[] { Sec2StrTime(seconds, showDetails), txtColorWarn1 + GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName + txtColorRight });
+                if(Configs.nextWaveElite == 1)
+                    alertMainText.text =
+                        string.Format("精英入侵抵达提示".Translate(), new object[] { Sec2StrTime(seconds, showDetails), txtColorWarn1 + GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName + txtColorRight });
                 stat1label.text = "预估数量".Translate();
                 stat2label.text = "预估强度".Translate();
                 stat3label.text = "虫洞数量".Translate();

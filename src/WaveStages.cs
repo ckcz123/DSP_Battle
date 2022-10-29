@@ -118,10 +118,24 @@ namespace DSP_Battle
             }
             Configs.nextWaveEnemy[0] = intensity / Configs.enemyIntensity[0];
             Configs.nextWaveWormCount = EnemyShips.random.Next(Math.Min(Configs.nextWaveIntensity / 150, 60), Math.Min(95, Configs.nextWaveEnemy.Sum())) + 1;
-            UIDialogPatch.ShowUIDialog("下一波攻击即将到来！".Translate(),
-                string.Format("做好防御提示".Translate(), GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName));
+            if (Configs.developerMode || Configs.totalWave % 5 == 4)
+            {
+                UIDialogPatch.ShowUIDialog("下一波精英攻击即将到来！".Translate(),
+                    string.Format("做好防御提示精英".Translate(), GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName));
+                Configs.nextWaveElite = 1;
+            }
+            else
+            {
+                UIDialogPatch.ShowUIDialog("下一波攻击即将到来！".Translate(),
+                    string.Format("做好防御提示".Translate(), GameMain.galaxy.stars[Configs.nextWaveStarIndex].displayName));
+                Configs.nextWaveElite = 0;
+            }
 
             UIAlert.ShowAlert(true);
+
+            // relic 1-8 2-17
+            Configs.relic1_8Protection = Relic.HaveRelic(1, 8) ? 0 : 99;
+            Configs.relic2_17Activated = Relic.HaveRelic(2, 17) ? true : false;
         }
 
         private static void UpdateWaveStage1(long time)
@@ -177,8 +191,6 @@ namespace DSP_Battle
                     u++;
                 }
             }
-            Configs.relic1_8Protection = Relic.HaveRelic(1, 8) ? 0 : 99;
-            Configs.relic2_17Activated = Relic.HaveRelic(2, 17) ? true : false;
             Configs.nextWaveState = 3;
         }
 
@@ -212,8 +224,10 @@ namespace DSP_Battle
                 //if (Configs.difficulty == 1) rewardBase *= 2;
                 long extraSpeedFrame = 0;
                 if (UIBattleStatistics.totalEnemyGen > 0)
-                    extraSpeedFrame = UIBattleStatistics.totalEnemyEliminated * rewardBase / UIBattleStatistics.totalEnemyGen;
-
+                {
+                    double percent = Math.Min(1.0, 1.0 * UIBattleStatistics.totalEnemyEliminated / UIBattleStatistics.totalEnemyGen); // 精英波次 消灭初始数量的敌人就算完整的奖励时间，但不能超过。可以按时间算但是我觉得不好，因为时间结束后还有剩余的敌人很麻烦。
+                    extraSpeedFrame = (long)(percent * rewardBase);
+                }
                 extraSpeedFrame += 3600 * (Rank.rank / 2);
 
                 Configs.extraSpeedFrame = time + extraSpeedFrame;
@@ -245,9 +259,7 @@ namespace DSP_Battle
                 {
                     rewardByRank = string.Format("奖励提示3".Translate(), extraSpeedFrame / 60);
                 }
-                string dropMatrixStr = "异星矩阵自动转换提示".Translate();
-                if (!GameMain.history.TechUnlocked(1924))
-                    dropMatrixStr = "掉落的异星矩阵".Translate() + ": " + UIBattleStatistics.alienMatrixGain.ToString();
+                string dropMatrixStr = "掉落的异星矩阵".Translate() + ": " + UIBattleStatistics.alienMatrixGain.ToString();
                 UIDialogPatch.ShowUIDialog("战斗已结束！".Translate(),
                     "战斗时间".Translate() + ": " + string.Format("{0:00}:{1:00}", new object[] { UIBattleStatistics.battleTime / 60 / 60, UIBattleStatistics.battleTime / 60 % 60 }) + "; " +
                     "歼灭敌人".Translate() + ": " + UIBattleStatistics.totalEnemyEliminated.ToString("N0") + "; " +
@@ -259,7 +271,7 @@ namespace DSP_Battle
                     "\n\n<color=#c2853d>" + rewardByRank + "</color>\n\n" +
                     "查看更多战斗信息".Translate()
                     );
-
+                if (Configs.nextWaveElite == 1) Relic.PrepareNewRelic(); // 精英波次结束后给予遗物选择
                 ///////////////////////////////////////////////////////////////////////////////BattleBGMController.SetWaveFinished();
             }
         }

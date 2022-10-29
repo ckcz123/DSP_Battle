@@ -236,9 +236,12 @@ namespace DSP_Battle
         }
 
 
-        public static void OnShipDistroyed(EnemyShip ship)
+        public static void OnShipDestroyed(EnemyShip ship)
         {
-            RemoveShip(ship);
+            if (Configs.nextWaveElite == 1 && GameMain.instance.timei < Configs.nextWaveFrameIndex + Configs.eliteDurationFrames)
+                ship.Revive();
+            else
+                RemoveShip(ship);
         }
 
         [HarmonyPostfix]

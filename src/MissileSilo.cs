@@ -286,7 +286,7 @@ namespace DSP_Battle
 
                                 VectorLF3 vectorLF2 = dysonRocket.uPos;
                                 //根据是导弹还是火箭确定
-                                if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
+                                if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]) && EnemyShips.ships[MissileTargets[starIndex][i]].state == EnemyShip.State.active)//如果以前的目标敌人还存在
                                 {
                                     vectorLF2 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
                                 }
@@ -432,7 +432,7 @@ namespace DSP_Battle
 
                             VectorLF3 vectorLF5 = dysonRocket.uPos;
                             //之前的目标是否还存活
-                            if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
+                            if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]) && EnemyShips.ships[MissileTargets[starIndex][i]].state == EnemyShip.State.active)//如果以前的目标敌人还存在
                             {
                                 vectorLF5 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
                             }
@@ -506,7 +506,7 @@ namespace DSP_Battle
                                     if (relic2_7Activated) bonus += 1;
                                     if (relic2_15Activated && missileId == 8006) bonus += 9;
                                     damage = Relic.BonusDamage(damage, bonus);
-                                    UIBattleStatistics.RegisterHit(missileId, target.BeAttacked(damage), 0);
+                                    UIBattleStatistics.RegisterHit(missileId, target.BeAttacked(damage, DamageType.missileMain), 0);
                                 }
                                 else
                                 {
@@ -516,6 +516,7 @@ namespace DSP_Battle
                                         {
                                             double distance = (dysonRocket.uPos - EnemyShips.ships[item].uPos).magnitude;
                                             int aoeDamage = damage;
+                                            int realDamage = 0;
                                             if (distance > dmgRange * 0.5 && !relic1_1Activated)
                                             {
                                                 aoeDamage = (int)(damage * (1.0 - (2 * distance - dmgRange) / dmgRange));
@@ -526,8 +527,12 @@ namespace DSP_Battle
                                                 if (relic2_7Activated) bonus += 1;
                                                 if (relic2_15Activated && missileId == 8006) bonus += 9;
                                                 aoeDamage = Relic.BonusDamage(aoeDamage, bonus);
+                                                realDamage = EnemyShips.ships[item].BeAttacked(aoeDamage, DamageType.missileMain);
                                             }
-                                            int realDamage = EnemyShips.ships[item].BeAttacked(aoeDamage);
+                                            else
+                                            {
+                                                realDamage = EnemyShips.ships[item].BeAttacked(aoeDamage, DamageType.missileAoe);
+                                            }
                                             UIBattleStatistics.RegisterHit(missileId, realDamage, 0); //每个目标不再注册新的击中数量，只注册伤害
                                             //引力导弹的强制位移
                                             if (forceDisplacement)
@@ -994,7 +999,7 @@ namespace DSP_Battle
                                 if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
                                 {
                                     EnemyShip ship = null;
-                                    if (EnemyShips.ships.TryGetValue(MissileTargets[starIndex][i], out ship))
+                                    if (EnemyShips.ships.TryGetValue(MissileTargets[starIndex][i], out ship) && ship.state == EnemyShip.State.active)
                                         vectorLF2 = ship.uPos - dysonRocket.uPos;
                                 }
                                 else
@@ -1143,7 +1148,7 @@ namespace DSP_Battle
                             if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
                             {
                                 EnemyShip ship = null;
-                                if (EnemyShips.ships.TryGetValue(MissileTargets[starIndex][i], out ship))
+                                if (EnemyShips.ships.TryGetValue(MissileTargets[starIndex][i], out ship) && ship.state == EnemyShip.State.active)
                                     vectorLF5 = ship.uPos - dysonRocket.uPos;
                             }
                             else
@@ -1220,7 +1225,7 @@ namespace DSP_Battle
                                     if (relic2_7Activated) bonus += 1;
                                     if (relic2_15Activated && missileId == 8006) bonus += 9;
                                     damage = Relic.BonusDamage(damage, bonus);
-                                    UIBattleStatistics.RegisterHit(missileId, target.BeAttacked(damage), 0);
+                                    UIBattleStatistics.RegisterHit(missileId, target.BeAttacked(damage, DamageType.missileMain), 0);
                                 }
                                 else
                                 {
@@ -1233,6 +1238,7 @@ namespace DSP_Battle
                                             {
                                                 double distance = (dysonRocket.uPos - hitShip.uPos).magnitude;
                                                 int aoeDamage = damage;
+                                                int realDamage = 0;
                                                 if (distance > dmgRange * 0.5 && !relic1_1Activated) // relic1-1虚空爆发 范围效果不衰减
                                                 {
                                                     aoeDamage = (int)(damage * (1.0 - (2 * distance - dmgRange) / dmgRange));
@@ -1243,8 +1249,12 @@ namespace DSP_Battle
                                                     if (relic2_7Activated) bonus += 1;
                                                     if (relic2_15Activated && missileId == 8006) bonus += 9;
                                                     aoeDamage = Relic.BonusDamage(aoeDamage, bonus);
+                                                    realDamage = hitShip.BeAttacked(aoeDamage, DamageType.missileMain);
                                                 }
-                                                int realDamage = hitShip.BeAttacked(aoeDamage);
+                                                else
+                                                {
+                                                    realDamage = hitShip.BeAttacked(aoeDamage, DamageType.missileAoe);
+                                                }
                                                 UIBattleStatistics.RegisterHit(missileId, realDamage, 0); //每个目标不再注册新的击中数量，只注册伤害
                                                 //引力导弹的强制位移
                                                 if (forceDisplacement)

@@ -664,8 +664,7 @@ namespace DSP_Battle
                         {
                             if (ship.state == EnemyShip.State.active)
                             {
-                                ship.BeAttacked(damage);
-                                UIBattleStatistics.RegisterMegastructureAttack(damage);
+                                UIBattleStatistics.RegisterMegastructureAttack(ship.BeAttacked(damage, DamageType.mega));
                             }
                         }
                     }

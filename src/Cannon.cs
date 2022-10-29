@@ -473,18 +473,20 @@ namespace DSP_Battle
                             int damage = 0;
                             int bulletId = bulletIds[starIndex][i];
                             int bulletCount = 1;
+                            DamageType dmgType = DamageType.bullet;
                             switch (bulletId)
                             {
                                 case 8001: damage = bullet1DamageWithRelic; bulletCount = bullet1Count; break;
                                 case 8002: damage = Configs.bullet2Atk; break;
                                 case 8003: damage = Configs.bullet3Atk; break;
-                                case 8007: damage = Configs.bullet4Atk * 5; break;
+                                case 8007: damage = (int)(Configs.bullet4Atk * 5 * Math.Max(0.2,(1 - Configs.laserDamageReducePerAU * __instance.bulletPool[i].maxt * Configs.bullet4Speed / 40000))); dmgType = DamageType.laser; break;
                                 default:
                                     break;
                             }
 
-                            int realDamage = EnemyShips.ships[bulletTargets[starIndex][i]].BeAttacked(damage); //击中造成伤害  //如果在RemoveBullet的postpatch写这个，可以不用每帧循环检测，但是伤害将在爆炸动画后结算，感觉不太合理
-                            UIBattleStatistics.RegisterHit(bulletId, realDamage, bulletCount);
+                            int realDamage = EnemyShips.ships[bulletTargets[starIndex][i]].BeAttacked(damage, dmgType); //击中造成伤害  //如果在RemoveBullet的postpatch写这个，可以不用每帧循环检测，但是伤害将在爆炸动画后结算，感觉不太合理
+                            if(realDamage > 0) // 被闪避了则不算击中
+                                UIBattleStatistics.RegisterHit(bulletId, realDamage, bulletCount);
                             if (Relic.HaveRelic(3, 7)) // relic3-7 虚空折射 子弹命中时对一个随机敌人造成20%额外伤害
                             {
                                 int refDmg = Relic.BonusDamage(damage, 0.2) - damage;
@@ -493,7 +495,7 @@ namespace DSP_Battle
                                     randNum = Utils.RandInt(0, EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex].Count);
                                 if (randNum >= 0 && EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex][randNum] != null && EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex][randNum].state == EnemyShip.State.active)
                                 {
-                                    int realRefDmg = EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex][randNum].BeAttacked(refDmg);
+                                    int realRefDmg = EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex][randNum].BeAttacked(refDmg, dmgType);
                                     UIBattleStatistics.RegisterHit(bulletId, realRefDmg, 0);
                                 }
                             }
