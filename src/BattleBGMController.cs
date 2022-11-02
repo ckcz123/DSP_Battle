@@ -12,7 +12,7 @@ namespace DSP_Battle
 {
     public class BattleBGMController
     {
-        /*
+        
         public static int musicState = 0; 
         // 1战前, 每次播放完更换一个新的战前bgm继续播放； 2交战，从头播放，反复播放循环节。3接近结束（任意一方80%消灭），从头播放，反复播放循环节。 4之前阶段的音乐不再循环，要将其播放到结尾，之后变为0，切换回游戏原本bgm。
         public static int musicCnt = 0;
@@ -23,23 +23,23 @@ namespace DSP_Battle
         public static int nextMusic = -1;
         public static float fadeOutTime = 0;
         public static float fadeInTime = 0;
-		public static string[] index2NameMap = new string[] { "Track 17" };
+		public static string[] index2NameMap = new string[] { "pre_1", "loop_1", "fin_1", "pre_2", "loop_2", "pre_3", "loop_3", "fin_3", "pre_4", "loop_4", "fin_4", "pre_5", "loop_5", "fin_5", "pre_6", "loop_6", "fin_6",
+        "Track7", "Track9", "Track10", "Track39", "TrackA1", "TrackE1", "TrackU1", "TrackU2"};
         public static Dictionary<string, int> name2IndexMap = new Dictionary<string, int>();
 		public static AssetBundle bgmAB;
         public static List<AudioSource> battleMusics = new List<AudioSource>();
-        public static List<float> musicLoopBegin = new List<float> { 5.11f };
-        public static List<float> musicLoopEnd = new List<float> { 101.1f };
+        public static List<float> musicBPM = new List<float> { 100, 176, 180, 180, 180, 200, 200 };
+        public static int beforeBattleBgmBeginNum = 17;
+        public static bool nextPlayFinishMusic = false;
         
-//DSP_Battle.BattleBGMController.musicLoopBegin[0] = 5.21f;
-//DSP_Battle.BattleBGMController.musicLoopEnd[0] = 101.2f;
          
         public static void InitAudioSources()
         {
             if (!Configs.enableBattleBGM) return;
             Transform BGMParent = GameObject.Find("Audios/BGM").transform;
             GameObject oriAudioSource = GameObject.Find("Audios/BGM/universe-1");
-			bgmAB = AssetBundle.LoadFromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("DSP_Battle.battlebgm"));
-            if(bgmAB == null)
+            bgmAB = AssetBundle.LoadFromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("DSP_Battle.battlebgm"));
+            if (bgmAB == null)
             {
                 Configs.enableBattleBGM = false;
                 return;
@@ -51,10 +51,12 @@ namespace DSP_Battle
 				GameObject battleTestObj = GameObject.Instantiate(oriAudioSource, BGMParent);
                 battleTestObj.name = index2NameMap[i];
                 AudioSource bgm = battleTestObj.GetComponent<AudioSource>();
-				bgm.clip = bgmAB.LoadAsset<AudioClip>(index2NameMap[i]);
+                bgm.clip = bgmAB.LoadAsset<AudioClip>(index2NameMap[i]);
                 name2IndexMap.Add(index2NameMap[i], i);
-				battleMusics.Add(bgm);
-			}
+                if(index2NameMap[i] == "fin_1")
+                    name2IndexMap.Add("fin_2", i);
+                battleMusics.Add(bgm);
+            }
 
 		}
 
@@ -73,56 +75,70 @@ namespace DSP_Battle
             fadeOutTime = 0;
             fadeInTime = 0;
             isOverriding = false;
+            nextPlayFinishMusic = false;
         }
 
         public static void BGMLogicUpdate()
         {
             if (!Configs.enableBattleBGM) return;
-            //bgm循环与终止逻辑
-            if (isOverriding) 
+
+            //bgm监测与选择逻辑
+            if (Configs.nextWaveState <= 1) // 战斗结束后播放
             {
-                if (currentMusic >= 0 && currentMusic < battleMusics.Count && currentMusic == nextMusic)
+                if (nextPlayFinishMusic)
                 {
-                    if (Configs.nextWaveState > 0 && Configs.nextWaveFrameIndex - GameMain.instance.timei <= 3600 * 5 && battleMusics[currentMusic].time >= musicLoopEnd[currentMusic])
+                    if (currentGroup < 0 || currentMusic < 0)
                     {
-                        LoopCurrent();
+                        nextPlayFinishMusic = false;
+                        nextMusic = name2IndexMap["fin_" + currentGroup.ToString()];
                     }
-                    //如果bgm没有被强制从中间循环，那么设定bgm结束
-                    else if (Configs.nextWaveState<=2 && battleMusics[currentMusic].time >= battleMusics[currentMusic].clip.length - 0.05f ) 
+                    else if (atBarEnd(battleMusics[currentMusic].time,musicBPM[currentGroup])) // 尽可能在小节末尾衔接结束的bgm
                     {
-                        if(lastMusic>=0 && lastMusic<musicCnt)
-                            battleMusics[lastMusic].Stop();
-
-                        
-                        battleMusics[currentMusic].Stop();
-
-                        lastMusic = -1;
-                        currentMusic = -1;
-                        nextMusic = -1;
-                        fadeOutTime = 0;
-                        fadeInTime = 0;
-
-                        //如果此时也没在战斗状态，虫洞也还没刷新，则彻底退出战斗bgm状态，并且播放游戏原本的bgm
-                        if (Configs.nextWaveState <= 1 && BGMController.instance!=null) 
-                        {
-                            currentGroup = -1;
-                            isOverriding = false;
-                            BGMController.Playback(0, 1, 1);
-                        }
+                        nextPlayFinishMusic = false;
+                        nextMusic = name2IndexMap["fin_" + currentGroup.ToString()];
                     }
                 }
-            }
-            
-            //bgm监测与选择逻辑
-            if (Configs.nextWaveState > 0 && Configs.nextWaveFrameIndex - GameMain.instance.timei <= 3600*5)
-            {
-                if(!isOverriding) //如果之前是游戏本身的bgm，则开始战斗bgm时随机一个group
+                else if (currentMusic >= 0 && battleMusics[currentMusic].time >= battleMusics[currentMusic].clip.length - 0.05f) // 战斗结束的音乐播放完毕，初始化
                 {
-                    currentGroup = Utils.RandInt(0, 3);
+                    lastMusic = -1;
+                    currentMusic = -1;
+                    nextMusic = -1;
+                    fadeOutTime = 0;
+                    fadeInTime = 0;
+                    isOverriding = false;
+                    BGMController.Playback(0, 1, 1);
+                }
+            }
+            else if (Configs.nextWaveState == 2) // 虫洞生成时播放
+            {
+                if (!isOverriding) //如果之前是游戏本身的bgm，则开始战斗bgm时随机一个group
+                {
+                    currentGroup = Utils.RandInt(1, 7);
                 }
                 if (currentMusic < 0) //如果没在播放bgm
                 {
-                    nextMusic = 0; //需要更改
+                    nextMusic = Utils.RandInt(beforeBattleBgmBeginNum, battleMusics.Count);
+                }
+                else if (battleMusics[currentMusic].time >= battleMusics[currentMusic].clip.length - 3f) // 如果在播放，且播放完了，换随机的下一首
+                {
+                    nextMusic = Utils.RandInt(beforeBattleBgmBeginNum, battleMusics.Count);
+                    if (nextMusic == currentMusic)
+                    {
+                        nextMusic = currentMusic + 1 < musicCnt ? currentMusic + 1 : currentMusic - 1;
+                    }
+                }
+            }
+            else if (Configs.nextWaveState == 3) // 在战斗中
+            {
+                if(currentGroup < 0)
+                    currentGroup = Utils.RandInt(1, 7);
+                if (currentMusic >= beforeBattleBgmBeginNum || currentMusic < 0) // 当前播放的是虫洞刷新的bgm，或者是没播放。则下一个播放战斗中的循环节之前的音频
+                {
+                    nextMusic = name2IndexMap["pre_" + currentGroup.ToString()];
+                }
+                else if (index2NameMap[currentMusic][0] == 'p' && battleMusics[currentMusic].time >= battleMusics[currentMusic].clip.length - 0.05f) // 已处在播放战斗中的音频中， 如果循环节之前的音频播放完毕，则跳转到循环节
+                {
+                    nextMusic = name2IndexMap["loop_" + currentGroup.ToString()];
                 }
             }
 
@@ -153,16 +169,16 @@ namespace DSP_Battle
                 if (fadeInTime > 0 && currentMusic >= 0 && currentMusic < musicCnt)
                 {
                     battleMusics[currentMusic].volume += 0.01666667f / fadeInTime;
-                    if (battleMusics[currentMusic].volume >= VFAudio.audioVolume * VFAudio.musicVolume)
+                    if (battleMusics[currentMusic].volume >= VFAudio.audioVolume * VFAudio.musicVolume * 0.8f)
                     {
                         fadeOutTime = 0;
-                        battleMusics[currentMusic].volume = VFAudio.audioVolume * VFAudio.musicVolume;
+                        battleMusics[currentMusic].volume = VFAudio.audioVolume * VFAudio.musicVolume * 0.8f;
                     }
                 }
                 else if(fadeInTime <= 0 && currentMusic >= 0 && currentMusic < musicCnt)
                 {
                     AudioSource cur = battleMusics[currentMusic];
-                    cur.volume = VFAudio.audioVolume * VFAudio.musicVolume;
+                    cur.volume = VFAudio.audioVolume * VFAudio.musicVolume * 0.8f;
                 }
             }
         }
@@ -171,7 +187,7 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(GameData), "GameTick")]
         public static void GameData_GameTick(ref GameData __instance, long time)
         {
-
+            if (time % 5 == 0 && isOverriding) MuteGameOriBgm();
         }
 
 
@@ -200,7 +216,7 @@ namespace DSP_Battle
                 VFListener.SetPassFilter(100);
         }
 
-        public static void PlayNext()
+        public static void PlayNext(float fade = 0f)
         {
             if (nextMusic >= 0 && nextMusic < musicCnt)
             {
@@ -211,27 +227,16 @@ namespace DSP_Battle
                     BGMController.instance.volsTar[BGMController.instance.playbackIndex] = 0;
                 }
 
-                fadeOutTime = 0.2f;
-                fadeInTime = 0.2f;
+                fadeOutTime = fade;
+                fadeInTime = fade;
                 isOverriding = true;
                 lastMusic = currentMusic;
                 currentMusic = nextMusic;
                 AudioSource bgm = battleMusics[nextMusic];
-                bgm.time = 0;
+                bgm.time = currentMusic>=beforeBattleBgmBeginNum? 0.3f:0;
                 bgm.Play();
-                bgm.loop = false;
+                bgm.loop = index2NameMap[currentMusic][0] == 'l';
                 bgm.volume = 0;
-            }
-        }
-
-        public static void LoopCurrent()
-        {
-            if (currentMusic >= 0 && currentMusic < musicCnt)
-            {
-                AudioSource bgm = battleMusics[currentMusic];
-                bgm.time = musicLoopBegin[currentMusic];
-                bgm.Play();
-                bgm.loop = false;
             }
         }
 
@@ -241,7 +246,24 @@ namespace DSP_Battle
             {
                 battleMusics[currentMusic].loop = false;
             }
+            nextPlayFinishMusic = true;
         }
-        */
+
+        public static void MuteGameOriBgm()
+        {
+            if (lastMusic < 0 && BGMController.instance != null && BGMController.instance.musics != null && BGMController.HasBGM(BGMController.instance.playbackIndex))
+            {
+                BGMController.instance.fadeOutTimes[BGMController.instance.playbackIndex] = 0f;
+                BGMController.instance.volsTar[BGMController.instance.playbackIndex] = 0;
+            }
+        }
+
+        public static bool atBarEnd(float time, float bpm)
+        {
+            float barLength = 60f / bpm * 4;
+            float dif = time / barLength - (int)(time / barLength);
+            return (dif <= 0.02f || dif >= barLength - 0.03f);
+        }
+        
     }
 }

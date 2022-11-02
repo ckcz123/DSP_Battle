@@ -99,7 +99,7 @@ namespace DSP_Battle
 
         public void Start()
         {
-            ////////////////////////////////////////////////////////////////////////////BattleBGMController.InitAudioSources();
+            BattleBGMController.InitAudioSources();
         }
 
         public void Update()
@@ -141,7 +141,7 @@ namespace DSP_Battle
             UIRelic.SelectionWindowAnimationUpdate();
             UIRelic.CheckRelicSlotsWindowShowByMouse();
             UIRelic.SlotWindowAnimationUpdate();
-            ///////////////////////////////////////////////////////////////////////////////////BattleBGMController.BGMLogicUpdate();
+            BattleBGMController.BGMLogicUpdate();
         }
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameMain), "OnDestroy")]
@@ -233,6 +233,7 @@ namespace DSP_Battle
             EnemyShipUIRenderer.Init();
             EnemyShipRenderer.Init();
             BattleProtos.ReCheckTechUnlockRecipes();
+            BattleBGMController.InitWhenLoad();
         }
 
         public void IntoOtherSave()
@@ -255,6 +256,7 @@ namespace DSP_Battle
             EnemyShipUIRenderer.Init();
             EnemyShipRenderer.Init();
             BattleProtos.ReCheckTechUnlockRecipes();
+            BattleBGMController.InitWhenLoad();
         }
 
 

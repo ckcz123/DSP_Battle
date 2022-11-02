@@ -271,8 +271,8 @@ namespace DSP_Battle
                     "\n\n<color=#c2853d>" + rewardByRank + "</color>\n\n" +
                     "查看更多战斗信息".Translate()
                     );
-                if (Configs.nextWaveElite == 1) Relic.PrepareNewRelic(); // 精英波次结束后给予遗物选择
-                ///////////////////////////////////////////////////////////////////////////////BattleBGMController.SetWaveFinished();
+                if (Configs.nextWaveElite == 1 || (Configs.totalWave<=1 && Relic.GetRelicCount()==0)) Relic.PrepareNewRelic(); // 精英波次结束后给予遗物选择，第一次接敌完成也给遗物
+                BattleBGMController.SetWaveFinished();
             }
         }
 
