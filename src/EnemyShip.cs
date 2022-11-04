@@ -809,37 +809,45 @@ namespace DSP_Battle
 
         public void Revive()
         {
-            countDown = 5;
-            int enemyId = Configs.enemyIntensity2TypeMap[intensity];
+            try
+            {
+                countDown = 5;
+                int enemyId = Configs.enemyIntensity2TypeMap[intensity];
 
-            shipData.direction = 1;
-            shipData.stage = 0;
+                shipData.direction = 1;
+                shipData.stage = 0;
 
-            shipData.direction = 1;
-            shipData.stage = 0;
-            shipData.uAngularVel = Vector3.zero;
-            shipData.uAngularSpeed = 0;
+                shipData.direction = 1;
+                shipData.stage = 0;
+                shipData.uAngularVel = Vector3.zero;
+                shipData.uAngularSpeed = 0;
 
-            int stationId = EnemyShips.FindNearestPlanetStation(GameMain.galaxy.stars[starIndex], Configs.nextWaveWormholes[wormholeIndex].uPos);
-            shipData.otherGId = stationId;
-            shipData.planetB = GameMain.data.galacticTransport.stationPool[stationId].planetId;
+                int stationId = EnemyShips.FindNearestPlanetStation(GameMain.galaxy.stars[starIndex], Configs.nextWaveWormholes[wormholeIndex].uPos);
+                shipData.otherGId = stationId;
+                shipData.planetB = GameMain.data.galacticTransport.stationPool[stationId].planetId;
 
-            shipData.uPos = Configs.nextWaveWormholes[wormholeIndex].uPos;
-            shipData.uRot = new Quaternion((float)DspBattlePlugin.randSeed.NextDouble(), (float)DspBattlePlugin.randSeed.NextDouble(), (float)DspBattlePlugin.randSeed.NextDouble(), (float)DspBattlePlugin.randSeed.NextDouble());
-            shipData.uRot.Normalize();
+                shipData.uPos = Configs.nextWaveWormholes[wormholeIndex].uPos;
+                shipData.uRot = new Quaternion((float)DspBattlePlugin.randSeed.NextDouble(), (float)DspBattlePlugin.randSeed.NextDouble(), (float)DspBattlePlugin.randSeed.NextDouble(), (float)DspBattlePlugin.randSeed.NextDouble());
+                shipData.uRot.Normalize();
 
-            shipData.uSpeed = ((float)DspBattlePlugin.randSeed.NextDouble()) * 0.25f * maxSpeed;
-            hp = Configs.enemyHp[enemyId];
-            if (Configs.difficulty == 1) hp *= 2;
-            if (Configs.difficulty == -1) hp = hp * 3 / 4;
-            damageRange = Configs.enemyRange[enemyId];
-            intensity = Configs.enemyIntensity[enemyId];
+                shipData.uSpeed = ((float)DspBattlePlugin.randSeed.NextDouble()) * 0.25f * maxSpeed;
+                hp = Configs.enemyHp[enemyId];
+                if (Configs.difficulty == 1) hp *= 2;
+                if (Configs.difficulty == -1) hp = hp * 3 / 4;
+                damageRange = Configs.enemyRange[enemyId];
+                intensity = Configs.enemyIntensity[enemyId];
 
-            state = countDown > 0 ? State.uninitialized : State.active;
+                state = countDown > 0 ? State.uninitialized : State.active;
 
-            isFiring = false;
-            fireStart = 0;
-            isBlockedByShield = false;
+                isFiring = false;
+                fireStart = 0;
+                isBlockedByShield = false;
+            }
+            catch (Exception)
+            {
+                EnemyShips.RemoveShip(this);
+            }
+           
         }
 
 
