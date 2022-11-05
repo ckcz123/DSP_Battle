@@ -823,6 +823,11 @@ namespace DSP_Battle
                 shipData.uAngularSpeed = 0;
 
                 int stationId = EnemyShips.FindNearestPlanetStation(GameMain.galaxy.stars[starIndex], Configs.nextWaveWormholes[wormholeIndex].uPos);
+                if (stationId < 0)
+                {
+                    EnemyShips.RemoveShip(this);
+                    return;
+                }
                 shipData.otherGId = stationId;
                 shipData.planetB = GameMain.data.galacticTransport.stationPool[stationId].planetId;
 
