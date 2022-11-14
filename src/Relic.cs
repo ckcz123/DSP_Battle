@@ -508,8 +508,8 @@ namespace DSP_Battle
                 // relic0-1 蓝buff效果 要放在最后面，因为前面有加time的遗物，所以这个根据time结算的要放在最后
                 if (Relic.HaveRelic(0, 1) && __instance.requires.Length > 1)
                 {
-                    // 原材料未堆积过多才会返还，产物堆积未被取出则不返还
-                    if (__instance.served[0] < 10 * __instance.requireCounts[0])
+                    // 原材料未堆积过多才会返还，产物堆积未被取出则不返还。 黑棒产线无视此遗物效果
+                    if (__instance.served[0] < 10 * __instance.requireCounts[0] && __instance.products[0] != 1803)
                     {
                         // Utils.Log("time = " + __instance.time + " / " + __instance.timeSpend); 这里是能输出两个相等的值的
                         // 不能直接用__instance.time >= __instance.timeSpend代替，必须-1，即便已经相等却无法触发，为什么？

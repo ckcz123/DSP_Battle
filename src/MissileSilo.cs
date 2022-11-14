@@ -88,7 +88,7 @@ namespace DSP_Battle
                 int targetIndex = 0;
                 if (Configs.nextWaveState == 3)
                 {
-                    targetIndex = FindTarget(starIndex, planetId, false);
+                    targetIndex = FindTarget(starIndex, planetId);
                 }
 
                 __instance.hasNode = (sphere.GetAutoNodeCount() > 0);
@@ -1004,7 +1004,7 @@ namespace DSP_Battle
                                 }
                                 else
                                 {
-                                    int newTargetId = FindTarget(starIndex, dysonRocket.planetId);
+                                    int newTargetId = FindTarget(starIndex, dysonRocket.planetId, i); // 这个i是种子偏移
                                     if (newTargetId > 0)
                                     {
                                         MissileTargets[starIndex][i] = newTargetId;
@@ -1153,7 +1153,7 @@ namespace DSP_Battle
                             }
                             else
                             {
-                                int newTargetId = FindTarget(starIndex, dysonRocket.planetId);
+                                int newTargetId = FindTarget(starIndex, dysonRocket.planetId, i);
                                 if (newTargetId > 0)
                                 {
                                     MissileTargets[starIndex][i] = newTargetId;
@@ -1693,10 +1693,10 @@ namespace DSP_Battle
             return (id - 8003) % 3 + 8004;
         }
 
-        private static int FindTarget(int starIndex, int planetId, bool showLog = true)
+        private static int FindTarget(int starIndex, int planetId, int randSeed = 0, bool showLog = true)
         {
             int index;
-            if (DspBattlePlugin.randSeed.NextDouble() < 0.5)
+            if (Utils.RandDoubleBySeedDelta(randSeed) < 0.2)
             {
                 index = FindNearestTarget(EnemyShips.minPlanetDisSortedShips[starIndex][planetId]);
                 if (index > 0)
@@ -1705,12 +1705,12 @@ namespace DSP_Battle
                 }
             }
 
-            index = FindRandTarget(EnemyShips.minPlanetDisSortedShips[starIndex][planetId]);
+            index = FindRandTarget(EnemyShips.minPlanetDisSortedShips[starIndex][planetId], randSeed);
             if (index > 0)
             {
                 return index;
             }
-            return FindRandTarget(EnemyShips.minTargetDisSortedShips[starIndex]);
+            return FindRandTarget(EnemyShips.minTargetDisSortedShips[starIndex], randSeed);
         }
 
         private static int FindNearestTarget(List<EnemyShip> ships)
@@ -1723,10 +1723,10 @@ namespace DSP_Battle
             return -1;
         }
 
-        private static int FindRandTarget(List<EnemyShip> ships)
+        private static int FindRandTarget(List<EnemyShip> ships, int randSeed = 0)
         {
             if (ships.Count == 0) return -1;
-            return ships[DspBattlePlugin.randSeed.Next(0, ships.Count)].shipIndex;
+            return ships[Utils.RandIntBySeedDelta(0, ships.Count, randSeed)].shipIndex;
         }
 
 

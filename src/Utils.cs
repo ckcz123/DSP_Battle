@@ -37,6 +37,20 @@ namespace DSP_Battle
             return randSeed.NextDouble();
         }
 
+        public static double RandDoubleBySeedDelta(int seedDelta)
+        {
+            long nSeed = (randSeed.Next() + seedDelta) % 2147483647;
+            System.Random nrand = new System.Random((int)nSeed);
+            return nrand.NextDouble();
+        }
+
+        public static int RandIntBySeedDelta(int min, int max, int seedDelta)
+        {
+            long nSeed = (randSeed.Next() + seedDelta) % 2147483647;
+            System.Random nrand = new System.Random((int)nSeed);
+            return nrand.Next(min, max);
+        }
+
         public static void Check(int num = 1, string str = "check ")
         {
             DspBattlePlugin.logger.LogInfo(str + num.ToString());

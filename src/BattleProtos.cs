@@ -506,7 +506,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物名称3-17", "Honorary Promotion\n<size=18>- Common -</size>", "荣誉晋升\n<size=18>- 普通 -</size>");
 
             ProtoRegistry.RegisterString("遗物描述0-0", "Every time the enemy ship is destroyed, a random mega structure will be partially auto-constructed according to the intensity of the enemy ship", "每次击毁敌舰，根据敌舰强度有概率略微推进巨构的建造进度");
-            ProtoRegistry.RegisterString("遗物描述0-1", "When assembling recipes with at least 2 different materials in assembling machine, every time a product is produced, one material in the first slot will be returned.", "制造厂在制造原材料至少2种的配方时，每产出1个产物，会返还1个第1位置的原材料");
+            ProtoRegistry.RegisterString("遗物描述0-1", "When assembling recipes with at least 2 different materials in assembling machine (except when assembling antimatter fuel rods), every time a product is produced, one material in the first slot will be returned.", "制造厂在制造原材料至少2种的配方时（反物质燃料棒的产线除外），每产出1个产物，会返还1个第1位置的原材料");
             ProtoRegistry.RegisterString("遗物描述0-2", "When producing recipes with at least 2 different materials in chemical plant, every time a product is produced, all material that is consumed in the first slot will be returned.", "化工厂在生产原材料至少2种的配方时，返还第1位置的全部原材料");
             ProtoRegistry.RegisterString("遗物描述0-3", "When calculating the energy level, the giant structure is regarded as a higher star luminosity", "巨构在计算能量水平时，视作拥有更高的恒星光度修正");
             ProtoRegistry.RegisterString("遗物描述0-4", "The ray receiver does not need to consume the lens to achieve the maximum output efficiency, and it will no longer be blocked at night", "射线接受器无需消耗透镜即可达到最大输出效率，且不再因背向恒星影响接收效率");
