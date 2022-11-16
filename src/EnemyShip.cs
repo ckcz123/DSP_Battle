@@ -289,15 +289,18 @@ namespace DSP_Battle
             {
                 VectorLF3 direction = forceDisplacement - shipData.uPos;
                 double fullDistance = direction.magnitude;
-                double forceDispDistance = fullDistance * movePerTick + minForcedMove;
-                if (fullDistance <= minForcedMove)
+                if (fullDistance <= 8000)
                 {
-                    //forceDisplacementTime = 1;
-                    forceDispDistance = fullDistance;
+                    double forceDispDistance = fullDistance * movePerTick + minForcedMove;
+                    if (fullDistance <= minForcedMove)
+                    {
+                        //forceDisplacementTime = 1;
+                        forceDispDistance = fullDistance;
+                    }
+                    if (fullDistance != 0)
+                        shipData.uPos = shipData.uPos + direction.normalized * forceDispDistance;
+                    forceDisplacementTime -= 1;
                 }
-                if(fullDistance!=0)
-                    shipData.uPos = shipData.uPos + direction.normalized * forceDispDistance;
-                forceDisplacementTime -= 1;
             }
 
             StationComponent station = targetStation;
@@ -847,6 +850,7 @@ namespace DSP_Battle
                 isFiring = false;
                 fireStart = 0;
                 isBlockedByShield = false;
+                forceDisplacementTime = 0;
             }
             catch (Exception)
             {

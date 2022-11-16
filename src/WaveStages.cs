@@ -68,6 +68,7 @@ namespace DSP_Battle
             int r1 = 1000;
             int r2 = 5;
             int waveNum = Configs.wavePerStar[starId];
+            
             if(waveNum<3)
             {
                 r1 = 1000 * (int)Math.Pow(2, (4 - waveNum));
@@ -100,6 +101,11 @@ namespace DSP_Battle
             Configs.nextWaveState = 1;
 
             int intensity = Configs.nextWaveIntensity;
+            if (Configs.developerMode)
+            {
+                //intensity = 10000;
+                //waveNum = 4;
+            }
             int avg = Configs.nextWaveIntensity / (Configs.enemyIntensity[0] + Configs.enemyIntensity[1]
                 + Configs.enemyIntensity[2] + Configs.enemyIntensity[3] + Configs.enemyIntensity[4]);
             for (int i = 4; i >= 1; --i)

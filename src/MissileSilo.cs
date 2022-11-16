@@ -49,12 +49,11 @@ namespace DSP_Battle
 
             if (gmProtoId == 2312) return true; //原始发射井返回原函数
 
-            //if (Configs.developerMode)
-            //{
-            //    __instance.bulletId = 8006;
-            //    __instance.bulletCount = 99;
-            //}
-
+            if (Configs.developerMode)
+            {
+                __instance.bulletId = 8006;
+                __instance.bulletCount = 99;
+            }
             if (GameMain.instance.timei % 60 == 0 && __instance.bulletCount == 0)
             {
                 __instance.bulletId = nextBulletId(__instance.bulletId);
@@ -301,6 +300,7 @@ namespace DSP_Battle
                                     }
                                     else
                                     {
+                                        missileProtoIds[starIndex][i] = 0;
                                         __instance.RemoveDysonRocket(i);
                                         goto IL_BDF;
                                     }
@@ -447,6 +447,7 @@ namespace DSP_Battle
                                 }
                                 else
                                 {
+                                    missileProtoIds[starIndex][i] = 0;
                                     __instance.RemoveDysonRocket(i);
                                     goto IL_BDF;
                                 }
@@ -995,14 +996,19 @@ namespace DSP_Battle
                             {
 
                                 VectorLF3 vectorLF2 = dysonRocket.uPos; //这个值下面立刻会修改
-                                                                        //根据是导弹还是火箭确定
+
+                                bool needFindNewTarget = true;
                                 if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
                                 {
                                     EnemyShip ship = null;
                                     if (EnemyShips.ships.TryGetValue(MissileTargets[starIndex][i], out ship) && ship.state == EnemyShip.State.active)
+                                    {
+                                        needFindNewTarget = false;
                                         vectorLF2 = ship.uPos - dysonRocket.uPos;
+                                    }
                                 }
-                                else
+
+                                if(needFindNewTarget)
                                 {
                                     int newTargetId = FindTarget(starIndex, dysonRocket.planetId, i); // 这个i是种子偏移
                                     if (newTargetId > 0)
@@ -1144,14 +1150,18 @@ namespace DSP_Battle
                         {
 
                             VectorLF3 vectorLF5 = dysonRocket.uPos;
+                            bool needFindNewTarget = true;
                             //之前的目标是否还存活
                             if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
                             {
                                 EnemyShip ship = null;
                                 if (EnemyShips.ships.TryGetValue(MissileTargets[starIndex][i], out ship) && ship.state == EnemyShip.State.active)
+                                {
+                                    needFindNewTarget = false;
                                     vectorLF5 = ship.uPos - dysonRocket.uPos;
+                                }
                             }
-                            else
+                            if(needFindNewTarget)
                             {
                                 int newTargetId = FindTarget(starIndex, dysonRocket.planetId, i);
                                 if (newTargetId > 0)
@@ -1696,7 +1706,7 @@ namespace DSP_Battle
         private static int FindTarget(int starIndex, int planetId, int randSeed = 0, bool showLog = true)
         {
             int index;
-            if (Utils.RandDoubleBySeedDelta(randSeed) < 0.2)
+            if (Utils.RandDouble() < 0.5)
             {
                 index = FindNearestTarget(EnemyShips.minPlanetDisSortedShips[starIndex][planetId]);
                 if (index > 0)
@@ -1726,7 +1736,7 @@ namespace DSP_Battle
         private static int FindRandTarget(List<EnemyShip> ships, int randSeed = 0)
         {
             if (ships.Count == 0) return -1;
-            return ships[Utils.RandIntBySeedDelta(0, ships.Count, randSeed)].shipIndex;
+            return ships[Utils.RandInt(0, ships.Count)].shipIndex;
         }
 
 

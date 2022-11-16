@@ -168,8 +168,7 @@ namespace DSP_Battle
 
         public static bool HaveRelic(int type, int num)
         {
-            //if (Configs.developerMode && type == 0 && num == 6) return true;
-            //if (Configs.developerMode && type>1) return true;
+            if (Configs.developerMode) return true;
             if (type > 3 || type < 0 || num > 30) return false;
             if ((relics[type] & (1 << num)) > 0) return true;
             return false;
@@ -508,7 +507,7 @@ namespace DSP_Battle
                 // relic0-1 蓝buff效果 要放在最后面，因为前面有加time的遗物，所以这个根据time结算的要放在最后
                 if (Relic.HaveRelic(0, 1) && __instance.requires.Length > 1)
                 {
-                    // 原材料未堆积过多才会返还，产物堆积未被取出则不返还。 黑棒产线无视此遗物效果
+                    // 原材料未堆积过多才会返还，产物堆积未被取出则不返还。黑棒产线无视此遗物效果
                     if (__instance.served[0] < 10 * __instance.requireCounts[0] && __instance.products[0] != 1803)
                     {
                         // Utils.Log("time = " + __instance.time + " / " + __instance.timeSpend); 这里是能输出两个相等的值的
@@ -598,7 +597,7 @@ namespace DSP_Battle
                     {
                         __instance.extraTime += (int)(power * __instance.speedOverride * 5); // 因为extraSpeed填满需要正常speed填满的十倍
                     }
-                    __instance.produced[1] = 0;
+                    __instance.produced[1] = -5;
                 }
 
             }

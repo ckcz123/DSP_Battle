@@ -570,7 +570,7 @@ namespace DSP_Battle
         public static void RollNewAlternateRelics()
         {
             if (!CheckEnoughMatrixToRoll()) return;
-            Relic.alternateRelics[0] = -1;
+            Relic.alternateRelics[0] = -1; // 三个备选遗物
             Relic.alternateRelics[1] = -1;
             Relic.alternateRelics[2] = -1;
             if (Relic.rollCount > 0)

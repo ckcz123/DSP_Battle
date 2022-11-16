@@ -9,10 +9,10 @@ namespace DSP_Battle
 {
     public class Configs
     {
-        public static string versionString = "2.1.0";
+        public static string versionString = "2.1.1";
         public static string qq = "694213906";
         public static bool developerMode = false; //发布前务必修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
-
+        
         public static bool enableProliferator4 = false;
         public static bool enableBattleBGM = true;
         public static bool enableAlertTextGlowing = true;

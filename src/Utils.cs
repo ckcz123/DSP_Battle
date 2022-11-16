@@ -2,18 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using Random = System.Random;
 
 namespace DSP_Battle
 {
     public class Utils
     {
-        static System.Random randSeed = new System.Random();
+        static int seed = Environment.TickCount;
+
+        static readonly ThreadLocal<Random> randSeed =
+            new ThreadLocal<Random>(() => new Random(Interlocked.Increment(ref seed)));
+
+        static Random rd = new Random();
+
+        public static int Rand()
+        {
+            return randSeed.Value.Next();
+        }
+
 
         public static VectorLF3 RandPosDelta()
         {
-            return new VectorLF3(randSeed.NextDouble() - 0.5, randSeed.NextDouble() - 0.5, randSeed.NextDouble() - 0.5);
+            return new VectorLF3(randSeed.Value.NextDouble() - 0.5, randSeed.Value.NextDouble() - 0.5, randSeed.Value.NextDouble() - 0.5);
         }
 
         public static VectorLF3 RandPosDelta(int Seed)
@@ -24,31 +37,28 @@ namespace DSP_Battle
 
         public static int RandInt(int min, int max)
         {
-            return randSeed.Next(min, max);
+            return randSeed.Value.Next(min, max);
         }
 
         public static int RandNext()
         {
-            return randSeed.Next();
+            return randSeed.Value.Next();
         }
 
         public static double RandDouble()
         {
-            return randSeed.NextDouble();
+            return randSeed.Value.NextDouble();
         }
 
-        public static double RandDoubleBySeedDelta(int seedDelta)
+
+        public static double RandDoubleBySeedDelta(int delta)
         {
-            long nSeed = (randSeed.Next() + seedDelta) % 2147483647;
-            System.Random nrand = new System.Random((int)nSeed);
-            return nrand.NextDouble();
+            return RandDouble();
         }
 
-        public static int RandIntBySeedDelta(int min, int max, int seedDelta)
+        public static int RandIntBySeedDelta(int min, int max, int delta)
         {
-            long nSeed = (randSeed.Next() + seedDelta) % 2147483647;
-            System.Random nrand = new System.Random((int)nSeed);
-            return nrand.Next(min, max);
+            return RandInt(min, max);
         }
 
         public static void Check(int num = 1, string str = "check ")

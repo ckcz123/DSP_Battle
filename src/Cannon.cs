@@ -3,6 +3,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using UnityEngine;
 
 namespace DSP_Battle
@@ -17,6 +18,7 @@ namespace DSP_Battle
 
         public static bool doTrack = true;
         public static System.Random rand = new System.Random();
+        public static int indexBegins = 0; // 寻敌遍历时开始的index，每帧寻敌最多遍历3次，每次重新排序则置0
 
         /// <summary>
         /// 每帧调用刷新子弹终点
@@ -232,9 +234,14 @@ namespace DSP_Battle
                 flag2 = true;
             VectorLF3 vectorLF2 = VectorLF3.zero;
 
-            for (int gm = 0; gm < loopNum; gm++)
+            int begins = indexBegins;
+            if (begins >= loopNum)
             {
-
+                Interlocked.Exchange(ref indexBegins, 0);
+                begins = 0;
+            }
+            for (int gm = begins; gm < loopNum && gm < begins+3; gm++)
+            {
                 //新增的，每次循环开始必须重置
                 __instance.targetState = EjectorComponent.ETargetState.OK;
                 flag = true;
@@ -247,7 +254,7 @@ namespace DSP_Battle
                 int shipIdx = 0;//ship总表中的唯一标识：index
                 vectorLF2 = sortedShips[gm].uPos;
                 shipIdx = sortedShips[gm].shipIndex;
-                if (!EnemyShips.ships.ContainsKey(shipIdx)) continue;
+                if (!EnemyShips.ships.ContainsKey(shipIdx) || sortedShips[gm].state != EnemyShip.State.active) continue;
                 VectorLF3 vectorLF3 = vectorLF2 - vectorLF;
                 __instance.targetDist = vectorLF3.magnitude;
                 vectorLF3.x /= __instance.targetDist;
@@ -302,13 +309,17 @@ namespace DSP_Battle
                     break;
                 }
             }
-
             //如果没有船/船没血了，就不打炮了
             if (curTarget == null)
             {
+                Interlocked.Add(ref indexBegins, 3);
                 flag = false; //本身是由于俯仰限制或路径被阻挡的判断，现在找不到目标而不打炮也算做里面
             }
             else if (curTarget != null && curTarget.hp <= 0)
+            {
+                flag = false;
+            }
+            else if (curTarget.state != EnemyShip.State.active)
             {
                 flag = false;
             }
