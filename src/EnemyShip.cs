@@ -161,10 +161,10 @@ namespace DSP_Battle
                     bonus += 1;
                 atk = Relic.BonusDamage(atk, bonus);
 
+                int shipType = Configs.enemyIntensity2TypeMap[intensity];
                 // 精英波次减伤
                 if (Configs.nextWaveElite == 1)
                 {
-                    int shipType = Configs.enemyIntensity2TypeMap[intensity];
                     if (shipType == 1 && dmgType == DamageType.bullet && Utils.RandDouble() > 0.1)
                         atk = 0;
                     else if (shipType == 3 && (dmgType == DamageType.missileAoe || dmgType == DamageType.mega))
@@ -210,18 +210,24 @@ namespace DSP_Battle
                             Utils.UIItemUp(dropItemId, 1, 180);
                             UIBattleStatistics.RegisterAlienMatrixGain(1);
                         }
+                        //relic 0-10 水滴击杀加伤害
+                        if (dmgType == DamageType.droplet && Relic.HaveRelic(0,10))
+                        {
+                            if(UIBattleStatistics.enemyEliminated[intensity]< UIBattleStatistics.enemyGen[intensity])
+                                Droplets.DamageGrow();
+                        }
                         // relic 2-14 每次击杀有概率获得黑棒或者翘曲器 概率为（5+0.1*舰船强度）%
                         if (Relic.HaveRelic(2, 14) && Relic.Verify(0.05 + 0.001 * intensity))
                         {
                             if (Utils.RandInt(0, 2) == 0)
                             {
                                 GameMain.mainPlayer.TryAddItemToPackage(1803, 1, 0, true);
-                                Utils.UIItemUp(1803, 1, 180);
+                                Utils.UIItemUp(1803, 1, 200);
                             }
                             else
                             {
                                 GameMain.mainPlayer.TryAddItemToPackage(1210, 1, 0, true);
-                                Utils.UIItemUp(1210, 1, 180);
+                                Utils.UIItemUp(1210, 1, 200);
                             }
 
                         }
@@ -900,6 +906,7 @@ namespace DSP_Battle
         missileAoe, // 导弹的非主要目标范围伤
         shield, // 护盾造成的伤害
         mega, // 巨构伤害
-        others, // 其他类型的伤害
+        droplet, // 水滴伤害
+        others, // 其他伤害
     }
 }

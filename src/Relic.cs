@@ -15,8 +15,9 @@ namespace DSP_Battle
         // 二进制存储已获取的遗物，需要存档
         public static int[] relics = { 0, 0, 0, 0 };
 
+        //不存档的设定参数
         public static int relicHoldMax = 8; // 最多可以持有的遗物数
-        public static int[] maxRelic = { 10, 12, 18, 18 }; // 当前版本各种类型的遗物各有多少种，每种类型均不能大于30
+        public static int[] maxRelic = { 11, 12, 18, 18 }; // 当前版本各种类型的遗物各有多少种，每种类型均不能大于30
         public static double[] relicTypeProbability = { 0.03, 0.09, 0.2, 1 }; // 各类型遗物刷新的概率，注意不是权重，是有次序地判断随机数
         public static double firstRelicIsRare = 0.5; // 第一个遗物至少是稀有的概率
         public static bool canSelectNewRelic = false; // 当canSelectNewRelic为true时点按按钮才是有效的选择
@@ -28,6 +29,8 @@ namespace DSP_Battle
         public static List<int> starsWithMegaStructureUnfinished = new List<int>(); // 每秒更新，具有巨构且未完成建造的星系.
         public static Vector3 playerLastPos = new VectorLF3(0, 0, 0); // 上一秒玩家的位置
         public static bool alreadyRecalcDysonStarLumin = false; // 不需要存档，如果需要置false则会在读档时以及选择特定遗物时自动完成
+        public static int dropletDamageGrowth = 10; // relic0-10每次水滴击杀的伤害成长
+        public static int dropletDamageLimitGrowth = 400; // relic0-10每次消耗水滴提供的伤害成长上限的成长
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameData), "GameTick")]
@@ -168,7 +171,7 @@ namespace DSP_Battle
 
         public static bool HaveRelic(int type, int num)
         {
-            if (Configs.developerMode) return true;
+            if (Configs.developerMode && num>9) return true;
             if (type > 3 || type < 0 || num > 30) return false;
             if ((relics[type] & (1 << num)) > 0) return true;
             return false;
@@ -252,7 +255,6 @@ namespace DSP_Battle
             if (HaveRelic(2, 13))
             {
                 bonus = 2 * bonus * damage;
-
             }
             else
             {

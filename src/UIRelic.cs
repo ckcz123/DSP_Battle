@@ -650,9 +650,9 @@ namespace DSP_Battle
         
         //  以下为左侧Relic 预览窗口
         static GameObject relicSlotsWindowObj = null;
-        static List<GameObject> relicSlotObjs = new List<GameObject>();
-        static List<Image> relicSlotImgs = new List<Image>();
-        static List<UIButton> relicSlotUIBtns = new List<UIButton>();
+        public static List<GameObject> relicSlotObjs = new List<GameObject>();
+        public static List<Image> relicSlotImgs = new List<Image>();
+        public static List<UIButton> relicSlotUIBtns = new List<UIButton>();
         static float targetX = -1065;
         static float curX = -1065;
         
@@ -725,12 +725,14 @@ namespace DSP_Battle
                         if (slotNum < relicSlotImgs.Count)
                         {
                             relicSlotImgs[slotNum].sprite = Resources.Load<Sprite>("Assets/DSPBattle/r" + type.ToString() + "-" + num.ToString());
-                            relicSlotObjs[slotNum].GetComponent<UIButton>().tips.tipTitle = ("遗物名称带颜色" + type.ToString() + "-" + num.ToString()).Translate();
-                            relicSlotObjs[slotNum].GetComponent<UIButton>().tips.tipText = ("遗物描述" + type.ToString() + "-" + num.ToString()).Translate();
-                            relicSlotObjs[slotNum].GetComponent<UIButton>().tips.offset = new Vector2(160, 70);
-                            relicSlotObjs[slotNum].GetComponent<UIButton>().tips.width = 200;
-                            relicSlotObjs[slotNum].GetComponent<UIButton>().tips.delay = 0.05f;
-                            UIButtonTip uibtnt = relicSlotObjs[slotNum].GetComponent<UIButton>().tip as UIButtonTip;
+                            relicSlotUIBtns[slotNum].tips.tipTitle = ("遗物名称带颜色" + type.ToString() + "-" + num.ToString()).Translate();
+                            relicSlotUIBtns[slotNum].tips.tipText = ("遗物描述" + type.ToString() + "-" + num.ToString()).Translate();
+                            if(type == 0 && num == 10)
+                                relicSlotUIBtns[slotNum].tips.tipText = relicSlotUIBtns[slotNum].tips.tipText + "\n\n<color=#61d8ffb4>" + "当前加成gm".Translate() + "  " + Droplets.bonusDamage + " / " + Droplets.bonusDamageLimit + "</color>";
+                            relicSlotUIBtns[slotNum].tips.offset = new Vector2(160, 70);
+                            relicSlotUIBtns[slotNum].tips.width = 200;
+                            relicSlotUIBtns[slotNum].tips.delay = 0.05f;
+                            UIButtonTip uibtnt = relicSlotUIBtns[slotNum].tip as UIButtonTip;
                             if (uibtnt != null) uibtnt.titleComp.supportRichText = true;
                             slotNum++;
                         }
@@ -744,10 +746,10 @@ namespace DSP_Battle
             for (; slotNum < relicSlotImgs.Count ; slotNum++)
             {
                 relicSlotImgs[slotNum].sprite = Resources.Load<Sprite>("Assets/DSPBattle/rEmpty");
-                relicSlotObjs[slotNum].GetComponent<UIButton>().tips.tipTitle = ("未获取遗物标题").Translate();
-                relicSlotObjs[slotNum].GetComponent<UIButton>().tips.tipText = ("未获取遗物描述").Translate();
-                relicSlotObjs[slotNum].GetComponent<UIButton>().tips.offset = new Vector2(160, 70);
-                relicSlotObjs[slotNum].GetComponent<UIButton>().tips.delay = 0.05f;
+                relicSlotUIBtns[slotNum].tips.tipTitle = ("未获取遗物标题").Translate();
+                relicSlotUIBtns[slotNum].tips.tipText = ("未获取遗物描述").Translate();
+                relicSlotUIBtns[slotNum].tips.offset = new Vector2(160, 70);
+                relicSlotUIBtns[slotNum].tips.delay = 0.05f;
             }
         }
 

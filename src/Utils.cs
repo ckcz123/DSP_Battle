@@ -106,7 +106,7 @@ namespace DSP_Battle
             }
         }
 
-        public static void UIItemUp(int itemId, int upCount, float forceWidth = 300)
+        public static void UIItemUp(int itemId, int upCount, float forceWidth = 300, int forceItemCount = -1)
         {
             if (GameMain.mainPlayer == null)
             {
@@ -122,6 +122,7 @@ namespace DSP_Battle
             }
             UIItemup itemupTips = UIRoot.instance.uiGame.itemupTips;
             int itemCount = GameMain.mainPlayer.package.GetItemCount(itemId);
+            if (forceItemCount >= 0) itemCount = forceItemCount;
             bool flag;
             UIItemupNode uiitemupNode = itemupTips.CreateNode(itemId, out flag);
             SetItemupNodeData(ref uiitemupNode, itemId, upCount, itemCount - upCount, itemCount, forceWidth);

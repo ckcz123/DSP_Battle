@@ -351,7 +351,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("gmRankUnlockText7", "Wave reward: mining consumption -20% --> -50%", "采矿消耗降低的奖励强化为-50%消耗");
             ProtoRegistry.RegisterString("gmRankUnlockText8", "Wave reward duration +20%", "战斗奖励持续时间增加20%");
             ProtoRegistry.RegisterString("gmRankUnlockText9", "Star cannon charging speed +100%", "恒星炮充能速度增加100%");
-            ProtoRegistry.RegisterString("gmRankUnlockText10", "Droplet damage greatly increased. Wave reward duration +20%", "水滴伤害获得大幅度加强，战斗结束后的奖励持续时间增加20%");
+            ProtoRegistry.RegisterString("gmRankUnlockText10", "Droplet base damage greatly increased. Wave reward duration +20%", "水滴基础伤害获得大幅度加强，战斗结束后的奖励持续时间增加20%");
             ProtoRegistry.RegisterString("gmRankReward1", "Wave reward unlocked", "战斗结束后给予战斗奖励");
             ProtoRegistry.RegisterString("gmRankReward7", "Additional wave reward: mining consumption -50%", "额外的战斗奖励：采矿消耗-50%");
             ProtoRegistry.RegisterString("gmRankReward3", "Additional wave reward: mining consumption -20%", "额外的战斗奖励：采矿消耗-20%");
@@ -442,17 +442,20 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("未能移除遗物描述", "No matched relic can be removed", "你没有稀有度匹配的圣物可供移除");
             ProtoRegistry.RegisterString("未获取遗物标题", "Unknown relic", "未知圣物");
             ProtoRegistry.RegisterString("未获取遗物描述", "This slot can place a decrypted relic", "此位置可供已解译的圣物放置");
+            ProtoRegistry.RegisterString("水滴伤害增加", "Droplet Bonus Damage", "水滴额外伤害");
+            ProtoRegistry.RegisterString("当前加成gm", "Current bonus damage", "当前伤害加成");
 
             ProtoRegistry.RegisterString("遗物名称0-0", "Swallower\n<size=18>- Legend -</size>", "吞噬者\n<size=18>- 传说 -</size>");
             ProtoRegistry.RegisterString("遗物名称0-1", "Blue Buff\n<size=18>- Legend -</size>", "蓝buff\n<size=18>- 传说 -</size>");
             ProtoRegistry.RegisterString("遗物名称0-2", "Tear of the Goddess\n<size=18>- Legend -</size>", "女神之泪\n<size=18>- 传说 -</size>");
-            ProtoRegistry.RegisterString("遗物名称0-3", "The Eternal\n<size=18>- Legend -</size>", "永恒之盘\n<size=18>- 传说 -</size>");
+            ProtoRegistry.RegisterString("遗物名称0-3", "The Eternal Ring\n<size=18>- Legend -</size>", "永恒之环\n<size=18>- 传说 -</size>");
             ProtoRegistry.RegisterString("遗物名称0-4", "Widowmaker\n<size=18>- Legend -</size>", "黑百合\n<size=18>- 传说 -</size>");
             ProtoRegistry.RegisterString("遗物名称0-5", "Thornmail\n<size=18>- Legend -</size>", "虚空荆棘\n<size=18>- 传说 -</size>");
             ProtoRegistry.RegisterString("遗物名称0-6", "Giga Cannon\n<size=18>- Legend -</size>", "京级巨炮\n<size=18>- 传说 -</size>");
             ProtoRegistry.RegisterString("遗物名称0-7", "Tearing Field\n<size=18>- Legend -</size>", "撕裂力场\n<size=18>- 传说 -</size>");
             ProtoRegistry.RegisterString("遗物名称0-8", "Bloodthirster\n<size=18>- Legend -</size>", "饮血剑\n<size=18>- 传说 -</size>");
             ProtoRegistry.RegisterString("遗物名称0-9", "Pentalobe\n<size=18>- Legend -</size>", "五叶草\n<size=18>- 传说 -</size>");
+            ProtoRegistry.RegisterString("遗物名称0-10", "Energy Siphon\n<size=18>- Legend -</size>", "能量虹吸\n<size=18>- 传说 -</size>");
 
             ProtoRegistry.RegisterString("遗物名称1-0", "Triumph\n<size=18>- Epic -</size>", "凯旋\n<size=18>- 史诗 -</size>");
             ProtoRegistry.RegisterString("遗物名称1-1", "Void Burst\n<size=18>- Epic -</size>", "虚空爆发\n<size=18>- 史诗 -</size>");
@@ -473,7 +476,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物名称2-3", "Echo I\n<size=18>- Rare -</size>",        "回声 I\n<size=18>- 稀有 -</size>");
             ProtoRegistry.RegisterString("遗物名称2-4", "Hyyyydrogen!\n<size=18>- Rare -</size>",     "听说有人缺氢\n<size=18>- 稀有 -</size>");
             ProtoRegistry.RegisterString("遗物名称2-5", "Hyperactivity II\n<size=18>- Rare -</size>", "多动症 II\n<size=18>- 稀有 -</size>");
-            ProtoRegistry.RegisterString("遗物名称2-6", "Efficiency Seeker\n<size=18>- Rare -</size>", "高效索敌\n<size=18>- 稀有 -</size>");
+            ProtoRegistry.RegisterString("遗物名称2-6", "Void Seeker\n<size=18>- Rare -</size>", "虚空索敌\n<size=18>- 稀有 -</size>");
             ProtoRegistry.RegisterString("遗物名称2-7", "Foe\n<size=18>- Rare -</size>",           "仇敌\n<size=18>- 稀有 -</size>");
             ProtoRegistry.RegisterString("遗物名称2-8", "Diraac Invrsooon\n<size=18>- Rare -</size>", "狄拉克辶辶变\n<size=18>- 稀有 -</size>");
             ProtoRegistry.RegisterString("遗物名称2-9", "Light Saver II\n<size=18>- Rare -</size>", "聚能环 II\n<size=18>- 稀有 -</size>");
@@ -515,6 +518,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物描述0-7", "The star system with a megastructure will deal <i>additional damage</i> to all enemy ships in the star system during the invasion, higher energy the megastucture generates, higher the damage it deals", "拥有巨构的星系在战斗时每秒会对星系中所有敌舰造成<i>额外伤害</i>，伤害取决于巨构的能量水平\n如果巨构为恒星炮，该伤害增加200%");
             ProtoRegistry.RegisterString("遗物描述0-8", "When any damage hit the enemy ships, a random planet that is in the invasion star system will immediately restore shield by 10% of the actual damage", "我方对敌舰造成的任何伤害时，会为正在发生战斗星系的一个随机行星立刻回复相当于实际伤害10%的护盾");
             ProtoRegistry.RegisterString("遗物描述0-9", "❤ You will be more lucky ❤", "❤你会更加幸运❤");
+            ProtoRegistry.RegisterString("遗物描述0-10", "Every time a droplet destroys an enemy ship, all droplets permanently obtain 10 <i>additional damage</i>. The upper limit is 400 at the begining. After reaching the upper limit, the mecha will automatically consume a droplet then increase the upper limit by 400. The latter's growth is unlimited.", "水滴每击杀一个敌人，所有水滴永久获得+10的<i>额外伤害</i>，加成上限初始为400，达到上限后，自动消耗背包中的一个水滴并再次提升400加成上限，提升上限的次数不受限制。");
 
             ProtoRegistry.RegisterString("遗物描述1-0", "Every time a invasion is over, random mega structures will be partially auto-constructed according to the total intensity", "每次入侵结束，根据来袭总强度少量推进巨构的建造进度");
             ProtoRegistry.RegisterString("遗物描述1-1", "The aoe damage (and aoe effect) of the missile no longer decrease by the distance", "导弹的范围伤害（以及范围效果）不再随距离衰减");
@@ -570,13 +574,14 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物名称带颜色0-0", "<color=#d2853d>Swallower  [Legend]</color>",  "<color=#d2853d>吞噬者  [传说]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色0-1", "<color=#d2853d>Blue Buff  [Legend]</color>",  "<color=#d2853d>蓝buff  [传说]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色0-2", "<color=#d2853d>Tear of the Goddess  [Legend]</color> ", "<color=#d2853d>女神之泪  [传说]</color>");
-            ProtoRegistry.RegisterString("遗物名称带颜色0-3", "<color=#d2853d>The Eternal  [Legend]</color>",  "<color=#d2853d>永恒之盘  [传说]</color>");
+            ProtoRegistry.RegisterString("遗物名称带颜色0-3", "<color=#d2853d>The Eternal Ring  [Legend]</color>",  "<color=#d2853d>永恒之环  [传说]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色0-4", "<color=#d2853d>Widowmaker  [Legend]</color>",  "<color=#d2853d>黑百合  [传说]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色0-5", "<color=#d2853d>Thornmail  [Legend]</color>",  "<color=#d2853d>虚空荆棘  [传说]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色0-6", "<color=#d2853d>Giga Cannon  [Legend]</color>",  "<color=#d2853d>京级巨炮  [传说]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色0-7", "<color=#d2853d>Tearing Field  [Legend]</color>", "<color=#d2853d>撕裂力场  [传说]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色0-8", "<color=#d2853d>Bloodthirster  [Legend]</color>", "<color=#d2853d>饮血剑  [传说]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色0-9", "<color=#d2853d>Pentalobe  [Legend]</color>", "<color=#d2853d>五叶草  [传说]</color>");
+            ProtoRegistry.RegisterString("遗物名称带颜色0-10", "<color=#d2853d>Energy Siphon  [Legend]</color>", "<color=#d2853d>能量虹吸  [传说]</color>");
 
             ProtoRegistry.RegisterString("遗物名称带颜色1-0", "<color=#9040d0>Triumph  [Epic]</color>",  "<color=#9040d0>凯旋  [史诗]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色1-1", "<color=#9040d0>Void Burst  [Epic]</color>", "<color=#9040d0>虚空爆发  [史诗]</color>");
@@ -597,7 +602,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物名称带颜色2-3", "<color=#2080d0>Echo I  [Rare]</color>",         "<color=#2080d0>回声 I  [稀有]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色2-4", "<color=#2080d0>Hyyyydrogen!  [Rare]</color>",      "<color=#2080d0>听说有人缺氢  [稀有]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色2-5", "<color=#2080d0>Hyperactivity II  [Rare]</color>",  "<color=#2080d0>多动症 II  [稀有]</color>");
-            ProtoRegistry.RegisterString("遗物名称带颜色2-6", "<color=#2080d0>Efficiency Seeker  [Rare]</color>", "<color=#2080d0>高效索敌  [稀有]</color>");
+            ProtoRegistry.RegisterString("遗物名称带颜色2-6", "<color=#2080d0>Void Seeker  [Rare]</color>", "<color=#2080d0>虚空索敌  [稀有]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色2-7", "<color=#2080d0>Foe  [Rare]</color>",            "<color=#2080d0>仇敌  [稀有]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色2-8", "<color=#2080d0>Diraac Invrsooon  [Rare]</color>",  "<color=#2080d0>狄拉克辶辶变  [稀有]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色2-9", "<color=#2080d0>Light Saver II  [Rare]</color>",  "<color=#2080d0>聚能环 II  [稀有]</color>");
@@ -669,6 +674,9 @@ namespace DSP_Battle
             ProtoRegistry.RegisterItem(8027, "彩蛋7", "彩蛋7描述", "Assets/DSPBattle/notes-of-pioneer-07", 9999, 100, EItemType.Material);
             ProtoRegistry.RegisterItem(8028, "彩蛋8", "彩蛋8描述", "Assets/DSPBattle/notes-of-pioneer-08", 9999, 100, EItemType.Material);
             ProtoRegistry.RegisterItem(8029, "彩蛋9", "彩蛋9描述", "Assets/DSPBattle/notes-of-pioneer-09", 9999, 100, EItemType.Material);
+
+
+            ProtoRegistry.RegisterItem(8035, "水滴伤害增加", "", "Assets/DSPBattle/r0-10", 9999, 100, EItemType.Material);
 
 
             var Cannon1 = ProtoRegistry.RegisterItem(8011, "弹射器1", "弹射器1描述", "Assets/DSPBattle/cannon1", 2601 + pageBias, 50, EItemType.Production);
