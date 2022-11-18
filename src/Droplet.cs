@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using System.Collections.Concurrent;
 using System.IO;
 using HarmonyLib;
+using System.Threading;
 
 namespace DSP_Battle
 {
@@ -23,6 +24,8 @@ namespace DSP_Battle
         //存档内容
         public static Droplet[] dropletPool = new Droplet[5];
         public static int maxDroplet = 2;
+        public static int bonusDamage = 0;
+        public static int bonusDamageLimit = 0;
 
         public static void InitAll()
         {
@@ -31,6 +34,8 @@ namespace DSP_Battle
             {
                 dropletPool[i] = new Droplet(i);
             }
+            bonusDamage = 0;
+            bonusDamageLimit = Relic.dropletDamageLimitGrowth;
             InitUI();
         }
 
@@ -176,7 +181,42 @@ namespace DSP_Battle
             GameMain.mainPlayer.mecha.MarkEnergyChange(8, -energy);
         }
 
-
+        public static void DamageGrow()
+        {
+            if (bonusDamage >= bonusDamageLimit)
+            {
+                int inc;
+                if (GameMain.mainPlayer.package.TakeItem(9511, 1, out inc) > 0) //拿到了
+                {
+                    Interlocked.Add(ref bonusDamageLimit, Relic.dropletDamageLimitGrowth);
+                }
+            }
+            if (bonusDamage < bonusDamageLimit)
+            {
+                Interlocked.Exchange(ref bonusDamage, Math.Min(bonusDamageLimit, bonusDamage + Relic.dropletDamageGrowth));
+                int slotNum = 0;
+                for (int rnum = 0; rnum < 10; rnum++)
+                {
+                    if (Relic.HaveRelic(0, rnum))
+                        slotNum++;
+                }
+                if (slotNum >= 8) return;
+                UIRelic.relicSlotUIBtns[slotNum].tips.tipText = "遗物描述0-10".Translate() + "\n\n<color=#61d8ffb4>" + "当前加成gm".Translate() + "  " + Droplets.bonusDamage + " / " + Droplets.bonusDamageLimit + "</color>";
+                if (UIRelic.relicSlotUIBtns[slotNum].tipShowing)
+                {
+                    UIRelic.relicSlotUIBtns[slotNum].OnPointerExit(null);
+                    UIRelic.relicSlotUIBtns[slotNum].OnPointerEnter(null);
+                    UIRelic.relicSlotUIBtns[slotNum].enterTime = 1;
+                }
+                try
+                {
+                    int width = (int)Math.Log10(bonusDamage) * 12 + 200;
+                    Utils.UIItemUp(8035, Relic.dropletDamageGrowth, width, bonusDamage);
+                }
+                catch (Exception)
+                { }
+            }
+        }
 
         public static void Export(BinaryWriter w) 
         {
@@ -184,6 +224,8 @@ namespace DSP_Battle
             {
                 dropletPool[i].Export(w);
             }
+            w.Write(bonusDamage);
+            w.Write(bonusDamageLimit);
         }
         public static void Import(BinaryReader r) 
         {
@@ -194,6 +236,16 @@ namespace DSP_Battle
                 {
                     dropletPool[i].Import(r);
                 }
+            }
+            if (Configs.versionWhenImporting >= 30221118)
+            {
+                bonusDamage = r.ReadInt32();
+                bonusDamageLimit = r.ReadInt32();
+            }
+            else
+            {
+                bonusDamage = 0;
+                bonusDamageLimit = Relic.dropletDamageLimitGrowth;
             }
         }
         public static void IntoOtherSave() 
@@ -469,9 +521,11 @@ namespace DSP_Battle
                     //判断击中，如果距离过近
                     if ((newBegin - enemyUPos).magnitude < 500 || newMaxt <= exceedDis * 1.0 / Configs.dropletSpd + 0.035f)
                     {
-                        int damageBonus = 1;
-                        if (Rank.rank >= 10) damageBonus = 5;
-                        UIBattleStatistics.RegisterDropletAttack(EnemyShips.ships[targetShipIndex].BeAttacked(Configs.dropletAtk * damageBonus));
+                        int damage = Configs.dropletAtk;
+                        if (Rank.rank >= 10) damage = 5* Configs.dropletAtk;
+                        if (Relic.HaveRelic(0, 10))
+                            damage = damage + (Relic.BonusDamage(Droplets.bonusDamage, 1) - Droplets.bonusDamage);
+                        UIBattleStatistics.RegisterDropletAttack(EnemyShips.ships[targetShipIndex].BeAttacked(damage, DamageType.droplet));
                         state = 3; //击中后继续冲过目标，准备转向的阶段
                     }
                 }

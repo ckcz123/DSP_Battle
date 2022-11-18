@@ -9,15 +9,15 @@ namespace DSP_Battle
 {
     public class Configs
     {
-        public static string versionString = "2.0.10";
+        public static string versionString = "2.1.2";
         public static string qq = "694213906";
         public static bool developerMode = false; //发布前务必修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
-
+        
         public static bool enableProliferator4 = false;
-        public static bool enableBattleBGM = false;
+        public static bool enableBattleBGM = true;
         public static bool enableAlertTextGlowing = true;
         public static int versionWhenImporting = -1;
-        public static int versionCode = 30221025;
+        public static int versionCode = 30221118;
 
 
         public static int difficulty = 0; // -1 easy, 0 normal, 1 hard
@@ -61,6 +61,8 @@ namespace DSP_Battle
 
         public static double dropletSpd = 30000.0;
 
+        public static double laserDamageReducePerAU = 0.2;
+
         // --- 敌方战舰信息
         public static int[] enemyIntensity = new int[10];
 
@@ -75,17 +77,19 @@ namespace DSP_Battle
 
         public static int[] enemyLandCnt = new int[] { 1, 3, 5, 5, 10000 };
 
-        public static int[] enemyFireInterval = new int[] {120, 60, 60, int.MaxValue, 60 }; //每攻击一次间隔的tick0
+        public static int[] enemyFireInterval = new int[] {120, 60, int.MaxValue, 60, 60 }; //每攻击一次间隔的tick0
 
         public static int[] enemyFireRange = new int[] { 5000, 8000, 15000, 15000, 30000 }; //射程
 
-        public static int[] enemyDamagePerBullet = new int[] { 500, 500, 200000, 1000, 1500 }; //dps = 100,200,300,-,1000, dps per intensity = 100,50,38,-,67
+        public static int[] enemyDamagePerBullet = new int[] { 500, 500, 200000, 500, 2000 }; //dps = 250,500,-,500,2000, dps per intensity = 250,125,-,42,133
         //public static int[] enemyDamagePerBullet = new int[] { 2, 2, 3, 200, 2 };
 
         //public static int[] enemyBulletSpeed = new int[] {20000, 30000, 50000, 80000, 150000 }; //虽然有speed设置，但是为了减少运算，子弹伤害是在发射时就结算的。speed应该设置的比较大来减少视觉上的误差
 
-        public static int[] enemyIntensity2TypeMap = new int[] { 0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4 };
-        //-------------------------------------------------------0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16,17,18,19,20,21,22,2
+        public static int[] enemyIntensity2TypeMap = new int[] { 0, 0, 0, 0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4 };
+        //-------------------------------------------------------0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
+
+        public static int eliteDurationFrames = 3600 * 3; // 精英进攻持续的时间
 
         // --- 虫洞信息
         public static int _wormholeRange;
@@ -113,6 +117,7 @@ namespace DSP_Battle
         public static int nextWaveWormCount = 0;
         public static int[] nextWaveEnemy = new int[10];
         public static Wormhole[] nextWaveWormholes = new Wormhole[100];
+        public static int nextWaveElite = 0;
 
         public static int nextWaveMatrixExpectation = 0;
 
@@ -120,7 +125,7 @@ namespace DSP_Battle
         public static int[] wavePerStar;
 
         public static bool isEnemyWeakenedByRelic = false; // relic1-3此项每帧更新，不存档，也不在读档时重置
-        public static bool relic2_17Activated = false; // 下个护盾在被摧毁时立刻回填50%上限的护盾量。此项在战斗开始时刷新，读档时设置为false，不存档
+        public static int relic2_17Activated = 0; // 下个护盾在被摧毁时立刻回填50%上限的护盾量。此项在战斗开始时刷新，读档时设置为false，不存档
         public static int relic1_8Protection = 99; // 前十个降落的敌舰不摧毁建筑。此项在战斗开始时刷新,此项读档时设置为99，不存档
 
         // --- 护盾信息
@@ -236,27 +241,27 @@ namespace DSP_Battle
             _missile3Atk = 1500;//00; // config.Bind("config", "missile3Atk", defaultValue: 2500, "引力塌陷导弹攻击力").Value;
             missile3Range = 8000; // config.Bind("config", "missile3Range", defaultValue: 2000, "引力塌陷导弹破坏范围").Value;
 
-            enemyIntensity[0] = 1; // config.Bind("config", "enemy1Intensity", defaultValue: 1, "敌方飞船1强度").Value;
+            enemyIntensity[0] = 1; // 无特殊效果
             enemyHp[0] = 4000; // config.Bind("config", "enemy1Hp", defaultValue: 4000, "敌方飞船1血量").Value;
             enemySpeed[0] = 1000f; // config.Bind("config", "enemy1Speed", defaultValue: 1500f, "敌方飞船1速度（米每秒）").Value;
             enemyRange[0] = 20; // config.Bind("config", "enemy1Range", defaultValue: 20, "敌方飞船1破坏范围").Value;
-
-            enemyIntensity[1] = 4; // config.Bind("config", "enemy2Intensity", defaultValue: 4, "敌方飞船2强度").Value;
+            
+            enemyIntensity[1] = 4; // 对子弹类型的伤害（不包括相位）具有90%闪避概率
             enemyHp[1] = 20000; // config.Bind("config", "enemy2Hp", defaultValue: 20000, "敌方飞船2血量").Value;
             enemySpeed[1] = 1500f; // config.Bind("config", "enemy2Speed", defaultValue: 2000f, "敌方飞船2速度（米每秒）").Value;
             enemyRange[1] = 40; // config.Bind("config", "enemy2Range", defaultValue: 40, "敌方飞船2破坏范围").Value;
-
-            enemyIntensity[2] = 6; // config.Bind("config", "enemy3Intensity", defaultValue: 8, "敌方飞船3强度").Value;
+            
+            enemyIntensity[2] = 6; // 会直接撞向护盾，摧毁自己并对护盾造成巨量伤害
             enemyHp[2] = 10000; // config.Bind("config", "enemy3Hp", defaultValue: 10000, "敌方飞船3血量").Value;
             enemySpeed[2] = 3000f; // config.Bind("config", "enemy3Speed", defaultValue: 5000f, "敌方飞船3速度（米每秒）").Value;
             enemyRange[2] = 60; // config.Bind("config", "enemy3Range", defaultValue: 60, "敌方飞船3破坏范围").Value;
 
-            enemyIntensity[3] = 12; // config.Bind("config", "enemy4Intensity", defaultValue: 8, "敌方飞船4强度").Value;
+            enemyIntensity[3] = 12; // 对aoe类型的伤害（导弹的所有次要目标以及巨构的aoe伤害）具有90%伤害减免，免疫控制效果
             enemyHp[3] = 100000; // config.Bind("config", "enemy4Hp", defaultValue: 120000, "敌方飞船4血量").Value;
             enemySpeed[3] = 1000f; // config.Bind("config", "enemy4Speed", defaultValue: 1000f, "敌方飞船4速度（米每秒）").Value;
             enemyRange[3] = 120; // config.Bind("config", "enemy4Range", defaultValue: 80, "敌方飞船4破坏范围").Value;
 
-            enemyIntensity[4] = 15; // config.Bind("config", "enemy5Intensity", defaultValue: 15, "敌方飞船5强度").Value;
+            enemyIntensity[4] = 15; // 对能量类（相位炮、巨构伤害）和护盾类（护盾反伤、护盾直接碰撞伤害）的伤害具有80%伤害减免
             enemyHp[4] = 80000; // config.Bind("config", "enemy5Hp", defaultValue: 80000, "敌方飞船5血量").Value;
             enemySpeed[4] = 1500f; // config.Bind("config", "enemy5Speed", defaultValue: 3000f, "敌方飞船5速度（米每秒）").Value;
             enemyRange[4] = 100; // config.Bind("config", "enemy5Range", defaultValue: 100, "敌方飞船5破坏范围").Value;
@@ -312,6 +317,8 @@ namespace DSP_Battle
             for (var i = 0; i < starCount; ++i) w.Write(wavePerStar[i]);
 
             w.Write(nextWaveMatrixExpectation);
+
+            w.Write(nextWaveElite);
         }
 
         public static void Import(BinaryReader r)
@@ -365,6 +372,15 @@ namespace DSP_Battle
                 }
             }
 
+            if (importVersion >= 30221029)
+            {
+                nextWaveElite = r.ReadInt32();
+            }
+            else
+            {
+                nextWaveElite = 0;
+            }
+
         }
 
         public static void IntoOtherSave()
@@ -393,6 +409,7 @@ namespace DSP_Battle
             wavePerStar = new int[starCount];
             nextWaveMatrixExpectation = expectationMatrices[0];
 
+            nextWaveElite = 0;
         }
 
     }

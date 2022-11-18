@@ -14,7 +14,7 @@ using xiaoye97;
 
 namespace DSP_Battle
 {
-    [BepInPlugin("com.ckcz123.DSP_Battle", "DSP_Battle", "2.0.4")]
+    [BepInPlugin("com.ckcz123.DSP_Battle", "DSP_Battle", "2.1.2")]
     [BepInDependency(DSPModSavePlugin.MODGUID)]
     [BepInDependency(CommonAPIPlugin.GUID)]
     [BepInDependency(LDBToolPlugin.MODGUID)]
@@ -99,7 +99,7 @@ namespace DSP_Battle
 
         public void Start()
         {
-            ////////////////////////////////////////////////////////////////////////////BattleBGMController.InitAudioSources();
+            BattleBGMController.InitAudioSources();
         }
 
         public void Update()
@@ -115,8 +115,9 @@ namespace DSP_Battle
             if (Input.GetKeyDown(KeyCode.Minus) && isControlDown && !GameMain.isPaused && (Configs.nextWaveState == 1 || Configs.nextWaveState == 2))
             {
                 Configs.nextWaveFrameIndex -= 60 * 60;
+                if (Configs.nextWaveFrameIndex < GameMain.instance.timei) Configs.nextWaveFrameIndex = GameMain.instance.timei; // 对于精英波次，如果一次回退超过了倒计时，会减少精英波次的持续时间
                 //由于强行使进攻提前到来，期望掉落的矩阵数减少10%，最少降低到无时间加成（即10min间隔）的对应波次基础期望的10%。
-                if(Relic.HaveRelic(3,4)) // relic 3-4 只减少5%
+                if (Relic.HaveRelic(3,4)) // relic 3-4 只减少5%
                     Configs.nextWaveMatrixExpectation = (int)(Configs.nextWaveMatrixExpectation * 0.95f);
                 else
                     Configs.nextWaveMatrixExpectation = (int)(Configs.nextWaveMatrixExpectation * 0.9f);
@@ -140,7 +141,7 @@ namespace DSP_Battle
             UIRelic.SelectionWindowAnimationUpdate();
             UIRelic.CheckRelicSlotsWindowShowByMouse();
             UIRelic.SlotWindowAnimationUpdate();
-            ///////////////////////////////////////////////////////////////////////////////////BattleBGMController.BGMLogicUpdate();
+            BattleBGMController.BGMLogicUpdate();
         }
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameMain), "OnDestroy")]
@@ -232,6 +233,7 @@ namespace DSP_Battle
             EnemyShipUIRenderer.Init();
             EnemyShipRenderer.Init();
             BattleProtos.ReCheckTechUnlockRecipes();
+            BattleBGMController.InitWhenLoad();
         }
 
         public void IntoOtherSave()
@@ -254,6 +256,7 @@ namespace DSP_Battle
             EnemyShipUIRenderer.Init();
             EnemyShipRenderer.Init();
             BattleProtos.ReCheckTechUnlockRecipes();
+            BattleBGMController.InitWhenLoad();
         }
 
 

@@ -49,12 +49,11 @@ namespace DSP_Battle
 
             if (gmProtoId == 2312) return true; //原始发射井返回原函数
 
-            //if (Configs.developerMode)
-            //{
-            //    __instance.bulletId = 8006;
-            //    __instance.bulletCount = 99;
-            //}
-
+            if (Configs.developerMode)
+            {
+                __instance.bulletId = 8006;
+                __instance.bulletCount = 99;
+            }
             if (GameMain.instance.timei % 60 == 0 && __instance.bulletCount == 0)
             {
                 __instance.bulletId = nextBulletId(__instance.bulletId);
@@ -88,7 +87,7 @@ namespace DSP_Battle
                 int targetIndex = 0;
                 if (Configs.nextWaveState == 3)
                 {
-                    targetIndex = FindTarget(starIndex, planetId, false);
+                    targetIndex = FindTarget(starIndex, planetId);
                 }
 
                 __instance.hasNode = (sphere.GetAutoNodeCount() > 0);
@@ -286,7 +285,7 @@ namespace DSP_Battle
 
                                 VectorLF3 vectorLF2 = dysonRocket.uPos;
                                 //根据是导弹还是火箭确定
-                                if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
+                                if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]) && EnemyShips.ships[MissileTargets[starIndex][i]].state == EnemyShip.State.active)//如果以前的目标敌人还存在
                                 {
                                     vectorLF2 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
                                 }
@@ -301,6 +300,7 @@ namespace DSP_Battle
                                     }
                                     else
                                     {
+                                        missileProtoIds[starIndex][i] = 0;
                                         __instance.RemoveDysonRocket(i);
                                         goto IL_BDF;
                                     }
@@ -432,7 +432,7 @@ namespace DSP_Battle
 
                             VectorLF3 vectorLF5 = dysonRocket.uPos;
                             //之前的目标是否还存活
-                            if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
+                            if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]) && EnemyShips.ships[MissileTargets[starIndex][i]].state == EnemyShip.State.active)//如果以前的目标敌人还存在
                             {
                                 vectorLF5 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
                             }
@@ -447,6 +447,7 @@ namespace DSP_Battle
                                 }
                                 else
                                 {
+                                    missileProtoIds[starIndex][i] = 0;
                                     __instance.RemoveDysonRocket(i);
                                     goto IL_BDF;
                                 }
@@ -506,7 +507,7 @@ namespace DSP_Battle
                                     if (relic2_7Activated) bonus += 1;
                                     if (relic2_15Activated && missileId == 8006) bonus += 9;
                                     damage = Relic.BonusDamage(damage, bonus);
-                                    UIBattleStatistics.RegisterHit(missileId, target.BeAttacked(damage), 0);
+                                    UIBattleStatistics.RegisterHit(missileId, target.BeAttacked(damage, DamageType.missileMain), 0);
                                 }
                                 else
                                 {
@@ -516,6 +517,7 @@ namespace DSP_Battle
                                         {
                                             double distance = (dysonRocket.uPos - EnemyShips.ships[item].uPos).magnitude;
                                             int aoeDamage = damage;
+                                            int realDamage = 0;
                                             if (distance > dmgRange * 0.5 && !relic1_1Activated)
                                             {
                                                 aoeDamage = (int)(damage * (1.0 - (2 * distance - dmgRange) / dmgRange));
@@ -526,8 +528,12 @@ namespace DSP_Battle
                                                 if (relic2_7Activated) bonus += 1;
                                                 if (relic2_15Activated && missileId == 8006) bonus += 9;
                                                 aoeDamage = Relic.BonusDamage(aoeDamage, bonus);
+                                                realDamage = EnemyShips.ships[item].BeAttacked(aoeDamage, DamageType.missileMain);
                                             }
-                                            int realDamage = EnemyShips.ships[item].BeAttacked(aoeDamage);
+                                            else
+                                            {
+                                                realDamage = EnemyShips.ships[item].BeAttacked(aoeDamage, DamageType.missileAoe);
+                                            }
                                             UIBattleStatistics.RegisterHit(missileId, realDamage, 0); //每个目标不再注册新的击中数量，只注册伤害
                                             //引力导弹的强制位移
                                             if (forceDisplacement)
@@ -990,16 +996,21 @@ namespace DSP_Battle
                             {
 
                                 VectorLF3 vectorLF2 = dysonRocket.uPos; //这个值下面立刻会修改
-                                                                        //根据是导弹还是火箭确定
+
+                                bool needFindNewTarget = true;
                                 if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
                                 {
                                     EnemyShip ship = null;
-                                    if (EnemyShips.ships.TryGetValue(MissileTargets[starIndex][i], out ship))
+                                    if (EnemyShips.ships.TryGetValue(MissileTargets[starIndex][i], out ship) && ship.state == EnemyShip.State.active)
+                                    {
+                                        needFindNewTarget = false;
                                         vectorLF2 = ship.uPos - dysonRocket.uPos;
+                                    }
                                 }
-                                else
+
+                                if(needFindNewTarget)
                                 {
-                                    int newTargetId = FindTarget(starIndex, dysonRocket.planetId);
+                                    int newTargetId = FindTarget(starIndex, dysonRocket.planetId, i); // 这个i是种子偏移
                                     if (newTargetId > 0)
                                     {
                                         MissileTargets[starIndex][i] = newTargetId;
@@ -1139,16 +1150,20 @@ namespace DSP_Battle
                         {
 
                             VectorLF3 vectorLF5 = dysonRocket.uPos;
+                            bool needFindNewTarget = true;
                             //之前的目标是否还存活
                             if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
                             {
                                 EnemyShip ship = null;
-                                if (EnemyShips.ships.TryGetValue(MissileTargets[starIndex][i], out ship))
+                                if (EnemyShips.ships.TryGetValue(MissileTargets[starIndex][i], out ship) && ship.state == EnemyShip.State.active)
+                                {
+                                    needFindNewTarget = false;
                                     vectorLF5 = ship.uPos - dysonRocket.uPos;
+                                }
                             }
-                            else
+                            if(needFindNewTarget)
                             {
-                                int newTargetId = FindTarget(starIndex, dysonRocket.planetId);
+                                int newTargetId = FindTarget(starIndex, dysonRocket.planetId, i);
                                 if (newTargetId > 0)
                                 {
                                     MissileTargets[starIndex][i] = newTargetId;
@@ -1220,7 +1235,7 @@ namespace DSP_Battle
                                     if (relic2_7Activated) bonus += 1;
                                     if (relic2_15Activated && missileId == 8006) bonus += 9;
                                     damage = Relic.BonusDamage(damage, bonus);
-                                    UIBattleStatistics.RegisterHit(missileId, target.BeAttacked(damage), 0);
+                                    UIBattleStatistics.RegisterHit(missileId, target.BeAttacked(damage, DamageType.missileMain), 0);
                                 }
                                 else
                                 {
@@ -1233,6 +1248,7 @@ namespace DSP_Battle
                                             {
                                                 double distance = (dysonRocket.uPos - hitShip.uPos).magnitude;
                                                 int aoeDamage = damage;
+                                                int realDamage = 0;
                                                 if (distance > dmgRange * 0.5 && !relic1_1Activated) // relic1-1虚空爆发 范围效果不衰减
                                                 {
                                                     aoeDamage = (int)(damage * (1.0 - (2 * distance - dmgRange) / dmgRange));
@@ -1243,8 +1259,12 @@ namespace DSP_Battle
                                                     if (relic2_7Activated) bonus += 1;
                                                     if (relic2_15Activated && missileId == 8006) bonus += 9;
                                                     aoeDamage = Relic.BonusDamage(aoeDamage, bonus);
+                                                    realDamage = hitShip.BeAttacked(aoeDamage, DamageType.missileMain);
                                                 }
-                                                int realDamage = hitShip.BeAttacked(aoeDamage);
+                                                else
+                                                {
+                                                    realDamage = hitShip.BeAttacked(aoeDamage, DamageType.missileAoe);
+                                                }
                                                 UIBattleStatistics.RegisterHit(missileId, realDamage, 0); //每个目标不再注册新的击中数量，只注册伤害
                                                 //引力导弹的强制位移
                                                 if (forceDisplacement)
@@ -1683,10 +1703,10 @@ namespace DSP_Battle
             return (id - 8003) % 3 + 8004;
         }
 
-        private static int FindTarget(int starIndex, int planetId, bool showLog = true)
+        private static int FindTarget(int starIndex, int planetId, int randSeed = 0, bool showLog = true)
         {
             int index;
-            if (DspBattlePlugin.randSeed.NextDouble() < 0.5)
+            if (Utils.RandDouble() < 0.5)
             {
                 index = FindNearestTarget(EnemyShips.minPlanetDisSortedShips[starIndex][planetId]);
                 if (index > 0)
@@ -1695,12 +1715,12 @@ namespace DSP_Battle
                 }
             }
 
-            index = FindRandTarget(EnemyShips.minPlanetDisSortedShips[starIndex][planetId]);
+            index = FindRandTarget(EnemyShips.minPlanetDisSortedShips[starIndex][planetId], randSeed);
             if (index > 0)
             {
                 return index;
             }
-            return FindRandTarget(EnemyShips.minTargetDisSortedShips[starIndex]);
+            return FindRandTarget(EnemyShips.minTargetDisSortedShips[starIndex], randSeed);
         }
 
         private static int FindNearestTarget(List<EnemyShip> ships)
@@ -1713,10 +1733,10 @@ namespace DSP_Battle
             return -1;
         }
 
-        private static int FindRandTarget(List<EnemyShip> ships)
+        private static int FindRandTarget(List<EnemyShip> ships, int randSeed = 0)
         {
             if (ships.Count == 0) return -1;
-            return ships[DspBattlePlugin.randSeed.Next(0, ships.Count)].shipIndex;
+            return ships[Utils.RandInt(0, ships.Count)].shipIndex;
         }
 
 

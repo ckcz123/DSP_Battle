@@ -54,16 +54,26 @@ Also welcome to anyone who'd like to contribute to the mod, better if you have e
 
 ## Update Log
 
-### 2022-10-27 V2.0.10
+### 2022-11-06 V2.1.1
 
- - Increase the acculumator capacity and charging speed
- - 大幅增加电池的蓄电量和放在地上的充放电速度
- - Optimize the performance in battle
- - 小幅优化战斗过程中的游戏性能
- - Fix beam still consuming power after battle end
- - 修复相位裂解炮在战斗结束后仍然耗电的问题
- - Fix rank badge UI hidden in some resolution
- - 修复徽章在一些分辨率夏不可见的问题
+ - Fix performance issue in battle caused by cannon
+ - 修复战斗过程中炮弹寻敌的卡顿问题
+ - Fix missile target selection bug
+ - 修复火箭的目标选取的bug
+ - Antimatter energy fuel receipt won't be affected by relic
+ - 反物质燃料棒的配方不会被圣物效果所影响
+ - Fix relic random issue
+ - 修复圣物随机过程的bug
+
+### 2022-10-24 V2.1.0
+ - Added strong wave and relic system
+ - 新增精英级别强大的进攻和遗物系统
+ - A strong wave will appear in every 5 waves. Each strong wave will last at least 3 minutes. The enemy ship will also gain additional buffs
+ - 强大的进攻会在每5次总计的进攻中出现，每次强大的进攻至少持续3分钟，敌舰也将获得加成效果
+ - Relic will be found after a strong wave. Players can choose from randomly refreshing relics. Each relic has a different powerful bonus effect. They may significantly simplify the production line or strengthen the combat ability
+ - 强大的进攻结束后会掉落圣物，玩家可以从随机刷新的圣物中选择，圣物均带有长久性的强大的加成效果，他们可能大幅简化产线或强化战斗能力
+ - New BGM before, during and after the invasion
+ - 战斗前夕、战斗中和结束后均加入了全新的BGM
 
 ### 2022-10-24 V2.0.9
  - Tiny fix
@@ -174,6 +184,6 @@ Also welcome to anyone who'd like to contribute to the mod, better if you have e
  - Fix UI on small resolution
  - 修复低分辨率下的显示问题
 
-### 2022-03-167 V1.0.0
+### 2022-03-17 V1.0.0
  - Initial Version
  - 初始版本
