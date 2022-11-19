@@ -17,8 +17,9 @@ namespace DSP_Battle
 
         //不存档的设定参数
         public static int relicHoldMax = 8; // 最多可以持有的遗物数
-        public static int[] maxRelic = { 11, 12, 18, 18 }; // 当前版本各种类型的遗物各有多少种，每种类型均不能大于30
+        public static int[] relicNumByType = { 11, 12, 18, 18 }; // 当前版本各种类型的遗物各有多少种，每种类型均不能大于30
         public static double[] relicTypeProbability = { 0.03, 0.09, 0.2, 1 }; // 各类型遗物刷新的概率，注意不是权重，是有次序地判断随机数
+        public static double[] relicRemoveProbabilityByRelicCount = { 0, 0, 0, 0, 0.05, 0.1, 0.12, 0.15, 1, 1, 1 }; // 拥有i个reilc时，第三个槽位刷新的是删除relic的概率
         public static double firstRelicIsRare = 0.5; // 第一个遗物至少是稀有的概率
         public static bool canSelectNewRelic = false; // 当canSelectNewRelic为true时点按按钮才是有效的选择
         public static int[] alternateRelics = { -1, -1, -1 }; // 三个备选，百位数字代表稀有度类型，0代表传说，个位十位是遗物序号。
@@ -60,10 +61,6 @@ namespace DSP_Battle
 
         public static int AddRelic(int type, int num)
         {
-            if (type == 9 && num == 99) // 玩家准备删除一个低稀有度的遗物
-            {
-                AskRemoveRandomRelic();
-            }
             if (num > 30) return -1; // 序号不存在
             if (type > 3 || type < 0) return -2; // 稀有度不存在
             if ((relics[type] & 1 << num) > 0) return 0; // 已有
@@ -114,53 +111,30 @@ namespace DSP_Battle
             return 1;
         }
 
-        public static void AskRemoveRandomRelic()
+        public static void AskRemoveRelic(int removeType, int removeNum)
         {
-            UIMessageBox.Show("删除遗物确认标题".Translate(), "删除遗物确认警告".Translate(),
+            if (removeType > 3 || removeNum > 30)
+            {
+                UIMessageBox.Show("Failed".Translate(), "Failed. Unknown relic.".Translate(), "确定".Translate(), 1);
+                RegretRemoveRelic();
+                return;
+            }
+            else if (!Relic.HaveRelic(removeType, removeNum))
+            {
+                UIMessageBox.Show("Failed".Translate(), "Failed. Relic not have.".Translate(), "确定".Translate(), 1);
+                RegretRemoveRelic();
+                return;
+            }
+            UIMessageBox.Show("删除遗物确认标题".Translate(), String.Format( "删除遗物确认警告".Translate(), ("遗物名称" + removeType.ToString() + "-" + removeNum.ToString()).Translate().Split('\n')[0]),
             "否".Translate(), "是".Translate(), 1, new UIMessageBox.Response(RegretRemoveRelic), new UIMessageBox.Response(() =>
             {
-                int removeType = -1;
-                int removeNum = -1;
-                if (Relic.GetRelicCount(3) > 0)
-                {
-                    List<int> canRemove = new List<int>();
-                    for (int i = 0; i < maxRelic[3]; i++)
-                    {
-                        if (HaveRelic(3, i)) canRemove.Add(i);
-                    }
-                    if (canRemove.Count > 0)
-                    {
-                        removeType = 3;
-                        removeNum = canRemove[Utils.RandInt(0, canRemove.Count)];
-                        relics[3] = relics[3] ^ 1 << removeNum;
-                    }
-                }
-                else
-                {
-                    List<int> canRemove = new List<int>();
-                    for (int i = 0; i < maxRelic[2]; i++)
-                    {
-                        if (HaveRelic(2, i)) canRemove.Add(i);
-                    }
-                    if (canRemove.Count > 0)
-                    {
-                        removeType = 2;
-                        removeNum = canRemove[Utils.RandInt(0, canRemove.Count)];
-                        relics[2] = relics[2] ^ 1 << removeNum;
-                    }
-                }
-                if (removeType == 2 || removeType == 3)
-                {
-                    UIMessageBox.Show("成功移除！".Translate(), "已移除遗物描述".Translate() + ("遗物名称" + removeType.ToString() + "-" + removeNum.ToString()).Translate().Split('\n')[0], "确定".Translate(), 1);
+                relics[removeType] = relics[removeType] ^ 1 << removeNum;
 
-                    UIRelic.CloseSelectionWindow();
-                    UIRelic.RefreshSlotsWindowUI();
-                }
-                else
-                {
-                    UIMessageBox.Show("未能移除！".Translate(), "未能移除遗物描述".Translate(), "确定".Translate(), 1);
-                    RegretRemoveRelic();
-                }
+                //UIMessageBox.Show("成功移除！".Translate(), "已移除遗物描述".Translate() + ("遗物名称" + removeType.ToString() + "-" + removeNum.ToString()).Translate().Split('\n')[0], "确定".Translate(), 1);
+
+                UIRelic.CloseSelectionWindow();
+                UIRelic.RefreshSlotsWindowUI();
+                UIRelic.HideSlots();
             }));
         }
 

@@ -423,10 +423,11 @@ namespace DSP_Battle
             // 遗物
             ProtoRegistry.RegisterString("发现异星圣物", "Alien Relic Found", "发现异星圣物");
             ProtoRegistry.RegisterString("解译异星圣物提示", 
-                "Select one decoding rail from the following three to obtain the corresponding buff. \n You can use alien matrix to seek new decoding rail with different available effects. Each re-random opportunity makes the relic  more unstable, so that the next re-random cost will be doubled.", 
-                "从以下三个解码轨中选取一个进行解译以获取对应的圣物加成。\n可以使用异星矩阵重随解码轨来发现新的可用效果，每次重新随机会使圣物更加不稳定，从而使下次重新随机的消耗翻倍。");
+                "Select one decoding rail from the following three to obtain the corresponding buff (or remove a relic). \n You can use alien matrix to seek new decoding rail with different available effects. Each re-random opportunity makes the relic  more unstable, so that the next re-random cost will be doubled.", 
+                "从以下三个解码轨中选取一个进行解译以获取对应的圣物加成(或移除圣物)。\n可以使用异星矩阵重随解码轨来发现新的可用效果，每次重新随机会使圣物更加不稳定，从而使下次重新随机的消耗翻倍。");
             ProtoRegistry.RegisterString("重新随机", "Roll", "重新随机");
             ProtoRegistry.RegisterString("免费", "free", "免费");
+            ProtoRegistry.RegisterString("移除遗物", "Remove", "移除");
             ProtoRegistry.RegisterString("放弃解译", "Abort Study         +", "放弃解译         +");
             ProtoRegistry.RegisterString("删除遗物名称", "Remove Relic", "移除圣物");
             ProtoRegistry.RegisterString("删除遗物描述", 
@@ -434,8 +435,8 @@ namespace DSP_Battle
                 "随机移除一个已拥有的[普通]稀有度的圣物，并返还该圣物所占用的圣物槽位\n如果没有[普通]圣物，则随机移除一个已拥有的[稀有]圣物");
             ProtoRegistry.RegisterString("删除遗物确认标题", "Confirm Remove Relic", "确认移除圣物");
             ProtoRegistry.RegisterString("删除遗物确认警告",
-                "This will randomly remove a [common] relic that you already have, and return the slot occupied by the relic. \nIf you don't have any [common] relic, then randomly remove a [rare] relic.", 
-                "这将随机移除一个你已拥有的<color=#30b530>[普通]</color>稀有度的圣物，并返还该圣物所占用的圣物槽位\n如果你没有任何<color=#30b530>[普通]</color>圣物，则随机移除一个你已拥有的<color=#2080d0>[稀有]</color>圣物！");
+                "This will remove {0} and return the slot occupied by the relic!", 
+                "这将移除圣物 {0}，并返还该圣物所占用的圣物槽位！");
             ProtoRegistry.RegisterString("成功移除！", "Relic removed", "成功移除圣物");
             ProtoRegistry.RegisterString("已移除遗物描述", "You've removed relic ", "你已移除");
             ProtoRegistry.RegisterString("未能移除！", "No relic can be removed", "没有可移除的圣物");
