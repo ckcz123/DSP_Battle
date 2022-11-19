@@ -232,6 +232,8 @@ namespace DSP_Battle
             UIBattleStatistics.InitSelectDifficulty();
             EnemyShipUIRenderer.Init();
             EnemyShipRenderer.Init();
+            EnemyTitanShipUIRenderer.Init();
+            EnemyTitanShipRenderer.Init();
             BattleProtos.ReCheckTechUnlockRecipes();
             BattleBGMController.InitWhenLoad();
         }
@@ -255,6 +257,8 @@ namespace DSP_Battle
             UIBattleStatistics.InitSelectDifficulty();
             EnemyShipUIRenderer.Init();
             EnemyShipRenderer.Init();
+            EnemyTitanShipUIRenderer.Init();
+            EnemyTitanShipRenderer.Init();
             BattleProtos.ReCheckTechUnlockRecipes();
             BattleBGMController.InitWhenLoad();
         }

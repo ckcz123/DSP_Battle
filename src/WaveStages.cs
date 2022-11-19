@@ -108,6 +108,15 @@ namespace DSP_Battle
             }
             int avg = Configs.nextWaveIntensity / (Configs.enemyIntensity[0] + Configs.enemyIntensity[1]
                 + Configs.enemyIntensity[2] + Configs.enemyIntensity[3] + Configs.enemyIntensity[4]);
+            if (true) // 生成泰坦
+            {
+                Configs.nextWaveEnemy[5] = 1;
+                intensity -= Configs.enemyIntensity[5];
+            }
+            else
+            {
+                Configs.nextWaveEnemy[5] = 0;
+            }
             for (int i = 4; i >= 1; --i)
             {
                 if (Configs.nextWaveIntensity <= 1000)
@@ -189,7 +198,7 @@ namespace DSP_Battle
         {
             if (time < Configs.nextWaveFrameIndex) return;
             int u = 0;
-            for (int i = 0; i <= 4; ++i)
+            for (int i = 0; i <= 5; ++i)
             {
                 for (int j = 0; j < Configs.nextWaveEnemy[i]; ++j)
                 {

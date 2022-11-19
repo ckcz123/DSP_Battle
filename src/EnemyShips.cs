@@ -471,6 +471,7 @@ namespace DSP_Battle
         public static void LogisticShipUIRenderer_Update(ref LogisticShipUIRenderer __instance)
         {
             EnemyShipUIRenderer.Update(__instance.uiStarmap);
+            EnemyTitanShipUIRenderer.Update(__instance.uiStarmap);
         }
 
         [HarmonyPostfix]
@@ -478,6 +479,7 @@ namespace DSP_Battle
         public static void LogisticShipUIRenderer_Draw(ref LogisticShipUIRenderer __instance)
         {
             EnemyShipUIRenderer.Draw(__instance);
+            EnemyTitanShipUIRenderer.Draw(__instance);
         }
 
         [HarmonyPostfix]
@@ -485,6 +487,7 @@ namespace DSP_Battle
         public static void LogisticShipRenderer_Update(ref LogisticShipRenderer __instance)
         {
             EnemyShipRenderer.Update();
+            EnemyTitanShipRenderer.Update();
         }
 
         [HarmonyPostfix]
@@ -492,6 +495,7 @@ namespace DSP_Battle
         public static void LogisticShipRenderer_Draw(ref LogisticShipRenderer __instance)
         {
             EnemyShipRenderer.Draw();
+            EnemyTitanShipRenderer.Draw();
         }
 
         [HarmonyPostfix]
@@ -499,6 +503,7 @@ namespace DSP_Battle
         public static void LogisticShipRenderer_Destroy(ref LogisticShipRenderer __instance)
         {
             EnemyShipRenderer.Destroy();
+            EnemyTitanShipRenderer.Destroy();
         }
 
         [HarmonyPostfix]
@@ -506,6 +511,7 @@ namespace DSP_Battle
         public static void LogisticShipUIRenderer_Destroy(ref LogisticShipUIRenderer __instance)
         {
             EnemyShipUIRenderer.Destroy();
+            EnemyTitanShipUIRenderer.Destroy();
         }
 
         public static void Export(BinaryWriter w)

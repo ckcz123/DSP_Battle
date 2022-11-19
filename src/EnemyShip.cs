@@ -330,7 +330,7 @@ namespace DSP_Battle
                 {
                     if (shipTypeNum != 2)
                         isBlockedByShield = true;
-                    else
+                    else if(shipTypeNum != 5) // 泰坦一但被block就永远不再移动，并且会一直开火无限射程
                         isBlockedByShield = false;
                     //如果在护盾>有效护盾（暂定50000）的情况下撞上了护盾，船承受巨量伤害，同时也会对护盾造成伤害。自爆船将会造成巨量伤害
                     if((GameMain.galaxy.PlanetById(planetId).uPosition - uPos).magnitude <= ShieldRenderer.shieldRadius * 810)
@@ -364,10 +364,10 @@ namespace DSP_Battle
 
                     }
                 }
-                else
+                else if(shipTypeNum!=5)
                     isBlockedByShield = false;
             }
-            else
+            else if(shipTypeNum!=5)
             {
                 isFiring = false;
                 isBlockedByShield = false;
@@ -375,7 +375,8 @@ namespace DSP_Battle
             if (isFiring)
             {
                 if (fireStart == 0) fireStart = GameMain.instance.timei;
-            } else
+            } 
+            else
             {
                 fireStart = 0;
             }
@@ -406,6 +407,19 @@ namespace DSP_Battle
                 {
                     //造成伤害
                     int planetId = shipData.planetB;
+                    if (shipTypeNum == 5 && ShieldGenerator.currentShield[planetId] < ShieldRenderer.shieldRenderMin) // 泰坦在把当前目标星球的盾打光之后，不会移动，会寻找下一个有盾的行星继续打
+                    {
+                        int planetCount = GameMain.galaxy.stars[Configs.nextWaveStarIndex].planetCount;
+                        for (int i = planetCount - 1; i >= 0 ; i--)
+                        {
+                            planetId = GameMain.galaxy.stars[Configs.nextWaveStarIndex].planets[i].id;
+                            if (ShieldGenerator.currentShield[planetId] > ShieldRenderer.shieldRenderMin)
+                            {
+                                shipData.planetB = planetId;
+                                break;
+                            }
+                        }
+                    }
                     if (fireStart == 0) fireStart = GameMain.instance.timei;
                     double rootNum = Relic.HaveRelic(2, 16) ? 1.5 : 2.0; // relic2-16 效果
                     int damage = (int)(Configs.enemyDamagePerBullet[shipTypeNum] * Math.Pow(rootNum, (GameMain.instance.timei - fireStart) / 3600.0));
@@ -453,7 +467,7 @@ namespace DSP_Battle
                     {
                         int bulletIndex = swarm.AddBullet(new SailBullet
                         {
-                            maxt = 0.1f,
+                            maxt = 0.2f,
                             lBegin = new Vector3(0, 0, 0),
                             uEndVel = new Vector3(0, 0, 0),
                             uBegin = uPos,
@@ -461,6 +475,22 @@ namespace DSP_Battle
                         }, 1);
 
                         swarm.bulletPool[bulletIndex].state = 0;
+                        if (intensity >= Configs.enemyIntensity[5])
+                        {
+                            for (int i = 0; i < 5; i++)
+                            {
+                                int bulletAIndex = swarm.AddBullet(new SailBullet
+                                {
+                                    maxt = 0.2f,
+                                    lBegin = new Vector3(0, 0, 0),
+                                    uEndVel = new Vector3(0, 0, 0),
+                                    uBegin = uPos + Utils.RandPosDelta()*10,
+                                    uEnd = (uPos - GameMain.galaxy.PlanetById(planetId).uPosition).normalized * ShieldRenderer.shieldRadius * 820 + GameMain.galaxy.PlanetById(planetId).uPosition
+                                }, 1);
+
+                                swarm.bulletPool[bulletAIndex].state = 0;
+                            }
+                        }
                     }
                 }
 

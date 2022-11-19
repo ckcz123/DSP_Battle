@@ -72,22 +72,22 @@ namespace DSP_Battle
 
         public static int[] enemyRange = new int[10];
 
-        public static int[] enemyItemIds = new int[] { 8040, 8041, 8042, 8043, 8044, 8044 };
+        public static int[] enemyItemIds = new int[] { 8040, 8041, 8042, 8043, 8044, 8045 };
         // public static int[] enemyItemIds = new int[] { 6001, 6002, 6003, 6004, 6005, 6006 };
 
-        public static int[] enemyLandCnt = new int[] { 1, 3, 5, 5, 10000 };
+        public static int[] enemyLandCnt = new int[] { 1, 3, 5, 5, 10000, 1 };
 
-        public static int[] enemyFireInterval = new int[] {120, 60, int.MaxValue, 60, 60 }; //每攻击一次间隔的tick0
+        public static int[] enemyFireInterval = new int[] {120, 60, int.MaxValue, 60, 60, 1 }; //每攻击一次间隔的tick0
 
-        public static int[] enemyFireRange = new int[] { 5000, 8000, 15000, 15000, 30000 }; //射程
+        public static int[] enemyFireRange = new int[] { 5000, 8000, 15000, 15000, 30000, 300000 }; //射程
 
-        public static int[] enemyDamagePerBullet = new int[] { 500, 500, 200000, 500, 2000 }; //dps = 250,500,-,500,2000, dps per intensity = 250,125,-,42,133
+        public static int[] enemyDamagePerBullet = new int[] { 500, 500, 200000, 500, 2000, 150 }; //dps = 250,500,-,500,2000, dps per intensity = 250,125,-,42,133
         //public static int[] enemyDamagePerBullet = new int[] { 2, 2, 3, 200, 2 };
 
         //public static int[] enemyBulletSpeed = new int[] {20000, 30000, 50000, 80000, 150000 }; //虽然有speed设置，但是为了减少运算，子弹伤害是在发射时就结算的。speed应该设置的比较大来减少视觉上的误差
 
-        public static int[] enemyIntensity2TypeMap = new int[] { 0, 0, 0, 0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4 };
-        //-------------------------------------------------------0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
+        public static int[] enemyIntensity2TypeMap = new int[] { 0, 0, 0, 0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5};
+        //-------------------------------------------------------0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43
 
         public static int eliteDurationFrames = 3600 * 3; // 精英进攻持续的时间
 
@@ -265,6 +265,11 @@ namespace DSP_Battle
             enemyHp[4] = 80000; // config.Bind("config", "enemy5Hp", defaultValue: 80000, "敌方飞船5血量").Value;
             enemySpeed[4] = 1500f; // config.Bind("config", "enemy5Speed", defaultValue: 3000f, "敌方飞船5速度（米每秒）").Value;
             enemyRange[4] = 100; // config.Bind("config", "enemy5Range", defaultValue: 100, "敌方飞船5破坏范围").Value;
+
+            enemyIntensity[5] = 40; // 对敌舰全体提供BUFF或具有独特效果
+            enemyHp[5] = 2000000; // config.Bind("config", "enemy5Hp", defaultValue: 80000, "敌方飞船5血量").Value;
+            enemySpeed[5] = 500f; // config.Bind("config", "enemy5Speed", defaultValue: 3000f, "敌方飞船5速度（米每秒）").Value;
+            enemyRange[5] = 100; // config.Bind("config", "enemy5Range", defaultValue: 100, "敌方飞船5破坏范围").Value;
 
             _wormholeRange = 20000; // config.Bind("config", "wormholeRange", defaultValue: 20000, "初始虫洞刷新范围，米为单位").Value;
 
