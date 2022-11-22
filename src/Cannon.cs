@@ -20,6 +20,8 @@ namespace DSP_Battle
         public static System.Random rand = new System.Random();
         public static int indexBegins = 0; // 寻敌遍历时开始的index，每帧寻敌最多遍历3次，每次重新排序则置0
 
+        public static ConcurrentDictionary<int, ConcurrentDictionary<int, int>> cannonTargets = new ConcurrentDictionary<int, ConcurrentDictionary<int, int>>(); //cannonTargets[planetId][entityId] = 目标的shipIndex
+
         /// <summary>
         /// 每帧调用刷新子弹终点
         /// </summary>
@@ -69,6 +71,7 @@ namespace DSP_Battle
             {
                 bulletTargets = new List<ConcurrentDictionary<int, int>>();
                 bulletIds = new List<ConcurrentDictionary<int, int>>();
+                cannonTargets = new ConcurrentDictionary<int, ConcurrentDictionary<int, int>>();
 
                 for (int i = 0; i < GameMain.galaxy.starCount; i++)
                 {
@@ -173,6 +176,7 @@ namespace DSP_Battle
         private static uint CannonFire(ref EjectorComponent __instance, float power, DysonSwarm swarm, AstroData[] astroPoses, AnimData[] animPool, int[] consumeRegister, int gmProtoId)
         {
             int planetId = __instance.planetId;
+            int entityId = __instance.entityId;
             int starIndex = planetId / 100 - 1;
             int calcOrbitId = __instance.orbitId;
             uint result = 0;
@@ -240,8 +244,29 @@ namespace DSP_Battle
                 Interlocked.Exchange(ref indexBegins, 0);
                 begins = 0;
             }
+
+            bool needFindNewTarget = true;
+            EnemyShip lastTargetShip = null;
+            if (cannonTargets.ContainsKey(planetId))
+            {
+                if (cannonTargets[planetId].ContainsKey(entityId))
+                {
+                    int lastTargetShipIndex = cannonTargets[planetId][entityId];
+                    if (EnemyShips.ships.ContainsKey(lastTargetShipIndex) && EnemyShips.ships[lastTargetShipIndex].state == EnemyShip.State.active)
+                    {
+                        lastTargetShip = EnemyShips.ships[lastTargetShipIndex];
+                        needFindNewTarget = false; // 老目标存在的话，在下面的循环中首先判断老目标是否合法（不被阻挡、俯仰角合适等）
+                    }
+                }
+            }
             for (int gm = begins; gm < loopNum && gm < begins+3; gm++)
             {
+                if (!needFindNewTarget && gm > begins) // 说明上一个循环判定了原目标，且原目标无法作为合法目标，因此重新开始判定目标
+                {
+                    needFindNewTarget = true;
+                    gm = begins;
+                }
+
                 //新增的，每次循环开始必须重置
                 __instance.targetState = EjectorComponent.ETargetState.OK;
                 flag = true;
@@ -252,9 +277,17 @@ namespace DSP_Battle
                     flag2 = __instance.bulletCount > 4;
 
                 int shipIdx = 0;//ship总表中的唯一标识：index
-                vectorLF2 = sortedShips[gm].uPos;
-                shipIdx = sortedShips[gm].shipIndex;
-                if (!EnemyShips.ships.ContainsKey(shipIdx) || sortedShips[gm].state != EnemyShip.State.active) continue;
+                EnemyShip targetShip = sortedShips[gm];
+                if (!needFindNewTarget) // 如果原本的目标存在，则先判断原本的目标，此时在这个循环中，gm=begins的ship并没有真的被计算俯仰角等合法性判断，因此假若原本的目标失效，进入了下个循环后要根据情况重置gm=begins（见循环节开头）
+                {
+                    targetShip = lastTargetShip;
+                }
+                vectorLF2 = targetShip.uPos;
+                shipIdx = targetShip.shipIndex;
+                
+                if(needFindNewTarget && (!EnemyShips.ships.ContainsKey(shipIdx) || targetShip.state != EnemyShip.State.active)) continue;
+
+
                 VectorLF3 vectorLF3 = vectorLF2 - vectorLF;
                 __instance.targetDist = vectorLF3.magnitude;
                 vectorLF3.x /= __instance.targetDist;
@@ -299,6 +332,15 @@ namespace DSP_Battle
                 if (EnemyShips.ships.ContainsKey(shipIdx) && EnemyShips.ships[shipIdx].state == EnemyShip.State.active && __instance.targetState != EjectorComponent.ETargetState.Blocked && __instance.targetState != EjectorComponent.ETargetState.AngleLimit)
                 {
                     curTarget = EnemyShips.ships[shipIdx]; //设定目标
+                    if (!cannonTargets.ContainsKey(planetId))
+                    {
+                        cannonTargets.TryAdd(planetId, new ConcurrentDictionary<int, int>());
+                        cannonTargets[planetId].TryAdd(entityId, shipIdx);
+                    }
+                    else
+                    {
+                        cannonTargets[planetId].AddOrUpdate(entityId, shipIdx, (x, y) => shipIdx);
+                    }
                     if (EjectorUIPatch.needToRefreshTarget) //如果需要刷新目标
                     {
                         if (EjectorUIPatch.curEjectorPlanetId == __instance.planetId && EjectorUIPatch.curEjectorEntityId == __instance.entityId)
