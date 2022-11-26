@@ -275,6 +275,8 @@ namespace DSP_Battle
                 if(calcShieldInc.TryGetValue(planetId, out inc) && currentShield.GetOrAdd(planetId,0) < item.Value)
                 {
                     inc *= 30;
+                    if (Relic.HaveRelic(2, 0)) // relic2-0提高充能速度
+                        inc *= 1.5;
                     currentShield.AddOrUpdate(planetId, (int) inc, (x, y) => y + (int) inc);
                     if (currentShield[planetId] > item.Value)
                         currentShield.AddOrUpdate(planetId, item.Value, (x, y) => item.Value);
@@ -283,7 +285,7 @@ namespace DSP_Battle
 
             if(shieldUIPlanetId!=0)
             {
-                curShieldIncUI = (int) calcShieldInc.GetOrAdd(shieldUIPlanetId, 0);
+                curShieldIncUI = (int)(calcShieldInc.GetOrAdd(shieldUIPlanetId, 0) * (Relic.HaveRelic(2, 0) ? 1.5 : 1.0)); // relic2-0提高充能速度 面板ui显示
                 curShieldGenCntUI = calcShieldGenCount.GetOrAdd(shieldUIPlanetId, 0);
             }
 

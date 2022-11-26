@@ -145,7 +145,7 @@ namespace DSP_Battle
 
         public static bool HaveRelic(int type, int num)
         {
-            if (Configs.developerMode && num>9) return true;
+            //if (Configs.developerMode && num>9) return true;
             if (type > 3 || type < 0 || num > 30) return false;
             if ((relics[type] & (1 << num)) > 0) return true;
             return false;
@@ -700,8 +700,11 @@ namespace DSP_Battle
                                 for (int i = 0; i < GameMain.galaxy.stars[starIndex].planetCount; i++)
                                 {
                                     int planetId = (starIndex + 1) * 100 + i + 1;
+                                    int shieldGen = (int)(energyPerTick / 200000);
                                     if (ShieldGenerator.currentShield.GetOrAdd(planetId, 0) < ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0))
-                                        ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => y + (int)(energyPerTick / 200000));
+                                        ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => y + shieldGen);
+                                    if (starIndex == Configs.nextWaveStarIndex && Configs.nextWaveState == 3)
+                                        UIBattleStatistics.RegisterShieldRestoreInBattle(shieldGen);
                                 }
                             }
                         }

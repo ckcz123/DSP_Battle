@@ -426,7 +426,9 @@ namespace DSP_Battle
                                 if (Configs.relic2_17Activated > 0)
                                 {
                                     Interlocked.Exchange(ref Configs.relic2_17Activated, 0);
-                                    ShieldGenerator.currentShield.AddOrUpdate(planetId, ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0) / 2, (x, y) => ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0) / 2);
+                                    int restored = ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0) / 2;
+                                    ShieldGenerator.currentShield.AddOrUpdate(planetId, restored, (x, y) => restored);
+                                    UIBattleStatistics.RegisterShieldRestoreInBattle(restored);
                                 }
                                 else
                                 {
