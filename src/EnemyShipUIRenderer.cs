@@ -149,17 +149,44 @@ namespace DSP_Battle
             if (!meshAlreadySet)
             {
                 shipMesh = Resources.Load<Mesh>("test/tgs demo/enemy-easteregg");
+                //shipMesh.Clear();
+                Mesh shipMeshSmall = Resources.Load<Mesh>("test/tgs demo/enemy-base");
                 //shipMesh = Resources.Load<Mesh>("entities/models/space capsule 1/space-capsule-1");
-                var oriVerts = shipMesh.vertices;
-                for (int i = 0; i < oriVerts.Length; i++)
+                //var oriVerts = shipMesh.vertices;
+                var smallVerts = shipMeshSmall.vertices;
+                int vLen = smallVerts.Length;
+                List<Vector3> newVerts = new List<Vector3>();
+                for (int i = 0; i < vLen; i++)
                 {
-                    Vector3 vert = oriVerts[i];
-                    vert.x *= 0.35f;
-                    vert.y *= 0.35f;
-                    vert.z *= 0.4f;
-                    oriVerts[i] = vert;
+                    float x = smallVerts[i].x * 16;
+                    float y = smallVerts[i].y * 16;
+                    float z = smallVerts[i].z * 8;
+                    //z = z < -50 ? z * 2 : z;
+                    newVerts.Add(new Vector3(x, y, z));
                 }
-                shipMesh.vertices = oriVerts;
+                shipMesh.SetUVs(0, new List<Vector2>( shipMeshSmall.uv));
+                shipMesh.SetUVs(1, new List<Vector2>(shipMeshSmall.uv2));
+                shipMesh.SetUVs(2, new List<Vector2>(shipMeshSmall.uv3));
+                shipMesh.SetUVs(3, new List<Vector2>(shipMeshSmall.uv4));
+                shipMesh.SetUVs(4, new List<Vector2>(shipMeshSmall.uv5));
+                shipMesh.SetUVs(5, new List<Vector2>(shipMeshSmall.uv6));
+                shipMesh.SetUVs(6, new List<Vector2>(shipMeshSmall.uv7));
+                shipMesh.SetUVs(7, new List<Vector2>(shipMeshSmall.uv8));
+                shipMesh.subMeshCount = shipMeshSmall.subMeshCount;
+                Utils.Log("MeshCount = " + shipMeshSmall.subMeshCount.ToString());
+                for (int i = 0; i < shipMeshSmall.subMeshCount; i++)
+                {
+                    shipMesh.SetIndices(shipMeshSmall.GetIndices(i), MeshTopology.Points, i);
+                }
+                //shipMesh.SetTriangles(shipMeshSmall.triangles, shipMeshSmall.subMeshCount);
+
+                //shipMesh.SetTangents(new List<Vector4>(shipMeshSmall.tangents));
+                shipMesh.SetVertices(newVerts);
+                //shipMesh.RecalculateNormals();
+                shipMesh.RecalculateBounds();
+                //shipMesh.RecalculateTangents();
+
+                //shipMesh.bounds = shipMeshSmall.bounds;
                 meshAlreadySet = true;
             }
 
@@ -169,6 +196,7 @@ namespace DSP_Battle
             argBuffer = new ComputeBuffer(25, 4, ComputeBufferType.DrawIndirect);
             argArr = new uint[25];
         }
+
 
         public static void Expand2x()
         {

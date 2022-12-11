@@ -793,7 +793,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterItem(8044, "战列舰".Translate(), "敌船4".Translate(), "Assets/DSPBattle/enemyShip4", 9999, 200,
                 EItemType.Component, ProtoRegistry.GetDefaultIconDesc(new Color(1f, 0f, 0.6f), new Color(1f, 0f, 0.6f), new Color(1f, 0f, 0.6f), new Color(1f, 0f, 0.6f)));
             ProtoRegistry.RegisterItem(8045, "泰坦".Translate(), "敌船5".Translate(), "Assets/DSPBattle/enemyShip5", 9999, 200,
-               EItemType.Component, ProtoRegistry.GetDefaultIconDesc(new Color(0.5f, 0f, 0.7f), new Color(0.5f, 0f, 0.7f), new Color(0.5f, 0f, 0.7f), new Color(0.5f, 0f, 0.7f)));
+               EItemType.Component, ProtoRegistry.GetDefaultIconDesc(new Color(0.09f, 0.045f, 0f), new Color(0.09f, 0.045f, 0f), new Color(0.09f, 0.045f, 0f), new Color(0.09f, 0.045f, 0f)));
 
             //ProtoRegistry.RegisterRecipe(820, ERecipeType.Assemble, 1, new int[] { 1101 }, new int[] { 1 }, new int[] { 8040 }, new int[] { 1 }, "测试用1",
             //    1901, 9999, "Assets/DSPBattle/enemyShip");

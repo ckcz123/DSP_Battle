@@ -329,8 +329,15 @@ namespace DSP_Battle
                 if (ShieldGenerator.currentShield[planetId] > ShieldRenderer.shieldRenderMin && distanceToTarget <= Configs.enemyFireRange[shipTypeNum] * 0.9f)
                 {
                     if (shipTypeNum != 2)
-                        isBlockedByShield = true;
-                    else if(shipTypeNum != 5) // 泰坦一但被block就永远不再移动，并且会一直开火无限射程
+                    {
+                        if (shipTypeNum != 5)
+                            isBlockedByShield = true;
+                        else if ((uPos - wormholePos).magnitude > 10000 || distanceToTarget <= 5000) // 泰坦必须离开出生的虫洞一定距离才会静止，但不能离星球太近
+                            isBlockedByShield = true;
+                        else
+                            isBlockedByShield = false;
+                    }
+                    else if (shipTypeNum != 5) // 泰坦一但被block就永远不再移动，并且会一直开火无限射程
                         isBlockedByShield = false;
                     //如果在护盾>有效护盾（暂定50000）的情况下撞上了护盾，船承受巨量伤害，同时也会对护盾造成伤害。自爆船将会造成巨量伤害
                     if((GameMain.galaxy.PlanetById(planetId).uPosition - uPos).magnitude <= ShieldRenderer.shieldRadius * 810)
