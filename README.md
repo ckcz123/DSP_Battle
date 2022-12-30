@@ -54,6 +54,23 @@ Also welcome to anyone who'd like to contribute to the mod, better if you have e
 
 ## Update Log
 
+### 2022-12-30 V2.1.3
+
+ - Optimize some English translation
+ - 优化部分文本的英文翻译
+ - Move Droplet to an individual technique
+ - 将水滴拆分成一个独立的科技
+
+### 2022-12-9 V2.1.2
+ - Fix a bug that the cannons sometimes keep changing targets without firing
+ - 修复一个炮台反复寻敌而不开火的问题
+ - Now the strong wave will sometimes give you an option to remove a specific relic rather than a random relic, when you already have more than 5 relics.
+ - 现在，如果你已经拥有五个或者更多个圣物，那么在强大的波次结束后，你有可能获得一个选项来移除一个确定的圣物（而不再是随机的）。
+ - Add a relic that will give droplets bonus damage when droplet kills an enemy
+ - 加入一个新的遗物，可以让水滴在击杀后永久提升伤害
+ - Optimize some battle BGM's loop clip length and ending clip lenth
+ - 优化部分战斗时BGM的循环节长度和结束片段的长度
+
 ### 2022-11-06 V2.1.1
 
  - Fix performance issue in battle caused by cannon

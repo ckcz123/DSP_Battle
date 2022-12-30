@@ -19,67 +19,67 @@ namespace DSP_Battle
 
             ProtoRegistry.RegisterString("轨道防御", "Defense", "轨道防御");
 
-            ProtoRegistry.RegisterString("子弹1", "Armour piercing", "穿甲磁轨弹");
-            ProtoRegistry.RegisterString("子弹1描述", "A cheap bullet, attack single enemy.", "从来没见过敌人的先驱者把老祖宗的数据库翻了114514遍，东拼西凑出来一个穿甲弹设计图。由于没找到火药配方，只好照着炮弹的样子铸造成实心炮弹并加强其结构。仅能进行单体动能打击，杀伤力有限。");
-            ProtoRegistry.RegisterString("子弹1结论", "You have unlocked armour piercing.", "你解锁了穿甲磁轨弹，可以利用动能进行攻击");
+            ProtoRegistry.RegisterString("子弹1", "Armor piercing bullet", "穿甲磁轨弹");
+            ProtoRegistry.RegisterString("子弹1描述", "The pioneers who had never seen an enemy before flipped the ancestors' database 114514 times to patch together an armor-piercing bullet design. Since they couldn't find a gunpowder formula, they had to cast it into a solid cannonball and strengthen its structure. It only had single kinetic attack and limited lethality.", "从来没见过敌人的先驱者把老祖宗的数据库翻了114514遍，东拼西凑出来一个穿甲弹设计图。由于没找到火药配方，只好照着炮弹的样子铸造成实心炮弹并加强其结构。仅能进行单体动能打击，杀伤力有限。");
+            ProtoRegistry.RegisterString("子弹1结论", "You have unlocked armor piercin bullet and can use kinetic energy for attack.", "你解锁了穿甲磁轨弹，可以利用动能进行攻击");
             ProtoRegistry.RegisterString("子弹2", "Acid bullet", "强酸磁轨弹");
-            ProtoRegistry.RegisterString("子弹2描述", "A powerful bullet by sulfuric acid.", "在对敌人进行分析和研究后，先驱者大胆将<color=#c2853d>硫酸</color>封装后制成了一种新的炮弹。爆破后可以对范围内敌人产生酸蚀，更加高效地杀伤敌人。");
-            ProtoRegistry.RegisterString("子弹2结论", "You have unlocked acid bullet.", "你解锁了强酸磁轨弹，可以利用硫酸腐蚀外壳");
-            ProtoRegistry.RegisterString("子弹3", "Deuterium nucleus", "氘核爆破弹");
+            ProtoRegistry.RegisterString("子弹2描述", "After analyzing and studying the enemy, the pioneers boldly packaged <color=#c2853d>sulfuric acid</color> into a new cannonball. The explosion can produce corrosion on enemies, killing them more efficiently.", "在对敌人进行分析和研究后，先驱者大胆将<color=#c2853d>硫酸</color>封装后制成了一种新的炮弹。爆破后可以对范围内敌人产生酸蚀，更加高效地杀伤敌人。");
+            ProtoRegistry.RegisterString("子弹2结论", "You have unlocked acid bullet and can use sulfuric acid to corrode the shell.", "你解锁了强酸磁轨弹，可以利用硫酸腐蚀外壳");
+            ProtoRegistry.RegisterString("子弹3", "Deuterium nucleus bullet", "氘核爆破弹");
             ProtoRegistry.RegisterString("子弹3短", "D-nucleus", "氘核爆破弹");
-            ProtoRegistry.RegisterString("子弹3描述", "A more powerful bullet with a micro-thermonuclear-boom in it.", "制造出<color=#c2853d>热核导弹</color>的先驱者想要让他更小更快，便试着把核弹微缩化封装进了子弹里。该武器可以在命中后发生聚变爆炸，对敌人造成大量伤害。");
-            ProtoRegistry.RegisterString("子弹3结论", "You have unlocked deuterium nucleus", "你解锁了氘核爆破弹，可以利用核聚变进行破坏");
+            ProtoRegistry.RegisterString("子弹3描述", "The pioneers who created the <color=#c2853d>thermonuclear missile</color> wanted to make it smaller and faster, so they tried to miniaturize and package the nuclear bomb into a bullet. This weapon can cause a large number of injuries to enemies after hitting by undergoing fusion explosion.", "制造出<color=#c2853d>热核导弹</color>的先驱者想要让他更小更快，便试着把核弹微缩化封装进了子弹里。该武器可以在命中后发生聚变爆炸，对敌人造成大量伤害。");
+            ProtoRegistry.RegisterString("子弹3结论", "You have unlocked deuterium nucleus and can use nuclear fusion to cause destruction.", "你解锁了氘核爆破弹，可以利用核聚变进行破坏");
             ProtoRegistry.RegisterString("脉冲", "Phase-cracking beam", "相位裂解光束");
             ProtoRegistry.RegisterString("脉冲短", "Cracking beam", "相位裂解光束");
-            ProtoRegistry.RegisterString("脉冲描述", "The beam doesn't need to be produced, just provide enough energy for the <color=#c2853d>Phaser emitter</color> to eject.", "这种光束是不需要制作和提供的，只需给<color=#c2853d>相位裂解炮</color>提供足够电量即可无限发射。");
+            ProtoRegistry.RegisterString("脉冲描述", "This beam does not require production, it only needs enough electricity to be supplied to the <color=#c2853d>Phaser emitter</color> to fire unlimitedly.", "这种光束是不需要制作和提供的，只需给<color=#c2853d>相位裂解炮</color>提供足够电量即可无限发射。");
 
             ProtoRegistry.RegisterString("导弹1", "Thermonuclear missile", "热核导弹");
             ProtoRegistry.RegisterString("导弹1短", "Nuclear missile", "热核导弹");
-            ProtoRegistry.RegisterString("导弹1描述", "A powerful nuclear missile", "这天，百无聊赖的先驱者正在刷哔哩哔哩，突然刷到了一条《如何在卧室制造核弹》的视频，于是这种导弹便被制造了出来。这是一种重型武器，发射升空并命中敌人后产生核爆，造成大范围伤害。");
-            ProtoRegistry.RegisterString("导弹1结论", "You have unlocked thermonuclear missile.", "你解锁了热核导弹，可以自动追踪敌人");
+            ProtoRegistry.RegisterString("导弹1描述", "One day, the bored pioneers were browsing Youtube and suddenly came across a video on \"How to Make a Nuke in Your Bedroom\", and so the missile was created. This is a heavyweight weapon that can cause a nuclear explosion when it reaches its target, causing massive damage.", "这天，百无聊赖的先驱者正在刷哔哩哔哩，突然刷到了一条《如何在卧室制造核弹》的视频，于是这种导弹便被制造了出来。这是一种重型武器，发射升空并命中敌人后产生核爆，造成大范围伤害。");
+            ProtoRegistry.RegisterString("导弹1结论", "You have unlocked thermonuclear missile and it can automatically track down enemies.", "你解锁了热核导弹，可以自动追踪敌人");
 
             ProtoRegistry.RegisterString("导弹2", "Antimatter missile", "反物质导弹");
             ProtoRegistry.RegisterString("导弹2短", "A-M missile", "反物质导弹");
-            ProtoRegistry.RegisterString("导弹2描述", "A missile has a bit of antimatter in it, turning anything into oblivion after explosion.", "先驱者在一次搬运货物时不慎手滑造成微量<color=#c2853d>反物质</color>泄露，这导致他辛辛苦苦拉好的产线毁于一旦。“为什么不让敌人尝尝这种痛苦呢？”他想到。于是这种将<color=#c2853d>反物质</color>封装入导弹的武器被制造了出来，命中敌人后会发生湮灭，将敌人彻底抹杀。");
-            ProtoRegistry.RegisterString("导弹2结论", "You have unlocked antimatter missile.", "你解锁了反物质导弹，可以自动追踪敌人");
+            ProtoRegistry.RegisterString("导弹2描述", "Accidentally, the pioneers spilled some <color=#c2853d>antimatter</color> while transporting goods, which destroyed their hard-made production line. \"Why not let the enemy experience the same misery?\" he thought. And so this weapon was created, packaging antimatter into a missile to annihilate enemies upon impact.", "先驱者在一次搬运货物时不慎手滑造成微量<color=#c2853d>反物质</color>泄露，这导致他辛辛苦苦拉好的产线毁于一旦。“为什么不让敌人尝尝这种痛苦呢？”他想到。于是这种将<color=#c2853d>反物质</color>封装入导弹的武器被制造了出来，命中敌人后会发生湮灭，将敌人彻底抹杀。");
+            ProtoRegistry.RegisterString("导弹2结论", "You have unlocked antimatter missile and it can automatically track down enemies.", "你解锁了反物质导弹，可以自动追踪敌人");
 
             ProtoRegistry.RegisterString("导弹3", "Gravitational collapse missile", "引力塌陷导弹");
             ProtoRegistry.RegisterString("导弹3短", "Grav-missile", "引力塌陷导弹");
-            ProtoRegistry.RegisterString("导弹3描述", "A missile can creates a micro-black-hole instantaneously after exposion.", "发明出<color=#c2853d>引力弹射炮</color>的先驱者一鼓作气，将微型黑洞封装进导弹，制成了这种超级武器。它能在爆炸后短暂生成一个微型黑洞将范围内的敌人聚拢，简单高效。");
-            ProtoRegistry.RegisterString("导弹3结论", "You have unlocked gravitational collapse missile.", "你解锁了引力塌陷导弹，可以自动追踪敌人");
+            ProtoRegistry.RegisterString("导弹3描述", "Inventors of the <color=#c2853d>Gravitation Slingshot ejector</color> worked hard to package a mini black hole into the missile, creating this super weapon. It can temporarily generate a mini black hole after the explosion to gather enemies in range and wipe them out efficiently.", "发明出<color=#c2853d>引力弹射炮</color>的先驱者一鼓作气，将微型黑洞封装进导弹，制成了这种超级武器。它能在爆炸后短暂生成一个微型黑洞将范围内的敌人聚拢，简单高效。");
+            ProtoRegistry.RegisterString("导弹3结论", "You have unlocked gravitational collapse missile and it can automatically track down enemies.", "你解锁了引力塌陷导弹，可以自动追踪敌人");
 
             ProtoRegistry.RegisterString("弹射器1", "Super railgun", "电磁轨道炮");
-            ProtoRegistry.RegisterString("弹射器1描述", "An giant railgun based on electromagnetic-ejection technology, ejecting any physical ammunition.", "制造出<color=#c2853d>穿甲磁轨弹</color>的先驱者不知道该如何把他们扔上天，直到他不小心把<color=#c2853d>太阳帆</color>误装成了炮弹。“好极了，现在我‘创造’了一种武器。”先驱者这样想着，“但是怎么区分他们呢？”。随后，先驱者默念着：“你指尖闪动的电光，是我此生不变的信仰……”给它装上了橙色氛围灯。该武器可以装入任何类型的子弹，且打击范围受到仰角限制。");
-            ProtoRegistry.RegisterString("弹射器1结论", "You have unlocked super railgun.", "你解锁了电磁轨道炮，可以发射子弹攻击敌方");
+            ProtoRegistry.RegisterString("弹射器1描述", "The pioneers of creating <color=#c2853d>Armor piercing bullet</color> didn't know how to launch them until an accidental mistake set <color=#c2853d>solar sails</color> as ammunition. \"Perfect, now I have 'created' a weapon,\" the pioneers thought, \"But how can I distinguish them?\" Soon after, with a flash of inspiration, the pioneers added an orange atmosphere light to it. This weapon can be loaded with any type of bullets, however its range of attack is limited by the angle of elevation.", "制造出<color=#c2853d>穿甲磁轨弹</color>的先驱者不知道该如何把他们扔上天，直到他不小心把<color=#c2853d>太阳帆</color>误装成了炮弹。“好极了，现在我‘创造’了一种武器。”先驱者这样想着，“但是怎么区分他们呢？”。随后，先驱者默念着：“你指尖闪动的电光，是我此生不变的信仰……”给它装上了橙色氛围灯。该武器可以装入任何类型的子弹，且打击范围受到仰角限制。");
+            ProtoRegistry.RegisterString("弹射器1结论", "You have unlocked super railgun and it can fire bullets to attack enemies.", "你解锁了电磁轨道炮，可以发射子弹攻击敌方");
 
             ProtoRegistry.RegisterString("弹射器2", "Gravitation Slingshot ejector", "引力弹射炮");
-            ProtoRegistry.RegisterString("弹射器2描述", "An giant ejector, speed up any physical ammunition by two micro-black-hole inside it.", "在黑洞杀了个七进七出之后，先驱者对引力操控有了深入见解，他终于决定自己开发一种武器。于是他拆除了<color=#c2853d>电磁轨道炮</color>的加速磁场，制造了一种利用微型黑洞制造引力弹弓的发生器，这使得发射炮弹获得了数倍于之前的动能。“这回可不是换个氛围灯那么简单了！”先驱者自我陶醉着。该武器能以更高的射速发射任何类型的子弹。");
-            ProtoRegistry.RegisterString("弹射器2结论", "You have unlocked Gravitation Slingshot ejector.", "你解锁了引力弹射炮，可以发射子弹攻击敌方");
+            ProtoRegistry.RegisterString("弹射器2描述", "After visiting a few times to the black hole, the pioneers gained a deeper understanding of gravity manipulation. They decided to develop their own weapon and so they dismantled the acceleration magnet of <color=#c2853d>Super railgun</color> and created a generator that could produce a gravity ejector using tiny blackholes. This allowed the ejector to fire bullets with much more kinetic energy than before. \"This time it's not just about changing the atmosphere light!\" The pioneers rejoiced. The weapon can fire any type of bullet with a much higher speed.", "在黑洞杀了个七进七出之后，先驱者对引力操控有了深入见解，他终于决定自己开发一种武器。于是他拆除了<color=#c2853d>电磁轨道炮</color>的加速磁场，制造了一种利用微型黑洞制造引力弹弓的发生器，这使得发射炮弹获得了数倍于之前的动能。“这回可不是换个氛围灯那么简单了！”先驱者自我陶醉着。该武器能以更高的射速发射任何类型的子弹。");
+            ProtoRegistry.RegisterString("弹射器2结论", "You have unlocked Gravitation Slingshot ejector  and it can fire bullets to attack enemies.", "你解锁了引力弹射炮，可以发射子弹攻击敌方");
 
             ProtoRegistry.RegisterString("脉冲炮", "Phaser emitter", "相位裂解炮");
-            ProtoRegistry.RegisterString("脉冲炮描述", "Just like weapons you've seen in sci-fi movies and games, ejects powerful radiation to break down enemy. <color=#c2853d>Physical bullets needless.</color>", "开发出超级武器的先驱者百般无聊，整日靠着当P社战犯度日，但是他灭绝寰宇的大业总是因为弹药短缺被打断，于是他一气之下依照《群星》的舰载武器开发了这种武器。利用发射的高能粒子流产生相位裂解链式反应，大范围杀伤敌人，最大的优点是，<color=#c2853d>无需弹药</color>！从此，先驱者在成为战犯的道路上越走越远。");
-            ProtoRegistry.RegisterString("脉冲炮结论", "You have unlocked Phaser emitter.", "你解锁了相位裂解炮，可以仅使用电力攻击敌方");
+            ProtoRegistry.RegisterString("脉冲炮描述", "The pioneers who developed the super weapons were bored and tried to explore the universe, but their ambition was always hindered by a lack of ammunition. In a fit of rage, with inspiration from Stellaris they developed this weapon. Using high-energy particle streams to create a phase disruption chain reaction, it can kill enemies in a large area. The biggest advantage is, <color=#c2853d>Ammunition not required</color>! However, the damage from this weapon will attenuate when the distance increases.", "开发出超级武器的先驱者百般无聊，整日靠着当P社战犯度日，但是他灭绝寰宇的大业总是因为弹药短缺被打断，于是他一气之下依照《群星》的舰载武器开发了这种武器。利用发射的高能粒子流产生相位裂解链式反应，大范围杀伤敌人，最大的优点是，<color=#c2853d>无需弹药</color>！从此，先驱者在成为战犯的道路上越走越远。注意，此光束伤害将随着距离而衰减。");
+            ProtoRegistry.RegisterString("脉冲炮结论", "You have unlocked Phaser emitter and can now attack the enemy using only electricity.", "你解锁了相位裂解炮，可以仅使用电力攻击敌方");
 
             ProtoRegistry.RegisterString("发射器1", "Void missile launching silo", "深空导弹发射井");
-            ProtoRegistry.RegisterString("发射器1描述", "Just a launching-silo.", "制造出<color=#c2853d>热核导弹</color>的先驱者并不知道如何把他们扔上天去，直到他看到了<color=#c2853d>垂直发射井</color>。“只要把它刷成红色我不就发明了一种武器吗？”先驱者这样想到。该武器可以对敌人进行全方位打击。");
+            ProtoRegistry.RegisterString("发射器1描述", "The pioneers who created the <color=#c2853d>thermonuclear missiles</color> didn't know how to get them into the space until they saw the <color=#c2853d>Vertical launching silo</color>. \"Can't I just paint them red and have invented a weapon?\" The pioneer thought. This weapon can attack enemies from all directions.", "制造出<color=#c2853d>热核导弹</color>的先驱者并不知道如何把他们扔上天去，直到他看到了<color=#c2853d>垂直发射井</color>。“只要把它刷成红色我不就发明了一种武器吗？”先驱者这样想到。该武器可以对敌人进行全方位打击。");
             ProtoRegistry.RegisterString("发射器1结论", "You have unlocked void missile launching silo.", "你解锁了深空导弹发射井，可以发射导弹攻击敌方");
 
             ProtoRegistry.RegisterString("近地防卫系统", "Near Earth Def-system", "近地防卫系统");
-            ProtoRegistry.RegisterString("近地防卫系统描述", "Manufacturing <color=#c2853d>super-railgun</color> to eject <color=#c2853d>armour-piercing</color> to bulid basal defensive system.", "制造<color=#c2853d>电磁轨道炮</color>发射<color=#c2853d>穿甲磁轨弹</color>进行基础防御。");
+            ProtoRegistry.RegisterString("近地防卫系统描述", "Manufacturing <color=#c2853d>Super railgun</color> to eject <color=#c2853d>Armor piercing</color> to bulid basal defensive system.", "制造<color=#c2853d>电磁轨道炮</color>发射<color=#c2853d>穿甲磁轨弹</color>进行基础防御。");
             ProtoRegistry.RegisterString("近地防卫系统结论", "You have unlocked Near Earth Def-system.", "你解锁了近地防卫系统");
-            ProtoRegistry.RegisterString("深空防卫系统", "Void Def-system", "深空防卫系统");
-            ProtoRegistry.RegisterString("深空防卫系统描述", "Manufacturing <color=#c2853d>void-missile-launching-silo</color> to deploy <color=#c2853d>thermonuclear-missile</color> to bulid broader strike, Filling the gap in near-earth-defense.", "制造<color=#c2853d>深空导弹发射井</color>部署<color=#c2853d>热核导弹</color>实现更大范围覆盖打击，填补近地防卫的空白。");
-            ProtoRegistry.RegisterString("深空防卫系统结论", "You have unlocked Void Def-system.", "你解锁了深空防卫系统");
+            ProtoRegistry.RegisterString("深空防卫系统", "Deep Space Def-system", "深空防卫系统");
+            ProtoRegistry.RegisterString("深空防卫系统描述", "Manufacturing <color=#c2853d>Void missile launching silo</color> to deploy <color=#c2853d>Thermonuclear missile</color> to bulid broader strike, filling the gap of near-earth-defense.", "制造<color=#c2853d>深空导弹发射井</color>部署<color=#c2853d>热核导弹</color>实现更大范围覆盖打击，填补近地防卫的空白。");
+            ProtoRegistry.RegisterString("深空防卫系统结论", "You have unlocked Deep Space Def-system.", "你解锁了深空防卫系统");
             ProtoRegistry.RegisterString("引力操控技术", "Gravitation control", "引力操控技术");
-            ProtoRegistry.RegisterString("引力操控技术描述", "Manufacturing <color=#c2853d>gravitation-slingshot-ejector</color> to level up near-earth-defense and <color=#c2853d>gravitational-collapse-missile</color> to further strengthen void-defense.", "制造<color=#c2853d>引力弹射炮</color>升级近地防卫系统，生产<color=#c2853d>引力塌陷导弹</color>进一步加强深空防御。");
+            ProtoRegistry.RegisterString("引力操控技术描述", "Manufacturing <color=#c2853d>Gravitation Slingshot ejector</color> to level up near earth defense and <color=#c2853d>Gravitational collapse missile</color> to further strengthen deep space defense.", "制造<color=#c2853d>引力弹射炮</color>升级近地防卫系统，生产<color=#c2853d>引力塌陷导弹</color>进一步加强深空防御。");
             ProtoRegistry.RegisterString("引力操控技术结论", "You have unlocked Gravitation control.", "你解锁了引力操控技术");
-            ProtoRegistry.RegisterString("相位裂解技术", "Phaser fission", "相位裂解技术");
-            ProtoRegistry.RegisterString("相位裂解技术描述", "Manufacturing super weapon <color=#c2853d>phaser-fission</color> to bulid ultimate near-earth-defense.", "这波<color=#c2853d>相位裂解炮</color>来全杀了。");
-            ProtoRegistry.RegisterString("相位裂解技术结论", "You have unlocked Phaser fission.", "你解锁了相位裂解技术");
+            ProtoRegistry.RegisterString("相位裂解技术", "Phaser disintegration technology", "相位裂解技术");
+            ProtoRegistry.RegisterString("相位裂解技术描述", "Manufacturing super weapon <color=#c2853d>Phaser emitter</color> to build ultimate near-earth-defense.", "这波<color=#c2853d>相位裂解炮</color>来全杀了。");
+            ProtoRegistry.RegisterString("相位裂解技术结论", "You have unlocked Phaser disintegration technology.", "你解锁了相位裂解技术");
 
-            ProtoRegistry.RegisterString("子弹2tech描述", "Manufacturing <color=#c2853d>Acid bullet</color> to strengthen defensive system.", "制造<color=#c2853d>强酸磁轨弹</color>加强近地防御力。");
-            ProtoRegistry.RegisterString("子弹3tech描述", "Manufacturing <color=#c2853d>Deuterium nucleus</color> to strengthen defensive system.", "制造<color=#c2853d>氘核爆破弹</color>进一步加强近地防御力。");
-            ProtoRegistry.RegisterString("导弹2tech描述", "Manufacturing <color=#c2853d>Antimatter missile</color> to strengthen defensive system.", "制造<color=#c2853d>反物质导弹</color>加强深空防御力。");
+            ProtoRegistry.RegisterString("子弹2tech描述", "Manufacturing <color=#c2853d>Acid bullet</color> to strengthen near earth defensive system.", "制造<color=#c2853d>强酸磁轨弹</color>加强近地防御力。");
+            ProtoRegistry.RegisterString("子弹3tech描述", "Manufacturing <color=#c2853d>Deuterium nucleus bullet</color> to further strengthen near earth defensive system.", "制造<color=#c2853d>氘核爆破弹</color>进一步加强近地防御力。");
+            ProtoRegistry.RegisterString("导弹2tech描述", "Manufacturing <color=#c2853d>Antimatter missile</color> to strengthen deep space defensive system.", "制造<color=#c2853d>反物质导弹</color>加强深空防御力。");
 
             ProtoRegistry.RegisterString("定向爆破1", "Directional blasting", "定向爆破");
             ProtoRegistry.RegisterString("定向爆破2", "Directional blasting", "定向爆破");
@@ -87,7 +87,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("定向爆破4", "Directional blasting", "定向爆破");
             ProtoRegistry.RegisterString("定向爆破5", "Directional blasting", "定向爆破");
             ProtoRegistry.RegisterString("定向爆破6", "Directional blasting", "定向爆破");
-            ProtoRegistry.RegisterString("定向爆破描述", "Increase damage for bullets and missiles.", "通过精确计算子弹和导弹的索敌路径，预测撞击前的最佳起爆点，以尽可能对敌人造成更大的破坏。");
+            ProtoRegistry.RegisterString("定向爆破描述", "By precisely calculating the trajectory of bullets and missiles to predict the optimal detonation point before impact, so as to cause as much destruction to the enemy as possible.", "通过精确计算子弹和导弹的索敌路径，预测撞击前的最佳起爆点，以尽可能对敌人造成更大的破坏。");
             ProtoRegistry.RegisterString("定向爆破结论", "Increase damage for bullets and missiles.", "子弹、导弹伤害增加");
             ProtoRegistry.RegisterString("子弹伤害和导弹伤害+15%", "Damage of bullets and missiles +15%", "子弹伤害和导弹伤害+15%");
             ProtoRegistry.RegisterString("相位裂解光束伤害+30%", "Damage of Phaser-emitter beam +30%", "相位裂解光束伤害+30%");
@@ -98,7 +98,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("引力波引导4", "Gravitational wave guidance", "引力波引导");
             ProtoRegistry.RegisterString("引力波引导5", "Gravitational wave guidance", "引力波引导");
             ProtoRegistry.RegisterString("引力波引导6", "Gravitational wave guidance", "引力波引导");
-            ProtoRegistry.RegisterString("引力波引导描述", "Increase speed for bullets and missiles.", "利用引力波提升子弹的飞行速度，使子弹能够更快地打到敌人。");
+            ProtoRegistry.RegisterString("引力波引导描述", "Utilizing gravitational waves to increase the speed of the bullet, enabling it to reach the enemy quicker.", "利用引力波提升子弹的飞行速度，使子弹能够更快地打到敌人。");
             ProtoRegistry.RegisterString("引力波引导结论", "Increase speed for bullets and missiles.", "子弹、导弹弹道速度增加");
             ProtoRegistry.RegisterString("子弹飞行速度+10%", "Bullet speed +10%", "子弹飞行速度+10%");
             ProtoRegistry.RegisterString("导弹飞行速度+5%", "Missile speed +5%", "导弹飞行速度+5%");
@@ -109,7 +109,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("相位干扰技术4", "Phase disturbance", "相位干扰技术");
             ProtoRegistry.RegisterString("相位干扰技术5", "Phase disturbance", "相位干扰技术");
             ProtoRegistry.RegisterString("相位干扰技术6", "Phase disturbance", "相位干扰技术");
-            ProtoRegistry.RegisterString("相位干扰技术描述", "Expand wormhole spawns radius.", "通过空间干扰让虫洞刷新的更远，增加敌人的飞行距离。");
+            ProtoRegistry.RegisterString("相位干扰技术描述", "Increase enemy flight distance by using space interference to make wormhole spawn further.", "通过空间干扰让虫洞刷新的更远，增加敌人的飞行距离。");
             ProtoRegistry.RegisterString("相位干扰技术结论", "Expand wormhole spawns radius.", "虫洞生成距离增加");
             ProtoRegistry.RegisterString("虫洞生成最近范围扩大0.25AU", "Wormhole spawns radius expanded by 0.25AU", "虫洞生成最近范围扩大0.25AU");
            
@@ -138,54 +138,57 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("玻色子操控", "Boson control", "玻色子操控");
             ProtoRegistry.RegisterString("玻色子操控描述", "Create powerful materials by manipulating various interacting forces.", "通过操控各种相互作用力来制造强大的材料。");
             ProtoRegistry.RegisterString("玻色子操控结论", "You have unlocked the Boson control.", "你解锁了玻色子操控。");
+            ProtoRegistry.RegisterString("水滴科技描述", "A powerful Droplet controlled by the mecha.", "一个由机甲控制的强大水滴");
+            ProtoRegistry.RegisterString("水滴科技结论", "You have unlocked the Droplet.", "你解锁了水滴技术。");
             ProtoRegistry.RegisterString("超距信号处理1", "Stellar-range signal processing", "超距信号处理");
             ProtoRegistry.RegisterString("超距信号处理2", "Stellar-range signal processing", "超距信号处理");
             ProtoRegistry.RegisterString("超距信号处理3", "Stellar-range signal processing", "超距信号处理");
             ProtoRegistry.RegisterString("超距信号处理描述", "Enhance real-time control of droplets.", "强化对水滴的实时控制能力。");
             ProtoRegistry.RegisterString("超距信号处理结论", "Drop control limit is increased.", "可同时操控的水滴上限提升。");
             ProtoRegistry.RegisterString("水滴控制上限", "Droplet control limit", "水滴控制上限");
+            ProtoRegistry.RegisterString("伤害衰减", "Damage attenuate", "伤害衰减");
 
             ProtoRegistry.RegisterString("恒星炮未规划", "Star Cannon Unplanned", "恒星炮未规划");
             ProtoRegistry.RegisterString("恒星炮建设中", "Building In Progress", "恒星炮建设中");
             ProtoRegistry.RegisterString("恒星炮冷却中", "Cooling Down", "恒星炮冷却中");
             ProtoRegistry.RegisterString("恒星炮充能中", "Charging", "恒星炮充能中");
-            ProtoRegistry.RegisterString("恒星炮开火", "Star Cannon Open Fire", "恒星炮开火");
+            ProtoRegistry.RegisterString("恒星炮开火", "Fire!", "恒星炮开火");
             ProtoRegistry.RegisterString("瞄准中", "Aiming", "瞄准中");
             ProtoRegistry.RegisterString("预热中", "Preheating", "预热中");
             ProtoRegistry.RegisterString("正在开火", "Firing", "正在开火");
-            ProtoRegistry.RegisterString("没有规划的恒星炮", "Firing", "没有规划的恒星炮");
-            ProtoRegistry.RegisterString("恒星炮需要至少修建至第一阶段才能够开火！", "Firing", "恒星炮需要至少修建至第一阶段才能够开火！");
-            ProtoRegistry.RegisterString("恒星炮已经启动", "Star cannon has already launched.", "恒星炮已经启动。");
-            ProtoRegistry.RegisterString("恒星炮冷却中！", "Star cannon is cooling down.", "恒星炮冷却中！");
-            ProtoRegistry.RegisterString("恒星炮充能中！", "Star cannon is charging.", "恒星炮充能中！");
-            ProtoRegistry.RegisterString("没有目标！", "Can not find target.", "没有目标！");
-            ProtoRegistry.RegisterString("超出射程！", "Out of range.", "超出射程！");
+            ProtoRegistry.RegisterString("没有规划的恒星炮", "No planned star cannon!", "没有规划的恒星炮");
+            ProtoRegistry.RegisterString("恒星炮需要至少修建至第一阶段才能够开火！", "You have to finish at least stage 1 to fire star cannon!", "恒星炮需要至少修建至第一阶段才能够开火！");
+            ProtoRegistry.RegisterString("恒星炮已经启动", "Star cannon has already launched!", "恒星炮已经启动。");
+            ProtoRegistry.RegisterString("恒星炮冷却中！", "Star cannon is still cooling down!", "恒星炮冷却中！");
+            ProtoRegistry.RegisterString("恒星炮充能中！", "Star cannon is still charging!", "恒星炮充能中！");
+            ProtoRegistry.RegisterString("没有目标！", "No target!", "没有目标！");
+            ProtoRegistry.RegisterString("超出射程！", "Out of range!", "超出射程！");
             ProtoRegistry.RegisterString("虫洞已完全稳定，无法被摧毁", "The wormholes are fully stabilized and cannot be destroyed.", "虫洞已完全稳定，无法被摧毁。");
             ProtoRegistry.RegisterString("恒星炮已启动", "Launching.", "恒星炮已启动。");
             
 
             ProtoRegistry.RegisterString("彩蛋1描述", "Seems like these enemies are a kind of space insect. They live in deep space, feed on the tides of power without vision. " +
-                "The interstellar station creates regular ripples in space, making itself a beacon in a dark universe that can easily be captured and attacked by the insects. " +
-                "In other words, <color=#c2853d>they will randomly choose an interstellar station, and attack its star system via wormholes. Stars with more interstellar stations will have a higher probability of being selected, and stars without any interstellar stations won't be attacked. </color>" +
-                "Obviously, I can't give up my interstellar stations as progress will slow without item transportation. Instead, I have to find a way to defend. Hope I still have time to think about 'The Answer to Life, the Universe, and Everything'.", 
+                "The communication between interstellar logistic stations create regular ripples in space, making itself a beacon in a dark universe that can easily be captured and attacked by the insects. " +
+                "In other words, <color=#c2853d>they will randomly choose an interstellar logistic station, and attack its star system via wormholes. Stars with more interstellar logistic stations will have a higher probability of being selected, and stars without any interstellar logistic stations won't be attacked. </color>" +
+                "Obviously, I can't give up my interstellar logistic stations - I can transport Titanium manually but not everything right? Instead, I have to find a way to defend. Hope I still have time to think about 'The Answer to Life, the Universe, and Everything'.", 
                 "这种生物似乎是一种虫类，靠进食宇宙中的各种能量潮汐为生，同时还具有虫洞制造能力，一旦发现食物就会直接在附近建立虫洞。" +
                 "星际物流塔产生的能量潮汐让它变成了宇宙中的一座灯塔，能被这些生物轻易捕捉并视作食物来源。" +
                 "换言之，<color=#c2853d>它们会随机选择全星区的任意一个星际物流塔，通过虫洞进攻该星系；物流塔越多的星系受到攻击概率越高，而只要不建设星际物流塔，那个星系就不会受到它们的侵扰。</color>" +
                 "但这显然行不通，不用星际物流塔将极大的延缓任务完成的速度，这是主脑不愿意看到的。看来我需要一些防御设施来保护星际物流塔。唉，本来还说抽空思考一下宇宙的终极答案的……");
-            ProtoRegistry.RegisterString("彩蛋2描述", "Armour piercing rounds are still too inefficient, I have to find a better alternative. Anyway, they are real creatures, and acid erosion should do more damage to them.\n" +
+            ProtoRegistry.RegisterString("彩蛋2描述", "Armor piercing rounds are still too inefficient, I have to find a better alternative. Anyway, they are real creatures, and acid erosion should do more damage to them.\n" +
                 "Besides, I found that <color=#c2853d>the wormholes will always establish when the warning timer reaches 5 minutes?</color> If my railgun can't destroy the invading enemies, maybe I can do something before then...", 
                 "穿甲弹的效率还是太低了，我得试试找到强力的替代品，最好是能产生更大的伤害。就目前的情况来看，硫酸是个不错的选择，我可以试着直接把他们投射向敌人。" +
                 "再怎么说他们也是实体生物，酸蚀也够他们喝一壶的。还好它们不是异形，不然就是够我喝一壶的了。\n" +
                 "另外我发现，<color=#c2853d>虫洞永远在预警五分钟时才生成？</color>" +
                 "要是我的磁轨炮打不到入侵的敌人，也许我可以提前做点什么...");
-            ProtoRegistry.RegisterString("彩蛋3描述", "They are more powerful than I thought. With the expansion of pipelines and interstellar stations, their offensive has become more and more ferocious. " +
+            ProtoRegistry.RegisterString("彩蛋3描述", "They are more powerful than I thought. With the expansion of factories and interstellar logistic stations, their offensive has become more and more ferocious. " +
                 "The Near Earth Def-system had limited coverage and could no longer effectively resist them. Luckily I have learned to manufacture thermonuclear missiles on YouTube, and launching it will definitely solve this urgent need.\n" +
-                "In addition, I found that <color=#c2853d>every time they destroy an interstellar station, the next wave will be delayed! </color>Maybe I can find a way to get more time for building?", 
+                "In addition, I found that <color=#c2853d>every time they destroy an interstellar logistic station, the next wave will be delayed! </color>Maybe I can find a way to get more time for development?", 
                 "我还是把他们想的太简单了。随着产线扩张，物流塔的建设，他们的攻势越来越凶猛。大炮的覆盖范围有限，已经无法有效抵挡他们了。好在我这几天在B站上学会了造热核弹，把它发射上去肯定能解燃眉之急。" +
                 "至于怎么发射上去，那还真得研究研究了，炮管子实在是太细了，放不进去。赶快结束这一切吧，我还想去梦里数电子羊呢。\n" +
                 "另外我发现，<color=#c2853d>虫子每破坏一座星际物流塔，下一次进攻就会被推迟！</color>也许可以想想办法获得更多的发展时间呢？");
             ProtoRegistry.RegisterString("彩蛋4描述", "The thermonuclear missiles are very powerful, but the launch is too slow. How can I create a miniature version and integrate with bullets, so they can both have lethality and speed? What a genius I am!\n" +
-                "Another thing I found is, <color=#c2853d>the intensity of the attack on different stars is independent. The first attack on a new star will start from the lowest intensity...</color> It seems I don't need to worry about the safety of planets with only for miners now.", 
+                "Another thing I found is, <color=#c2853d>the intensity of the attack on different star system is independent. The first attack on a new star will start from the lowest intensity...</color> It seems I don't need to too worry about the safety of planets only for miners now.", 
                 "热核导弹的杀伤力确实很大，但是发射也太慢了，我得研究研究怎么把热核导弹造成微缩版本塞进炮弹里面去，那不就既有杀伤力又有速度嘛。我可真是个天才！" +
                 "唉，你说我这天才为什么就不得伊卡拉姆妹妹的喜欢呢？我为她专门点亮了一片星系告白，但她居然说：“前天看到了小白兔，昨天是小鹿，今天是你。”这不是嘲讽我像个动物一样蠢吗。算了算了，不提了，女人只会影响我造戴森球的速度。\n" +
                 "另外我发现，<color=#c2853d>这些虫子攻击不同星系的强度是独立的啊，进攻全新星系的虫群似乎会重新从最低强度开始...</color> 看来暂时是不怎么需要担心矿星的安全性问题了。");
@@ -215,12 +218,12 @@ namespace DSP_Battle
 
             ProtoRegistry.RegisterString("UI快捷键提示", "Press Backspace to hide/open this window. Press \"Ctrl\" + \"-\" to advance the attack time by 1 min.", "按下退格键开启或关闭此窗口，按下Ctrl+减号键使敌军进攻时间提前1分钟");
 
-            ProtoRegistry.RegisterString("简单难度提示", "Difficulty: Easy (Station won't be destroyed; Merit points earned *0.75)", "当前难度：简单（物流塔不会被破坏；功勋点数获得*0.75）");
+            ProtoRegistry.RegisterString("简单难度提示", "Difficulty: Easy (Station won't be dismantled; Merit points *0.75)", "当前难度：简单（物流塔不会被破坏；功勋点数获得*0.75）");
             ProtoRegistry.RegisterString("普通难度提示", "Difficulty: Normal (Station attacked will turn to blueprint mode)", "当前难度：普通（物流塔被破坏会进入蓝图模式）");
-            ProtoRegistry.RegisterString("困难难度提示", "Difficulty: Hard (Station will be dismantled; Enemy strength will increase; Merit points earned *1.5)", "当前难度：困难（物流塔会被破坏拆除，敌人战斗力大幅提升；功勋点数获得*1.5）");
+            ProtoRegistry.RegisterString("困难难度提示", "Difficulty: Hard (Station will be dismantled; Enemy strength increase; Merit points *1.5)", "当前难度：困难（物流塔会被破坏拆除，敌人战斗力大幅提升；功勋点数获得*1.5）");
             ProtoRegistry.RegisterString("奖励倒计时：", "Reward time left: ", "奖励剩余时间：");
 
-            ProtoRegistry.RegisterString("mod版本信息", "Current version: " + Configs.versionString, "当前版本：" + Configs.versionString + "          欢迎加入mod交流群：" + Configs.qq);
+            ProtoRegistry.RegisterString("mod版本信息", "Current version: " + Configs.versionString + "                Contact me in Discord: ckcz#3576", "当前版本：" + Configs.versionString + "          欢迎加入mod交流群：" + Configs.qq);
             ProtoRegistry.RegisterString("未探测到威胁", "No threat detected", "未探测到威胁");
             ProtoRegistry.RegisterString("预估数量", "Estimated quantity", "预估数量");
             ProtoRegistry.RegisterString("预估强度", "Estimated strength", "预估强度");
@@ -265,7 +268,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("做好防御提示", "Please prepare next wave in <color=#c2853d>{0}</color>!", "请为<color=#c2853d>{0}</color>做好防御准备。");
             ProtoRegistry.RegisterString("下一波精英攻击即将到来！", "Next ★elite wave★ is coming!", "下一波 ★精英攻击★ 即将到来！");
             ProtoRegistry.RegisterString("做好防御提示精英",
-                "Please prepare next wave in <color=#c2853d>{0}</color>!\n The enemy's attack will not stop for 3 minutes\nthe ships will obtain different buff.\nFrigate: 90% chance to evade bullet damage\nCruiser: reduce 90% damage from any aoe effects, immune crowd control\nBattleship: reduce 80% damage from energy weapons and shields",
+                "Please prepare next wave in <color=#c2853d>{0}</color>!\nThe enemy's attack will keep in 3 minutes, and the ships will obtain different buff.\nFrigate: 90% chance to evade bullet damage\nCruiser: reduce 90% damage from any aoe effects, immune crowd control\nBattleship: reduce 80% damage from energy weapons and shields",
                 "请为<color=#c2853d>{0}</color>做好防御准备！\n 敌人将在三分钟内持续进攻\n敌舰将获得额外的加成效果\n护卫舰：有90%概率闪避来自子弹的伤害\n巡洋舰：减免90%受到的范围伤害，免疫任何控制效果\n战列舰：对能量武器和来自护盾的伤害减少80%");
             ProtoRegistry.RegisterString("虫洞已生成！", "Wormhole generated!", "虫洞已生成！");
             ProtoRegistry.RegisterString("虫洞生成提示", "Use starmap or fly to <color=#c2853d>{0}</color> to view details.", "可通过星图或飞往<color=#c2853d>{0}</color>查看具体信息。");
@@ -393,7 +396,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("水滴工作功率", "Work Consumption", "工作功率");
 
             ProtoRegistry.RegisterString("异星矩阵", "Alien matrix", "异星矩阵");
-            ProtoRegistry.RegisterString("异星矩阵描述", "A matrix containing high-density data accidentally dropped by invading swarms. Can be analyzed by mechs and used to unlock more advanced alien technologies. The matrix itself also seems to have potentially high-dimensional spatiotemporal properties", "由入侵的虫群偶然掉落的载有高密度数据的矩阵，可以由机甲分析并用于解锁更高级的异星科技。矩阵本身似乎还具有潜在的高维时空特性。");
+            ProtoRegistry.RegisterString("异星矩阵描述", "A matrix containing high-density data accidentally dropped by invading swarms. Can be analyzed by mechas and used to unlock more advanced alien technologies. The matrix itself also seems to have potentially high-dimensional spatiotemporal properties", "由入侵的虫群偶然掉落的载有高密度数据的矩阵，可以由机甲分析并用于解锁更高级的异星科技。矩阵本身似乎还具有潜在的高维时空特性。");
             ProtoRegistry.RegisterString("异星元数据", "Alien metadata", "异星元数据");
             ProtoRegistry.RegisterString("异星元数据描述", "Having fully decoded the Alien Matrix, Icarus can now quickly decompile the Alien Matrix and obtain the alien metadata, which does not require as much computation as initially decoding the megastructure data in the Alien Matrix. The decoded alien metadata in mech will be automatically uploaded to the CenterBrain and shared with other pioneers in the sector, which will provide Icarus with additional <color=#c2853d>merit points</color>. But this metadata cannot be shared across archives like other metadata.",
                 "在完成了对异星矩阵的全面解码后，伊卡洛斯现在可以快速对异星矩阵进行反编译并获得异星元数据，这不需要像最初解码异星矩阵中的巨构数据那样消耗大量算力。机甲中的异星元数据将自动上传给主脑并共享给星区的其他开拓者，这同时也会为伊卡洛斯提供大量的<color=#c2853d>功勋点数</color>。但该元数据无法像其他元数据一样在存档间共享。");
@@ -417,13 +420,14 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("折跃场广播阵列科技结论", "You have successfully decoded the blueprint of Resonant generator carrier rocket.", "你成功解码了谐振发射器运载火箭的制造蓝图。");
             ProtoRegistry.RegisterString("星际组装厂科技结论", "You have successfully decoded the blueprint of Interstellar assembly component and its carrier rocket.", "你成功解码了星际组装厂组件和运载火箭的制造蓝图。");
             ProtoRegistry.RegisterString("晶体重构器科技结论", "You have successfully decoded the blueprint of Crystal reconstructor carrier rocket.", "你成功解码了晶体重构器运载火箭的制造蓝图。");
+            ProtoRegistry.RegisterString("多功能集成组件描述gm2", "The high level of integration makes it possible to quickly assemble a variety of production building and logistics components, while occupying very little space. Can only be produced in megastructure <color=#c2853d>Interstellar assembly</color>.", "超高集成度使其可以迅速地组装成多种生产建筑和物流组件，却仅占用极小的空间。仅能在巨构<color=#c2853d>星际组装厂</color>中制作。");
 
             ProtoRegistry.RegisterString("被深空来敌mod禁止", "Banned by mod They Come From Void", "被深空来敌mod禁止");
             
             // 遗物
             ProtoRegistry.RegisterString("发现异星圣物", "Alien Relic Found", "发现异星圣物");
             ProtoRegistry.RegisterString("解译异星圣物提示", 
-                "Select one decoding rail from the following three to obtain the corresponding buff (or remove a relic). \n You can use alien matrix to seek new decoding rail with different available effects. Each re-random opportunity makes the relic  more unstable, so that the next re-random cost will be doubled.", 
+                "Select one decoding rail from the following three to obtain the corresponding buff (or remove a relic). \n You can use alien matrix to seek new decoding rail with different available effects. Each re-random opportunity makes the relic more unstable, so that the next re-random cost will be doubled.", 
                 "从以下三个解码轨中选取一个进行解译以获取对应的圣物加成(或移除圣物)。\n可以使用异星矩阵重随解码轨来发现新的可用效果，每次重新随机会使圣物更加不稳定，从而使下次重新随机的消耗翻倍。");
             ProtoRegistry.RegisterString("重新随机", "Roll", "重新随机");
             ProtoRegistry.RegisterString("免费", "free", "免费");
@@ -516,15 +520,15 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物描述0-4", "The ray receiver does not need to consume the lens to achieve the maximum output efficiency, and it will no longer be blocked at night", "射线接受器无需消耗透镜即可达到最大输出效率，且不再因背向恒星影响接收效率");
             ProtoRegistry.RegisterString("遗物描述0-5", "Planet shields will rebound 10% of the basic damage to the enemy ship as <i>additional damage</i>", "行星力场护盾会向伤害来源反弹10%受到的基础伤害作为<i>额外伤害</i>");
             ProtoRegistry.RegisterString("遗物描述0-6", "The armor piercing deals 50,000% <i>additional damage</i>, the bullet speed increased significantly. But the ejector needs 5 armor piercings to fire, and the charge and cooldown time increased by 900%", "穿甲磁轨弹造成50000%<i>额外伤害</i>，弹道速度大幅增加，但每次消耗5发弹药，且充能与冷却时间增加900%");
-            ProtoRegistry.RegisterString("遗物描述0-7", "The star system with a megastructure will deal <i>additional damage</i> to all enemy ships in the star system during the invasion, higher energy the megastucture generates, higher the damage it deals", "拥有巨构的星系在战斗时每秒会对星系中所有敌舰造成<i>额外伤害</i>，伤害取决于巨构的能量水平\n如果巨构为恒星炮，该伤害增加200%");
+            ProtoRegistry.RegisterString("遗物描述0-7", "The star system with a megastructure will deal <i>additional damage</i> to all enemy ships in the star system during the invasion, higher energy the megastucture generates, higher the damage it deals.\nIf the megastructure is star cannon, then the additional damage increases 200%.", "拥有巨构的星系在战斗时每秒会对星系中所有敌舰造成<i>额外伤害</i>，伤害取决于巨构的能量水平\n如果巨构为恒星炮，该伤害增加200%");
             ProtoRegistry.RegisterString("遗物描述0-8", "When any damage hit the enemy ships, a random planet that is in the invasion star system will immediately restore shield by 10% of the actual damage", "我方对敌舰造成的任何伤害时，会为正在发生战斗星系的一个随机行星立刻回复相当于实际伤害10%的护盾");
             ProtoRegistry.RegisterString("遗物描述0-9", "❤ You will be more lucky ❤", "❤你会更加幸运❤");
-            ProtoRegistry.RegisterString("遗物描述0-10", "Every time a droplet destroys an enemy ship, all droplets permanently obtain 10 <i>additional damage</i>. The upper limit is 400 at the begining. After reaching the upper limit, the mecha will automatically consume a droplet then increase the upper limit by 400. The latter's growth is unlimited.", "水滴每击杀一个敌人，所有水滴永久获得+10的<i>额外伤害</i>，加成上限初始为400，达到上限后，自动消耗背包中的一个水滴并再次提升400加成上限，提升上限的次数不受限制。");
+            ProtoRegistry.RegisterString("遗物描述0-10", "Every time a droplet destroys an enemy ship, all droplets permanently obtain 10 <i>additional damage</i>. The upper limit is 400 at the begining. After reaching the upper limit, the mecha will automatically consume a droplet in inventory then increase the upper limit by 400. The upper limit growth is unlimited.", "水滴每击杀一个敌人，所有水滴永久获得+10的<i>额外伤害</i>，加成上限初始为400，达到上限后，自动消耗背包中的一个水滴并再次提升400加成上限，提升上限的次数不受限制。");
 
             ProtoRegistry.RegisterString("遗物描述1-0", "Every time a invasion is over, random mega structures will be partially auto-constructed according to the total intensity", "每次入侵结束，根据来袭总强度少量推进巨构的建造进度");
             ProtoRegistry.RegisterString("遗物描述1-1", "The aoe damage (and aoe effect) of the missile no longer decrease by the distance", "导弹的范围伤害（以及范围效果）不再随距离衰减");
             ProtoRegistry.RegisterString("遗物描述1-2", "The star system with a megastructure will automatically recharge the shield of all the planets according to the megastructure's energy", "拥有巨构的星系会自动缓慢充能该星系全部星球的护盾，充能速度取决于巨构能量水平");
-            ProtoRegistry.RegisterString("遗物描述1-3", "A star system with a megastructure with at least 6 GW, will applied 30% slow down to all enemy ships in the fist minute of the invasion. Meanwhile， all the enemy ships will receive 30% <i>additional damage</i>.", "拥有巨构的星系在战斗开始的前60秒对所有敌舰施加30%减速效果，并使他们在这期间受到30%的<i>额外伤害</i>");
+            ProtoRegistry.RegisterString("遗物描述1-3", "A star system with a megastructure with at least 6 GW, will applied 30% slow down to all enemy ships in the fist minute of the invasion. Meanwhile, all the enemy ships will receive 30% <i>additional damage</i>.", "拥有6GW以上巨构的星系在战斗开始的前60秒对所有敌舰施加30%减速效果，并使他们在这期间受到30%的<i>额外伤害</i>");
             ProtoRegistry.RegisterString("遗物描述1-4", "Give a droplet immediately, droplets energy consumption -50%", "立刻获得一个水滴，水滴能量消耗-50%");
             ProtoRegistry.RegisterString("遗物描述1-5", "The missile silo will reload a free missile after each launch", "导弹发射井在每次发射后向本体回填一发免费弹药");
             ProtoRegistry.RegisterString("遗物描述1-6", "When producing megastructure rockets, each output returns 2 deuteron fuel rods", "生产巨构火箭时，每个产出返还2个氘核燃料棒");
@@ -851,7 +855,9 @@ namespace DSP_Battle
                 new int[] { 200 }, 36000, new int[] { 570, 571, 572 }, new Vector2(65, -3));
             
             TechProto techDrop = ProtoRegistry.RegisterTech(1919, "玻色子操控", "玻色子操控描述", "玻色子操控结论", "Assets/DSPBattle/bosontech", new int[] { 1915 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-                new int[] { 24, 24, 24, 24, 24 }, 450000, new int[] { 566, 567, 568, 569, 573 }, new Vector2(57, -43));
+                new int[] { 24, 24, 24, 24, 24 }, 300000, new int[] { 566, 567, 568, 569 }, new Vector2(57, -43));
+            ProtoRegistry.RegisterTech(1930, "水滴gm2", "水滴科技描述", "水滴科技结论", "Assets/DSPBattle/bosontech", new int[] { 1919 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+                new int[] { 24, 24, 24, 24, 24 }, 375000, new int[] { 573 }, new Vector2(61, -43));
 
 
             TechProto techMegaMD = ProtoRegistry.RegisterTech(1920, "物质解压器", "物质解压器科技描述", "物质解压器科技结论", "Assets/DSPBattle/techMD", new int[] {  }, new int[] { 8032 },
@@ -1164,6 +1170,8 @@ namespace DSP_Battle
                     StorageComponent.itemStackCount[proto.ID] = proto.StackSize;
                 }
             }
+
+            LDB.items.Select(9500).Description = LDB.items.Select(9500).description = "多功能集成组件描述gm2".Translate();
 
             LDB.models.OnAfterDeserialize();
             LDB.models.Select(311).prefabDesc.modelIndex = 311;
