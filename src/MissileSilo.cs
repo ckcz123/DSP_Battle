@@ -1807,6 +1807,7 @@ namespace DSP_Battle
         private static string originSiloDetailLabel;
         private static string originSiloPickerTitle;
         private static string originSiloPickerButtonText;
+        private static GameObject productIconObj;
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UISiloWindow), "OnSiloIdChange")]
@@ -1817,6 +1818,7 @@ namespace DSP_Battle
                 siloDetailText = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Silo Window/detail-texts/label (3)").GetComponent<Text>();
                 siloPickerTitle = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Silo Window/node-picker/title").GetComponent<Text>();
                 siloEditButtonText = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Silo Window/node-picker/button (Edit)/Text").GetComponent<Text>();
+                productIconObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Silo Window/product");
 
                 originSiloDetailLabel = siloDetailText.text;
                 originSiloPickerTitle = siloPickerTitle.text;
@@ -1833,13 +1835,14 @@ namespace DSP_Battle
                     siloDetailText.text = originSiloDetailLabel;
                     siloPickerTitle.text = originSiloPickerTitle;
                     siloEditButtonText.text = originSiloPickerButtonText;
-
+                    productIconObj.SetActive(true);
                 }
                 else
                 {
                     siloDetailText.text = "剩余敌人".Translate();
                     siloPickerTitle.text = "火箭模式提示".Translate();
                     siloEditButtonText.text = "打开统计面板".Translate();
+                    productIconObj.SetActive(false);
                 }
             }
             catch (Exception) { }
