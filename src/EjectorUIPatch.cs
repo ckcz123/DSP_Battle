@@ -20,6 +20,7 @@ namespace DSP_Battle
         public static GameObject orbitalPickerObj = null;
         public static GameObject remainEnemyShipsLabelObj = null;
         public static GameObject remainEnemyShipsValueObj = null;
+        public static GameObject productIconObj = null;
         public static Text remainEnemyShipsLabel = null;
         public static Text remainEnemyShipsValue = null;
 
@@ -60,6 +61,7 @@ namespace DSP_Battle
 
 
                 orbitalPickerObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Ejector Window/orbit-picker");
+                productIconObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Ejector Window/product");
 
                 //下面初始化选择攻击目标逻辑的UI
                 GameObject oriTitleLabelObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Ejector Window/orbit-picker/title");
@@ -161,6 +163,7 @@ namespace DSP_Battle
             {
                 int orbitId = GameMain.data.galaxy.PlanetById(curEjectorPlanetId).factory.factorySystem.ejectorPool[curEjectorPoolId].orbitId;
                 orbitalPickerObj.SetActive(false);
+                productIconObj.SetActive(false);
                 setAimingModeLabelObj.SetActive(true);
                 setModeButton1Obj.SetActive(true);
                 setModeButton1Obj.GetComponent<UIButton>().highlighted = orbitId == 1;
@@ -184,6 +187,7 @@ namespace DSP_Battle
             else
             {
                 orbitalPickerObj.SetActive(true);
+                productIconObj.SetActive(true);
                 setAimingModeLabelObj.SetActive(false);
                 setModeButton1Obj.SetActive(false);
                 setModeButton2Obj.SetActive(false);
