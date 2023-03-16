@@ -211,6 +211,7 @@ namespace DSP_Battle
             Droplets.Export(w);
             Rank.Export(w);
             Relic.Export(w);
+            StarFortress.Export(w);
         }
 
         public void Import(BinaryReader r)
@@ -226,6 +227,7 @@ namespace DSP_Battle
             Droplets.Import(r);
             Rank.Import(r);
             Relic.Import(r);
+            StarFortress.Import(r);
 
             WaveStages.ResetCargoAccIncTable(Configs.extraSpeedEnabled && Rank.rank>=5);
             UIBattleStatistics.InitAll();
@@ -249,6 +251,7 @@ namespace DSP_Battle
             Droplets.IntoOtherSave();
             Rank.IntoOtherSave();
             Relic.IntoOtherSave();
+            StarFortress.IntoOtherSave();
 
             WaveStages.ResetCargoAccIncTable(Configs.extraSpeedEnabled && Rank.rank >= 5);
             UIBattleStatistics.InitAll();

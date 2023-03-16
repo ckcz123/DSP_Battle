@@ -17,6 +17,7 @@ namespace DSP_Battle
             //官方星图界面 橙色高亮字体color=FD965EC0
             //增产效果的蓝色高亮字体 0.3821 0.8455 1 0.7059 : 61d8ffb4
 
+            // 文本翻译
             ProtoRegistry.RegisterString("轨道防御", "Defense", "轨道防御");
 
             ProtoRegistry.RegisterString("子弹1", "Armor piercing bullet", "穿甲磁轨弹");
@@ -124,11 +125,12 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("彩蛋9", "Pioneer Diary #9", "先驱者日记#9");
 
             //ProtoRegistry.RegisterString("行星力场护盾", "Planet shield", "行星力场护盾");
-            ProtoRegistry.RegisterString("星际要塞", "Star fortress", "星际要塞");
             ProtoRegistry.RegisterString("恒星炮gm2", "Star cannon", "恒星炮");
             ProtoRegistry.RegisterString("水滴gm2", "Droplet", "水滴"); 
             ProtoRegistry.RegisterString("即将到来gm", "Coming soon", "即将推出");
-
+            ProtoRegistry.RegisterString("恒星要塞", "Star fortress", "恒星要塞");
+            ProtoRegistry.RegisterString("恒星要塞描述", "Star fortress desc", "恒星要塞描述");
+            ProtoRegistry.RegisterString("恒星要塞描述", "You have unlocked the star fortress.", "你解锁了武装巨构来构建恒星要塞的能力。");
             ProtoRegistry.RegisterString("尼科尔戴森光束", "Nicoll-Dyson beam", "尼科尔-戴森光束");
             ProtoRegistry.RegisterString("尼科尔戴森光束描述", "Decoding a method for building a Star Cannon from alien matrices, disintegrating wormholes with stellar energy.", "从异星矩阵中解码建造恒星炮的方法，利用恒星级能量瓦解虫洞。");
             ProtoRegistry.RegisterString("尼科尔戴森光束结论", "You have unlocked the star cannon.", "你解锁了建造恒星炮的能力。");
@@ -639,6 +641,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物名称带颜色3-16", "<color=#30b530>Void Lens  [Common]</color>",  "<color=#30b530>虚空棱镜  [普通]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色3-17", "<color=#30b530>Honorary Promotion  [Common]</color>", "<color=#30b530>荣誉晋升  [普通]</color>");
 
+            // 物品 Item
             ItemProto bullet1 = ProtoRegistry.RegisterItem(8001, "子弹1", "子弹1描述", "Assets/DSPBattle/bullet1", 2701 + pageBias, 100, EItemType.Material);
             ItemProto bullet2 = ProtoRegistry.RegisterItem(8002, "子弹2", "子弹2描述", "Assets/DSPBattle/bullet2", 2702 + pageBias, 100, EItemType.Material);
             ItemProto bullet3 = ProtoRegistry.RegisterItem(8003, "子弹3", "子弹3描述", "Assets/DSPBattle/bullet3", 2703 + pageBias, 100, EItemType.Material);
@@ -725,6 +728,15 @@ namespace DSP_Battle
             Silo.Upgrades = new int[] { };
             Silo.DescFields = new int[] { 35, 11, 12, 1, 40 };
 
+            var StarFortressSilo = ProtoRegistry.RegisterItem(8036, "恒星要塞组件发射井", "恒星要塞组件发射井描述", "Assets/DSPBattle/missilesilo", 2607 + pageBias, 50, EItemType.Production);
+            //StarFortressSilo.BuildIndex = 610;
+            StarFortressSilo.BuildMode = 1;
+            StarFortressSilo.IsEntity = true;
+            StarFortressSilo.isRaw = false;
+            StarFortressSilo.CanBuild = true;
+            StarFortressSilo.Upgrades = new int[] { };
+            StarFortressSilo.DescFields = new int[] { 35, 11, 12, 1, 40 };
+
 
             var ShieldGenerator = ProtoRegistry.RegisterItem(8030, "行星护盾生成器", "行星护盾生成器描述", "Assets/MegaStructureTab/shieldGen", 2605 + pageBias, 10, EItemType.Production);
             ShieldGenerator.BuildMode = 1;
@@ -743,7 +755,7 @@ namespace DSP_Battle
             TestEngine.CanBuild = true;
             TestEngine.Upgrades = new int[] { };
 
-
+            // 配方
             ProtoRegistry.RegisterRecipe(801, ERecipeType.Assemble, 60, new int[] { 1112, 1103 }, new int[] { 1, 1 }, new int[] { 8001 }, new int[] { 1 }, "子弹1描述",
                 1901, 2701 + pageBias, "Assets/DSPBattle/bullet1");
             ProtoRegistry.RegisterRecipe(802, ERecipeType.Assemble, 90, new int[] { 1118, 1110, 1116 }, new int[] { 1, 1, 1 }, new int[] { 8002 }, new int[] { 2 }, "子弹2描述",
@@ -767,9 +779,11 @@ namespace DSP_Battle
             ProtoRegistry.RegisterRecipe(815, ERecipeType.Assemble, 900, new int[] { 9503, 1305, 1125 }, new int[] { 30, 20, 30 }, new int[] { 8030 }, new int[] { 1 }, "行星护盾生成器描述",
                 1916, 2605 + pageBias, "Assets/MegaStructureTab/shieldGen");
             ProtoRegistry.RegisterRecipe(816, ERecipeType.Assemble, 10, new int[] { 1101 }, new int[] { 1 }, new int[] { 8031 }, new int[] { 1 }, "测试用发动机描述",
-                1916, 2606 + hideMask + pageBias, "Assets/MegaStructureTab/shieldGen");
+                1916, 2607 + hideMask + pageBias, "Assets/MegaStructureTab/shieldGen");
             ProtoRegistry.RegisterRecipe(817, ERecipeType.Research, 60, new int[] { 8032 }, new int[] { 2 }, new int[] { 8032 }, new int[] { 1 }, "异星矩阵描述",
                 1901, 9999 + pageBias, "Assets/DSPBattle/alienmatrix");
+            ProtoRegistry.RegisterRecipe(821, ERecipeType.Assemble, 10, new int[] { 1101 }, new int[] { 1 }, new int[] { 8036 }, new int[] { 1 }, "恒星要塞组件发射井描述",
+                1916, 2606 + pageBias, "Assets/DSPBattle/missilesilo");
 
             RecipeProto decompileRecipe0 = ProtoRegistry.RegisterRecipe(818, ERecipeType.Research, 60, new int[] { 8032 }, new int[] { 10 }, new int[] { 8033 }, new int[] { 500 }, "异星元数据描述",
                 1924, 2712 + pageBias, "异星矩阵反编译", "Assets/DSPBattle/alienmetax100");
@@ -808,6 +822,8 @@ namespace DSP_Battle
             //ProtoRegistry.RegisterRecipe(824, ERecipeType.Assemble, 1, new int[] { 1101 }, new int[] { 1 }, new int[] { 8044 }, new int[] { 1 }, "测试用1",
             //    1901, 9999, "Assets/DSPBattle/enemyShip");
 
+
+            // 科技
             TechProto techBullet1 = ProtoRegistry.RegisterTech(1901, "近地防卫系统", "近地防卫系统描述", "近地防卫系统结论", "Assets/DSPBattle/bullet1tech", new int[] { 1711 }, new int[] { 6001, 6002 }, new int[] { 20, 20 },
                 72000, new int[] { 801, 811, 817 }, new Vector2(29, -43));
 
@@ -848,9 +864,9 @@ namespace DSP_Battle
             TechProto techShield1 = ProtoRegistry.RegisterTech(1916, "行星力场护盾", "行星力场护盾描述", "行星力场护盾结论", "Assets/DSPBattle/shieldtech", new int[] { 1705 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
                 new int[] { 24, 24, 24, 24, 24 }, 300000, new int[] { 565,815 }, new Vector2(53, -31));
             
-            TechProto techStellarFortress = ProtoRegistry.RegisterTech(1917, "星际要塞", "星际要塞描述", "星际要塞结论", "Assets/DSPBattle/cannon3tech", new int[] { 1903 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 816 }, new Vector2(41, -43));
-            techStellarFortress.Published = false;
+            TechProto techStellarFortress = ProtoRegistry.RegisterTech(1917, "恒星要塞", "恒星要塞描述", "恒星要塞结论", "Assets/DSPBattle/shield1", new int[] { 1903 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
+                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 821 }, new Vector2(41, -43));
+            // techStellarFortress.Published = false;
             TechProto techStarCannon = ProtoRegistry.RegisterTech(1918, "尼科尔戴森光束", "尼科尔戴森光束描述", "尼科尔戴森光束结论", "Assets/DSPBattle/starcannontech", new int[] { 1144 }, new int[] { 8032 },
                 new int[] { 200 }, 36000, new int[] { 570, 571, 572 }, new Vector2(65, -3));
             
@@ -1095,6 +1111,12 @@ namespace DSP_Battle
             SiloModel.prefabDesc.siloColdFrame = 360;
             LDBTool.PreAddProto(SiloModel);
 
+            var StarFortressSiloModel = CopyModelProto(74, 317, Color.yellow);
+            //StarFortressSiloModel.prefabDesc.siloBulletId = 8004; // 导弹的Id
+            //StarFortressSiloModel.prefabDesc.siloChargeFrame = 120;
+            //StarFortressSiloModel.prefabDesc.siloColdFrame = 360;
+            LDBTool.PreAddProto(StarFortressSiloModel);
+
             var ShieldGenModel = CopyModelProto(45, 315, Color.blue);
             ShieldGenModel.prefabDesc.emptyId = 9999;
             ShieldGenModel.prefabDesc.fullId = 1208;
@@ -1197,6 +1219,10 @@ namespace DSP_Battle
             LDB.models.Select(316).prefabDesc.modelIndex = 316;
             LDB.items.Select(8031).ModelIndex = 316;
             LDB.items.Select(8031).prefabDesc = LDB.models.Select(316).prefabDesc;
+
+            LDB.models.Select(317).prefabDesc.modelIndex = 317;
+            LDB.items.Select(8036).ModelIndex = 317;
+            LDB.items.Select(8036).prefabDesc = LDB.models.Select(317).prefabDesc;
 
             // LDB.items.Select(2206).prefabDesc.ener
             LDB.items.Select(2206).prefabDesc.inputEnergyPerTick = 150000;

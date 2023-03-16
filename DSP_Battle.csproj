@@ -141,6 +141,8 @@
     <Compile Include="src\ShieldGenerator.cs" />
     <Compile Include="src\ShieldRenderer.cs" />
     <Compile Include="src\StarCannon.cs" />
+    <Compile Include="src\StarFortress.cs" />
+    <Compile Include="src\StarFortressSilo.cs" />
     <Compile Include="src\UIBattleStatistics.cs" />
     <Compile Include="src\Cannon.cs" />
     <Compile Include="src\Configs.cs" />
