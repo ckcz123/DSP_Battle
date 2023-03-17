@@ -244,7 +244,7 @@ namespace DSP_Battle
                         float missileMaxSpeed = (float)Configs.missile1Speed;
                         int damage = Configs.missile1Atk;
                         int dmgRange = Configs.missile1Range;
-                        if (missileId == 8005)
+                        if (missileId == 8005 || missileId == 8008)
                         {
                             missileMaxSpeed = (float)Configs.missile2Speed;
                             damage = Configs.missile2Atk;
@@ -964,7 +964,7 @@ namespace DSP_Battle
                         float missileMaxSpeed = (float)Configs.missile1Speed;
                         int damage = Configs.missile1Atk;
                         int dmgRange = Configs.missile1Range;
-                        if (missileId == 8005)
+                        if (missileId == 8005 || missileId == 8008)
                         {
                             missileMaxSpeed = (float)Configs.missile2Speed;
                             damage = Configs.missile2Atk;
@@ -1722,7 +1722,7 @@ namespace DSP_Battle
         {
             return 1101;
         }
-        private static int FindTarget(int starIndex, int planetId, int randSeed = 0, bool showLog = true)
+        public static int FindTarget(int starIndex, int planetId, int randSeed = 0, bool showLog = true)
         {
             int index;
             if (Utils.RandDouble() < 0.5)

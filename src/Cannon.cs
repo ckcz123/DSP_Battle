@@ -533,6 +533,7 @@ namespace DSP_Battle
                                 case 8002: damage = Configs.bullet2Atk; break;
                                 case 8003: damage = Configs.bullet3Atk; break;
                                 case 8007: damage = (int)(Configs.bullet4Atk * 5 * Math.Max(0.2,(1 - Configs.laserDamageReducePerAU * __instance.bulletPool[i].maxt * Configs.bullet4Speed / 40000))); dmgType = DamageType.laser; break;
+                                case 8009: damage = 8000; break;
                                 default:
                                     break;
                             }

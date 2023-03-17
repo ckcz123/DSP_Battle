@@ -90,6 +90,7 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(BattleBGMController));
             Harmony.CreateAndPatchAll(typeof(Relic));
             Harmony.CreateAndPatchAll(typeof(RelicFunctionPatcher));
+            Harmony.CreateAndPatchAll(typeof(StarFortress));
 
             LDBTool.PreAddDataAction += BattleProtos.AddProtos;
             LDBTool.PostAddDataAction += BattleProtos.PostDataAction;

@@ -130,7 +130,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("即将到来gm", "Coming soon", "即将推出");
             ProtoRegistry.RegisterString("恒星要塞", "Star fortress", "恒星要塞");
             ProtoRegistry.RegisterString("恒星要塞描述", "Star fortress desc", "恒星要塞描述");
-            ProtoRegistry.RegisterString("恒星要塞描述", "You have unlocked the star fortress.", "你解锁了武装巨构来构建恒星要塞的能力。");
+            ProtoRegistry.RegisterString("恒星要塞结论", "You have unlocked the star fortress.", "你解锁了武装巨构来构建恒星要塞的能力。");
             ProtoRegistry.RegisterString("尼科尔戴森光束", "Nicoll-Dyson beam", "尼科尔-戴森光束");
             ProtoRegistry.RegisterString("尼科尔戴森光束描述", "Decoding a method for building a Star Cannon from alien matrices, disintegrating wormholes with stellar energy.", "从异星矩阵中解码建造恒星炮的方法，利用恒星级能量瓦解虫洞。");
             ProtoRegistry.RegisterString("尼科尔戴森光束结论", "You have unlocked the star cannon.", "你解锁了建造恒星炮的能力。");
