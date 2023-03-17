@@ -91,6 +91,7 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(Relic));
             Harmony.CreateAndPatchAll(typeof(RelicFunctionPatcher));
             Harmony.CreateAndPatchAll(typeof(StarFortress));
+            Harmony.CreateAndPatchAll(typeof(UIStarFortress));
 
             LDBTool.PreAddDataAction += BattleProtos.AddProtos;
             LDBTool.PostAddDataAction += BattleProtos.PostDataAction;
@@ -110,9 +111,15 @@ namespace DSP_Battle
             //    Configs.nextWaveFrameIndex -= 60 * 60;
             //}
             if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
+            {
                 isControlDown = true;
+                UIStarFortress.RefreshSetBtnText();
+            }
             if (Input.GetKeyUp(KeyCode.LeftControl) || Input.GetKeyUp(KeyCode.RightControl))
+            {
                 isControlDown = false;
+                UIStarFortress.RefreshSetBtnText();
+            }
             if (Input.GetKeyDown(KeyCode.Minus) && isControlDown && !GameMain.isPaused && (Configs.nextWaveState == 1 || Configs.nextWaveState == 2))
             {
                 Configs.nextWaveFrameIndex -= 60 * 60;

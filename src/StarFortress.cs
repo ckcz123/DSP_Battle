@@ -12,20 +12,21 @@ namespace DSP_Battle
     public class StarFortress
     {
         public static List<int> moduleCapacity;
-        public static List<List<int>> moduleCount;
-        public static List<List<int>> moduleMaxCount;
+        public static List<List<int>> moduleComponentCount; // 存储已完成的组件数，除以每模块的组件需求数量就是已经完成的模块数
+        public static List<List<int>> moduleMaxCount; // 存储规划的模块数
 
         static int lockLoop = 0; // 为减少射击弹道飞行过程中重复锁定同一个敌人导致伤害溢出的浪费，恒星要塞的炮会依次序攻击队列中第lockLoop序号的敌人，且每次攻击后此值+1（对一个循环上限取余，循环上线取决于射击频率，原则上射击频率越快循环上限越大，循环上限loop通过FireCannon函数传入）
 
         public static void InitAll()
         {
             StarFortressSilo.InitAll();
+            UIStarFortress.InitAll();
             moduleCapacity = new List<int>(1000);
-            moduleCount = new List<List<int>>();
+            moduleComponentCount = new List<List<int>>();
             moduleMaxCount = new List<List<int>>();
             for (int i = 0; i < 1000; i++)
             {
-                moduleCount.Add(new List<int> { 0, 0, 0, 0 });
+                moduleComponentCount.Add(new List<int> { 0, 0, 0, 0 });
                 moduleMaxCount.Add(new List<int> { 0, 0, 0, 0 });
             }
         }

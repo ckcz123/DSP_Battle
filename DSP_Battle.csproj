@@ -155,6 +155,7 @@
     <Compile Include="src\UIDialogPatch.cs" />
     <Compile Include="src\UIRank.cs" />
     <Compile Include="src\UIRelic.cs" />
+    <Compile Include="src\UIStarFortress.cs" />
     <Compile Include="src\WaveStages.cs" />
     <Compile Include="src\Utils.cs" />
     <Compile Include="src\Wormhole.cs" />
