@@ -25,7 +25,7 @@ namespace DSP_Battle
 
 		public static bool SiloSubPatch(ref SiloComponent __instance, float power, DysonSphere sphere, AnimData[] animPool, int[] consumeRegister, ref uint __result)
         {
-			if (__instance.bulletCount <= 0)
+			if (__instance.bulletCount <= 0 && GameMain.instance.timei % 60 == 0)
 				__instance.bulletId = nextBulletId(__instance.bulletId);
 			if (__instance.needs == null)
 			{
@@ -159,7 +159,7 @@ namespace DSP_Battle
 
 		private static int nextBulletId(int id)
 		{
-			return 1101;
+			return ((id-8037)+1)%3 + 8037;
 		}
 
 		private static DysonNode FindRandomNode(DysonSphere sphere, int randSeed)
@@ -222,8 +222,10 @@ namespace DSP_Battle
 					_this.rocketPool[num2].id = num2;
 					_this.rocketPool[num2].t = -1f;
 					num = num2;
-
-					starFortressRocketProtoIds[_this.starData.index][num] = rocketId; // 放进dictionary里面记录，在后面rocket更新时方便截获
+					int index = rocketId - 8037;
+					index = Math.Min(Math.Max(0, index), 2);
+					starFortressRocketProtoIds[_this.starData.index].AddOrUpdate(num, rocketId, (x, y) => rocketId); // 放进dictionary里面记录，在后面rocket更新时方便截获
+					StarFortress.moduleComponentInProgress[_this.starData.index].AddOrUpdate(index, 1, (x, y) => y + 1); // 增加一个在途的火箭
 				}
 				else
 				{

@@ -14,6 +14,14 @@ namespace DSP_Battle
         public static GameObject StarFortressUIObj = null; // UI总面板
         public static GameObject StarFortressContentObj = null; // 可被隐藏或显示的UI
 
+        public static Text starFortressTitleText;
+        public static Text capacityTitleText;
+        public static Text module0TitleText;
+        public static Text module1TitleText;
+        public static Text module2TitleText;
+        public static Text module0CompoText;
+        public static Text module1CompoText;
+        public static Text module2CompoText;
         public static Text capacityText;
         public static List<Text> moduleCountText;
         public static List<Text> componentCountText;
@@ -46,10 +54,9 @@ namespace DSP_Battle
                 GameObject TitleTextObj = GameObject.Instantiate(GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Assembler Window/produce/circle-back/cnt-text"), masterUITrans);
                 TitleTextObj.name = "title";
                 TitleTextObj.transform.localPosition = new Vector3(0, -20);
-                Text titleText = TitleTextObj.GetComponent<Text>();
-                titleText.fontSize = 18;
-                titleText.alignment = TextAnchor.MiddleLeft;
-                titleText.text = "恒星要塞".Translate();
+                starFortressTitleText = TitleTextObj.GetComponent<Text>();
+                starFortressTitleText.fontSize = 18;
+                starFortressTitleText.alignment = TextAnchor.MiddleLeft;
 
                 // 显示、隐藏下面的主要UI部分的按钮
                 GameObject addNewLayerButton = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Dyson Sphere Editor/Dyson Editor Control Panel/hierarchy/layers/buttons-group/buttons/add-button");
@@ -77,11 +84,11 @@ namespace DSP_Battle
                 // 最大容量文本显示
                 GameObject capacityTitleTextObj = GameObject.Instantiate(GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Assembler Window/produce/circle-back/cnt-text"), subTrans);
                 capacityTitleTextObj.name = "capacity-title";
-                capacityTitleTextObj.transform.localPosition = new Vector3(0, 0);
-                Text capacityTitleText = capacityTitleTextObj.GetComponent<Text>();
+                capacityTitleTextObj.transform.localPosition = new Vector3(-6, 0);
+                capacityTitleText = capacityTitleTextObj.GetComponent<Text>();
                 capacityTitleText.fontSize = 16;
                 capacityTitleText.alignment = TextAnchor.MiddleLeft;
-                capacityTitleText.text = "模块容量".Translate();
+                capacityTitleText.color = new Color(1, 1, 1, 0.5f);
                 GameObject capacityValueTextObj = GameObject.Instantiate(GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Assembler Window/produce/circle-back/cnt-text"), subTrans);
                 capacityValueTextObj.name = "capacity-value";
                 capacityValueTextObj.transform.localPosition = new Vector3(130, 0);
@@ -89,6 +96,7 @@ namespace DSP_Battle
                 capacityText.fontSize = 16;
                 capacityText.alignment = TextAnchor.MiddleCenter;
                 capacityText.text = "0/0";
+                capacityText.color = new Color(1, 1, 1, 0.5f);
                 CreateTipButton(subTrans, -60, 20, "模块容量", "模块容量说明");
 
                 // 分隔线Obj
@@ -106,13 +114,12 @@ namespace DSP_Battle
                 sepLineObj.transform.localScale = new Vector3(1, 1, 1);
                 sepLineObj.transform.localPosition = new Vector3(115, 38, 0);
                 sepLineObj.GetComponent<RectTransform>().sizeDelta = new Vector2(365, 7);
-                CreateText(missileModuleObj.transform, "title", "导弹模块", 0, -0, 16);
-                CreateText(missileModuleObj.transform, "compo", "组件需求", 0, -25, 12);
+                module0TitleText = CreateText(missileModuleObj.transform, "title", "导弹模块".Translate(), -6, -0, 16);
+                module0CompoText = CreateText(missileModuleObj.transform, "compo", "组件需求".Translate(), 0, -25, 12);
                 moduleCountText.Add(CreateText(missileModuleObj.transform,"moduleCount", "0/0", 190, 0, 16, TextAnchor.MiddleCenter));
                 componentCountText.Add(CreateText(missileModuleObj.transform, "componentCount", "0/0", 190, -25, 12, TextAnchor.MiddleCenter));
                 CreateTipButton(missileModuleObj.transform, -60, 20, "导弹模块", "导弹模块说明");
                 CreateSetButtons(missileModuleObj.transform, 0);
-
 
                 // 光矛模块
                 GameObject cannonModuleObj = new GameObject("cannon-module");
@@ -125,13 +132,41 @@ namespace DSP_Battle
                 sepLine2Obj.transform.localScale = new Vector3(1, 1, 1);
                 sepLine2Obj.transform.localPosition = new Vector3(115, 38, 0);
                 sepLine2Obj.GetComponent<RectTransform>().sizeDelta = new Vector2(365, 7);
-                CreateText(cannonModuleObj.transform, "title", "光矛模块", 0, -0, 16);
-                CreateText(cannonModuleObj.transform, "compo", "组件需求", 0, -25, 12);
+                module1TitleText = CreateText(cannonModuleObj.transform, "title", "光矛模块".Translate(), -6, -0, 16);
+                module1CompoText = CreateText(cannonModuleObj.transform, "compo", "组件需求".Translate(), 0, -25, 12);
                 moduleCountText.Add(CreateText(cannonModuleObj.transform, "moduleCount", "0/0", 190, 0, 16, TextAnchor.MiddleCenter));
                 componentCountText.Add(CreateText(cannonModuleObj.transform, "componentCount", "0/0", 190, -25, 12, TextAnchor.MiddleCenter));
                 CreateTipButton(cannonModuleObj.transform, -60, 20, "光矛模块", "光矛模块说明");
                 CreateSetButtons(cannonModuleObj.transform, 1);
+
+                // 平台扩展模块
+                GameObject expandModuleObj = new GameObject("expand-module");
+                expandModuleObj.transform.SetParent(subTrans);
+                expandModuleObj.transform.localScale = new Vector3(1, 1, 1);
+                expandModuleObj.transform.localPosition = new Vector3(0, -190, 0);
+                expandModuleObj.SetActive(true);
+                GameObject sepLine3Obj = GameObject.Instantiate(oriSepLineObj, expandModuleObj.transform);
+                sepLine3Obj.name = "sep";
+                sepLine3Obj.transform.localScale = new Vector3(1, 1, 1);
+                sepLine3Obj.transform.localPosition = new Vector3(115, 38, 0);
+                sepLine3Obj.GetComponent<RectTransform>().sizeDelta = new Vector2(365, 7);
+                module2TitleText = CreateText(expandModuleObj.transform, "title", "平台扩展模块".Translate(), -6, -0, 16);
+                module2CompoText = CreateText(expandModuleObj.transform, "compo", "组件需求".Translate(), 0, -25, 12);
+                moduleCountText.Add(CreateText(expandModuleObj.transform, "moduleCount", "0/0", 190, 0, 16, TextAnchor.MiddleCenter));
+                componentCountText.Add(CreateText(expandModuleObj.transform, "componentCount", "0/0", 190, -25, 12, TextAnchor.MiddleCenter));
+                CreateTipButton(expandModuleObj.transform, -60, 20, "平台扩展模块", "平台扩展模块说明");
+                CreateSetButtons(expandModuleObj.transform, 2);
+
             }
+
+            starFortressTitleText.text = "恒星要塞".Translate();
+            capacityTitleText.text = "模块容量".Translate();
+            module0TitleText.text = "导弹模块".Translate();
+            module0CompoText.text = "组件需求".Translate();
+            module1TitleText.text = "光矛模块".Translate();
+            module1CompoText.text = "组件需求".Translate();
+            module2TitleText.text = "平台扩展模块".Translate();
+            module2CompoText.text = "组件需求".Translate();
         }
 
         public static void CreateTipButton(Transform parent, float x, float y, string tipTitle, string tipText)
@@ -152,18 +187,21 @@ namespace DSP_Battle
             tipButtonObj.GetComponent<UIButton>().tips.tipText = tipText.Translate();
             tipButtonObj.GetComponent<UIButton>().tips.delay = 0.3f;
             tipButtonObj.GetComponent<UIButton>().tips.width = 280;
-            tipButtonObj.GetComponent<UIButton>().tips.offset = new Vector2(140, -50);
+            tipButtonObj.GetComponent<UIButton>().tips.offset = new Vector2(190, -50);
         }
 
         public static Text CreateText(Transform parent, string objname, string defaultText, float x, float y,int fontSize, TextAnchor textAnchor = TextAnchor.MiddleLeft)
         {
+            Utils.Log(defaultText);
             GameObject textObj = GameObject.Instantiate(GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Assembler Window/produce/circle-back/cnt-text"), parent);
             textObj.name = objname;
             textObj.transform.localPosition = new Vector3(x, y);
             Text txt = textObj.GetComponent<Text>();
             txt.alignment = textAnchor;
             txt.fontSize = fontSize;
-            txt.text = defaultText.Translate();
+            txt.text = defaultText;
+            if (objname.Length > 0 && objname[0] == 'c')
+                txt.color = new Color(1, 1, 1, 0.5f);
             return txt;
         }
 
@@ -207,6 +245,8 @@ namespace DSP_Battle
         public static void RefreshAll()
         {
             if (StarFortressUIObj == null) return;
+            if (curDysonSphere == null) return;
+            int starIndex = curDysonSphere.starData.index;
             showHideBtnText.text = "显示/隐藏".Translate();
             for (int i = 0; i < tipBtnText.Count; i++)
             {
@@ -216,10 +256,15 @@ namespace DSP_Battle
                 }
             }
 
-            if (StarFortressContentObj.activeSelf) // 避免顶部UI互相遮挡
+
+            capacityText.text = (StarFortress.moduleMaxCount[starIndex][0] + StarFortress.moduleMaxCount[starIndex][1]).ToString() + "/" + StarFortress.moduleCapacity[starIndex].ToString();
+
+            for (int i = 0; i < moduleCountText.Count; i++)
             {
-                UIAlert.ShowAlert(false);
+                moduleCountText[i].text = StarFortress.CalcModuleBuilt(starIndex)[i].ToString() + "/" + StarFortress.moduleMaxCount[starIndex][i].ToString();
+                componentCountText[i].text = StarFortress.moduleComponentCount[starIndex][i].ToString() + "/" + (StarFortress.moduleMaxCount[starIndex][i] * StarFortress.compoPerModule[i]).ToString();
             }
+
             RefreshSetBtnText();
         }
 
@@ -248,13 +293,90 @@ namespace DSP_Battle
         public static void ShowHideUI()
         {
             StarFortressContentObj.SetActive(!StarFortressContentObj.activeSelf);
+
+            if (StarFortressContentObj.activeSelf) // 避免顶部UI互相遮挡
+            {
+                UIAlert.ShowAlert(false);
+            }
             RefreshAll();
         }
 
         public static void SetModuleNum(int index, int delta)
         {
-            Utils.Log($"index is {index} and delta is {delta}");
+            if (curDysonSphere == null) return;
+            int starIndex = curDysonSphere.starData.index;
+            if (DspBattlePlugin.isControlDown)
+                delta *= 10;
+
+            if (delta > 0)
+            {
+                if (index <= 1)
+                {
+                    if (StarFortress.CapacityRemaining(starIndex) < delta)
+                        UIRealtimeTip.Popup("恒星要塞容量不足警告".Translate());
+                    else
+                    {
+                        StarFortress.moduleMaxCount[starIndex][index] += delta;
+                    }
+                }
+                else if (index == 2) // 扩展模块目前设定是可以无限增加
+                {
+                    // 暂时无效的警告
+                    if (StarFortress.moduleCapacity[starIndex] <= 0)
+                        UIRealtimeTip.Popup("警告扩展模块无效");
+                    else
+                        StarFortress.moduleMaxCount[starIndex][index] += delta;
+                }
+            }
+            else
+            {
+                int resultCount = Math.Max(0, StarFortress.moduleMaxCount[starIndex][index] + delta);
+                int alreadyBuilt = StarFortress.CalcModuleBuilt(starIndex)[index];
+                if (alreadyBuilt > resultCount || (alreadyBuilt == resultCount&& StarFortress.moduleComponentCount[starIndex][index] % StarFortress.compoPerModule[index] != 0)) // 说明降低之后即将拆除部分已建成的
+                {
+                    if (index == 2) // 已建造好的扩展模块无法被拆除，所以上限不会减小到已建造好的数量之下
+                    {
+                        resultCount = StarFortress.CalcModuleBuilt(starIndex)[index];
+                        //if (StarFortress.moduleComponentCount[starIndex][index] % StarFortress.compoPerModule[index] != 0) // 这部分原本是为了防止已建成的部分组件点数浪费但是我觉得没必要
+                        //    resultCount += 1;
+
+                        StarFortress.moduleMaxCount[starIndex][index] = resultCount;
+                    }
+                    else // 普通防御模块如果减小规划数量之后，数量小于已建造完成的数量，则提示玩家是否要拆除
+                    {
+                        if (StarFortress.remindPlayerWhenDestruction > 0)
+                        {
+                            UIMessageBox.Show("即将拆除模块标题".Translate(), "即将拆除模块警告".Translate(),
+                                "取消".Translate(), "确定".Translate(), 1, new UIMessageBox.Response(() =>
+                                {
+
+                                }),
+                                new UIMessageBox.Response(() =>
+                                {
+                                    StarFortress.remindPlayerWhenDestruction = 0;
+                                    StarFortress.moduleMaxCount[starIndex][index] = resultCount;
+                                    StarFortress.moduleComponentInProgress[starIndex].AddOrUpdate(index, 0, (x, y) => 0); // 如果进行了拆除，重置一下inprogress的火箭数量
+                                }));
+                        }
+                        else 
+                        {
+                            StarFortress.moduleMaxCount[starIndex][index] = resultCount;
+                            StarFortress.moduleComponentInProgress[starIndex].AddOrUpdate(index, 0, (x, y) => 0); // 如果进行了拆除，重置一下inprogress的火箭数量
+                        }
+                    }
+                }
+                else
+                {
+                    StarFortress.moduleMaxCount[starIndex][index] = resultCount;
+                }
+            }
+
+            StarFortress.ReCalcData(ref curDysonSphere);
+            RefreshAll();
+
         }
+
+
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UIDysonEditor), "_OnOpen")]

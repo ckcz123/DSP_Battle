@@ -128,7 +128,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("恒星炮gm2", "Star cannon", "恒星炮");
             ProtoRegistry.RegisterString("水滴gm2", "Droplet", "水滴"); 
             ProtoRegistry.RegisterString("即将到来gm", "Coming soon", "即将推出");
-            ProtoRegistry.RegisterString("恒星要塞", "Star fortress", "恒星要塞");
+            ProtoRegistry.RegisterString("恒星要塞", "Star Fortress", "恒星要塞");
             ProtoRegistry.RegisterString("恒星要塞描述", "Star fortress desc", "恒星要塞描述");
             ProtoRegistry.RegisterString("恒星要塞结论", "You have unlocked the star fortress.", "你解锁了武装巨构来构建恒星要塞的能力。");
             ProtoRegistry.RegisterString("尼科尔戴森光束", "Nicoll-Dyson beam", "尼科尔-戴森光束");
@@ -323,6 +323,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("已产生gm", "Total", "已产生");
             ProtoRegistry.RegisterString("占比gm", "Percentage", "占比");
             ProtoRegistry.RegisterString("游戏提示gm", "Message", "游戏提示");
+            ProtoRegistry.RegisterString("剩余时间", "Time left", "剩余时间");
 
             ProtoRegistry.RegisterString("gmRank0", "<color=#ffffff80>Icarus</color>", "<color=#ffffff80>伊卡洛斯</color>");
             ProtoRegistry.RegisterString("gmRank1", "<color=#61d8ffb4>Explorer I</color>", "<color=#61d8ffb4>探索者 I</color>");
@@ -429,7 +430,7 @@ namespace DSP_Battle
             // 遗物
             ProtoRegistry.RegisterString("发现异星圣物", "Alien Relic Found", "发现异星圣物");
             ProtoRegistry.RegisterString("解译异星圣物提示", 
-                "Select one decoding rail from the following three to obtain the corresponding buff (or remove a relic). \n You can use alien matrix to seek new decoding rail with different available effects. Each re-random opportunity makes the relic more unstable, so that the next re-random cost will be doubled.", 
+                "Select one decoding rail from the following three to obtain the corresponding buff. You can use alien matrix to seek new decoding rail with different effects.\nEach re-random opportunity makes the relic more unstable, so that the next cost will be doubled.", 
                 "从以下三个解码轨中选取一个进行解译以获取对应的圣物加成(或移除圣物)。\n可以使用异星矩阵重随解码轨来发现新的可用效果，每次重新随机会使圣物更加不稳定，从而使下次重新随机的消耗翻倍。");
             ProtoRegistry.RegisterString("重新随机", "Roll", "重新随机");
             ProtoRegistry.RegisterString("免费", "free", "免费");
@@ -641,6 +642,18 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物名称带颜色3-16", "<color=#30b530>Void Lens  [Common]</color>",  "<color=#30b530>虚空棱镜  [普通]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色3-17", "<color=#30b530>Honorary Promotion  [Common]</color>", "<color=#30b530>荣誉晋升  [普通]</color>");
 
+            ProtoRegistry.RegisterString("显示/隐藏", "Show/Hide", "显示/隐藏");
+            ProtoRegistry.RegisterString("模块容量", "Module Capacity", "模块容量");
+            ProtoRegistry.RegisterString("模块容量说明", "", "模块容量决定着你可以在这个恒星要塞建造的防御性模块的数量，规划导弹模块和光矛模块都将消耗可用的模块容量，提升模块容量的方式有两个：\n1.构建更多的巨构框架和壳面将提升模块容量；\n2.在至少建造了一定能量水平的巨构后，建造平台扩展模块也会提升模块容量。");
+            ProtoRegistry.RegisterString("组件需求", "Component points", "组件点数");
+            ProtoRegistry.RegisterString("导弹模块", "Missile Mod.", "导弹模块");
+            ProtoRegistry.RegisterString("导弹模块说明", "", "导弹模块会在战斗中发射反物质导弹攻击敌舰，其使用的反物质导弹是在恒星环境下由模块自主生产的，无需地面供给弹药，且享受来自科技的加成效果。\n使用按钮来增加或减少建造的数量，然后从地面发射对应的运载火箭提供组件点数来逐步建造模块。按住Ctrl将使按钮变为10倍。");
+            ProtoRegistry.RegisterString("光矛模块", "Lightspear Mod.", "光矛模块");
+            ProtoRegistry.RegisterString("光矛模块说明", "", "光矛模块会在战斗中发射伤害高达50000的光矛攻击敌舰，但充能时间较长，且不享受科技加成。建造更多的光矛模块会加快光矛的充能速度从而增加射速。\n使用按钮来增加或减少建造的数量，然后从地面发射对应的运载火箭提供组件点数来逐步建造模块。按住Ctrl将使按钮变为10倍。");
+            ProtoRegistry.RegisterString("平台扩展模块", "Expand Mod.", "扩展模块");
+            ProtoRegistry.RegisterString("平台扩展模块说明", "", "每个平台扩展模块会提供（而非消耗）模块容量，以便使你能在低完成度的巨构上构建大型防御平台。\n已建成的平台扩展模块无法拆除。");
+            ProtoRegistry.RegisterString("警告扩展模块无效", "", "警告：在巨构壳层与框架能量水平总和达到一个最低值（600MW）之前，扩展模块无法生效。");
+
             // 物品 Item
             ItemProto bullet1 = ProtoRegistry.RegisterItem(8001, "子弹1", "子弹1描述", "Assets/DSPBattle/bullet1", 2701 + pageBias, 100, EItemType.Material);
             ItemProto bullet2 = ProtoRegistry.RegisterItem(8002, "子弹2", "子弹2描述", "Assets/DSPBattle/bullet2", 2702 + pageBias, 100, EItemType.Material);
@@ -685,6 +698,9 @@ namespace DSP_Battle
 
 
             ProtoRegistry.RegisterItem(8035, "水滴伤害增加", "", "Assets/DSPBattle/r0-10", 9999, 100, EItemType.Material);
+            ProtoRegistry.RegisterItem(8037, "sf组件1火箭", "", "Assets/DSPBattle/r0-10", 2307 + pageBias, 100, EItemType.Material);
+            ProtoRegistry.RegisterItem(8038, "sf组件2火箭", "", "Assets/DSPBattle/r0-10", 2308 + pageBias, 100, EItemType.Material);
+            ProtoRegistry.RegisterItem(8039, "sf组件3火箭", "", "Assets/DSPBattle/r0-10", 2309 + pageBias, 100, EItemType.Material);
 
 
             var Cannon1 = ProtoRegistry.RegisterItem(8011, "弹射器1", "弹射器1描述", "Assets/DSPBattle/cannon1", 2601 + pageBias, 50, EItemType.Production);
@@ -783,7 +799,13 @@ namespace DSP_Battle
             ProtoRegistry.RegisterRecipe(817, ERecipeType.Research, 60, new int[] { 8032 }, new int[] { 2 }, new int[] { 8032 }, new int[] { 1 }, "异星矩阵描述",
                 1901, 9999 + pageBias, "Assets/DSPBattle/alienmatrix");
             ProtoRegistry.RegisterRecipe(821, ERecipeType.Assemble, 10, new int[] { 1101 }, new int[] { 1 }, new int[] { 8036 }, new int[] { 1 }, "恒星要塞组件发射井描述",
-                1916, 2606 + pageBias, "Assets/DSPBattle/missilesilo");
+                1917, 2606 + pageBias, "Assets/DSPBattle/missilesilo");
+            ProtoRegistry.RegisterRecipe(822, ERecipeType.Assemble, 10, new int[] { 1101 }, new int[] { 1 }, new int[] { 8037 }, new int[] { 1 }, "sf组件1火箭描述",
+                1917, 2307 + pageBias, "Assets/DSPBattle/missilesilo");
+            ProtoRegistry.RegisterRecipe(823, ERecipeType.Assemble, 10, new int[] { 1101 }, new int[] { 1 }, new int[] { 8038 }, new int[] { 1 }, "sf组件2火箭描述",
+                19176, 2308 + pageBias, "Assets/DSPBattle/missilesilo");
+            ProtoRegistry.RegisterRecipe(824, ERecipeType.Assemble, 10, new int[] { 1101 }, new int[] { 1 }, new int[] { 8039 }, new int[] { 1 }, "sf组件3火箭描述",
+                1917, 2309 + pageBias, "Assets/DSPBattle/missilesilo");
 
             RecipeProto decompileRecipe0 = ProtoRegistry.RegisterRecipe(818, ERecipeType.Research, 60, new int[] { 8032 }, new int[] { 10 }, new int[] { 8033 }, new int[] { 500 }, "异星元数据描述",
                 1924, 2712 + pageBias, "异星矩阵反编译", "Assets/DSPBattle/alienmetax100");
@@ -1112,7 +1134,7 @@ namespace DSP_Battle
             LDBTool.PreAddProto(SiloModel);
 
             var StarFortressSiloModel = CopyModelProto(74, 317, Color.yellow);
-            //StarFortressSiloModel.prefabDesc.siloBulletId = 8004; // 导弹的Id
+            StarFortressSiloModel.prefabDesc.siloBulletId = 8037; // 恒星要塞组件运载火箭的id
             //StarFortressSiloModel.prefabDesc.siloChargeFrame = 120;
             //StarFortressSiloModel.prefabDesc.siloColdFrame = 360;
             LDBTool.PreAddProto(StarFortressSiloModel);

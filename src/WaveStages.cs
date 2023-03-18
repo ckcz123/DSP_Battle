@@ -198,6 +198,7 @@ namespace DSP_Battle
                 }
             }
             Configs.nextWaveState = 3;
+            StarFortress.cannonChargeProgress = 600; // 战斗开始默认光矛充能完毕
         }
 
         private static void UpdateWaveStage3(long time)
