@@ -744,14 +744,14 @@ namespace DSP_Battle
             Silo.Upgrades = new int[] { };
             Silo.DescFields = new int[] { 35, 11, 12, 1, 40 };
 
-            var StarFortressSilo = ProtoRegistry.RegisterItem(8036, "恒星要塞组件发射井", "恒星要塞组件发射井描述", "Assets/DSPBattle/missilesilo", 2607 + pageBias, 50, EItemType.Production);
+            //var StarFortressSilo = ProtoRegistry.RegisterItem(8036, "恒星要塞组件发射井", "恒星要塞组件发射井描述", "Assets/DSPBattle/missilesilo", 2607 + pageBias, 50, EItemType.Production);
             //StarFortressSilo.BuildIndex = 610;
-            StarFortressSilo.BuildMode = 1;
-            StarFortressSilo.IsEntity = true;
-            StarFortressSilo.isRaw = false;
-            StarFortressSilo.CanBuild = true;
-            StarFortressSilo.Upgrades = new int[] { };
-            StarFortressSilo.DescFields = new int[] { 35, 11, 12, 1, 40 };
+            //StarFortressSilo.BuildMode = 1;
+            //StarFortressSilo.IsEntity = true;
+            //StarFortressSilo.isRaw = false;
+            //StarFortressSilo.CanBuild = true;
+            //StarFortressSilo.Upgrades = new int[] { };
+            //StarFortressSilo.DescFields = new int[] { 35, 11, 12, 1, 40 };
 
 
             var ShieldGenerator = ProtoRegistry.RegisterItem(8030, "行星护盾生成器", "行星护盾生成器描述", "Assets/MegaStructureTab/shieldGen", 2605 + pageBias, 10, EItemType.Production);
@@ -798,8 +798,8 @@ namespace DSP_Battle
                 1916, 2607 + hideMask + pageBias, "Assets/MegaStructureTab/shieldGen");
             ProtoRegistry.RegisterRecipe(817, ERecipeType.Research, 60, new int[] { 8032 }, new int[] { 2 }, new int[] { 8032 }, new int[] { 1 }, "异星矩阵描述",
                 1901, 9999 + pageBias, "Assets/DSPBattle/alienmatrix");
-            ProtoRegistry.RegisterRecipe(821, ERecipeType.Assemble, 10, new int[] { 1101 }, new int[] { 1 }, new int[] { 8036 }, new int[] { 1 }, "恒星要塞组件发射井描述",
-                1917, 2606 + pageBias, "Assets/DSPBattle/missilesilo");
+            //ProtoRegistry.RegisterRecipe(821, ERecipeType.Assemble, 10, new int[] { 1101 }, new int[] { 1 }, new int[] { 8036 }, new int[] { 1 }, "恒星要塞组件发射井描述",
+            //    1917, 2606 + pageBias, "Assets/DSPBattle/missilesilo");
             ProtoRegistry.RegisterRecipe(822, ERecipeType.Assemble, 10, new int[] { 1101 }, new int[] { 1 }, new int[] { 8037 }, new int[] { 1 }, "sf组件1火箭描述",
                 1917, 2307 + pageBias, "Assets/DSPBattle/missilesilo");
             ProtoRegistry.RegisterRecipe(823, ERecipeType.Assemble, 10, new int[] { 1101 }, new int[] { 1 }, new int[] { 8038 }, new int[] { 1 }, "sf组件2火箭描述",
@@ -1133,11 +1133,11 @@ namespace DSP_Battle
             SiloModel.prefabDesc.siloColdFrame = 360;
             LDBTool.PreAddProto(SiloModel);
 
-            var StarFortressSiloModel = CopyModelProto(74, 317, Color.yellow);
-            StarFortressSiloModel.prefabDesc.siloBulletId = 8037; // 恒星要塞组件运载火箭的id
+            //var StarFortressSiloModel = CopyModelProto(74, 317, Color.yellow);
+            //StarFortressSiloModel.prefabDesc.siloBulletId = 8037; // 恒星要塞组件运载火箭的id
             //StarFortressSiloModel.prefabDesc.siloChargeFrame = 120;
             //StarFortressSiloModel.prefabDesc.siloColdFrame = 360;
-            LDBTool.PreAddProto(StarFortressSiloModel);
+            //LDBTool.PreAddProto(StarFortressSiloModel);
 
             var ShieldGenModel = CopyModelProto(45, 315, Color.blue);
             ShieldGenModel.prefabDesc.emptyId = 9999;
@@ -1242,9 +1242,9 @@ namespace DSP_Battle
             LDB.items.Select(8031).ModelIndex = 316;
             LDB.items.Select(8031).prefabDesc = LDB.models.Select(316).prefabDesc;
 
-            LDB.models.Select(317).prefabDesc.modelIndex = 317;
-            LDB.items.Select(8036).ModelIndex = 317;
-            LDB.items.Select(8036).prefabDesc = LDB.models.Select(317).prefabDesc;
+            //LDB.models.Select(317).prefabDesc.modelIndex = 317;
+            //LDB.items.Select(8036).ModelIndex = 317;
+            //LDB.items.Select(8036).prefabDesc = LDB.models.Select(317).prefabDesc;
 
             // LDB.items.Select(2206).prefabDesc.ener
             LDB.items.Select(2206).prefabDesc.inputEnergyPerTick = 150000;

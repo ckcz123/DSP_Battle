@@ -47,7 +47,17 @@ namespace DSP_Battle
                 return false;
             }
 
-            if (gmProtoId == 2312) return true; //原始发射井返回原函数
+            if (gmProtoId == 2312) // 恒星要塞组件使用原本的发射井发射
+            {
+                if (GameMain.instance.timei % 60 == 1 && __instance.bulletCount <= 0)
+                {
+                    __instance.bulletId = StarFortressSilo.nextBulletId(starIndex, __instance.bulletId);
+                }
+                if (__instance.bulletId < 8037 || __instance.bulletId > 8039)
+                    return true; //原始发射井返回原函数
+                else
+                    return StarFortressSilo.SiloSubPatch(ref __instance, power, sphere, animPool, consumeRegister, ref __result);
+            }
             if (gmProtoId == 8036) return StarFortressSilo.SiloSubPatch(ref __instance, power, sphere, animPool, consumeRegister, ref __result);
 
             if (Configs.developerMode)
@@ -1877,6 +1887,12 @@ namespace DSP_Battle
             if (gmProtoId != 2312 && gmProtoId != 8036)
             {
                 __instance.value3Text.text = EnemyShips.ships.Count.ToString();
+            }
+            else if (siloComponent.bulletId > 8036 && siloComponent.bulletId <8040) // 说明是恒星要塞火箭的发射台
+            {
+                int index = siloComponent.bulletId - 8037;
+                int starIndex = __instance.factory.planet.star.index;
+                __instance.value3Text.text = StarFortress.moduleComponentCount[starIndex][index] + " / " + StarFortress.moduleMaxCount[starIndex][index]*StarFortress.compoPerModule[index];
             }
 
         }

@@ -25,8 +25,6 @@ namespace DSP_Battle
 
 		public static bool SiloSubPatch(ref SiloComponent __instance, float power, DysonSphere sphere, AnimData[] animPool, int[] consumeRegister, ref uint __result)
         {
-			if (__instance.bulletCount <= 0 && GameMain.instance.timei % 60 == 0)
-				__instance.bulletId = nextBulletId(__instance.bulletId);
 			if (__instance.needs == null)
 			{
 				__instance.needs = new int[6];
@@ -157,10 +155,49 @@ namespace DSP_Battle
 			return false;
 		}
 
-		private static int nextBulletId(int id)
+		public static int nextBulletId(int starIndex, int id)
 		{
-			return ((id-8037)+1)%3 + 8037;
-		}
+			if (starIndex >= MoreMegaStructure.MoreMegaStructure.StarMegaStructureType.Length) return 1503;
+			int bulletIdExpected = 1503;
+			int megaType = MoreMegaStructure.MoreMegaStructure.StarMegaStructureType[starIndex];
+			switch (megaType)
+			{
+				case 0:
+					bulletIdExpected = 1503;
+					break;
+				case 1:
+					bulletIdExpected = 9488;
+					break;
+				case 2:
+					bulletIdExpected = 9489;
+					break;
+				case 3:
+					bulletIdExpected = 9490;
+					break;
+				case 4:
+					bulletIdExpected = 9491;
+					break;
+				case 5:
+					bulletIdExpected = 9492;
+					break;
+				case 6:
+					bulletIdExpected = 9510;
+					break;
+				default:
+					break;
+			}
+			switch (id)
+            {
+				case 8037:
+					return 8038;
+				case 8038:
+					return 8039;
+				case 8039:
+					return bulletIdExpected;
+                default:
+					return 8037;
+            }
+        }
 
 		private static DysonNode FindRandomNode(DysonSphere sphere, int randSeed)
 		{
