@@ -698,9 +698,9 @@ namespace DSP_Battle
 
 
             ProtoRegistry.RegisterItem(8035, "水滴伤害增加", "", "Assets/DSPBattle/r0-10", 9999, 100, EItemType.Material);
-            ProtoRegistry.RegisterItem(8037, "sf组件1火箭", "", "Assets/DSPBattle/r0-10", 2307 + pageBias, 100, EItemType.Material);
-            ProtoRegistry.RegisterItem(8038, "sf组件2火箭", "", "Assets/DSPBattle/r0-10", 2308 + pageBias, 100, EItemType.Material);
-            ProtoRegistry.RegisterItem(8039, "sf组件3火箭", "", "Assets/DSPBattle/r0-10", 2309 + pageBias, 100, EItemType.Material);
+            ProtoRegistry.RegisterItem(8037, "sf组件1火箭", "", "Assets/DSPBattle/rocketSf1", 2307 + pageBias, 100, EItemType.Material);
+            ProtoRegistry.RegisterItem(8038, "sf组件2火箭", "", "Assets/DSPBattle/rocketSf2", 2308 + pageBias, 100, EItemType.Material);
+            ProtoRegistry.RegisterItem(8039, "sf组件3火箭", "", "Assets/DSPBattle/rocketSf3", 2309 + pageBias, 100, EItemType.Material);
 
 
             var Cannon1 = ProtoRegistry.RegisterItem(8011, "弹射器1", "弹射器1描述", "Assets/DSPBattle/cannon1", 2601 + pageBias, 50, EItemType.Production);
@@ -800,12 +800,12 @@ namespace DSP_Battle
                 1901, 9999 + pageBias, "Assets/DSPBattle/alienmatrix");
             //ProtoRegistry.RegisterRecipe(821, ERecipeType.Assemble, 10, new int[] { 1101 }, new int[] { 1 }, new int[] { 8036 }, new int[] { 1 }, "恒星要塞组件发射井描述",
             //    1917, 2606 + pageBias, "Assets/DSPBattle/missilesilo");
-            ProtoRegistry.RegisterRecipe(822, ERecipeType.Assemble, 10, new int[] { 1101 }, new int[] { 1 }, new int[] { 8037 }, new int[] { 1 }, "sf组件1火箭描述",
-                1917, 2307 + pageBias, "Assets/DSPBattle/missilesilo");
-            ProtoRegistry.RegisterRecipe(823, ERecipeType.Assemble, 10, new int[] { 1101 }, new int[] { 1 }, new int[] { 8038 }, new int[] { 1 }, "sf组件2火箭描述",
-                19176, 2308 + pageBias, "Assets/DSPBattle/missilesilo");
-            ProtoRegistry.RegisterRecipe(824, ERecipeType.Assemble, 10, new int[] { 1101 }, new int[] { 1 }, new int[] { 8039 }, new int[] { 1 }, "sf组件3火箭描述",
-                1917, 2309 + pageBias, "Assets/DSPBattle/missilesilo");
+            ProtoRegistry.RegisterRecipe(822, ERecipeType.Assemble, 480, new int[] { 9482, 9487, 1802 }, new int[] { 1, 1, 2 }, new int[] { 8037 }, new int[] { 1 }, "sf组件1火箭描述",
+                1917, 2307 + pageBias, "Assets/DSPBattle/rocketSf1");
+            ProtoRegistry.RegisterRecipe(823, ERecipeType.Assemble, 480, new int[] { 9508, 1209, 1802 }, new int[] { 1, 2, 2 }, new int[] { 8038 }, new int[] { 1 }, "sf组件2火箭描述",
+                1918, 2308 + pageBias, "Assets/DSPBattle/rocketSf2");
+            ProtoRegistry.RegisterRecipe(824, ERecipeType.Assemble, 360, new int[] { 1502, 1802, 1305 }, new int[] { 1, 2, 1 }, new int[] { 8039 }, new int[] { 1 }, "sf组件3火箭描述",
+                1917, 2309 + pageBias, "Assets/DSPBattle/rocketSf3");
 
             RecipeProto decompileRecipe0 = ProtoRegistry.RegisterRecipe(818, ERecipeType.Research, 60, new int[] { 8032 }, new int[] { 10 }, new int[] { 8033 }, new int[] { 500 }, "异星元数据描述",
                 1924, 2712 + pageBias, "异星矩阵反编译", "Assets/DSPBattle/alienmetax100");
@@ -887,10 +887,11 @@ namespace DSP_Battle
                 new int[] { 24, 24, 24, 24, 24 }, 300000, new int[] { 565,815 }, new Vector2(53, -31));
             
             TechProto techStellarFortress = ProtoRegistry.RegisterTech(1917, "恒星要塞", "恒星要塞描述", "恒星要塞结论", "Assets/DSPBattle/shield1", new int[] { 1903 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 821 }, new Vector2(41, -43));
-            // techStellarFortress.Published = false;
+                new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 822, 824 }, new Vector2(41, -43));
+            techStellarFortress.PreTechsImplicit = new int[] { 1912 };
+
             TechProto techStarCannon = ProtoRegistry.RegisterTech(1918, "尼科尔戴森光束", "尼科尔戴森光束描述", "尼科尔戴森光束结论", "Assets/DSPBattle/starcannontech", new int[] { 1144 }, new int[] { 8032 },
-                new int[] { 200 }, 36000, new int[] { 570, 571, 572 }, new Vector2(65, -3));
+                new int[] { 200 }, 36000, new int[] { 570, 571, 572, 823 }, new Vector2(65, -3));
             
             TechProto techDrop = ProtoRegistry.RegisterTech(1919, "玻色子操控", "玻色子操控描述", "玻色子操控结论", "Assets/DSPBattle/bosontech", new int[] { 1915 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
                 new int[] { 24, 24, 24, 24, 24 }, 300000, new int[] { 566, 567, 568, 569 }, new Vector2(57, -43));
