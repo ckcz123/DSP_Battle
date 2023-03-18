@@ -42,6 +42,19 @@ Then download the mod manully and unzip into `plugins` (including the `dll` and 
 
 在上述地址安装框架和几个前置mod，然后将本mod解压到`plugins`目录（包括`dll`和`dspbattletex`文件）。如果开始游戏后能看到新的logo，那么mod就安装成功了。
 
+## How to play / 如何游戏
+
+They come when your first interstellar logistics station is placed. From then on, stronger and stronger waves will assault you about every 60 minutes. They will never stop. They will never end.
+
+They may target any planet with an interstellar logistics station. Though the first few waves will be in one system and easily manageable, assuming it will stay that way will lead to demise. Luckily, notifications and after-battle reports will fill you in on where you need to focus your rebuilding efforts. More information on ai targeting, notifications, and other mechanics are available in-game.
+
+They are going to be a challenge to EXPERIENCED players who have extensive knowledge of the game and a library of finely tuned production blueprints. Though different difficulty levels exist, even easy is not recommended for new players or experienced players that want a casual run.
+
+So far, we haven't encountered any issues installing this mod mid-run. Want time to develop your foothold and prepare before you watch your galaxy burn? Great!
+Personal Opinion for users who want a casual start but a challenge late-game, I recommend installing the mod when you either make your first white science or your dyson sphere reaches 4GW.
+
+Do not remove this mod once installed or you risk breaking your save.
+
 ## Feedback and suggestions / 意见和反馈
 
 If you have any feedback or suggestions, please file a new issue via [github](https://github.com/ckcz123/DSP_Battle), or contact me in Discord `ckcz123#3576`.
@@ -53,6 +66,13 @@ Also welcome to anyone who'd like to contribute to the mod, better if you have e
 欢迎任何向为此mod进行贡献的人，我们尤其需要有Unity经验或者会建模的大佬。
 
 ## Update Log
+
+### 2022-03-18 V2.1.4
+
+ - Add "Fast Start" option when creating the game. It will unlock all blue/red science and give a lot of buildings to help on early game.
+ - 游戏开始时增加“快速开局”选项；它会直接解锁所有红蓝糖科技，并赠送大量建筑，助你快速读过无聊的前期。
+ - Remove abnormality tips
+ - 移除游戏异常的提示。
 
 ### 2022-12-30 V2.1.3
 
