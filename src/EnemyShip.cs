@@ -903,11 +903,11 @@ namespace DSP_Battle
     public enum DamageType
     {
         bullet, // 穿甲、强酸和聚变子弹
-        laser, // 专指相位子弹
+        laser, // 相位子弹和其他光束伤害（恒星要塞的光矛）
         missileMain, // 导弹的直接命中
         missileAoe, // 导弹的非主要目标范围伤
         shield, // 护盾造成的伤害
-        mega, // 巨构伤害
+        mega, // 巨构的范围伤害
         droplet, // 水滴伤害
         others, // 其他伤害
     }

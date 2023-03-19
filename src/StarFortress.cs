@@ -15,8 +15,8 @@ namespace DSP_Battle
         // 下面进入存档
         public static List<int> moduleCapacity;
         public static List<ConcurrentDictionary<int, int>> moduleComponentCount;// 存储已完成的组件数，除以每模块的组件需求数量就是已经完成的模块数
+        public static List<ConcurrentDictionary<int, int>> moduleComponentInProgress; // 已发射了组件运载火箭但还未飞到节点内部的
         public static List<List<int>> moduleMaxCount; // 存储规划的模块数
-        public static List<ConcurrentDictionary<int, int>> moduleComponentInProgress; // 已发射了组件运载火箭但还未建成的
         public static int remindPlayerWhenDestruction = 1; // 减少模块数量时，减少后的上限少于已经建造的数量时，就拆除，是否需要提醒玩家
         // 下面不进入存档
         static int lockLoop = 0; // 为减少射击弹道飞行过程中重复锁定同一个敌人导致伤害溢出的浪费，恒星要塞的炮会依次序攻击队列中第lockLoop序号的敌人，且每次攻击后此值+1（对一个循环上限取余，循环上线取决于射击频率，原则上射击频率越快循环上限越大，循环上限loop通过FireCannon函数传入）
@@ -25,7 +25,7 @@ namespace DSP_Battle
         public static int cannonChargeProgress = 0; // 战斗所在星系的光矛充能，不进入存档
 
         public static int energyPerModule = 1000000;
-        public static List<int> compoPerModule = new List<int> { 3, 4, 4, 4 }; // 测试前后务必修改
+        public static List<int> compoPerModule = new List<int> { 100, 200, 200, 200 }; // 测试前后务必修改
 
         public static void InitAll()
         {
@@ -107,6 +107,16 @@ namespace DSP_Battle
             }
 
             // 如果拆除戴森球壳面导致容量下降，需要执行对模块的拆除
+            int overFlow = -CapacityRemaining(starIndex);
+            if (overFlow > 0)
+            {
+                int destructCount = Math.Max(1, overFlow / 100);
+                float cannonRatio = moduleMaxCount[starIndex][1] * 1.0f / (moduleMaxCount[starIndex][0] + moduleMaxCount[starIndex][1]);
+                int destructCannonModule = (int)(destructCount * cannonRatio);
+                int destructMissileModule = destructCount - destructCannonModule;
+                moduleMaxCount[starIndex][0] = Math.Max(0, moduleMaxCount[starIndex][0] - destructMissileModule);
+                moduleMaxCount[starIndex][1] = Math.Max(0, moduleMaxCount[starIndex][1] - destructCannonModule);
+            }
 
             // 计算已建成的是否超过上限
             for (int i = 0; i < 4; i++)
@@ -348,17 +358,97 @@ namespace DSP_Battle
 
         public static void Export(BinaryWriter w)
         {
-            
+            w.Write(moduleCapacity.Count);
+            for (int i = 0; i < moduleCapacity.Count; i++)
+            {
+                w.Write(moduleCapacity[i]);
+            }
+            w.Write(moduleComponentCount.Count);
+            for (int i = 0; i < moduleComponentCount.Count; i++)
+            {
+                w.Write(moduleComponentCount[i].Count);
+                foreach (var item in moduleComponentCount[i])
+                {
+                    w.Write(item.Key);
+                    w.Write(item.Value);
+                }
+            }
+            w.Write(moduleComponentInProgress.Count);
+            for (int i = 0; i < moduleComponentInProgress.Count; i++)
+            {
+                w.Write(moduleComponentInProgress[i].Count);
+                foreach (var item in moduleComponentInProgress[i])
+                {
+                    w.Write(item.Key);
+                    w.Write(item.Value);
+                }
+            }
+            w.Write(moduleMaxCount.Count);
+            for (int i = 0; i < moduleMaxCount.Count; i++)
+            {
+                w.Write(moduleMaxCount[i].Count);
+                for (int j = 0; j < moduleMaxCount[i].Count; j++)
+                {
+                    w.Write(moduleMaxCount[i][j]);
+                }
+            }
+            w.Write(remindPlayerWhenDestruction);
+
+            StarFortressSilo.Export(w);
         }
 
         public static void Import(BinaryReader r)
         {
             InitAll();
+            if (Configs.versionWhenImporting >= 30230319)
+            {
+                int total1 = r.ReadInt32();
+                for (int i = 0; i < total1; i++)
+                {
+                    moduleCapacity[i] = r.ReadInt32();
+                }
+                int total2 = r.ReadInt32();
+                for (int i = 0; i < total2; i++)
+                {
+                    int total2_1 = r.ReadInt32();
+                    for (int j = 0; j < total2_1; j++)
+                    {
+                        int key = r.ReadInt32();
+                        int value = r.ReadInt32();
+                        moduleComponentCount[i].AddOrUpdate(key, value, (x,y)=>value); // 这里不用tryadd是因为InitAll里面对每个key（只有0123）都进行过了add
+                    }
+                }
+                int total3 = r.ReadInt32();
+                for (int i = 0; i < total3; i++)
+                {
+                    int total3_1 = r.ReadInt32();
+                    for (int j = 0; j < total3_1; j++)
+                    {
+                        int key = r.ReadInt32();
+                        int value = r.ReadInt32();
+                        moduleComponentInProgress[i].AddOrUpdate(key, value, (x, y) => value);
+                    }
+                }
+                int total4 = r.ReadInt32();
+                for (int i = 0; i < total4; i++)
+                {
+                    int total4_1 = r.ReadInt32();
+                    for (int j = 0; j < total4_1; j++)
+                    {
+                        moduleMaxCount[i][j] = r.ReadInt32();
+                    }
+                }
+                remindPlayerWhenDestruction = r.ReadInt32();
+            }
+
+            StarFortressSilo.Import(r);
         }
 
         public static void IntoOtherSave()
         {
             InitAll();
+
+            StarFortressSilo.IntoOtherSave();
         }
     }
 }

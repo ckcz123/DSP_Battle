@@ -11,13 +11,13 @@ namespace DSP_Battle
     {
         public static string versionString = "2.1.3";
         public static string qq = "694213906";
-        public static bool developerMode = true; //发布前务必修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+        public static bool developerMode = false; //发布前务必修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
         
         public static bool enableProliferator4 = false;
         public static bool enableBattleBGM = true;
         public static bool enableAlertTextGlowing = true;
         public static int versionWhenImporting = -1;
-        public static int versionCode = 30221118;
+        public static int versionCode = 30230319;
 
 
         public static int difficulty = 0; // -1 easy, 0 normal, 1 hard

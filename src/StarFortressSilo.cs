@@ -11,7 +11,7 @@ namespace DSP_Battle
 {
     public class StarFortressSilo
     {
-
+		// 以下需要存档
 		public static List<ConcurrentDictionary<int, int>> starFortressRocketProtoIds; //记录用于构建恒星要塞的火箭的Id，starFortressRocketIds[starIndex][rocketId] = protoId，其中rocketId也是其pool中的index
 
 		public static void InitAll()
@@ -274,11 +274,34 @@ namespace DSP_Battle
 
 		public static void Export(BinaryWriter w)
 		{
-
+			w.Write(starFortressRocketProtoIds.Count);
+			for (int i = 0; i < starFortressRocketProtoIds.Count; i++)
+			{
+				w.Write(starFortressRocketProtoIds[i].Count);
+				foreach (var item in starFortressRocketProtoIds[i])
+				{
+					w.Write(item.Key);
+					w.Write(item.Value);
+				}
+			}
 		}
 
 		public static void Import(BinaryReader r)
 		{
+			if (Configs.versionWhenImporting >= 30230319)
+			{
+				int total = r.ReadInt32();
+				for (int i = 0; i < total; i++)
+				{
+					int total_1 = r.ReadInt32();
+					for (int j = 0; j < total_1; j++)
+					{
+						int key = r.ReadInt32();
+						int value = r.ReadInt32();
+						starFortressRocketProtoIds[i].AddOrUpdate(key, value, (x, y) => value);
+					}
+				}
+			}
 		}
 
 		public static void IntoOtherSave()

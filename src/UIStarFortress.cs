@@ -323,7 +323,7 @@ namespace DSP_Battle
                 {
                     // 暂时无效的警告
                     if (StarFortress.moduleCapacity[starIndex] <= 0)
-                        UIRealtimeTip.Popup("警告扩展模块无效");
+                        UIRealtimeTip.Popup("警告扩展模块无效".Translate());
                     else
                         StarFortress.moduleMaxCount[starIndex][index] += delta;
                 }

@@ -129,7 +129,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("水滴gm2", "Droplet", "水滴"); 
             ProtoRegistry.RegisterString("即将到来gm", "Coming soon", "即将推出");
             ProtoRegistry.RegisterString("恒星要塞", "Star Fortress", "恒星要塞");
-            ProtoRegistry.RegisterString("恒星要塞描述", "Star fortress desc", "恒星要塞描述");
+            ProtoRegistry.RegisterString("恒星要塞描述", "Plan additional defense modules on any mega structure to strengthen the defense capabilities of the star system, and the energy to support the star fortress comes entirely from the stars. This can also save a significant amount of planetary area.", "在任何巨构上规划额外的防御模块来强化星系的防御能力，支持恒星要塞的能量完全来自于恒星。这还能节约大量地表的可建造面积。");
             ProtoRegistry.RegisterString("恒星要塞结论", "You have unlocked the star fortress.", "你解锁了武装巨构来构建恒星要塞的能力。");
             ProtoRegistry.RegisterString("尼科尔戴森光束", "Nicoll-Dyson beam", "尼科尔-戴森光束");
             ProtoRegistry.RegisterString("尼科尔戴森光束描述", "Decoding a method for building a Star Cannon from alien matrices, disintegrating wormholes with stellar energy.", "从异星矩阵中解码建造恒星炮的方法，利用恒星级能量瓦解虫洞。");
@@ -393,10 +393,15 @@ namespace DSP_Battle
 
             ProtoRegistry.RegisterString("护盾承受伤害", "Shield damage taken", "护盾承受伤害");
             ProtoRegistry.RegisterString("护盾造成伤害", "Shield damage dealed", "护盾造成伤害");
+            ProtoRegistry.RegisterString("护盾伤害减免与规避", "Shield dmg. alleviated / evaded", "护盾减免和规避伤害");
+            ProtoRegistry.RegisterString("护盾战时回复", "Shield restored", "护盾战时回复");
             ProtoRegistry.RegisterString("水滴伤害", "Droplet damage", "水滴伤害");
             ProtoRegistry.RegisterString("最小发射能量", "Launch Energy Threshold", "发射能量阈值");
             ProtoRegistry.RegisterString("水滴发射耗能", "Launch Consumption", "发射耗能");
             ProtoRegistry.RegisterString("水滴工作功率", "Work Consumption", "工作功率");
+            ProtoRegistry.RegisterString("巨构伤害", "Megastructure damage", "巨构伤害");
+            ProtoRegistry.RegisterString("恒星要塞导弹伤害", "StarFortress Missile dmg.", "恒星要塞导弹伤害");
+            ProtoRegistry.RegisterString("恒星要塞光矛伤害", "StarFortress LightSpear dmg.", "恒星要塞光矛伤害");
 
             ProtoRegistry.RegisterString("异星矩阵", "Alien matrix", "异星矩阵");
             ProtoRegistry.RegisterString("异星矩阵描述", "A matrix containing high-density data accidentally dropped by invading swarms. Can be analyzed by mechas and used to unlock more advanced alien technologies. The matrix itself also seems to have potentially high-dimensional spatiotemporal properties", "由入侵的虫群偶然掉落的载有高密度数据的矩阵，可以由机甲分析并用于解锁更高级的异星科技。矩阵本身似乎还具有潜在的高维时空特性。");
@@ -644,15 +649,22 @@ namespace DSP_Battle
 
             ProtoRegistry.RegisterString("显示/隐藏", "Show/Hide", "显示/隐藏");
             ProtoRegistry.RegisterString("模块容量", "Module Capacity", "模块容量");
-            ProtoRegistry.RegisterString("模块容量说明", "", "模块容量决定着你可以在这个恒星要塞建造的防御性模块的数量，规划导弹模块和光矛模块都将消耗可用的模块容量，提升模块容量的方式有两个：\n1.构建更多的巨构框架和壳面将提升模块容量；\n2.在至少建造了一定能量水平的巨构后，建造平台扩展模块也会提升模块容量。");
+            ProtoRegistry.RegisterString("模块容量说明", "Module capacity limits the number of defensive modules that you can build in this Star Fortress. Planning missile modules and light spear modules will consume available module capacity.\nThere are two ways to increase module capacity: \n1. Build bigger mega structure will provide more capacity; \n2. Building platform expansion modules will also increase module capacity, but the megastructure must have at least 600MW before its expansion modules work.", "模块容量决定着你可以在这个恒星要塞建造的防御性模块的数量，规划导弹模块和光矛模块都将消耗可用的模块容量，提升模块容量的方式有两个：\n1.构建更多的巨构框架和壳面将提升模块容量；\n2.在至少建造了一定能量水平的巨构后，建造平台扩展模块也会提升模块容量。");
             ProtoRegistry.RegisterString("组件需求", "Component points", "组件点数");
             ProtoRegistry.RegisterString("导弹模块", "Missile Mod.", "导弹模块");
-            ProtoRegistry.RegisterString("导弹模块说明", "", "导弹模块会在战斗中发射反物质导弹攻击敌舰，其使用的反物质导弹是在恒星环境下由模块自主生产的，无需地面供给弹药，且享受来自科技的加成效果。\n使用按钮来增加或减少建造的数量，然后从地面发射对应的运载火箭提供组件点数来逐步建造模块。按住Ctrl将使按钮变为10倍。");
+            ProtoRegistry.RegisterString("导弹模块说明", "The missile module will launch special antimatter missiles to attack enemy ships in combat. The antimatter missiles it uses are independently produced by the module in a stellar environment, requiring no ground supply of ammunition, and benefiting from technology upgrade. \nUse the buttons to increase or decrease the planned number, and then launch the corresponding rocket from the ground to provide component points to gradually build the module. \nHolding \'Ctrl\' to make the button 10x times.", "导弹模块会在战斗中发射反物质导弹攻击敌舰，其使用的反物质导弹是在恒星环境下由模块自主生产的，无需地面供给弹药，且享受来自科技的加成效果。\n使用按钮来增加或减少建造的数量，然后从地面发射对应的运载火箭提供组件点数来逐步建造模块。\n按住Ctrl将使按钮变为10倍。");
             ProtoRegistry.RegisterString("光矛模块", "Lightspear Mod.", "光矛模块");
-            ProtoRegistry.RegisterString("光矛模块说明", "", "光矛模块会在战斗中发射伤害高达50000的光矛攻击敌舰，但充能时间较长，且不享受科技加成。建造更多的光矛模块会加快光矛的充能速度从而增加射速。\n使用按钮来增加或减少建造的数量，然后从地面发射对应的运载火箭提供组件点数来逐步建造模块。按住Ctrl将使按钮变为10倍。");
-            ProtoRegistry.RegisterString("平台扩展模块", "Expand Mod.", "扩展模块");
-            ProtoRegistry.RegisterString("平台扩展模块说明", "", "每个平台扩展模块会提供（而非消耗）模块容量，以便使你能在低完成度的巨构上构建大型防御平台。\n已建成的平台扩展模块无法拆除。");
-            ProtoRegistry.RegisterString("警告扩展模块无效", "", "警告：在巨构壳层与框架能量水平总和达到一个最低值（600MW）之前，扩展模块无法生效。");
+            ProtoRegistry.RegisterString("光矛模块说明", "The Light Spear module can fire light spears with up to 50000 damage in combat, but it takes very long to recharge and cannot be enhanced by technology upgrades. Building more Light Spear modules will accelerate the charging speed of the Light Spear and thus increase the fire rate (+6/min/module). \nUse the buttons to increase or decrease the planned number, and then launch the corresponding rocket from the ground to provide component points to gradually build the module. \nHolding \'Ctrl\' to make the button 10x times.", "光矛模块会在战斗中发射伤害高达50000的光矛攻击敌舰，但充能时间较长，且不享受科技加成。建造更多的光矛模块会加快光矛的充能速度从而增加射速(+6/min/模块)。\n使用按钮来增加或减少建造的数量，然后从地面发射对应的运载火箭提供组件点数来逐步建造模块。\n按住Ctrl将使按钮变为10倍。");
+            ProtoRegistry.RegisterString("平台扩展模块", "Expansion Mod.", "扩展模块");
+            ProtoRegistry.RegisterString("平台扩展模块说明", "Each platform expansion module will provide module capacity to enable you to build large defense platforms on low completion megastructures. But the megastructure must have at least 600MW before the expansion modules can work. \nThe platform expansion modules that are already built cannot be removed.\nUse the buttons to increase or decrease the planned number, and then launch the corresponding rocket from the ground to provide component points to gradually build the module. \nHolding \'Ctrl\' to make the button 10x times.", "每个平台扩展模块会提供（而非消耗）模块容量，以便使你能在低完成度的巨构上构建大型防御平台。\n已建成的平台扩展模块无法拆除。");
+            ProtoRegistry.RegisterString("警告扩展模块无效", "Notice: The expansion module cannot take effect until the total energy provide by the megastructure's layers reaches 600MW.", "注意：在巨构壳层与框架能量水平总和达到一个600MW之前，扩展模块无法生效。");
+            ProtoRegistry.RegisterString("恒星要塞容量不足警告", "The module capacity is insufficient! Please expand the mega structure or plan more expansion modules on star fortress.", "恒星要塞模块容量不足！请扩大巨构或规划更多的扩展模块。");
+            ProtoRegistry.RegisterString("sf组件1火箭", "Missile module carrier rocket", "导弹模块组件运载火箭");
+            ProtoRegistry.RegisterString("sf组件1火箭描述", "Use the Vertical Launching Silo to launch this rocket onto the Star Fortress, carring necessary components to build the missile module. This will fill the component points of the missile module on the Star Fortress, but it is not helpful for the construction of any mega structures.", "使用发射井发射此火箭来将构建导弹模块的必须组件发射到恒星要塞上，这会填充恒星要塞的导弹模块的组件点数，但无法推进任何巨构的建造。");
+            ProtoRegistry.RegisterString("sf组件2火箭", "Light spear module carrier rocket", "导弹模块组件运载火箭");
+            ProtoRegistry.RegisterString("sf组件2火箭描述", "Use the Vertical Launching Silo to launch this rocket onto the Star Fortress, carring necessary components to build the light spear module. This will fill the component points of the light spear module on the Star Fortress, but it is not helpful for the construction of any mega structures.", "使用发射井发射此火箭来将构建导弹模块的必须组件发射到恒星要塞上，这会填充恒星要塞的导弹模块的组件点数，但无法推进任何巨构的建造。");
+            ProtoRegistry.RegisterString("sf组件3火箭", "Expansion module carrier rocket", "导弹模块组件运载火箭");
+            ProtoRegistry.RegisterString("sf组件3火箭描述", "Use the Vertical Launching Silo to launch this rocket onto the Star Fortress, carring necessary components to build the expansion module. This will fill the component points of the expansion module on the Star Fortress, but it is not helpful for the construction of any mega structures.", "使用发射井发射此火箭来将构建导弹模块的必须组件发射到恒星要塞上，这会填充恒星要塞的导弹模块的组件点数，但无法推进任何巨构的建造。");
 
             // 物品 Item
             ItemProto bullet1 = ProtoRegistry.RegisterItem(8001, "子弹1", "子弹1描述", "Assets/DSPBattle/bullet1", 2701 + pageBias, 100, EItemType.Material);
@@ -698,9 +710,9 @@ namespace DSP_Battle
 
 
             ProtoRegistry.RegisterItem(8035, "水滴伤害增加", "", "Assets/DSPBattle/r0-10", 9999, 100, EItemType.Material);
-            ProtoRegistry.RegisterItem(8037, "sf组件1火箭", "", "Assets/DSPBattle/rocketSf1", 2307 + pageBias, 100, EItemType.Material);
-            ProtoRegistry.RegisterItem(8038, "sf组件2火箭", "", "Assets/DSPBattle/rocketSf2", 2308 + pageBias, 100, EItemType.Material);
-            ProtoRegistry.RegisterItem(8039, "sf组件3火箭", "", "Assets/DSPBattle/rocketSf3", 2309 + pageBias, 100, EItemType.Material);
+            ProtoRegistry.RegisterItem(8037, "sf组件1火箭", "sf组件1火箭描述", "Assets/DSPBattle/rocketSf1", 2307 + pageBias, 100, EItemType.Material);
+            ProtoRegistry.RegisterItem(8038, "sf组件2火箭", "sf组件2火箭描述", "Assets/DSPBattle/rocketSf2", 2308 + pageBias, 100, EItemType.Material);
+            ProtoRegistry.RegisterItem(8039, "sf组件3火箭", "sf组件3火箭描述", "Assets/DSPBattle/rocketSf3", 2309 + pageBias, 100, EItemType.Material);
 
 
             var Cannon1 = ProtoRegistry.RegisterItem(8011, "弹射器1", "弹射器1描述", "Assets/DSPBattle/cannon1", 2601 + pageBias, 50, EItemType.Production);
