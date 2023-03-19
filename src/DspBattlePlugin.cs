@@ -73,6 +73,7 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(RemoveEntities));
             Harmony.CreateAndPatchAll(typeof(Cannon));
             Harmony.CreateAndPatchAll(typeof(BattleProtos));
+            Harmony.CreateAndPatchAll(typeof(FastStartOption));
             Harmony.CreateAndPatchAll(typeof(EjectorUIPatch));
             Harmony.CreateAndPatchAll(typeof(UIAlert));
             Harmony.CreateAndPatchAll(typeof(MissileSilo));
@@ -204,6 +205,16 @@ namespace DSP_Battle
             escLogo.GetComponent<RawImage>().texture = texture;
             mainLogo.GetComponent<RectTransform>().sizeDelta = new Vector2(texture.width, texture.height);
             escLogo.GetComponent<RectTransform>().sizeDelta = new Vector2(texture.width, texture.height);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIAbnormalityTip), "_OnInit")]
+        public static void UIAbnormalityTip_OnInit(ref UIAbnormalityTip __instance)
+        {
+            __instance.isWarned = true;
+            __instance.willClose = true;
+            __instance.mainTweener.Play1To0Continuing();
+            __instance.closeDelayTime = 3f;
         }
 
         public void Export(BinaryWriter w)

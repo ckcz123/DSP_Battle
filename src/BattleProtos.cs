@@ -225,11 +225,13 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("困难难度提示", "Difficulty: Hard (Station will be dismantled; Enemy strength increase; Merit points *1.5)", "当前难度：困难（物流塔会被破坏拆除，敌人战斗力大幅提升；功勋点数获得*1.5）");
             ProtoRegistry.RegisterString("奖励倒计时：", "Reward time left: ", "奖励剩余时间：");
 
+            ProtoRegistry.RegisterString("快速开局", "Fast Start", "快速开局");
             ProtoRegistry.RegisterString("mod版本信息", "Current version: " + Configs.versionString + "                Contact me in Discord: ckcz123#3576", "当前版本：" + Configs.versionString + "          欢迎加入mod交流群：" + Configs.qq);
             ProtoRegistry.RegisterString("未探测到威胁", "No threat detected", "未探测到威胁");
             ProtoRegistry.RegisterString("预估数量", "Estimated quantity", "预估数量");
             ProtoRegistry.RegisterString("预估强度", "Estimated strength", "预估强度");
             ProtoRegistry.RegisterString("虫洞数量", "Wormhole quantity", "虫洞数量");
+            ProtoRegistry.RegisterString("剩余时间", "Time left", "剩余时间");
             ProtoRegistry.RegisterString("敌人正在入侵", "The enemies are invading ", "敌人正在入侵");
             ProtoRegistry.RegisterString("剩余敌人", "Remaining enemies", "剩余敌人");
             ProtoRegistry.RegisterString("剩余强度", "Remaining strength", "剩余强度");
