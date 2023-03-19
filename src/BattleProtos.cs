@@ -663,9 +663,9 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("恒星要塞容量不足警告", "The module capacity is insufficient! Please expand the mega structure or plan more expansion modules on star fortress.", "恒星要塞模块容量不足！请扩大巨构或规划更多的扩展模块。");
             ProtoRegistry.RegisterString("sf组件1火箭", "Missile module carrier rocket", "导弹模块组件运载火箭");
             ProtoRegistry.RegisterString("sf组件1火箭描述", "Use the Vertical Launching Silo to launch this rocket onto the Star Fortress, carring necessary components to build the missile module. This will fill the component points of the missile module on the Star Fortress, but it is not helpful for the construction of any mega structures.", "使用发射井发射此火箭来将构建导弹模块的必须组件发射到恒星要塞上，这会填充恒星要塞的导弹模块的组件点数，但无法推进任何巨构的建造。");
-            ProtoRegistry.RegisterString("sf组件2火箭", "Light spear module carrier rocket", "导弹模块组件运载火箭");
+            ProtoRegistry.RegisterString("sf组件2火箭", "Light spear module carrier rocket", "光矛模块组件运载火箭");
             ProtoRegistry.RegisterString("sf组件2火箭描述", "Use the Vertical Launching Silo to launch this rocket onto the Star Fortress, carring necessary components to build the light spear module. This will fill the component points of the light spear module on the Star Fortress, but it is not helpful for the construction of any mega structures.", "使用发射井发射此火箭来将构建导弹模块的必须组件发射到恒星要塞上，这会填充恒星要塞的导弹模块的组件点数，但无法推进任何巨构的建造。");
-            ProtoRegistry.RegisterString("sf组件3火箭", "Expansion module carrier rocket", "导弹模块组件运载火箭");
+            ProtoRegistry.RegisterString("sf组件3火箭", "Expansion module carrier rocket", "扩展模块组件运载火箭");
             ProtoRegistry.RegisterString("sf组件3火箭描述", "Use the Vertical Launching Silo to launch this rocket onto the Star Fortress, carring necessary components to build the expansion module. This will fill the component points of the expansion module on the Star Fortress, but it is not helpful for the construction of any mega structures.", "使用发射井发射此火箭来将构建导弹模块的必须组件发射到恒星要塞上，这会填充恒星要塞的导弹模块的组件点数，但无法推进任何巨构的建造。");
 
             // 物品 Item
