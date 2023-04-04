@@ -22,7 +22,7 @@ namespace DSP_Battle
         static int lockLoop = 0; // 为减少射击弹道飞行过程中重复锁定同一个敌人导致伤害溢出的浪费，恒星要塞的炮会依次序攻击队列中第lockLoop序号的敌人，且每次攻击后此值+1（对一个循环上限取余，循环上线取决于射击频率，原则上射击频率越快循环上限越大，循环上限loop通过FireCannon函数传入）
         static List<List<bool>> rocketsRequireMap; // 每帧刷新一部分，每秒进行一次完整刷新，记录是否需要发射恒星要塞组件火箭
         static List<int> battleStarModuleBuiltCount = new List<int> { 0, 0, 0, 0 }; // 每秒刷新，记录战斗星系的恒星要塞各模块已建成的数量
-        public static int cannonChargeProgress = 0; // 战斗所在星系的光矛充能，不进入存档
+        public static double cannonChargeProgress = 0; // 战斗所在星系的光矛充能，不进入存档
 
         public static int energyPerModule = 1000000;
         public static List<int> compoPerModule = new List<int> { 100, 200, 200, 200 }; // 测试前后务必修改
@@ -38,6 +38,7 @@ namespace DSP_Battle
             rocketsRequireMap = new List<List<bool>>();
             battleStarModuleBuiltCount = new List<int> { 0, 0, 0, 0 };
             cannonChargeProgress = 0;
+            if (Configs.developerMode) compoPerModule = new List<int> { 1, 2, 2, 2 };
             for (int i = 0; i < 1024; i++)
             {
                 moduleCapacity.Add(0);
@@ -182,16 +183,13 @@ namespace DSP_Battle
 
             if (Configs.nextWaveState == 3  && starIndex == Configs.nextWaveStarIndex)
             {
-                if (cannonChargeProgress >= 600 && battleStarModuleBuiltCount[1] > 0) // 光矛开火
+                if (cannonChargeProgress >= 6000 && battleStarModuleBuiltCount[1] > 0) // 光矛开火 6000
                 {
-                    int fireTimes = cannonChargeProgress / 600;
-                    for (int i = 0; i < fireTimes; i++)
-                    {
-                        FireCannon(ref __instance.swarm);
-                    }
-                    cannonChargeProgress %= 600;
+                    FireCannon(ref __instance.swarm);
+                    cannonChargeProgress %= 6000;
                 }
-                cannonChargeProgress += battleStarModuleBuiltCount[1];
+                int cannonModuleCount = battleStarModuleBuiltCount[1];
+                cannonChargeProgress += 300.0 * (cannonModuleCount)/(299.0+cannonModuleCount); // 充能速度有一个上限，就是300/帧，也就是说发射速度有每秒3次的上限（因为充能满需要6000）
 
 
                 // 发射导弹的速度暂定为：每个导弹模块提供1导弹/10s的发射速度
@@ -287,7 +285,7 @@ namespace DSP_Battle
             //UIBattleStatistics.RegisterShootOrLaunch(__instance.bulletId, damage);
         }
 
-        public static void FireCannon(ref DysonSwarm swarm, int loop = 20)
+        public static void FireCannon(ref DysonSwarm swarm, int loop = 3)
         {
             lockLoop = (lockLoop + 1) % loop;
             int starIndex = Configs.nextWaveStarIndex;
@@ -306,18 +304,18 @@ namespace DSP_Battle
                 else
                     return;
                 float t = (float)((VectorLF3)targetUPos - star.uPosition).magnitude / 250000f;
-
-                //下面是添加子弹
-                for (int i = 0; i < 10; i++)
+                Vector3 finalUPos = star.uPosition + ((VectorLF3)targetUPos - star.uPosition).normalized * 400000;
+                //下面是添加子弹，并且伤害立刻结算
+                for (int i = 0; i < 100; i++)
                 {
-                    VectorLF3 randDelta = Utils.RandPosDelta();
+                    VectorLF3 randDelta = Utils.RandPosDelta() * 5;
                     bulletIndex = swarm.AddBullet(new SailBullet
                     {
-                        maxt = t + i * 0.01f,
+                        maxt = 0.2f + i>10?0.1f:0.0f,
                         lBegin = star.uPosition,
                         uEndVel = targetUPos, //至少影响着形成的太阳帆的初速度方向
                         uBegin = star.uPosition + randDelta,
-                        uEnd = (VectorLF3)targetUPos + randDelta
+                        uEnd = ((VectorLF3)finalUPos-star.uPosition)*(100.0-i)/100.0 + star.uPosition + randDelta
                     }, 2);
 
                     try
@@ -329,23 +327,21 @@ namespace DSP_Battle
                     {
                         DspBattlePlugin.logger.LogInfo("bullet info1 set error.");
                     }
-
-                    if (bulletIndex != -1)
-                        Cannon.bulletTargets[swarm.starData.index].AddOrUpdate(bulletIndex, enemyShip.shipIndex, (x, y) => enemyShip.shipIndex);
-
-                    //Main.logger.LogInfo("bullet info2 set error.");
-
-
-                    try
+                }
+                // 立即结算伤害
+                int realDamage = enemyShip.BeAttacked(50000, DamageType.laser); //击中造成伤害  //如果在RemoveBullet的postpatch写这个，可以不用每帧循环检测，但是伤害将在爆炸动画后结算，感觉不太合理
+                if (realDamage > 0) // 被闪避了则不算击中
+                    UIBattleStatistics.RegisterHit(8009, realDamage, 1);
+                if (Relic.HaveRelic(3, 7)) // relic3-7 虚空折射 子弹命中时对一个随机敌人造成20%额外伤害
+                {
+                    int refDmg = Relic.BonusDamage(50000, 0.2) - 50000;
+                    int randNum = -1;
+                    if (EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex].Count > 0)
+                        randNum = Utils.RandInt(0, EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex].Count);
+                    if (randNum >= 0 && EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex][randNum] != null && EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex][randNum].state == EnemyShip.State.active)
                     {
-                        int bulletId = 8009;
-                        if (bulletIndex != -1)
-                            Cannon.bulletIds[swarm.starData.index].AddOrUpdate(bulletIndex, bulletId, (x, y) => bulletId);
-                        // bulletIds[swarm.starData.index][bulletIndex] = 1;//后续可以根据子弹类型/炮类型设定不同数值
-                    }
-                    catch (Exception)
-                    {
-                        DspBattlePlugin.logger.LogInfo("bullet info8009 set error.");
+                        int realRefDmg = EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex][randNum].BeAttacked(refDmg, DamageType.laser);
+                        UIBattleStatistics.RegisterHit(8009, realRefDmg, 0);
                     }
                 }
             }
