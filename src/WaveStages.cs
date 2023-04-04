@@ -75,7 +75,7 @@ namespace DSP_Battle
                 r2 = waveNum + 1;
             }
             long cube = (long)(GameMain.history.universeMatrixPointUploaded * 0.0002777777777777778);
-            if (cube > 100000) Configs.nextWaveIntensity += (int)((cube - 100000) / r1);
+            if (cube > 100000) Configs.nextWaveIntensity += (int)(Math.Pow((cube - 100000), 0.9) / r1);
 
             ulong energy = 0;
             DysonSphere[] dysonSpheres = GameMain.data.dysonSpheres;
