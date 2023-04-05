@@ -508,6 +508,32 @@ namespace DSP_Battle
             EnemyShipUIRenderer.Destroy();
         }
 
+
+        public static void TestDestoryStation()
+        {
+            RemoveEntities.distroyedStation.Clear(); // 否则测试过程中每一波，每个station只能被手动触发摧毁一次
+            int nextStationId = EnemyShips.FindNearestPlanetStation(GameMain.mainPlayer.planetData.star, GameMain.mainPlayer.planetData.star.planets[0].uPosition);
+            int starIndex = GameMain.mainPlayer.planetData.star.index;
+            if (nextStationId < 0)
+            {
+                return;
+            }
+            int nextGid = random.Next(1 << 27, 1 << 29);
+            while (ships.ContainsKey(nextGid)) nextGid = random.Next(1 << 27, 1 << 29);
+
+
+            EnemyShip enemyShip = new EnemyShip(
+                nextGid,
+                nextStationId,
+                0,
+                3,
+                9999999);
+            DspBattlePlugin.logger.LogInfo("=========> Init ship " + nextGid + " at station " + enemyShip.shipData.otherGId);
+            RemoveEntities.Add(enemyShip, enemyShip.targetStation);
+            //ships.TryAdd(nextGid, enemyShip);
+
+        }
+
         public static void Export(BinaryWriter w)
         {
             w.Write(ships.Count);

@@ -111,6 +111,10 @@ namespace DSP_Battle
             //{
             //    Configs.nextWaveFrameIndex -= 60 * 60;
             //}
+            if (Configs.developerMode && Input.GetKeyDown(KeyCode.Z))
+            {
+                //EnemyShips.TestDestoryStation();
+            }
             if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
             {
                 isControlDown = true;
@@ -138,7 +142,7 @@ namespace DSP_Battle
             {
                 UIAlert.OnActiveChange();
             }
-            if(Configs.developerMode && Input.GetKeyDown(KeyCode.Z))
+            if(Configs.developerMode && isControlDown && Input.GetKeyDown(KeyCode.Z))
             {
                 Relic.PrepareNewRelic();
                 int planetId = 103;

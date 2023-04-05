@@ -325,7 +325,6 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("已产生gm", "Total", "已产生");
             ProtoRegistry.RegisterString("占比gm", "Percentage", "占比");
             ProtoRegistry.RegisterString("游戏提示gm", "Message", "游戏提示");
-            ProtoRegistry.RegisterString("剩余时间", "Time left", "剩余时间");
 
             ProtoRegistry.RegisterString("gmRank0", "<color=#ffffff80>Icarus</color>", "<color=#ffffff80>伊卡洛斯</color>");
             ProtoRegistry.RegisterString("gmRank1", "<color=#61d8ffb4>Explorer I</color>", "<color=#61d8ffb4>探索者 I</color>");
