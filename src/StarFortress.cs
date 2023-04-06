@@ -19,7 +19,7 @@ namespace DSP_Battle
         public static List<List<int>> moduleMaxCount; // 存储规划的模块数
         public static int remindPlayerWhenDestruction = 1; // 减少模块数量时，减少后的上限少于已经建造的数量时，就拆除，是否需要提醒玩家
         // 下面不进入存档
-        static int lockLoop = 0; // 为减少射击弹道飞行过程中重复锁定同一个敌人导致伤害溢出的浪费，恒星要塞的炮会依次序攻击队列中第lockLoop序号的敌人，且每次攻击后此值+1（对一个循环上限取余，循环上线取决于射击频率，原则上射击频率越快循环上限越大，循环上限loop通过FireCannon函数传入）
+        static int lockLoop = 0; // 由于光矛伤害改为即时命中，此项功能已失去实际意义。为减少射击弹道飞行过程中重复锁定同一个敌人导致伤害溢出的浪费，恒星要塞的炮会依次序攻击队列中第lockLoop序号的敌人，且每次攻击后此值+1（对一个循环上限取余，循环上线取决于射击频率，原则上射击频率越快循环上限越大，循环上限loop通过FireCannon函数传入）
         static List<List<bool>> rocketsRequireMap; // 每帧刷新一部分，每秒进行一次完整刷新，记录是否需要发射恒星要塞组件火箭
         static List<int> battleStarModuleBuiltCount = new List<int> { 0, 0, 0, 0 }; // 每秒刷新，记录战斗星系的恒星要塞各模块已建成的数量
         public static double cannonChargeProgress = 0; // 战斗所在星系的光矛充能，不进入存档
@@ -38,7 +38,6 @@ namespace DSP_Battle
             rocketsRequireMap = new List<List<bool>>();
             battleStarModuleBuiltCount = new List<int> { 0, 0, 0, 0 };
             cannonChargeProgress = 0;
-            if (Configs.developerMode) compoPerModule = new List<int> { 1, 2, 2, 2 };
             for (int i = 0; i < 1024; i++)
             {
                 moduleCapacity.Add(0);
@@ -69,12 +68,13 @@ namespace DSP_Battle
         }
 
         // 可能被多线程调用
-        public static void ConstructStarFortPoint(int starIndex, int rocketProtoId)
+        public static void ConstructStarFortPoint(int starIndex, int rocketProtoId, int count = 1)
         {
             int index = rocketProtoId - 8037;
             index = Math.Min(Math.Max(0, index), 2);
-            moduleComponentCount[starIndex].AddOrUpdate(index, 1, (x, y) => y + 1);
-            moduleComponentInProgress[starIndex].AddOrUpdate(index,0, (x, y) => Math.Max(0, y - 1));
+            moduleComponentCount[starIndex].AddOrUpdate(index, 1, (x, y) => y + count);
+            if(count == 1)
+                moduleComponentInProgress[starIndex].AddOrUpdate(index,0, (x, y) => Math.Max(0, y - 1));
         }
 
         // 游戏每帧调用，逐步刷新全星系的是否需要火箭
@@ -108,10 +108,10 @@ namespace DSP_Battle
             }
 
             // 如果拆除戴森球壳面导致容量下降，需要执行对模块的拆除
-            int overFlow = -CapacityRemaining(starIndex);
-            if (overFlow > 0)
+            int overflow = -CapacityRemaining(starIndex);
+            if (overflow > 0)
             {
-                int destructCount = Math.Max(1, overFlow / 100);
+                int destructCount = Math.Max(1, overflow / 100);
                 float cannonRatio = moduleMaxCount[starIndex][1] * 1.0f / (moduleMaxCount[starIndex][0] + moduleMaxCount[starIndex][1]);
                 int destructCannonModule = (int)(destructCount * cannonRatio);
                 int destructMissileModule = destructCount - destructCannonModule;
@@ -138,7 +138,7 @@ namespace DSP_Battle
             if (starIndex < 0 || starIndex >= moduleMaxCount.Count) return res;
             for (int i = 0; i < 4; i++)
             {
-                res[i] = Math.Min(moduleMaxCount[starIndex][i], moduleComponentCount[starIndex][i] / compoPerModule[i]);
+                res[i] = moduleComponentCount[starIndex][i] / compoPerModule[i];
             }
             return res;
         }

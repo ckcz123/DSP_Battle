@@ -93,6 +93,7 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(RelicFunctionPatcher));
             Harmony.CreateAndPatchAll(typeof(StarFortress));
             Harmony.CreateAndPatchAll(typeof(UIStarFortress));
+            Harmony.CreateAndPatchAll(typeof(StationOrderFixPatch));
 
             LDBTool.PreAddDataAction += BattleProtos.AddProtos;
             LDBTool.PostAddDataAction += BattleProtos.PostDataAction;
@@ -114,6 +115,22 @@ namespace DSP_Battle
             if (Configs.developerMode && Input.GetKeyDown(KeyCode.Z))
             {
                 //EnemyShips.TestDestoryStation();
+                if (MoreMegaStructure.MoreMegaStructure.curStar != null)
+                {
+                    int starIndex = MoreMegaStructure.MoreMegaStructure.curStar.index;
+                    if (isControlDown)
+                    {
+                        StarFortress.ConstructStarFortPoint(starIndex, 8037, 10000);
+                        StarFortress.ConstructStarFortPoint(starIndex, 8038, 10000);
+                        StarFortress.ConstructStarFortPoint(starIndex, 8039, 10000);
+                    }
+                    else
+                    {
+                        StarFortress.ConstructStarFortPoint(starIndex, 8037, 743);
+                        StarFortress.ConstructStarFortPoint(starIndex, 8038, 743);
+                        StarFortress.ConstructStarFortPoint(starIndex, 8039, 743);
+                    }
+                }
             }
             if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
             {
