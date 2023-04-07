@@ -114,6 +114,9 @@ namespace DSP_Battle
             //}
             if (Configs.developerMode && Input.GetKeyDown(KeyCode.Z))
             {
+                //Debug.LogWarning("Z test warning by TCFV");
+                //Debug.Log("Z test log by TCFV");
+                //Debug.LogError("Z error log by TCFV");
                 //EnemyShips.TestDestoryStation();
                 if (MoreMegaStructure.MoreMegaStructure.curStar != null)
                 {

@@ -1,4 +1,6 @@
-﻿using HarmonyLib;
+﻿using BepInEx;
+using BepInEx.Logging;
+using HarmonyLib;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -26,6 +28,7 @@ namespace DSP_Battle
 
         public static int energyPerModule = 1000000;
         public static List<int> compoPerModule = new List<int> { 100, 200, 200, 200 }; // 测试前后务必修改
+        public static int lightSpearDamage = 20000;
 
         public static void InitAll()
         {
@@ -194,32 +197,33 @@ namespace DSP_Battle
                     cannonChargeProgress %= 6000;
                 }
                 int cannonModuleCount = battleStarModuleBuiltCount[1];
-                cannonChargeProgress += 300.0 * (cannonModuleCount)/(299.0+cannonModuleCount); // 充能速度有一个上限，就是300/帧，也就是说发射速度有每秒3次的上限（因为充能满需要6000）
+                cannonChargeProgress += 1000.0 * (cannonModuleCount)/(299.0+cannonModuleCount); // 充能速度有一个上限，就是1000/帧，也就是说发射速度有每秒10次的上限（因为充能满需要6000）
 
 
                 // 发射导弹的速度暂定为：每个导弹模块提供1导弹/10s的发射速度
-                int lauchCheck = 60;
-                if (UIBattleStatistics.battleTime > 6000) lauchCheck = 6000;
-                if (gameTick % lauchCheck == 0) // 最快也是每秒才会发射一次（发射数量为模块数的十分之一），因此每秒可能不发射或发射多个导弹。如果战斗已超过100s，射速降低至1%
+                int launchCheck = 60;
+                int divisor = 10; // 这是由导弹模块的射速决定的
+                if (UIBattleStatistics.battleTime > 5400) divisor = 1000;
+                if (gameTick % launchCheck == 0) // 最快也是每秒才会发射一次（发射数量为模块数的十分之一），因此每秒可能不发射或发射多个导弹。如果战斗已超过90s，射速降低至1%
                 {
                     int launchCount = 0; // 计算后得到的发射数量
                     int missileModuleCount = battleStarModuleBuiltCount[0];
-                    if (missileModuleCount >= 10)
+                    if (missileModuleCount >= divisor)
                     {
-                        int over = missileModuleCount % 10;
-                        launchCount = missileModuleCount / 10;
-                        if (gameTick / lauchCheck < over)
+                        int over = missileModuleCount % divisor;
+                        launchCount = missileModuleCount / divisor;
+                        if (gameTick % (divisor * launchCheck) / 60 < over)
                             launchCount += 1;
                     }
                     else if (missileModuleCount > 0)
                     {
-                        if (gameTick / lauchCheck < missileModuleCount) // 不能超过每秒发射一个的速度的时候，则每10s的前第整n秒发射一发
+                        if (gameTick % (divisor * launchCheck) / 60 < missileModuleCount) // 不能超过每秒发射一个的速度的时候，则每10s的前第整n秒发射一发
                         {
                             launchCount = 1;
                         }
                     }
                     System.Random rand = new System.Random();
-
+                    //launchCount = launchCount > 50 ? 50 : launchCount;
                     for (int i = 0; i < launchCount; i++)
                     {
                         DysonNode node = null;
@@ -261,6 +265,24 @@ namespace DSP_Battle
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// 用于在战斗时屏蔽一些不重要的log
+        /// </summary>
+        /// <param name="__instance"></param>
+        /// <param name="sender"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(BepInEx.Logging.ConsoleLogListener), "LogEvent")]
+        public static bool BepInExLogEventPatch(ref BepInEx.Logging.ConsoleLogListener __instance, object sender, LogEventArgs eventArgs)
+        {
+            if ((eventArgs.Level & (LogLevel.Error | LogLevel.Warning)) != LogLevel.None && Configs.nextWaveState == 3)
+            {
+                return false;
+            }
+            return true;
         }
 
         public static void LauchMissile(DysonSphereLayer layer, DysonNode node)
