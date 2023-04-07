@@ -121,13 +121,13 @@ namespace DSP_Battle
                     if (isControlDown)
                     {
                         StarFortress.ConstructStarFortPoint(starIndex, 8037, 10000);
-                        StarFortress.ConstructStarFortPoint(starIndex, 8038, 10000);
+                        //StarFortress.ConstructStarFortPoint(starIndex, 8038, 10000);
                         StarFortress.ConstructStarFortPoint(starIndex, 8039, 10000);
                     }
                     else
                     {
                         StarFortress.ConstructStarFortPoint(starIndex, 8037, 743);
-                        StarFortress.ConstructStarFortPoint(starIndex, 8038, 743);
+                        //StarFortress.ConstructStarFortPoint(starIndex, 8038, 743);
                         StarFortress.ConstructStarFortPoint(starIndex, 8039, 743);
                     }
                 }

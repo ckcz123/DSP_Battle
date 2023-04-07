@@ -157,21 +157,26 @@ namespace DSP_Battle
             int starCount = GameMain.galaxy.starCount;
             int starsPerFrame = Math.Max(1, starCount / 60);
             int f = (int)(time % 60);
+            for (int i = f * starsPerFrame; i < Math.Max(starCount, (f + 1) * starsPerFrame); i++)
+            {
+                DysonSphere sphere = GameMain.data.dysonSpheres[i];
+                ReCalcData(ref sphere);
+            }
             RecalcRocketNeed(f * starsPerFrame, Math.Max(starCount, (f + 1) * starsPerFrame));
 
-            if (UIStarFortress.curDysonSphere == null) return;
-            if (time % 60 == 45)
-            {
-                ReCalcData(ref UIStarFortress.curDysonSphere);
-                UIStarFortress.RefreshAll();
-            }
-            else if (time % 60 == 46) // 为了战斗时防止每帧都重新计算，仅每秒计算后存储
+            if (time % 60 == 45) // 为了战斗时防止每帧都重新计算，仅每秒计算后存储
             {
                 List<int> built = CalcModuleBuilt(Configs.nextWaveStarIndex);
                 battleStarModuleBuiltCount[0] = built[0];
                 battleStarModuleBuiltCount[1] = built[1];
                 battleStarModuleBuiltCount[2] = built[2];
                 battleStarModuleBuiltCount[3] = built[3];
+            }
+
+            if (UIStarFortress.curDysonSphere == null) return;
+            if (time % 60 == 46)
+            {
+                UIStarFortress.RefreshAll();
             }
         }
 
@@ -183,9 +188,9 @@ namespace DSP_Battle
 
             if (Configs.nextWaveState == 3  && starIndex == Configs.nextWaveStarIndex)
             {
-                if (cannonChargeProgress >= 6000 && battleStarModuleBuiltCount[1] > 0) // 光矛开火 6000
+                if (cannonChargeProgress >= 6000 && battleStarModuleBuiltCount[1] > 0 ) // 光矛开火 6000
                 {
-                    FireCannon(ref __instance.swarm);
+                    FireCannon(ref __instance.swarm,4);
                     cannonChargeProgress %= 6000;
                 }
                 int cannonModuleCount = battleStarModuleBuiltCount[1];
@@ -193,7 +198,9 @@ namespace DSP_Battle
 
 
                 // 发射导弹的速度暂定为：每个导弹模块提供1导弹/10s的发射速度
-                if (gameTick % 60 == 0) // 最快也是每秒才会发射一次，依此可以不发射或发射多个导弹
+                int lauchCheck = 60;
+                if (UIBattleStatistics.battleTime > 6000) lauchCheck = 6000;
+                if (gameTick % lauchCheck == 0) // 最快也是每秒才会发射一次（发射数量为模块数的十分之一），因此每秒可能不发射或发射多个导弹。如果战斗已超过100s，射速降低至1%
                 {
                     int launchCount = 0; // 计算后得到的发射数量
                     int missileModuleCount = battleStarModuleBuiltCount[0];
@@ -201,12 +208,12 @@ namespace DSP_Battle
                     {
                         int over = missileModuleCount % 10;
                         launchCount = missileModuleCount / 10;
-                        if (gameTick % 600 < 60 * over)
+                        if (gameTick / lauchCheck < over)
                             launchCount += 1;
                     }
                     else if (missileModuleCount > 0)
                     {
-                        if (gameTick % 600 < 60 * missileModuleCount) // 不能超过每秒发射一个的速度的时候，则每10s的前第整n秒发射一发
+                        if (gameTick / lauchCheck < missileModuleCount) // 不能超过每秒发射一个的速度的时候，则每10s的前第整n秒发射一发
                         {
                             launchCount = 1;
                         }
@@ -264,6 +271,7 @@ namespace DSP_Battle
             Vector3 nodeUPos = layer.NodeUPos(node);
             Vector3 starUPos = star.uPosition;
             int targetIndex = MissileSilo.FindTarget(starIndex, star.id * 100 + 1);
+            if (targetIndex < 0) return;
 
             DysonRocket dysonRocket = default(DysonRocket);
             dysonRocket.planetId = star.id * 100 + 1;
@@ -285,7 +293,7 @@ namespace DSP_Battle
             //UIBattleStatistics.RegisterShootOrLaunch(__instance.bulletId, damage);
         }
 
-        public static void FireCannon(ref DysonSwarm swarm, int loop = 3)
+        public static void FireCannon(ref DysonSwarm swarm, int loop = 100)
         {
             lockLoop = (lockLoop + 1) % loop;
             int starIndex = Configs.nextWaveStarIndex;
