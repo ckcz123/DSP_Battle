@@ -689,7 +689,7 @@ namespace DSP_Battle
             Relic.rollCount = Math.Min(Relic.rollCount+1, 8); // 记录本次重随次数，重随消耗有上限
             if (Configs.developerMode)
             {
-                Relic.alternateRelics[0] = 8;
+                //Relic.alternateRelics[0] = 8;
             }
             RefreshSelectionWindowUI();
         }

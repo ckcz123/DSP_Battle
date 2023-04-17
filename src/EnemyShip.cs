@@ -888,6 +888,7 @@ namespace DSP_Battle
             intensity = r.ReadInt32();
             damageRange = r.ReadInt32();
             countDown = r.ReadInt32();
+            wormholeIndex = Utils.RandInt(0, Configs.nextWaveWormCount);
 
             renderingData.SetEmpty();
             renderingData.gid = shipData.shipIndex;

@@ -277,6 +277,7 @@ namespace DSP_Battle
 
             if (Configs.developerMode)
             {
+                //dropletAtk = 400000;
             }
 
             intensity =

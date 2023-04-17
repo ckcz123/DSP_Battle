@@ -356,7 +356,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("gmRankUnlockText5", "New wave reward: proliferator's efficiency has been improved", "战斗结束后额外获得增产剂效果全面加强的奖励");
             ProtoRegistry.RegisterString("gmRankUnlockText6", "Wave reward duration +20%", "战斗奖励持续时间增加20%");
             ProtoRegistry.RegisterString("gmRankUnlockText7", "Wave reward: mining consumption -20% --> -50%", "采矿消耗降低的奖励强化为-50%消耗");
-            ProtoRegistry.RegisterString("gmRankUnlockText8", "Wave reward duration +20%", "战斗奖励持续时间增加20%");
+            ProtoRegistry.RegisterString("gmRankUnlockText8", "Droplets can quickly approach distant target. Wave reward duration +20%", "水滴能够快速接近远距离的目标，战斗奖励持续时间增加20%");
             ProtoRegistry.RegisterString("gmRankUnlockText9", "Star cannon charging speed +100%", "恒星炮充能速度增加100%");
             ProtoRegistry.RegisterString("gmRankUnlockText10", "Droplet base damage greatly increased. Wave reward duration +20%", "水滴基础伤害获得大幅度加强，战斗结束后的奖励持续时间增加20%");
             ProtoRegistry.RegisterString("gmRankReward1", "Wave reward unlocked", "战斗结束后给予战斗奖励");
@@ -364,6 +364,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("gmRankReward3", "Additional wave reward: mining consumption -20%", "额外的战斗奖励：采矿消耗-20%");
             ProtoRegistry.RegisterString("gmRankReward5", "Additional wave reward: proliferator enhancement", "额外的战斗奖励：增产剂效果强化");
             ProtoRegistry.RegisterString("gmRankReward2", "Wave reward duration +", "战斗奖励持续时间+");
+            ProtoRegistry.RegisterString("gmRankReward8", "Droplets can quickly approach distant target", "水滴能够快速接近远距离的目标");
             ProtoRegistry.RegisterString("gmRankReward9", "Star cannon charging speed +100%", "恒星炮充能速度+100%");
             ProtoRegistry.RegisterString("gmRankReward10", "Droplet damage +400%", "水滴伤害+400%");
             ProtoRegistry.RegisterString("功勋阶级", "Merit Rank", "功勋阶级");

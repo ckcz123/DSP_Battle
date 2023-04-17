@@ -104,6 +104,7 @@ namespace DSP_Battle
         public void Start()
         {
             BattleBGMController.InitAudioSources();
+
         }
 
         public void Update()
@@ -118,6 +119,7 @@ namespace DSP_Battle
                 //Debug.Log("Z test log by TCFV");
                 //Debug.LogError("Z error log by TCFV");
                 //EnemyShips.TestDestoryStation();
+                Rank.AddExp(100000);
                 if (MoreMegaStructure.MoreMegaStructure.curStar != null)
                 {
                     int starIndex = MoreMegaStructure.MoreMegaStructure.curStar.index;
@@ -164,6 +166,7 @@ namespace DSP_Battle
             }
             if(Configs.developerMode && isControlDown && Input.GetKeyDown(KeyCode.Z))
             {
+                Rank.AddExp(1000000);
                 Relic.PrepareNewRelic();
                 int planetId = 103;
                 if (GameMain.localPlanet != null)

@@ -30,6 +30,8 @@ namespace DSP_Battle
         public static List<int> compoPerModule = new List<int> { 20, 200, 200, 200 }; // 测试前后务必修改
         public static int lightSpearDamage = 20000;
         public static int RefreshDataCountDown = 120; // 每次载入游戏时，前两秒不刷新数据
+        public static List<int> randInc = new List<int> { -9, -7, -3, -1, 1, 3, 7, 9 };
+        public static int randIncLength = 8;
 
         public static void InitAll()
         {
@@ -238,15 +240,18 @@ namespace DSP_Battle
                     {
                         DysonNode node = null;
                         int beginLayerIndex = rand.Next(1, 10);
+                        int inc = randInc[rand.Next(0,randInc.Count)];
                         // 寻找第一个壳面
-                        for (int layerIndex = beginLayerIndex; layerIndex < 10; layerIndex = (layerIndex + 1) % 10)
+                        for (int layerIndex = (beginLayerIndex + inc + 10) % 10; layerIndex < 10; layerIndex = (layerIndex + inc + 10) % 10)
                         {
                             if (__instance.layersIdBased.Length > layerIndex && __instance.layersIdBased[layerIndex] != null && __instance.layersIdBased[layerIndex].nodeCount > 0)
                             {
                                 DysonSphereLayer layer = __instance.layersIdBased[layerIndex];
                                 bool found = false; // 寻找到可用的发射node之后，发射导弹，一直break到外面
-                                int beginNodeIndex = rand.Next(0, Math.Max(1, layer.nodePool.Length));
-                                for (int nodeIndex = beginNodeIndex; nodeIndex < layer.nodeCursor && nodeIndex < layer.nodeCursor; nodeIndex++)
+                                int beginNodeIndex = rand.Next(0, Math.Max(1, layer.nodeCursor));
+                                int nodeInc = layer.nodeCursor % inc == 0 ? 1 : inc + layer.nodeCursor;
+                                nodeInc = nodeInc <= 0 ? 1 : nodeInc;
+                                for (int nodeIndex = (beginNodeIndex + nodeInc) % layer.nodeCursor; nodeIndex < layer.nodeCursor && nodeIndex < layer.nodeCursor; nodeIndex = (nodeIndex + nodeInc) % layer.nodeCursor)
                                 {
                                     if (layer.nodePool[nodeIndex] != null)
                                     {
@@ -254,6 +259,7 @@ namespace DSP_Battle
                                         LauchMissile(layer, layer.nodePool[nodeIndex]);
                                         break;
                                     }
+                                    if (nodeIndex == beginNodeIndex) break;
                                 }
                                 if (found)
                                     break;
@@ -270,7 +276,7 @@ namespace DSP_Battle
                                     break;
                             }
 
-                            if (layerIndex == beginLayerIndex - 1) break;
+                            if (layerIndex == beginLayerIndex) break;
                         }
                     }
                 }

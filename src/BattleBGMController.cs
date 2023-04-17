@@ -130,8 +130,11 @@ namespace DSP_Battle
             }
             else if (Configs.nextWaveState == 3) // 在战斗中
             {
-                if(currentGroup < 0)
-                    currentGroup = Utils.RandInt(1, 7);
+                if (currentGroup < 0)
+                {
+                    System.Random rand = new System.Random();
+                    currentGroup = rand.Next(1, 7);
+                }
                 if (currentMusic >= beforeBattleBgmBeginNum || currentMusic < 0) // 当前播放的是虫洞刷新的bgm，或者是没播放。则下一个播放战斗中的循环节之前的音频
                 {
                     nextMusic = name2IndexMap["pre_" + currentGroup.ToString()];

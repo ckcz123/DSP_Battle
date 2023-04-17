@@ -203,6 +203,8 @@ namespace DSP_Battle
                     res += "-  " + "gmRankReward5".Translate() + "\n";
                 if (rank >= 2)
                     res += "-  " + "gmRankReward2".Translate() + (rank / 2 * 2).ToString() + "0%\n";
+                if (rank >= 8)
+                    res += "-  " + "gmRankReward8".Translate() + "\n";
                 if (rank >= 9)
                     res += "-  " + "gmRankReward9".Translate() + "\n";
                 if (rank == 10)
@@ -221,6 +223,9 @@ namespace DSP_Battle
                     res += ("gmRankReward" + nextRank.ToString()).Translate();
                 if (nextRank == 10)
                     res += "\n-  " + "gmRankReward10".Translate();
+                else if (nextRank == 8)
+                    res += "\n-  " + "gmRankReward8".Translate();
+
                 res += "</color>";
             }
 
