@@ -9,6 +9,7 @@ using System.Collections.Concurrent;
 using System.IO;
 using HarmonyLib;
 using System.Threading;
+using static UnityEngine.EventSystems.EventTrigger;
 
 namespace DSP_Battle
 {
@@ -16,9 +17,9 @@ namespace DSP_Battle
     {
         public static GameObject mechaDropletObj = null;
         public static Text mechaDropletAmountText = null;
-        public static long energyComsumptionPerLaunch = 1000000000; //发射水滴耗能
-        public static long energyComsumptionPerAttack = 10000000; //水滴攻击耗能，不再使用
-        public static long energyComsumptionPerTick = 500000; //水滴每帧耗能
+        public static long energyConsumptionPerLaunch = 1000000000; //发射水滴耗能
+        public static long energyConsumptionPerAttack = 10000000; //水滴攻击耗能，不再使用
+        public static long energyConsumptionPerTick = 500000; //水滴每帧耗能
         public static int maxWorkingDroplets = 5;
 
         //存档内容
@@ -91,14 +92,17 @@ namespace DSP_Battle
             }
 
             //如果在战斗状态，且机甲在相同星系，每秒发射一个水滴
-            if(Configs.nextWaveState == 3 && GameMain.localStar!=null && GameMain.localStar.index == Configs.nextWaveStarIndex && time % 60 == 6)
+            long energyCons = energyConsumptionPerLaunch;
+            if (Relic.HaveRelic(1, 4)) energyCons = (long)(energyCons * 0.5); // relic1-4 水滴减耗
+            if (Relic.HaveRelic(2, 6)) energyCons = (long)(energyCons * 0.6); // relic2-6 水滴减耗
+            if (Configs.nextWaveState == 3 && GameMain.localStar!=null && GameMain.localStar.index == Configs.nextWaveStarIndex && time % 60 == 6)
             {
                 int starIndex = GameMain.localStar.index;
                 for (int i = 0; i < maxDroplet; i++)
                 {
-                    if (GameMain.mainPlayer.mecha.coreEnergy > energyComsumptionPerLaunch * 2 && dropletPool[i].Launch(starIndex))
+                    if (GameMain.mainPlayer.mecha.coreEnergy > energyCons * 2 && dropletPool[i].Launch(starIndex))
                     {
-                        TryConsumeMechaEnergy(energyComsumptionPerLaunch);
+                        TryConsumeMechaEnergy(energyCons);
                         break; 
                     }
                 }
@@ -442,7 +446,7 @@ namespace DSP_Battle
 
             if(state >= 2 && state <= 3 && working)//飞出、返航过程不消耗能量
             {
-                Droplets.ForceConsumeMechaEnergy(Droplets.energyComsumptionPerTick);
+                Droplets.ForceConsumeMechaEnergy(Droplets.energyConsumptionPerTick);
             }
 
             if(state >= 2 && state <= 3 && !working && Configs.nextWaveState==3) //如果因为机甲能量水平不够，水滴会停在原地，但是如果战斗状态结束了，那么水滴会无视能量限制继续正常Update（正常Update会在战斗结束后让水滴立刻进入4阶段回机甲）

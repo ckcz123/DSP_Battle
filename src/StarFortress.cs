@@ -27,8 +27,9 @@ namespace DSP_Battle
         public static double cannonChargeProgress = 0; // 战斗所在星系的光矛充能，不进入存档
 
         public static int energyPerModule = 1000000;
-        public static List<int> compoPerModule = new List<int> { 100, 200, 200, 200 }; // 测试前后务必修改
+        public static List<int> compoPerModule = new List<int> { 20, 200, 200, 200 }; // 测试前后务必修改
         public static int lightSpearDamage = 20000;
+        public static int RefreshDataCountDown = 120; // 每次载入游戏时，前两秒不刷新数据
 
         public static void InitAll()
         {
@@ -58,6 +59,7 @@ namespace DSP_Battle
                 moduleComponentInProgress[i].AddOrUpdate(3, 0, (x, y) => 0);
             }
             remindPlayerWhenDestruction = 1;
+            RefreshDataCountDown = 120;
         }
 
         // 由Silo调用
@@ -101,6 +103,7 @@ namespace DSP_Battle
         public static void ReCalcData(ref DysonSphere sphere)
         {
             if (sphere == null) return;
+            if (RefreshDataCountDown > 0) return;
             int starIndex = sphere.starData.index;
             moduleCapacity[starIndex] = (int)(sphere.energyGenCurrentTick_Layers / energyPerModule);
             if (moduleCapacity[starIndex] < 10) // 恒星要塞需要一个最小巨构能量水平才能开启
@@ -157,15 +160,22 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(GameData), "GameTick")]
         public static void GameData_GameTick(long time)
         {
+            if (RefreshDataCountDown > 0)
+                RefreshDataCountDown -= 1;
             int starCount = GameMain.galaxy.starCount;
             int starsPerFrame = Math.Max(1, starCount / 60);
             int f = (int)(time % 60);
-            for (int i = f * starsPerFrame; i < Math.Max(starCount, (f + 1) * starsPerFrame); i++)
+            int end = Math.Min((f + 1) * starsPerFrame, starCount);
+            if (f == 59) end = starCount;
+            for (int i = f * starsPerFrame; i < end; i++)
             {
-                DysonSphere sphere = GameMain.data.dysonSpheres[i];
-                ReCalcData(ref sphere);
+                if (GameMain.data.dysonSpheres != null && i < GameMain.data.dysonSpheres.Length)
+                {
+                    DysonSphere sphere = GameMain.data.dysonSpheres[i];
+                    ReCalcData(ref sphere);
+                }
             }
-            RecalcRocketNeed(f * starsPerFrame, Math.Max(starCount, (f + 1) * starsPerFrame));
+            RecalcRocketNeed(f * starsPerFrame, end);
 
             if (time % 60 == 45) // 为了战斗时防止每帧都重新计算，仅每秒计算后存储
             {
@@ -202,9 +212,9 @@ namespace DSP_Battle
 
                 // 发射导弹的速度暂定为：每个导弹模块提供1导弹/10s的发射速度
                 int launchCheck = 60;
-                int divisor = 10; // 这是由导弹模块的射速决定的
-                if (UIBattleStatistics.battleTime > 5400) divisor = 1000;
-                if (gameTick % launchCheck == 0) // 最快也是每秒才会发射一次（发射数量为模块数的十分之一），因此每秒可能不发射或发射多个导弹。如果战斗已超过90s，射速降低至1%
+                int divisor = 100; // 这是由导弹模块的射速决定的
+                //if (UIBattleStatistics.battleTime > 5400) divisor = 1000;
+                if (gameTick % launchCheck == 0) // 最快也是每秒才会发射一次（发射数量为模块数的二十分之一），因此每秒可能不发射或发射多个导弹。// 已移除：如果战斗已超过90s，射速降低至1%
                 {
                     int launchCount = 0; // 计算后得到的发射数量
                     int missileModuleCount = battleStarModuleBuiltCount[0];
@@ -359,12 +369,13 @@ namespace DSP_Battle
                     }
                 }
                 // 立即结算伤害
-                int realDamage = enemyShip.BeAttacked(50000, DamageType.laser); //击中造成伤害
+                int damage = Configs.lightSpearAtk;
+                int realDamage = enemyShip.BeAttacked(damage, DamageType.laser); //击中造成伤害
                 if (realDamage > 0) // 被闪避了则不算击中
                     UIBattleStatistics.RegisterHit(8009, realDamage, 1);
                 if (Relic.HaveRelic(3, 7)) // relic3-7 虚空折射 子弹命中时对一个随机敌人造成20%额外伤害
                 {
-                    int refDmg = Relic.BonusDamage(50000, 0.2) - 50000;
+                    int refDmg = Relic.BonusDamage(damage, 0.2) - 50000;
                     int randNum = -1;
                     if (EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex].Count > 0)
                         randNum = Utils.RandInt(0, EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex].Count);
@@ -462,6 +473,10 @@ namespace DSP_Battle
                     for (int j = 0; j < total4_1; j++)
                     {
                         moduleMaxCount[i][j] = r.ReadInt32();
+                        if (j==0 && Configs.versionWhenImporting < 30230414) // 更新之后模块占用*5
+                        {
+                            moduleMaxCount[i][j] *= 5;
+                        }
                     }
                 }
                 remindPlayerWhenDestruction = r.ReadInt32();

@@ -436,8 +436,8 @@ namespace DSP_Battle
             // 遗物
             ProtoRegistry.RegisterString("发现异星圣物", "Alien Relic Found", "发现异星圣物");
             ProtoRegistry.RegisterString("解译异星圣物提示", 
-                "Select one decoding rail from the following three to obtain the corresponding buff. You can use alien matrix to seek new decoding rail with different effects.\nEach re-random opportunity makes the relic more unstable, so that the next cost will be doubled.", 
-                "从以下三个解码轨中选取一个进行解译以获取对应的圣物加成(或移除圣物)。\n可以使用异星矩阵重随解码轨来发现新的可用效果，每次重新随机会使圣物更加不稳定，从而使下次重新随机的消耗翻倍。");
+                "Select one decoding rail from the following three to obtain the buff. You can use alien matrix to seek new decoding rail with different effects.\nEach re-roll opportunity makes the relic more unstable, so that the next cost will be doubled.",
+                "从以下三个解码轨中选取一个进行解译以获取对应的圣物加成。\n可以使用异星矩阵重随解码轨来发现新的可用效果，每次重新随机会使圣物更加不稳定，从而使下次重新随机的消耗翻倍。");
             ProtoRegistry.RegisterString("重新随机", "Roll", "重新随机");
             ProtoRegistry.RegisterString("免费", "free", "免费");
             ProtoRegistry.RegisterString("移除遗物", "Remove", "移除");
@@ -542,7 +542,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物描述1-5", "The missile silo will reload a free missile after each launch", "导弹发射井在每次发射后向本体回填一发免费弹药");
             ProtoRegistry.RegisterString("遗物描述1-6", "When producing megastructure rockets, each output returns 2 deuteron fuel rods", "生产巨构火箭时，每个产出返还2个氘核燃料棒");
             ProtoRegistry.RegisterString("遗物描述1-7", "Solar sial adsorption speed increases 300%", "巨构的太阳帆吸附速度提升300%");
-            ProtoRegistry.RegisterString("遗物描述1-8", "The first ten enemy ships' landing will not destroy any buildings or resources in each invasion", "每场入侵中，降落的前十个敌舰不会摧毁任何建筑或资源");
+            ProtoRegistry.RegisterString("遗物描述1-8", "The first ten (upto 200 by higher wave intensity) enemy ships' landing will not destroy any buildings or resources in each invasion", "每场入侵中，降落的前十个（随进攻强度最多增至200个）敌舰不会摧毁任何建筑或资源。");
             ProtoRegistry.RegisterString("遗物描述1-9", "When the planet shield is hit, if your mecha energy is higher than 20%, you will lose the energy that is equivalent to 2000 times the damage to replace the shield damage", "行星力场护盾受到伤害时，如果你机甲的能量高于20%，你将损失相当于伤害2000倍的能量，并使该次伤害无效化");
             ProtoRegistry.RegisterString("遗物描述1-10", "Wormholes no longer increase other wormholes' damage reduction when they are destroyed (except the last one)", "虫洞不再随着被连续摧毁的数量增加而提升伤害减免（最后一个除外）");
             ProtoRegistry.RegisterString("遗物描述1-11", "The gravitational collapse missile no longer gathers the enemy ship together, but makes them frozen 3s in place. The farther the distance is, the less affected it deals", "引力塌陷导弹不再聚拢敌舰，而是使他们在原地冻结3s，距离爆心越远受到的影响越小");
@@ -653,9 +653,9 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("模块容量说明", "Module capacity limits the number of defensive modules that you can build in this Star Fortress. Planning missile modules and light spear modules will consume available module capacity.\nThere are two ways to increase module capacity: \n1. Build bigger mega structure will provide more capacity; \n2. Building platform expansion modules will also increase module capacity, but the megastructure must have at least 600MW before its expansion modules work.", "模块容量决定着你可以在这个恒星要塞建造的防御性模块的数量，规划导弹模块和光矛模块都将消耗可用的模块容量，提升模块容量的方式有两个：\n1.构建更多的巨构框架和壳面将提升模块容量；\n2.在至少建造了一定能量水平的巨构后，建造平台扩展模块也会提升模块容量。");
             ProtoRegistry.RegisterString("组件需求", "Component points", "组件点数");
             ProtoRegistry.RegisterString("导弹模块", "Missile Mod.", "导弹模块");
-            ProtoRegistry.RegisterString("导弹模块说明", "The missile module will launch special antimatter missiles to attack enemy ships in combat. The antimatter missiles it uses are independently produced by the module in a stellar environment, requiring no ground supply of ammunition, and benefiting from technology upgrade. \nIn each invasion, each missile module can only fire at the highest firing rate (6/min) for 90s. After that, the firing rate will decrease to 1%. \nUse the buttons to increase or decrease the planned number, and then launch the corresponding rocket from the ground to provide component points to gradually build the module. \nHolding \'Ctrl\' to make the button 10x times.", "    导弹模块会在战斗中发射反物质导弹攻击敌舰，其使用的反物质导弹是在恒星环境下由模块自主生产的，无需地面供给弹药，且享受来自科技的加成效果。\n    每次入侵中，每个导弹模块仅能以最高射速6/min工作最多90s，之后射速便会将降低至1%。\n    使用按钮来增加或减少建造的数量，然后从地面发射对应的运载火箭提供组件点数来逐步建造模块。\n    按住Ctrl将使按钮变为10倍。");
+            ProtoRegistry.RegisterString("导弹模块说明", "The missile module will launch special antimatter missiles to attack enemy ships in combat. The antimatter missiles it uses are independently produced by the module in a stellar environment, requiring no ground supply of ammunition, and benefiting from technology upgrade. \nUse the buttons to increase or decrease the planned number, and then launch the corresponding rocket from the ground to provide component points to gradually build the module. \nHolding \'Ctrl\' to make the button 10x times.", "    导弹模块会在战斗中发射反物质导弹攻击敌舰，其使用的反物质导弹是在恒星环境下由模块自主生产的，无需地面供给弹药，且享受来自科技的加成效果。\n    使用按钮来增加或减少建造的数量，然后从地面发射对应的运载火箭提供组件点数来逐步建造模块。\n    按住Ctrl将使按钮变为10倍。");
             ProtoRegistry.RegisterString("光矛模块", "Lightspear Mod.", "光矛模块");
-            ProtoRegistry.RegisterString("光矛模块说明", "The Light Spear module can fire light spears with up to 20000 damage in combat, but it takes very long to recharge and cannot be enhanced by technology upgrades. Building more Light Spear modules will accelerate the charging speed of the Light Spear and thus increase the fire rate (non-linear, max 10/s). \nUse the buttons to increase or decrease the planned number, and then launch the corresponding rocket from the ground to provide component points to gradually build the module. \nHolding \'Ctrl\' to make the button 10x times.", "    光矛模块会在战斗中发射伤害高达20000的光矛攻击敌舰，但充能时间较长，且不享受科技加成。建造更多的光矛模块会加快光矛的充能速度从而增加射速(非线性，最大10/s)。\n    使用按钮来增加或减少建造的数量，然后从地面发射对应的运载火箭提供组件点数来逐步建造模块。\n    按住Ctrl将使按钮变为10倍。");
+            ProtoRegistry.RegisterString("光矛模块说明", "The Light Spear module can fire light spears with up to 20000 damage in combat, and can be enhanced by technology upgrades just like Phase-cracking beam. Building more Light Spear modules will accelerate the charging speed of the Light Spear and thus increase the fire rate (non-linear, max 10/s). \nUse the buttons to increase or decrease the planned number, and then launch the corresponding rocket from the ground to provide component points to gradually build the module. \nHolding \'Ctrl\' to make the button 10x times.", "    光矛模块会在战斗中发射伤害高达20000的光矛攻击敌舰，且享受与相位裂解光束等同的科技加成。建造更多的光矛模块会加快光矛的充能速度从而增加射速(非线性，最大10/s)。\n    使用按钮来增加或减少建造的数量，然后从地面发射对应的运载火箭提供组件点数来逐步建造模块。\n    按住Ctrl将使按钮变为10倍。");
             ProtoRegistry.RegisterString("平台扩展模块", "Expansion Mod.", "扩展模块");
             ProtoRegistry.RegisterString("平台扩展模块说明", "Each platform expansion module will provide module capacity to enable you to build large defense platforms on low completion megastructures. But the megastructure must have at least 600MW before the expansion modules can work. \nThe platform expansion modules that are already built cannot be removed.\nUse the buttons to increase or decrease the planned number, and then launch the corresponding rocket from the ground to provide component points to gradually build the module. \nHolding \'Ctrl\' to make the button 10x times.", "    每个平台扩展模块会提供（而非消耗）模块容量，以便使你能在低完成度的巨构上构建大型防御平台。\n    已建成的平台扩展模块无法拆除。");
             ProtoRegistry.RegisterString("警告扩展模块无效", "Notice: The expansion module cannot take effect until the total energy provide by the megastructure's layers reaches 600MW.", "注意：在巨构壳层与框架能量水平总和达到一个600MW之前，扩展模块无法生效。");
@@ -666,6 +666,8 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("sf组件2火箭描述", "Use the Vertical Launching Silo to launch this rocket onto the Star Fortress, carring necessary components to build the light spear module. This will fill the component points of the light spear module on the Star Fortress, but it is not helpful for the construction of any mega structures.", "使用发射井发射此火箭来将构建光矛模块的必须组件发射到恒星要塞上，这会填充恒星要塞的光矛模块的组件点数，但无法推进任何巨构的建造。");
             ProtoRegistry.RegisterString("sf组件3火箭", "Expansion module carrier rocket", "扩展模块组件运载火箭");
             ProtoRegistry.RegisterString("sf组件3火箭描述", "Use the Vertical Launching Silo to launch this rocket onto the Star Fortress, carring necessary components to build the expansion module. This will fill the component points of the expansion module on the Star Fortress, but it is not helpful for the construction of any mega structures.", "使用发射井发射此火箭来将构建扩展模块的必须组件发射到恒星要塞上，这会填充恒星要塞的扩展模块的组件点数，但无法推进任何巨构的建造。");
+            ProtoRegistry.RegisterString("即将拆除模块标题", "Warning! Destructing modules!", "警告！即将拆除模块");
+            ProtoRegistry.RegisterString("即将拆除模块警告", "Since the module upper limit will be less than the number of completed modules, the overflowing completed modules will be immediately removed, and the module points will be wasted. Are you sure you want to remove them?", "由于模块上限被调整后将少于已建成的模块数，溢出的已建成的模块将被立刻拆除，模块点数将被浪费。是否确认拆除？"); 
 
             // 物品 Item
             ItemProto bullet1 = ProtoRegistry.RegisterItem(8001, "子弹1", "子弹1描述", "Assets/DSPBattle/bullet1", 2701 + pageBias, 100, EItemType.Material);
@@ -1575,13 +1577,13 @@ namespace DSP_Battle
                     }
                     return;
                 case 54:
-                    __result = Utils.KMGFormat(Droplets.energyComsumptionPerLaunch) + "J";
+                    __result = Utils.KMGFormat(Droplets.energyConsumptionPerLaunch) + "J";
                     return;
                 case 55:
-                    __result = Utils.KMGFormat(Droplets.energyComsumptionPerTick * 60) + "W";
+                    __result = Utils.KMGFormat(Droplets.energyConsumptionPerTick * 60) + "W";
                     return;
                 case 56:
-                    __result = Utils.KMGFormat(Droplets.energyComsumptionPerLaunch * 2) + "J";
+                    __result = Utils.KMGFormat(Droplets.energyConsumptionPerLaunch * 2) + "J";
                     return;
                 case 57:
                     __result = "0 - " + Configs.capacityPerGenerator[0].Item2.ToString();

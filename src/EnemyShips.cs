@@ -212,8 +212,8 @@ namespace DSP_Battle
         public static void OnShipLanded(EnemyShip ship)
         {
             DspBattlePlugin.logger.LogInfo("=========> Ship " + ship.shipIndex + " landed at station " + ship.shipData.otherGId);
-
-            if (shouldDistroy && Configs.relic1_8Protection > 10) // relic1-8前十个不被摧毁。这个值在每次开始战斗时如果有该遗物则重置为0，但是每次读档设定为99
+            int relic1_8Protection_Max = Math.Max(10, Math.Min(200, Configs.nextWaveIntensity / 50));
+            if (shouldDistroy && Configs.relic1_8Protection > relic1_8Protection_Max) // relic1-8前十个不被摧毁。这个值在每次开始战斗时如果有该遗物则重置为0，但是每次读档设定为99
             {
                 StationComponent station = ship.targetStation;
                 if (ValidStellarStation(station))
