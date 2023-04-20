@@ -145,7 +145,7 @@ namespace DSP_Battle
 
         public static bool HaveRelic(int type, int num)
         {
-            //if (Configs.developerMode && num>9) return true;
+            //if (Configs.developerMode &&( type == 0 && num == 5 ||  type == 1 && num == 9 )) return true;
             if (type > 3 || type < 0 || num > 30) return false;
             if ((relics[type] & (1 << num)) > 0) return true;
             return false;

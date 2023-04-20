@@ -333,11 +333,21 @@ namespace DSP_Battle
                     else
                         isBlockedByShield = false;
                     //如果在护盾>有效护盾（暂定50000）的情况下撞上了护盾，船承受巨量伤害，同时也会对护盾造成伤害。自爆船将会造成巨量伤害
-                    if((GameMain.galaxy.PlanetById(planetId).uPosition - uPos).magnitude <= ShieldRenderer.shieldRadius * 810)
+                    if((GameMain.galaxy.PlanetById(planetId).uPosition - uPos).magnitude <= ShieldRenderer.shieldRadius * 810) // 现在可以因relic效果而闪避和被减免
                     {
                         UIBattleStatistics.RegisterShieldAttack(BeAttacked(9999999)); // 无需伤害类型，必死
-                        ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => y - Configs.enemyDamagePerBullet[shipTypeNum]); // 无法因relic效果而闪避和被减免
-                        if(ShieldGenerator.currentShield.GetOrAdd(planetId, 0) < 0)
+                        int damage = Configs.enemyDamagePerBullet[shipTypeNum];
+                        if (Relic.HaveRelic(1, 9) && GameMain.mainPlayer.mecha.coreEnergy >= GameMain.mainPlayer.mecha.coreEnergyCap * 0.2 && GameMain.mainPlayer.mecha.coreEnergy >= damage * 2000) // relic1-9 骑士之誓用机甲能量替代护盾伤害
+                        {
+                            GameMain.mainPlayer.mecha.coreEnergy -= damage * 2000;
+                            GameMain.mainPlayer.mecha.MarkEnergyChange(8, -damage * 2000);
+                            UIBattleStatistics.RegisterShieldAvoidDamage(damage);
+                        }
+                        else
+                        {
+                            ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => y - damage);
+                        }
+                        if (ShieldGenerator.currentShield.GetOrAdd(planetId, 0) < 0)
                             ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => 0);
                         UIBattleStatistics.RegisterShieldTakeDamage(Configs.enemyDamagePerBullet[shipTypeNum]);
 
@@ -416,6 +426,12 @@ namespace DSP_Battle
                             GameMain.mainPlayer.mecha.coreEnergy -= damage * 2000;
                             GameMain.mainPlayer.mecha.MarkEnergyChange(8, -damage * 2000);
                             UIBattleStatistics.RegisterShieldAvoidDamage(damage);
+                            // relic0-5 荆棘之甲 护盾反伤效果 伤害被转移则反伤系数为0.5基础伤害
+                            if (Relic.HaveRelic(0, 5))
+                            {
+                                int reboundDamage = Relic.BonusDamage(Configs.enemyDamagePerBullet[shipTypeNum], 1.0) - Configs.enemyDamagePerBullet[shipTypeNum]; // 注意是基础伤害而非被时间增幅过的伤害
+                                UIBattleStatistics.RegisterShieldAttack(BeAttacked(reboundDamage, DamageType.shield));
+                            }
                         }
                         else
                         {
@@ -437,16 +453,22 @@ namespace DSP_Battle
                             }
                         }
 
-                        // relic0-5 荆棘之甲 护盾反伤效果，无论是否被机甲能量替代（relic1-9），都会反伤。有combo是好事。但如果被闪避了，那就没反伤了。
+                        // relic0-5 荆棘之甲 护盾反伤效果 正常反伤10%基础伤害
                         if (Relic.HaveRelic(0, 5))
                         {
-                            int reboundDamage = Relic.BonusDamage(Configs.enemyDamagePerBullet[shipTypeNum], 0.1) - Configs.enemyDamagePerBullet[shipTypeNum]; // 注意是基础伤害而非被时间增幅过的伤害
+                            int reboundDamage = Relic.BonusDamage(Configs.enemyDamagePerBullet[shipTypeNum], 0.1) - Configs.enemyDamagePerBullet[shipTypeNum];
                             UIBattleStatistics.RegisterShieldAttack(BeAttacked(reboundDamage, DamageType.shield));
                         }
                     }
                     else 
                     {
                         UIBattleStatistics.RegisterShieldAvoidDamage(damage);
+                        // relic0-5 荆棘之甲 护盾反伤效果 伤害被直接规避 则反伤系数为0.5基础伤害
+                        if (Relic.HaveRelic(0, 5))
+                        {
+                            int reboundDamage = Relic.BonusDamage(Configs.enemyDamagePerBullet[shipTypeNum], 1.0) - Configs.enemyDamagePerBullet[shipTypeNum];
+                            UIBattleStatistics.RegisterShieldAttack(BeAttacked(reboundDamage, DamageType.shield));
+                        }
                     }
                     
                     //子弹

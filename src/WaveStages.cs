@@ -103,7 +103,7 @@ namespace DSP_Battle
             int intensity = Configs.nextWaveIntensity;
             if (Configs.developerMode)
             {
-                intensity = 1000;
+                intensity = 10000;
                 //waveNum = 4;
             }
             int avg = Configs.nextWaveIntensity / (Configs.enemyIntensity[0] + Configs.enemyIntensity[1]
