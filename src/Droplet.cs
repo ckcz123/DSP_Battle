@@ -21,7 +21,7 @@ namespace DSP_Battle
         public static long energyConsumptionPerAttack = 10000000; //水滴攻击耗能，不再使用
         public static long energyConsumptionPerTick = 500000; //水滴每帧耗能
         public static int maxWorkingDroplets = 5;
-        public static List<int> warpRushCharge; // 足够充能时，如果水滴下一个目标距离超过warpRushDistThr，则消耗充能瞬移过去
+        public static List<int> warpRushCharge = new List<int> { 0, 0, 0, 0, 0 }; // 足够充能时，如果水滴下一个目标距离超过warpRushDistThr，则消耗充能瞬移过去
         public static int warpRushNeed = 180; // 水滴远距离瞬移所需充能时间（帧数）
         public static int warpRushDistThr = 10000; // 水滴下一个目标距离大于此距离才会触发瞬移
 
@@ -40,8 +40,8 @@ namespace DSP_Battle
             }
             bonusDamage = 0;
             bonusDamageLimit = Relic.dropletDamageLimitGrowth;
-            warpRushCharge = new List<int>(maxWorkingDroplets);
-            for (int i = 0; i < maxWorkingDroplets; i++)
+            warpRushCharge = new List<int>();
+            for (int i = 0; i < 5; i++)
             {
                 warpRushCharge.Add(0);
             }
