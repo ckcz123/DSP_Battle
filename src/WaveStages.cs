@@ -103,7 +103,7 @@ namespace DSP_Battle
             int intensity = Configs.nextWaveIntensity;
             if (Configs.developerMode)
             {
-                //intensity = 10000;
+                intensity = 10000;
                 //waveNum = 4;
             }
             int avg = Configs.nextWaveIntensity / (Configs.enemyIntensity[0] + Configs.enemyIntensity[1]
@@ -140,7 +140,7 @@ namespace DSP_Battle
             UIAlert.ShowAlert(true);
 
             // relic 1-8 2-17
-            Configs.relic1_8Protection = Relic.HaveRelic(1, 8) ? 0 : 99;
+            Configs.relic1_8Protection = Relic.HaveRelic(1, 8) ? 0 : int.MaxValue;
             Configs.relic2_17Activated = Relic.HaveRelic(2, 17) ? 1 : 0;
         }
 
@@ -198,6 +198,7 @@ namespace DSP_Battle
                 }
             }
             Configs.nextWaveState = 3;
+            StarFortress.cannonChargeProgress = 600; // 战斗开始默认光矛充能完毕
         }
 
         private static void UpdateWaveStage3(long time)

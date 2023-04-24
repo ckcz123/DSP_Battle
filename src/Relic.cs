@@ -54,7 +54,7 @@ namespace DSP_Battle
             UIRelic.InitAll();
             canSelectNewRelic = false;
             rollCount = 0;
-            Configs.relic1_8Protection = 99;
+            Configs.relic1_8Protection = int.MaxValue;
             Configs.relic2_17Activated = 0;
             RelicFunctionPatcher.CheckSolarSailLife();
         }
@@ -145,7 +145,7 @@ namespace DSP_Battle
 
         public static bool HaveRelic(int type, int num)
         {
-            //if (Configs.developerMode && num>9) return true;
+            //if (Configs.developerMode &&( type == 0 && num == 5 ||  type == 1 && num == 9 )) return true;
             if (type > 3 || type < 0 || num > 30) return false;
             if ((relics[type] & (1 << num)) > 0) return true;
             return false;

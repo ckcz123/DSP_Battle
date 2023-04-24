@@ -212,8 +212,8 @@ namespace DSP_Battle
         public static void OnShipLanded(EnemyShip ship)
         {
             DspBattlePlugin.logger.LogInfo("=========> Ship " + ship.shipIndex + " landed at station " + ship.shipData.otherGId);
-
-            if (shouldDistroy && Configs.relic1_8Protection > 10) // relic1-8前十个不被摧毁。这个值在每次开始战斗时如果有该遗物则重置为0，但是每次读档设定为99
+            int relic1_8Protection_Max = Math.Max(10, Math.Min(200, Configs.nextWaveIntensity / 50));
+            if (shouldDistroy && Configs.relic1_8Protection > relic1_8Protection_Max) // relic1-8前十个不被摧毁。这个值在每次开始战斗时如果有该遗物则重置为0，但是每次读档设定为99
             {
                 StationComponent station = ship.targetStation;
                 if (ValidStellarStation(station))
@@ -506,6 +506,32 @@ namespace DSP_Battle
         public static void LogisticShipUIRenderer_Destroy(ref LogisticShipUIRenderer __instance)
         {
             EnemyShipUIRenderer.Destroy();
+        }
+
+
+        public static void TestDestoryStation()
+        {
+            RemoveEntities.distroyedStation.Clear(); // 否则测试过程中每一波，每个station只能被手动触发摧毁一次
+            int nextStationId = EnemyShips.FindNearestPlanetStation(GameMain.mainPlayer.planetData.star, GameMain.mainPlayer.uPosition);
+            int starIndex = GameMain.mainPlayer.planetData.star.index;
+            if (nextStationId < 0)
+            {
+                return;
+            }
+            int nextGid = random.Next(1 << 27, 1 << 29);
+            while (ships.ContainsKey(nextGid)) nextGid = random.Next(1 << 27, 1 << 29);
+
+
+            EnemyShip enemyShip = new EnemyShip(
+                nextGid,
+                nextStationId,
+                0,
+                0,
+                9999999);
+            DspBattlePlugin.logger.LogInfo("=========> Init ship " + nextGid + " at station " + enemyShip.shipData.otherGId);
+            RemoveEntities.Add(enemyShip, enemyShip.targetStation);
+            //ships.TryAdd(nextGid, enemyShip);
+
         }
 
         public static void Export(BinaryWriter w)

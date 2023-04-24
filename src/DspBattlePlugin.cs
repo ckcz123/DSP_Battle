@@ -91,6 +91,9 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(BattleBGMController));
             Harmony.CreateAndPatchAll(typeof(Relic));
             Harmony.CreateAndPatchAll(typeof(RelicFunctionPatcher));
+            Harmony.CreateAndPatchAll(typeof(StarFortress));
+            Harmony.CreateAndPatchAll(typeof(UIStarFortress));
+            Harmony.CreateAndPatchAll(typeof(StationOrderFixPatch));
 
             LDBTool.PreAddDataAction += BattleProtos.AddProtos;
             LDBTool.PostAddDataAction += BattleProtos.PostDataAction;
@@ -101,6 +104,7 @@ namespace DSP_Battle
         public void Start()
         {
             BattleBGMController.InitAudioSources();
+
         }
 
         public void Update()
@@ -109,10 +113,40 @@ namespace DSP_Battle
             //{
             //    Configs.nextWaveFrameIndex -= 60 * 60;
             //}
+            if (Configs.developerMode && Input.GetKeyDown(KeyCode.Z))
+            {
+                //Debug.LogWarning("Z test warning by TCFV");
+                //Debug.Log("Z test log by TCFV");
+                //Debug.LogError("Z error log by TCFV");
+                //EnemyShips.TestDestoryStation();
+                Rank.AddExp(100000);
+                if (MoreMegaStructure.MoreMegaStructure.curStar != null)
+                {
+                    int starIndex = MoreMegaStructure.MoreMegaStructure.curStar.index;
+                    if (isControlDown)
+                    {
+                        StarFortress.ConstructStarFortPoint(starIndex, 8037, 10000);
+                        //StarFortress.ConstructStarFortPoint(starIndex, 8038, 10000);
+                        StarFortress.ConstructStarFortPoint(starIndex, 8039, 10000);
+                    }
+                    else
+                    {
+                        StarFortress.ConstructStarFortPoint(starIndex, 8037, 743);
+                        //StarFortress.ConstructStarFortPoint(starIndex, 8038, 743);
+                        StarFortress.ConstructStarFortPoint(starIndex, 8039, 743);
+                    }
+                }
+            }
             if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
+            {
                 isControlDown = true;
+                UIStarFortress.RefreshSetBtnText();
+            }
             if (Input.GetKeyUp(KeyCode.LeftControl) || Input.GetKeyUp(KeyCode.RightControl))
+            {
                 isControlDown = false;
+                UIStarFortress.RefreshSetBtnText();
+            }
             if (Input.GetKeyDown(KeyCode.Minus) && isControlDown && !GameMain.isPaused && (Configs.nextWaveState == 1 || Configs.nextWaveState == 2))
             {
                 Configs.nextWaveFrameIndex -= 60 * 60;
@@ -130,8 +164,9 @@ namespace DSP_Battle
             {
                 UIAlert.OnActiveChange();
             }
-            if(Configs.developerMode && Input.GetKeyDown(KeyCode.Z))
+            if(Configs.developerMode && isControlDown && Input.GetKeyDown(KeyCode.Z))
             {
+                Rank.AddExp(1000000);
                 Relic.PrepareNewRelic();
                 int planetId = 103;
                 if (GameMain.localPlanet != null)
@@ -222,6 +257,7 @@ namespace DSP_Battle
             Droplets.Export(w);
             Rank.Export(w);
             Relic.Export(w);
+            StarFortress.Export(w);
         }
 
         public void Import(BinaryReader r)
@@ -237,6 +273,7 @@ namespace DSP_Battle
             Droplets.Import(r);
             Rank.Import(r);
             Relic.Import(r);
+            StarFortress.Import(r);
 
             WaveStages.ResetCargoAccIncTable(Configs.extraSpeedEnabled && Rank.rank>=5);
             UIBattleStatistics.InitAll();
@@ -260,6 +297,7 @@ namespace DSP_Battle
             Droplets.IntoOtherSave();
             Rank.IntoOtherSave();
             Relic.IntoOtherSave();
+            StarFortress.IntoOtherSave();
 
             WaveStages.ResetCargoAccIncTable(Configs.extraSpeedEnabled && Rank.rank >= 5);
             UIBattleStatistics.InitAll();

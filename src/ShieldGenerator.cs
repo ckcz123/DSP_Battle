@@ -167,7 +167,10 @@ namespace DSP_Battle
         {
             if (__instance.emptyId != 9999)
                 return;
-
+            if (Configs.nextWaveStarIndex == __instance.fullId / 100 - 1 && Configs.nextWaveState == 3) //战斗中护盾回复动画停止
+            {
+                __instance.currPoolEnergy = __instance.currPoolEnergy - __instance.currEnergyPerTick;
+            }
             if (GameMain.instance.timei % 30 != 1) return;
 
             if (__instance.currPoolEnergy >= __instance.maxPoolEnergy - __instance.energyPerTick)
@@ -209,7 +212,6 @@ namespace DSP_Battle
             if (Configs.nextWaveStarIndex == __instance.fullId / 100 - 1 && Configs.nextWaveState == 3) //战斗中不回复护盾
             { 
                 gen = 0;
-                __instance.currPoolEnergy -= __instance.energyPerTick;
             }
             if (Relic.HaveRelic(2, 1)) gen = gen * 1.5;
             calcShieldInc.AddOrUpdate(planetId, gen, (x, y) => y + gen);
@@ -277,6 +279,7 @@ namespace DSP_Battle
                     inc *= 30;
                     if (Relic.HaveRelic(2, 0)) // relic2-0提高充能速度
                         inc *= 1.5;
+                    if (Configs.developerMode) inc *= 1000;
                     currentShield.AddOrUpdate(planetId, (int) inc, (x, y) => y + (int) inc);
                     if (currentShield[planetId] > item.Value)
                         currentShield.AddOrUpdate(planetId, item.Value, (x, y) => item.Value);

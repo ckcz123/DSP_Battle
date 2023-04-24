@@ -501,7 +501,7 @@ namespace DSP_Battle
             int starIndex = __instance.starData.index;
 
             // relic0-6 京级巨炮效果
-            int bullet1DamageWithRelic = Relic.HaveRelic(0, 6) ? Relic.BonusDamage(Configs.bullet1Atk, 500) : Configs.bullet1Atk;
+            int bullet1DamageWithRelic = Relic.HaveRelic(0, 6) ? Relic.BonusDamage(Configs.bullet1Atk, 200) : Configs.bullet1Atk;
             int bullet1Count = Relic.HaveRelic(0, 6) ? 5 : 1; // 实际消耗过的穿甲弹数量
 
             foreach (var i in bulletTargets[starIndex].Keys)
@@ -533,6 +533,7 @@ namespace DSP_Battle
                                 case 8002: damage = Configs.bullet2Atk; break;
                                 case 8003: damage = Configs.bullet3Atk; break;
                                 case 8007: damage = (int)(Configs.bullet4Atk * 5 * Math.Max(0.2,(1 - Configs.laserDamageReducePerAU * __instance.bulletPool[i].maxt * Configs.bullet4Speed / 40000))); dmgType = DamageType.laser; break;
+                                case 8009: damage = 5000; dmgType = DamageType.laser; break;
                                 default:
                                     break;
                             }

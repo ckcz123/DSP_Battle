@@ -75,9 +75,9 @@ namespace DSP_Battle
         //除上面的之外其他总和数值
         public static int totalEnemyGen; //生成的敌人总数
         public static long totalAmmoDamageOut, totalAmmoDamageHit, bAmmoDamageOut, bAmmoDamageHit, mAmmoDamageOut, mAmmoDamageHit; //伤害输出和命中总和记录。此处Ammo泛指子弹和导弹，前缀b和m指代子弹和导弹
-        public static int totalAmmoUse, totalAmmoHit, bAmmoUse, bAmmoHit, mAmmoUse, mAmmoHit; //数量发射和命中总和记录
+        public static int totalAmmoUse, totalAmmoHit, bAmmoUse, bAmmoHit, mAmmoUse, mAmmoHit; //数量发射和命中总和记录，前缀b和m代表bullet和missile两大类中所有小类的总计
         public static ConcurrentDictionary<int,long> ammoDamageOutput; //每种子弹、导弹输出总伤害
-        public static ConcurrentDictionary<int,long> ammoDamageHit; //每种子弹、导弹击中总伤害，由于子弹导弹等有飞行时间，在中飞行时科技升级了，那么单个子弹注册的输出伤害会低于击中伤害，但无所谓，这种情况发生概率或者占比较小，不大会影响数据统计。此外，导弹有aoe，其伤害效率超过100%也是正常的
+        public static ConcurrentDictionary<int,long> ammoDamageHit; //每种子弹、导弹击中总伤害8008、8009代表恒星要塞的导弹和光矛伤害。由于子弹导弹等有飞行时间，在中飞行时科技升级了，那么单个子弹注册的输出伤害会低于击中伤害，但无所谓，这种情况发生概率或者占比较小，不大会影响数据统计。此外，导弹有aoe，其伤害效率超过100%也是正常的
         public static ConcurrentDictionary<int, int> ammoUse; //每种子弹、导弹的发射量
         public static ConcurrentDictionary<int, int> ammoHit; //每种子弹、导弹击中量
         public static ConcurrentQueue<double> allInterceptDis; //所有曾经拦截成功的距离
@@ -236,7 +236,7 @@ namespace DSP_Battle
                 mAmmoUse = 0;
                 mAmmoHit = 0;
                 avgInterceptDis = 0;
-                minInterceptDis = 999999999999999999;
+                minInterceptDis = double.MaxValue;
                 alienMatrixGain = 0;
                 enemyGen = new ConcurrentDictionary<int, int>();
                 enemyEliminated = new ConcurrentDictionary<int, int>();
@@ -246,7 +246,7 @@ namespace DSP_Battle
                 ammoHit = new ConcurrentDictionary<int, int>();
                 allInterceptDis = new ConcurrentQueue<double>();
                 //因为后面需要直接用比较方便，所以直接初始化了，后面就不用判断了
-                for (int i = 8001; i < 8008; i++)
+                for (int i = 8001; i < 8010; i++) // 8008、8009记录恒星要塞的导弹和光矛
                 {
                     ammoDamageOutput.AddOrUpdate(i, 0, (x, y) => 0);
                     ammoDamageHit.AddOrUpdate(i, 0, (x, y) => 0);
@@ -375,9 +375,10 @@ namespace DSP_Battle
                     default:
                         break;
                 }
-                if(bulletId != 8007) //不计算激光的子弹用量
+                if (bulletId > 8000 && bulletId < 8007) //不计算激光的子弹用量
                     Interlocked.Add(ref totalAmmoHit, num);
-                Interlocked.Add(ref totalAmmoDamageHit, damage);
+                if (bulletId > 8000 && bulletId < 8008)
+                    Interlocked.Add(ref totalAmmoDamageHit, damage);
                 ammoHit.AddOrUpdate(bulletId, num, (x, y) => y + num);
                 ammoDamageHit.AddOrUpdate(bulletId, damage, (x, y) => y + damage);
             }
@@ -568,13 +569,13 @@ namespace DSP_Battle
                     "损失其他建筑".Translate() + "\n"  + "损失资源".Translate() + "\n\n" + 
                     "平均拦截距离".Translate() + "\n" + "最小拦截距离".Translate() + "\n" +
                     "护盾承受伤害".Translate() + "\n" + "护盾伤害减免与规避".Translate() + "\n" + "护盾战时回复".Translate() + "\n" + "护盾造成伤害".Translate() + "\n\n" + 
-                    "水滴伤害".Translate() + "\n" + "巨构伤害".Translate();
+                    "水滴伤害".Translate() + "\n" + "巨构伤害".Translate() + "\n" + "恒星要塞导弹伤害".Translate() + "\n" + "恒星要塞光矛伤害".Translate();
                 briefValue1.text = "";
                 briefValue2.text =
                     string.Format("{0:00}:{1:00}", new object[] { battleTime / 60 / 60, battleTime / 60 % 60 }) + "\n" +
                     totalEnemyEliminated.ToString("N0") + "\n" + totalDamage.ToString("N0") + "\n" + stationLost.ToString("N0") + "\n" + othersLost.ToString("N0") + "\n" + resourceLost.ToString("N0") + "\n\n" +
-                    avgInterDisStr + "\n" + minInterDisStr + "\n" + shieldDamageTaken.ToString("N0") + "\n" + shieldDamageAvoid.ToString("N0") + "(" + (shieldDamageAvoid * 100.0 / Math.Max((shieldDamageAvoid + shieldDamageTaken),1)).ToString("F1") + "%)\n" +
-                    shieldRestoreInBattle.ToString("N0") + "\n" + shieldDamageMade.ToString("N0") + "\n\n" + dropletDamage.ToString("N0") + "\n" + megastructureDamage.ToString("N0");
+                    avgInterDisStr + "\n" + minInterDisStr + "\n" + shieldDamageTaken.ToString("N0") + "\n" + shieldDamageAvoid.ToString("N0") + "(" + (shieldDamageAvoid * 100.0 / Math.Max((shieldDamageAvoid + shieldDamageTaken), 1)).ToString("F1") + "%)\n" +
+                    shieldRestoreInBattle.ToString("N0") + "\n" + shieldDamageMade.ToString("N0") + "\n\n" + dropletDamage.ToString("N0") + "\n" + megastructureDamage.ToString("N0") + "\n" + ammoDamageHit[8008].ToString("N0") + "\n" + ammoDamageHit[8009].ToString("N0");
 
                 ammoLabel.text = "\n" + 
                     "数量总计".Translate() + "\n" + "伤害总计".Translate() + "\n\n" +

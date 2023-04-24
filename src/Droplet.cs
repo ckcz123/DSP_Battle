@@ -9,6 +9,7 @@ using System.Collections.Concurrent;
 using System.IO;
 using HarmonyLib;
 using System.Threading;
+using static UnityEngine.EventSystems.EventTrigger;
 
 namespace DSP_Battle
 {
@@ -16,10 +17,13 @@ namespace DSP_Battle
     {
         public static GameObject mechaDropletObj = null;
         public static Text mechaDropletAmountText = null;
-        public static long energyComsumptionPerLaunch = 1000000000; //发射水滴耗能
-        public static long energyComsumptionPerAttack = 10000000; //水滴攻击耗能，不再使用
-        public static long energyComsumptionPerTick = 500000; //水滴每帧耗能
+        public static long energyConsumptionPerLaunch = 1000000000; //发射水滴耗能
+        public static long energyConsumptionPerAttack = 10000000; //水滴攻击耗能，不再使用
+        public static long energyConsumptionPerTick = 500000; //水滴每帧耗能
         public static int maxWorkingDroplets = 5;
+        public static List<int> warpRushCharge = new List<int> { 0, 0, 0, 0, 0 }; // 足够充能时，如果水滴下一个目标距离超过warpRushDistThr，则消耗充能瞬移过去
+        public static int warpRushNeed = 180; // 水滴远距离瞬移所需充能时间（帧数）
+        public static int warpRushDistThr = 10000; // 水滴下一个目标距离大于此距离才会触发瞬移
 
         //存档内容
         public static Droplet[] dropletPool = new Droplet[5];
@@ -36,6 +40,11 @@ namespace DSP_Battle
             }
             bonusDamage = 0;
             bonusDamageLimit = Relic.dropletDamageLimitGrowth;
+            warpRushCharge = new List<int>();
+            for (int i = 0; i < 5; i++)
+            {
+                warpRushCharge.Add(0);
+            }
             InitUI();
         }
 
@@ -91,14 +100,17 @@ namespace DSP_Battle
             }
 
             //如果在战斗状态，且机甲在相同星系，每秒发射一个水滴
-            if(Configs.nextWaveState == 3 && GameMain.localStar!=null && GameMain.localStar.index == Configs.nextWaveStarIndex && time % 60 == 6)
+            long energyCons = energyConsumptionPerLaunch;
+            if (Relic.HaveRelic(1, 4)) energyCons = (long)(energyCons * 0.5); // relic1-4 水滴减耗
+            if (Relic.HaveRelic(2, 6)) energyCons = (long)(energyCons * 0.6); // relic2-6 水滴减耗
+            if (Configs.nextWaveState == 3 && GameMain.localStar!=null && GameMain.localStar.index == Configs.nextWaveStarIndex && time % 60 == 6)
             {
                 int starIndex = GameMain.localStar.index;
                 for (int i = 0; i < maxDroplet; i++)
                 {
-                    if (GameMain.mainPlayer.mecha.coreEnergy > energyComsumptionPerLaunch * 2 && dropletPool[i].Launch(starIndex))
+                    if (GameMain.mainPlayer.mecha.coreEnergy > energyCons * 2 && dropletPool[i].Launch(starIndex))
                     {
-                        TryConsumeMechaEnergy(energyComsumptionPerLaunch);
+                        TryConsumeMechaEnergy(energyCons);
                         break; 
                     }
                 }
@@ -116,6 +128,8 @@ namespace DSP_Battle
             //每个水滴update
             for (int i = 0; i < maxDroplet; i++)
             {
+                if (warpRushCharge[i] < warpRushNeed)
+                    warpRushCharge[i] += 1;
                 if (dropletPool[i].state >= 2 && dropletPool[i].state <= 3)
                 {
                     if (maxWorkingDropletsNew > 0)
@@ -440,9 +454,9 @@ namespace DSP_Battle
                 return;
             }
 
-            if(state >= 2 && state <= 3 && working)//飞出、返航过程不消耗能量
+            if(state >= 2 && state <= 3 && working)//只有不是飞出、返航过程，才会消耗能量
             {
-                Droplets.ForceConsumeMechaEnergy(Droplets.energyComsumptionPerTick);
+                Droplets.ForceConsumeMechaEnergy(Droplets.energyConsumptionPerTick);
             }
 
             if(state >= 2 && state <= 3 && !working && Configs.nextWaveState==3) //如果因为机甲能量水平不够，水滴会停在原地，但是如果战斗状态结束了，那么水滴会无视能量限制继续正常Update（正常Update会在战斗结束后让水滴立刻进入4阶段回机甲）
@@ -517,7 +531,22 @@ namespace DSP_Battle
                     VectorLF3 newBegin = GetCurrentUPos();
                     VectorLF3 newEnd = (enemyUPos - newBegin).normalized * exceedDis + enemyUPos;
                     float newMaxt = (float)((newEnd - newBegin).magnitude / Configs.dropletSpd);
-                    RetargetAllBullet(newBegin, newEnd, bulletIds.Length, maxPosDelta, maxPosDelta, Configs.dropletSpd);
+                    double realSpd = Configs.dropletSpd;
+                    if (Rank.rank >= 8 || Configs.developerMode) // 水滴快速接近
+                    {
+                        double warpRushDist = (enemyUPos - newBegin).magnitude - exceedDis;
+                        if (warpRushDist > Droplets.warpRushDistThr && Droplets.warpRushCharge[dropletIndex] >= Droplets.warpRushNeed)
+                        {
+                            Droplets.warpRushCharge[dropletIndex] = -5;
+                            realSpd = 12 * warpRushDist;
+                        }
+                        else if (Droplets.warpRushCharge[dropletIndex] < 0)
+                        {
+                            int phase = -Droplets.warpRushCharge[dropletIndex];
+                            realSpd = 60 / phase * warpRushDist;
+                        }
+                    }
+                    RetargetAllBullet(newBegin, newEnd, bulletIds.Length, maxPosDelta, maxPosDelta, realSpd);
                     //判断击中，如果距离过近
                     if ((newBegin - enemyUPos).magnitude < 500 || newMaxt <= exceedDis * 1.0 / Configs.dropletSpd + 0.035f)
                     {
@@ -703,7 +732,8 @@ namespace DSP_Battle
             }
 
             float originalT = swarm.bulletPool[bulletIds[0]].t;
-            float newBeginT = originalT < 0.0166667f * 4 ? originalT : 0.0166667f * 4;
+            int tailT = speed > Droplets.warpRushDistThr * 5 ? 1 : 4;
+            float newBeginT = originalT < 0.0166667f * tailT ? originalT : 0.0166667f * tailT;
 
             VectorLF3 uBegin = newUBegin + (newUBegin-newUEnd).normalized * speed * newBeginT;
             VectorLF3 uEnd = newUEnd;
@@ -726,8 +756,8 @@ namespace DSP_Battle
             for (int i = 1; i < bulletNum; i++)
             {
                 if (swarm.bulletPool.Length <= bulletIds[i]) continue;
-                swarm.bulletPool[bulletIds[i]].t = 0;//0.0166667f * 4;
-                swarm.bulletPool[bulletIds[i]].maxt = newMaxt;
+                swarm.bulletPool[bulletIds[i]].t = newBeginT;//0.0166667f * 4;
+                swarm.bulletPool[bulletIds[i]].maxt = newMaxt + newBeginT;
                 swarm.bulletPool[bulletIds[i]].uBegin = newUBegin + Utils.RandPosDelta(randSeed + i + 100) * randomBeginRatio; //uBegin + Utils.RandPosDelta(randSeed + i + 100) * randomBeginRatio;
                 swarm.bulletPool[bulletIds[i]].uEnd = uEnd + Utils.RandPosDelta(randSeed + i + 100) * randomEndRatio;
             }

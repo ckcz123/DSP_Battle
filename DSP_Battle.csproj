@@ -43,8 +43,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="BepInEx">
-      <HintPath>..\..\..\Steam\steamapps\common\Dyson Sphere Program\BepInEx\core\BepInEx.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\SteamLibrary\steamapps\common\Dyson Sphere Program\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="CommonAPI">
       <HintPath>D:\SteamLibrary\steamapps\common\Dyson Sphere Program\BepInEx\plugins\CommonAPI\CommonAPI.dll</HintPath>
@@ -142,6 +141,9 @@
     <Compile Include="src\ShieldGenerator.cs" />
     <Compile Include="src\ShieldRenderer.cs" />
     <Compile Include="src\StarCannon.cs" />
+    <Compile Include="src\StarFortress.cs" />
+    <Compile Include="src\StarFortressSilo.cs" />
+    <Compile Include="src\StationOrderFixPatch.cs" />
     <Compile Include="src\UIBattleStatistics.cs" />
     <Compile Include="src\Cannon.cs" />
     <Compile Include="src\Configs.cs" />
@@ -154,6 +156,7 @@
     <Compile Include="src\UIDialogPatch.cs" />
     <Compile Include="src\UIRank.cs" />
     <Compile Include="src\UIRelic.cs" />
+    <Compile Include="src\UIStarFortress.cs" />
     <Compile Include="src\WaveStages.cs" />
     <Compile Include="src\Utils.cs" />
     <Compile Include="src\Wormhole.cs" />

@@ -9,7 +9,7 @@ namespace DSP_Battle
 {
     public class Configs
     {
-        public static string versionString = "2.1.4";
+        public static string versionString = "2.2.5";
         public static string qq = "694213906";
         public static bool developerMode = false; //发布前务必修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
         
@@ -17,7 +17,7 @@ namespace DSP_Battle
         public static bool enableBattleBGM = true;
         public static bool enableAlertTextGlowing = true;
         public static int versionWhenImporting = -1;
-        public static int versionCode = 30221231;
+        public static int versionCode = 30230415;
 
 
         public static int difficulty = 0; // -1 easy, 0 normal, 1 hard
@@ -54,6 +54,8 @@ namespace DSP_Battle
         public static double _missile3Speed;
 
         public static int _missile3Atk;
+
+        public static int _lightSpearAtk;
 
         public static int missile3Range;
 
@@ -188,6 +190,10 @@ namespace DSP_Battle
         {
             get { return Mathf.RoundToInt((float)(_bullet4Atk * (1.0 + (Configs.bulletAtkScale - 1.0) * 2))); }
         }
+        public static int lightSpearAtk
+        {
+            get { return Mathf.RoundToInt((float)(_lightSpearAtk * (1.0 + (Configs.bulletAtkScale - 1.0) * 2))); }
+        }
         public static double missile1Speed
         {
             get { return _missile1Speed * (1.0 + (bulletSpeedScale - 1.0) * 0.5); }
@@ -228,6 +234,7 @@ namespace DSP_Battle
             _bullet3Atk = 500; // config.Bind("config", "bullet3Atk", defaultValue: 400, "氘核爆破弹攻击力").Value;
             _bullet4Speed = 250000.0; //  config.Bind("config", "bullet4Speed", defaultValue: 250000.0, "中子脉冲束速度").Value;
             _bullet4Atk = 10; //  config.Bind("config", "bullet4Atk", defaultValue: 10, "中子脉冲束攻击力").Value;
+            _lightSpearAtk = 20000;
 
             _missile1Speed = 10000.0; // config.Bind("config", "missile1Speed", defaultValue: 5000.0, "热核导弹速度（米每秒）").Value;
             _missile1Atk = 5000; // config.Bind("config", "missile1Atk", defaultValue: 5000, "热核导弹攻击力").Value;
@@ -270,6 +277,7 @@ namespace DSP_Battle
 
             if (Configs.developerMode)
             {
+                //dropletAtk = 400000;
             }
 
             intensity =

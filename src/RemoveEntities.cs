@@ -120,21 +120,21 @@ namespace DSP_Battle
                 station.storage[i].remoteOrder = 0;
             }
 
-            station.idleDroneCount = 0;
-            station.workDroneCount = 0;
-            Array.Clear(station.workDroneDatas, 0, station.workDroneDatas.Length);
-            Array.Clear(station.workDroneOrders, 0, station.workDroneOrders.Length);
-            station.idleShipCount = 0;
-            station.workShipCount = 0;
-            station.workShipIndices = 0;
-            Array.Clear(station.workShipDatas, 0, station.workShipDatas.Length);
-            Array.Clear(station.workShipOrders, 0, station.workShipOrders.Length);
-            station.energy = 0;
-            station.energyPerTick = 0;
-            station.warperCount = 0;
+            //station.idleDroneCount = 0;
+            //station.workDroneCount = 0;
+            //Array.Clear(station.workDroneDatas, 0, station.workDroneDatas.Length);
+            //Array.Clear(station.workDroneOrders, 0, station.workDroneOrders.Length);
+            //station.idleShipCount = 0;
+            //station.workShipCount = 0;
+            //station.workShipIndices = 0;
+            //Array.Clear(station.workShipDatas, 0, station.workShipDatas.Length);
+            //Array.Clear(station.workShipOrders, 0, station.workShipOrders.Length);
+            //station.energy = 0;
+            //station.energyPerTick = 0;
+            //station.warperCount = 0;
 
-            factory.transport.RefreshStationTraffic(station.id);
-            GameMain.data.galacticTransport.RefreshTraffic(station.gid);
+            //factory.transport.RefreshStationTraffic(station.id);
+            //GameMain.data.galacticTransport.RefreshTraffic(station.gid);
 
             bool freePhysics = false;
             if (factory.planet.physics == null)

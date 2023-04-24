@@ -47,7 +47,18 @@ namespace DSP_Battle
                 return false;
             }
 
-            if (gmProtoId == 2312) return true; //原始发射井返回原函数
+            if (gmProtoId == 2312) // 恒星要塞组件使用原本的发射井发射
+            {
+                if (GameMain.instance.timei % 60 == 1 && __instance.bulletCount <= 0)
+                {
+                    __instance.bulletId = StarFortressSilo.nextBulletId(starIndex, __instance.bulletId);
+                }
+                if (__instance.bulletId < 8037 || __instance.bulletId > 8039)
+                    return true; //原始发射井返回原函数
+                else
+                    return StarFortressSilo.SiloSubPatch(ref __instance, power, sphere, animPool, consumeRegister, ref __result);
+            }
+            if (gmProtoId == 8036) return StarFortressSilo.SiloSubPatch(ref __instance, power, sphere, animPool, consumeRegister, ref __result);
 
             if (Configs.developerMode)
             {
@@ -243,7 +254,7 @@ namespace DSP_Battle
                         float missileMaxSpeed = (float)Configs.missile1Speed;
                         int damage = Configs.missile1Atk;
                         int dmgRange = Configs.missile1Range;
-                        if (missileId == 8005)
+                        if (missileId == 8005 || missileId == 8008)
                         {
                             missileMaxSpeed = (float)Configs.missile2Speed;
                             damage = Configs.missile2Atk;
@@ -670,7 +681,7 @@ namespace DSP_Battle
                     {
                         __instance.RemoveDysonRocket(i);
                     }
-                    else//普通火箭不要动！！！！！！！！！！！
+                    else//普通火箭不要动！！！！！！！！！！！但是现在加入了对恒星要塞火箭的特殊处理，他也要飞入节点但是他不能实际构建node的点数
                     {
 
                         DysonSphereLayer dysonSphereLayer = __instance.layersIdBased[dysonRocket.node.layerId];
@@ -811,7 +822,14 @@ namespace DSP_Battle
                             double num28 = Math.Sqrt(vectorLF5.x * vectorLF5.x + vectorLF5.y * vectorLF5.y + vectorLF5.z * vectorLF5.z);
                             if (num28 < 2.0)
                             {
-                                __instance.ConstructSp(dysonRocket.node);
+                                // 下面这个判断是为了让构建恒星要塞的火箭不建造巨构的框架节点，而是构建恒星要塞
+                                if (!(StarFortressSilo.starFortressRocketProtoIds[__instance.starData.index].ContainsKey(dysonRocket.id) && StarFortressSilo.starFortressRocketProtoIds[__instance.starData.index][dysonRocket.id] > 0))
+                                    __instance.ConstructSp(dysonRocket.node);
+                                else
+                                {
+                                    StarFortress.ConstructStarFortPoint(__instance.starData.index, StarFortressSilo.starFortressRocketProtoIds[__instance.starData.index][dysonRocket.id]);
+                                    StarFortressSilo.starFortressRocketProtoIds[__instance.starData.index][dysonRocket.id] = 0;
+                                }
                                 __instance.RemoveDysonRocket(i);
                                 goto IL_BDF;
                             }
@@ -956,7 +974,7 @@ namespace DSP_Battle
                         float missileMaxSpeed = (float)Configs.missile1Speed;
                         int damage = Configs.missile1Atk;
                         int dmgRange = Configs.missile1Range;
-                        if (missileId == 8005)
+                        if (missileId == 8005 || missileId == 8008)
                         {
                             missileMaxSpeed = (float)Configs.missile2Speed;
                             damage = Configs.missile2Atk;
@@ -1411,7 +1429,7 @@ namespace DSP_Battle
                     {
                         __instance.RemoveDysonRocket(i);
                     }
-                    else //普通火箭不要管！！！！！！！！！！！！！！！！！！！！！！！！！！！
+                    else //普通火箭不要管！！！！！！！！！！！！！！！！！！！！！！！！！！！但是现在加入了对恒星要塞火箭的特殊处理，他也要飞入节点但是他不能实际构建node的点数
                     {
 
                         DysonSphereLayer dysonSphereLayer = __instance.layersIdBased[dysonRocket.node.layerId];
@@ -1552,7 +1570,14 @@ namespace DSP_Battle
                             double num28 = Math.Sqrt(vectorLF5.x * vectorLF5.x + vectorLF5.y * vectorLF5.y + vectorLF5.z * vectorLF5.z);
                             if (num28 < 2.0)
                             {
-                                __instance.ConstructSp(dysonRocket.node);
+                                // 下面这个判断是为了让构建恒星要塞的火箭不建造巨构的框架节点，而是构建恒星要塞
+                                if (!(StarFortressSilo.starFortressRocketProtoIds[__instance.starData.index].ContainsKey(dysonRocket.id) && StarFortressSilo.starFortressRocketProtoIds[__instance.starData.index][dysonRocket.id] > 0))
+                                    __instance.ConstructSp(dysonRocket.node);
+                                else
+                                {
+                                    StarFortress.ConstructStarFortPoint(__instance.starData.index, StarFortressSilo.starFortressRocketProtoIds[__instance.starData.index][dysonRocket.id]);
+                                    StarFortressSilo.starFortressRocketProtoIds[__instance.starData.index][dysonRocket.id] = 0;
+                                }
                                 __instance.RemoveDysonRocket(i);
                                 goto IL_BDF;
                             }
@@ -1703,7 +1728,11 @@ namespace DSP_Battle
             return (id - 8003) % 3 + 8004;
         }
 
-        private static int FindTarget(int starIndex, int planetId, int randSeed = 0, bool showLog = true)
+        private static int nextStarFortRocketId(int id)
+        {
+            return 1101;
+        }
+        public static int FindTarget(int starIndex, int planetId, int randSeed = 0, bool showLog = true)
         {
             int index;
             if (Utils.RandDouble() < 0.5)
@@ -1830,7 +1859,7 @@ namespace DSP_Battle
                 SiloComponent siloComponent = __instance.factorySystem.siloPool[__instance.siloId];
                 int gmProtoId = __instance.factory.entityPool[siloComponent.entityId].protoId;
 
-                if (gmProtoId == 2312)
+                if (gmProtoId == 2312 ||  gmProtoId == 8036)
                 {
                     siloDetailText.text = originSiloDetailLabel;
                     siloPickerTitle.text = originSiloPickerTitle;
@@ -1855,9 +1884,15 @@ namespace DSP_Battle
             if (__instance == null || __instance.factorySystem == null || __instance.factorySystem.siloPool == null) return;
             SiloComponent siloComponent = __instance.factorySystem.siloPool[__instance.siloId];
             int gmProtoId = __instance.factory.entityPool[siloComponent.entityId].protoId;
-            if (gmProtoId != 2312)
+            if (gmProtoId != 2312 && gmProtoId != 8036)
             {
                 __instance.value3Text.text = EnemyShips.ships.Count.ToString();
+            }
+            else if (siloComponent.bulletId > 8036 && siloComponent.bulletId <8040) // 说明是恒星要塞火箭的发射台
+            {
+                int index = siloComponent.bulletId - 8037;
+                int starIndex = __instance.factory.planet.star.index;
+                __instance.value3Text.text = StarFortress.moduleComponentCount[starIndex][index] + " / " + StarFortress.moduleMaxCount[starIndex][index]*StarFortress.compoPerModule[index];
             }
 
         }
@@ -1868,7 +1903,7 @@ namespace DSP_Battle
         {
             SiloComponent siloComponent = __instance.factorySystem.siloPool[__instance.siloId];
             int gmProtoId = __instance.factory.entityPool[siloComponent.entityId].protoId;
-            if (gmProtoId != 2312)
+            if (gmProtoId != 2312 && gmProtoId != 8036)
             {
                 UIRoot.instance.uiGame.OpenProductionWindow();
                 UIBattleStatistics.OnClickBattleStatButton();
