@@ -166,7 +166,6 @@ namespace DSP_Battle
             }
             if(Configs.developerMode && isControlDown && Input.GetKeyDown(KeyCode.Z))
             {
-                Rank.AddExp(1000000);
                 Relic.PrepareNewRelic();
                 int planetId = 103;
                 if (GameMain.localPlanet != null)
@@ -178,6 +177,7 @@ namespace DSP_Battle
             UIRelic.CheckRelicSlotsWindowShowByMouse();
             UIRelic.SlotWindowAnimationUpdate();
             BattleBGMController.BGMLogicUpdate();
+            DevConsole.Update();
         }
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameMain), "OnDestroy")]
@@ -258,6 +258,7 @@ namespace DSP_Battle
             Rank.Export(w);
             Relic.Export(w);
             StarFortress.Export(w);
+            DevConsole.Export(w);
         }
 
         public void Import(BinaryReader r)
@@ -274,6 +275,8 @@ namespace DSP_Battle
             Rank.Import(r);
             Relic.Import(r);
             StarFortress.Import(r);
+
+            DevConsole.Import(r);
 
             WaveStages.ResetCargoAccIncTable(Configs.extraSpeedEnabled && Rank.rank>=5);
             UIBattleStatistics.InitAll();
@@ -299,6 +302,8 @@ namespace DSP_Battle
             Relic.IntoOtherSave();
             StarFortress.IntoOtherSave();
 
+            DevConsole.IntoOtherSave();
+
             WaveStages.ResetCargoAccIncTable(Configs.extraSpeedEnabled && Rank.rank >= 5);
             UIBattleStatistics.InitAll();
             UIBattleStatistics.InitSelectDifficulty();
@@ -306,6 +311,7 @@ namespace DSP_Battle
             EnemyShipRenderer.Init();
             BattleProtos.ReCheckTechUnlockRecipes();
             BattleBGMController.InitWhenLoad();
+
         }
 
 

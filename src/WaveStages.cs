@@ -39,7 +39,7 @@ namespace DSP_Battle
             }
         }
 
-        private static void UpdateWaveStage0(long time)
+        private static void UpdateWaveStage0(long time) // 重要！此函数中的局部变量StarId实际上含义是StarIndex
         {
             if (time % 300 != 1 || time < Configs.nextWaveFrameIndex + 60 * 60) return;
             StationComponent[] stations = GameMain.data.galacticTransport.stationPool.Where(EnemyShips.ValidStellarStation).ToArray();

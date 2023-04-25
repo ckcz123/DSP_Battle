@@ -128,6 +128,7 @@
   <ItemGroup>
     <Compile Include="src\BattleBGMController.cs" />
     <Compile Include="src\BattleProtos.cs" />
+    <Compile Include="src\DevConsole.cs" />
     <Compile Include="src\Droplet.cs" />
     <Compile Include="src\FastStartOption.cs" />
     <Compile Include="src\Rank.cs" />
