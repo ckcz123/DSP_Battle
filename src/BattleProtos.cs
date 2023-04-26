@@ -543,7 +543,7 @@ namespace DSP_Battle
 
             ProtoRegistry.RegisterString("遗物描述1-0", "Every time a invasion is over, random mega structures will be partially auto-constructed according to the total intensity", "每次入侵结束，根据来袭总强度少量推进巨构的建造进度");
             ProtoRegistry.RegisterString("遗物描述1-1", "The aoe damage (and aoe effect) of the missile no longer decrease by the distance", "导弹的范围伤害（以及范围效果）不再随距离衰减");
-            ProtoRegistry.RegisterString("遗物描述1-2", "The star system with a megastructure will automatically recharge the shield of all the planets according to the megastructure's energy", "拥有巨构的星系会自动缓慢充能该星系全部星球的护盾，充能速度取决于巨构能量水平");
+            ProtoRegistry.RegisterString("遗物描述1-2", "The star system with a megastructure will automatically recharge the shield of all the planets according to the megastructure's energy, if not in invasion", "拥有巨构的星系会在非战时缓慢充能该星系全部星球的护盾，充能速度取决于巨构能量水平");
             ProtoRegistry.RegisterString("遗物描述1-3", "A star system with a megastructure with at least 6 GW, will applied 30% slow down to all enemy ships in the fist minute of the invasion. Meanwhile, all the enemy ships will receive 30% <i>additional damage</i>.", "拥有6GW以上巨构的星系在战斗开始的前60秒对所有敌舰施加30%减速效果，并使他们在这期间受到30%的<i>额外伤害</i>");
             ProtoRegistry.RegisterString("遗物描述1-4", "Give a droplet immediately, droplets energy consumption -50%", "立刻获得一个水滴，水滴能量消耗-50%");
             ProtoRegistry.RegisterString("遗物描述1-5", "The missile silo will reload a free missile after each launch", "导弹发射井在每次发射后向本体回填一发免费弹药");

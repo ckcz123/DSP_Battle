@@ -242,7 +242,7 @@ namespace DSP_Battle
                     {
                         int shd = ShieldGenerator.currentShield.GetOrAdd(planetId, 0);
                         int max = ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0);
-                        if (shd < max * 1.5 && shd < minShield)
+                        if (shd < max * 1.5 && shd < minShield && shd > 0)
                         {
                             minShieldPlanetId = planetId;
                             minShield = shd;
@@ -722,19 +722,19 @@ namespace DSP_Battle
         /// <summary>
         /// relic0-8 命中时，在这里强制计算护盾回复。
         /// </summary>
-        /// <param name="bonusDamage"></param>
+        /// <param name="damage"></param>
         public static void ApplyBloodthirster(int damage)
         {
             if (Relic.HaveRelic(0, 8)) // relic0-8 饮血剑效果
             {
                 int starIndex = Configs.nextWaveStarIndex;
-                if (starIndex > 0)
+                if (starIndex >= 0)
                 {
                     int planetId = (starIndex + 1) * 100 + Utils.RandInt(1, GameMain.galaxy.stars[starIndex].planetCount + 1);
                     if (Relic.minShieldPlanetId > 0 && Relic.minShieldPlanetId / 100 - 1 == Configs.nextWaveStarIndex)
                         planetId = Relic.minShieldPlanetId;
                     int shieldRestore = (int)(damage * 0.1);
-                    if (ShieldGenerator.currentShield.GetOrAdd(planetId, 0) < ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0) * 1.5)
+                    if (ShieldGenerator.currentShield.GetOrAdd(planetId, 0) < ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0) * 1.5 && ShieldGenerator.currentShield.GetOrAdd(planetId, 0) > 0)
                     {
                         ShieldGenerator.currentShield.AddOrUpdate(planetId, shieldRestore, (x, y) => y + shieldRestore);
                         UIBattleStatistics.RegisterShieldRestoreInBattle(shieldRestore);
@@ -766,6 +766,8 @@ namespace DSP_Battle
                 {
                     if (starIndex >= 0 && starIndex < GameMain.data.dysonSpheres.Length)
                     {
+                        if (Configs.nextWaveStarIndex == starIndex && Configs.nextWaveState == 3)
+                            continue;
                         if (GameMain.data.dysonSpheres[starIndex] != null)
                         {
                             long energyPerTick = GameMain.data.dysonSpheres[starIndex].energyGenCurrentTick_Layers;
