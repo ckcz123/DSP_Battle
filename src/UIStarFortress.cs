@@ -192,7 +192,6 @@ namespace DSP_Battle
 
         public static Text CreateText(Transform parent, string objname, string defaultText, float x, float y,int fontSize, TextAnchor textAnchor = TextAnchor.MiddleLeft)
         {
-            Utils.Log(defaultText);
             GameObject textObj = GameObject.Instantiate(GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Assembler Window/produce/circle-back/cnt-text"), parent);
             textObj.name = objname;
             textObj.transform.localPosition = new Vector3(x, y);

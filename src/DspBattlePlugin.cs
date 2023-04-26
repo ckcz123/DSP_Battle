@@ -284,6 +284,7 @@ namespace DSP_Battle
             EnemyShipUIRenderer.Init();
             EnemyShipRenderer.Init();
             BattleProtos.ReCheckTechUnlockRecipes();
+            BattleProtos.UnlockTutorials();
             BattleBGMController.InitWhenLoad();
         }
 
@@ -310,6 +311,7 @@ namespace DSP_Battle
             EnemyShipUIRenderer.Init();
             EnemyShipRenderer.Init();
             BattleProtos.ReCheckTechUnlockRecipes();
+            BattleProtos.UnlockTutorials();
             BattleBGMController.InitWhenLoad();
 
         }

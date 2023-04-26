@@ -159,6 +159,8 @@ namespace DSP_Battle
                     bonus += 0.3;
                 if (Relic.HaveRelic(2, 12) && Relic.Verify(0.1)) // relic2-12 有概率暴击
                     bonus += 1;
+                if (Relic.HaveRelic(0, 2) && Relic.relic0_2Version == 1)
+                    bonus += 0.0003 * Relic.relic0_2Charge;
                 atk = Relic.BonusDamage(atk, bonus);
 
                 int shipType = Configs.enemyIntensity2TypeMap[intensity];
@@ -183,6 +185,12 @@ namespace DSP_Battle
                     hp = 0;
                     state = State.distroyed;
                     EnemyShips.OnShipDestroyed(this);
+                    // relic 0-2 新版女神之泪充能效果
+                    if (Relic.HaveRelic(0, 2) && Relic.relic0_2Version == 1 && Relic.relic0_2CanActivate >= 1 && Relic.relic0_2Charge < Relic.relic0_2MaxCharge && Configs.nextWaveElite <= 0)
+                    {
+                        Interlocked.Add(ref Relic.relic0_2Charge, 1);
+                        UIRelic.RefreshTearOfGoddessSlotTips();
+                    }
                     Rank.AddExp(intensity * 10); //获得经验
                     try //根据期望掉落矩阵
                     {
@@ -933,5 +941,6 @@ namespace DSP_Battle
         mega, // 巨构的范围伤害
         droplet, // 水滴伤害
         others, // 其他伤害
+        goddess, // 女神之怒伤害
     }
 }

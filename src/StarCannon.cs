@@ -118,7 +118,22 @@ namespace DSP_Battle
         }
         public static void OnFireButtonClick()
         {
-            if(starCannonStarIndex<0)
+            if (Relic.HaveRelic(0, 2) && Relic.relic0_2Version == 1 && Configs.nextWaveState == 3 && Relic.relic0_2CanActivate >= 1)
+            {
+                if (Relic.relic0_2Charge < Relic.relic0_2MaxCharge)
+                {
+                    UIRealtimeTip.Popup("女神之怒充能中".Translate());
+                    return;
+                }
+                else
+                {
+                    UIRealtimeTip.Popup("女神之怒".Translate());
+                    RelicFunctionPatcher.GoddessRage();
+                    return;
+                }
+            }
+
+            if (starCannonStarIndex < 0)
             {
                 UIRealtimeTip.Popup("没有规划的恒星炮！".Translate());
                 return;
@@ -201,54 +216,72 @@ namespace DSP_Battle
         public static void RefreshFireButtonUI()
         {
             if (fireButton == null || fireButtonImage == null || fireButtonText == null) return;
-            if(starCannonStarIndex < 0)
+            if (Relic.HaveRelic(0, 2) && Relic.relic0_2Version == 1 && Configs.nextWaveState == 3 && Relic.relic0_2CanActivate >= 1)
             {
-                fireButtonImage.color = cannonDisableColor;
-                fireButtonText.text = "恒星炮未规划".Translate();
-                fireButtonText.fontSize = 18;
-                return;
-            }
-            else if(starCannonLevel <= 0)
-            {
-                fireButtonImage.color = cannonDisableColor;
-                fireButtonText.text = "恒星炮建设中".Translate();
-                fireButtonText.fontSize = 18;
-                return;
-            }
-            switch (fireStage)
-            {
-                case -2:
+                if (Relic.relic0_2Charge < Relic.relic0_2MaxCharge)
+                {
                     fireButtonImage.color = cannonChargingColor;
-                    fireButtonText.text = "  " + "恒星炮冷却中".Translate() + "   " + $"{(-chargingTimeNeed - time) / 60 / 60:00}:{(-chargingTimeNeed - time) / 60 % 60:00}" + "  ";
-                    fireButtonText.fontSize = 16;
-                    break;
-                case -1:
-                    fireButtonImage.color = cannonChargingColor;
-                    fireButtonText.text = "  " + "恒星炮充能中".Translate() + "   " + $"{(-time) / 60 / 60:00}:{(-time) / 60 % 60:00}" + "  ";
-                    fireButtonText.fontSize = 16;
-                    break;
-                case 0:
+                    fireButtonText.text = "女神之怒充能中".Translate();
+                    fireButtonText.fontSize = 18;
+                }
+                else
+                {
                     fireButtonImage.color = cannonReadyColor;
-                    fireButtonText.text = "恒星炮开火".Translate();
+                    fireButtonText.text = "女神之怒".Translate();
                     fireButtonText.fontSize = 18;
-                    break;
-                case 1:
-                    fireButtonImage.color = cannonAimingColor;
-                    fireButtonText.text = "瞄准中".Translate();
+                }
+            }
+            else
+            {
+                if (starCannonStarIndex < 0)
+                {
+                    fireButtonImage.color = cannonDisableColor;
+                    fireButtonText.text = "恒星炮未规划".Translate();
                     fireButtonText.fontSize = 18;
-                    break;
-                case 2:
-                    fireButtonImage.color = cannonAimingColor;
-                    fireButtonText.text = "预热中".Translate();
+                    return;
+                }
+                else if (starCannonLevel <= 0)
+                {
+                    fireButtonImage.color = cannonDisableColor;
+                    fireButtonText.text = "恒星炮建设中".Translate();
                     fireButtonText.fontSize = 18;
-                    break;
-                case 3:
-                case 4:
-                case 5:
-                    fireButtonImage.color = cannonFiringColor;
-                    fireButtonText.text = "正在开火".Translate();
-                    fireButtonText.fontSize = 18;
-                    break;
+                    return;
+                }
+                switch (fireStage)
+                {
+                    case -2:
+                        fireButtonImage.color = cannonChargingColor;
+                        fireButtonText.text = "  " + "恒星炮冷却中".Translate() + "   " + $"{(-chargingTimeNeed - time) / 60 / 60:00}:{(-chargingTimeNeed - time) / 60 % 60:00}" + "  ";
+                        fireButtonText.fontSize = 16;
+                        break;
+                    case -1:
+                        fireButtonImage.color = cannonChargingColor;
+                        fireButtonText.text = "  " + "恒星炮充能中".Translate() + "   " + $"{(-time) / 60 / 60:00}:{(-time) / 60 % 60:00}" + "  ";
+                        fireButtonText.fontSize = 16;
+                        break;
+                    case 0:
+                        fireButtonImage.color = cannonReadyColor;
+                        fireButtonText.text = "恒星炮开火".Translate();
+                        fireButtonText.fontSize = 18;
+                        break;
+                    case 1:
+                        fireButtonImage.color = cannonAimingColor;
+                        fireButtonText.text = "瞄准中".Translate();
+                        fireButtonText.fontSize = 18;
+                        break;
+                    case 2:
+                        fireButtonImage.color = cannonAimingColor;
+                        fireButtonText.text = "预热中".Translate();
+                        fireButtonText.fontSize = 18;
+                        break;
+                    case 3:
+                    case 4:
+                    case 5:
+                        fireButtonImage.color = cannonFiringColor;
+                        fireButtonText.text = "正在开火".Translate();
+                        fireButtonText.fontSize = 18;
+                        break;
+                }
             }
         }
 

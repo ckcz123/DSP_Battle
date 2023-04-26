@@ -69,6 +69,7 @@ namespace DSP_Battle
         public static long shieldDamageMade; //护盾造成伤害
         public static long dropletDamage; //水滴造成伤害
         public static long megastructureDamage; //巨构造成伤害（不含恒星炮）
+        public static long goddessRageDamage; // 女神之怒伤害
 
         public static int alienMatrixGain; //获取的异星矩阵数
 
@@ -223,6 +224,7 @@ namespace DSP_Battle
                 shieldDamageTaken = 0;
                 dropletDamage = 0;
                 megastructureDamage = 0;
+                goddessRageDamage = 0;
                 totalAmmoDamageHit = 0;
                 totalAmmoDamageOut = 0;
                 totalAmmoHit = 0;
@@ -444,6 +446,13 @@ namespace DSP_Battle
             Interlocked.Add(ref totalDamage, damage);
         }
 
+        //女神之怒伤害
+        public static void RegisterGoddessRage(int num)
+        {
+            Interlocked.Add(ref goddessRageDamage, num);
+        }
+
+
         //异星矩阵掉落
         public static void RegisterAlienMatrixGain(int num)
         {
@@ -569,13 +578,13 @@ namespace DSP_Battle
                     "损失其他建筑".Translate() + "\n"  + "损失资源".Translate() + "\n\n" + 
                     "平均拦截距离".Translate() + "\n" + "最小拦截距离".Translate() + "\n" +
                     "护盾承受伤害".Translate() + "\n" + "护盾伤害减免与规避".Translate() + "\n" + "护盾战时回复".Translate() + "\n" + "护盾造成伤害".Translate() + "\n\n" + 
-                    "水滴伤害".Translate() + "\n" + "巨构伤害".Translate() + "\n" + "恒星要塞导弹伤害".Translate() + "\n" + "恒星要塞光矛伤害".Translate();
+                    "水滴伤害".Translate() + "\n" + "巨构伤害".Translate() + "\n" + "恒星要塞导弹伤害".Translate() + "\n" + "恒星要塞光矛伤害".Translate() + "\n" + "女神之怒伤害".Translate();
                 briefValue1.text = "";
                 briefValue2.text =
                     string.Format("{0:00}:{1:00}", new object[] { battleTime / 60 / 60, battleTime / 60 % 60 }) + "\n" +
                     totalEnemyEliminated.ToString("N0") + "\n" + totalDamage.ToString("N0") + "\n" + stationLost.ToString("N0") + "\n" + othersLost.ToString("N0") + "\n" + resourceLost.ToString("N0") + "\n\n" +
                     avgInterDisStr + "\n" + minInterDisStr + "\n" + shieldDamageTaken.ToString("N0") + "\n" + shieldDamageAvoid.ToString("N0") + "(" + (shieldDamageAvoid * 100.0 / Math.Max((shieldDamageAvoid + shieldDamageTaken), 1)).ToString("F1") + "%)\n" +
-                    shieldRestoreInBattle.ToString("N0") + "\n" + shieldDamageMade.ToString("N0") + "\n\n" + dropletDamage.ToString("N0") + "\n" + megastructureDamage.ToString("N0") + "\n" + ammoDamageHit[8008].ToString("N0") + "\n" + ammoDamageHit[8009].ToString("N0");
+                    shieldRestoreInBattle.ToString("N0") + "\n" + shieldDamageMade.ToString("N0") + "\n\n" + dropletDamage.ToString("N0") + "\n" + megastructureDamage.ToString("N0") + "\n" + ammoDamageHit[8008].ToString("N0") + "\n" + ammoDamageHit[8009].ToString("N0") + "\n" + goddessRageDamage.ToString("N0");
 
                 ammoLabel.text = "\n" + 
                     "数量总计".Translate() + "\n" + "伤害总计".Translate() + "\n\n" +

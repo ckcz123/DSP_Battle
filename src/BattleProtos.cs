@@ -1,5 +1,6 @@
 ﻿using CommonAPI.Systems;
 using HarmonyLib;
+using rail;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -404,6 +405,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("巨构伤害", "Megastructure damage", "巨构伤害");
             ProtoRegistry.RegisterString("恒星要塞导弹伤害", "StarFortress Missile dmg.", "恒星要塞导弹伤害");
             ProtoRegistry.RegisterString("恒星要塞光矛伤害", "StarFortress LightSpear dmg.", "恒星要塞光矛伤害");
+            ProtoRegistry.RegisterString("女神之怒伤害", "Goddess's rage dmg.", "女神之怒伤害");
 
             ProtoRegistry.RegisterString("异星矩阵", "Alien matrix", "异星矩阵");
             ProtoRegistry.RegisterString("异星矩阵描述", "A matrix containing high-density data accidentally dropped by invading swarms. Can be analyzed by mechas and used to unlock more advanced alien technologies. The matrix itself also seems to have potentially high-dimensional spatiotemporal properties", "由入侵的虫群偶然掉落的载有高密度数据的矩阵，可以由机甲分析并用于解锁更高级的异星科技。矩阵本身似乎还具有潜在的高维时空特性。");
@@ -459,6 +461,9 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("未获取遗物描述", "This slot can place a decrypted relic", "此位置可供已解译的圣物放置");
             ProtoRegistry.RegisterString("水滴伤害增加", "Droplet Bonus Damage", "水滴额外伤害");
             ProtoRegistry.RegisterString("当前加成gm", "Current bonus damage", "当前伤害加成");
+            ProtoRegistry.RegisterString("已充能gm", "Charged", "已充能");
+            ProtoRegistry.RegisterString("女神之怒充能中", "Goddess's Rage Charging", "女神之怒充能中");
+            ProtoRegistry.RegisterString("女神之怒", "† Goddess's Rage †", "† 女神之怒 †");
 
             ProtoRegistry.RegisterString("遗物名称0-0", "Swallower\n<size=18>- Legend -</size>", "吞噬者\n<size=18>- 传说 -</size>");
             ProtoRegistry.RegisterString("遗物名称0-1", "Blue Buff\n<size=18>- Legend -</size>", "蓝buff\n<size=18>- 传说 -</size>");
@@ -525,13 +530,14 @@ namespace DSP_Battle
 
             ProtoRegistry.RegisterString("遗物描述0-0", "Every time the enemy ship is destroyed, a random mega structure will be partially auto-constructed according to the intensity of the enemy ship", "每次击毁敌舰，根据敌舰强度有概率略微推进巨构的建造进度");
             ProtoRegistry.RegisterString("遗物描述0-1", "When assembling recipes with at least 2 different materials in assembling machine (except when assembling antimatter fuel rods), every time a product is produced, one material in the first slot will be returned.", "制造厂在制造原材料至少2种的配方时（反物质燃料棒的产线除外），每产出1个产物，会返还1个第1位置的原材料");
-            ProtoRegistry.RegisterString("遗物描述0-2", "When producing recipes with at least 2 different materials in chemical plant, every time a product is produced, all material that is consumed in the first slot will be returned.", "化工厂在生产原材料至少2种的配方时，返还第1位置的全部原材料");
+            ProtoRegistry.RegisterString("遗物描述0-2", "When destroy an enemy ship in normal wave, gain 1 sorrow (max 1000). Each sorrow deals 0.02% <i>additional damage</i> to all enemy ships. With 1000 sorrow, you can use the star cannon button to launch Goddess's rage during invasion, consuming all sorrows and dealing true damage equivalent to 95% of their maximum health to all enemies.", "我方在非精英波次摧毁敌舰时，叠加1层哀痛(上限1000)，每层哀痛使你造成0.02%<i>额外伤害</i>。满层后，你可以通过恒星炮按钮在入侵时发动女神之怒，消耗所有层数并对全部敌人造成其最大生命值95%的真实伤害。"); 
+            ProtoRegistry.RegisterString("遗物描述0-2old", "When producing recipes with at least 2 different materials in chemical plant, every time a product is produced, all material that is consumed in the first slot will be returned.", "化工厂在生产原材料至少2种的配方时，返还第1位置的全部原材料");
             ProtoRegistry.RegisterString("遗物描述0-3", "When calculating the energy level, the giant structure is regarded as a higher star luminosity", "巨构在计算能量水平时，视作拥有更高的恒星光度修正");
             ProtoRegistry.RegisterString("遗物描述0-4", "The ray receiver does not need to consume the lens to achieve the maximum output efficiency, and it will no longer be blocked at night", "射线接受器无需消耗透镜即可达到最大输出效率，且不再因背向恒星影响接收效率");
             ProtoRegistry.RegisterString("遗物描述0-5", "Planet shields will rebound 10% of the basic damage to the enemy ship as <i>additional damage</i>. If the damage that the shield should be taken is avoided by other relics, it will instead rebound 100%", "行星力场护盾会向伤害来源反弹10%受到的基础伤害作为<i>额外伤害</i>，如果护盾本应受到的伤害被转移或规避，则转而反弹100%基础伤害");
             ProtoRegistry.RegisterString("遗物描述0-6", "The armor piercing deals 20,000% <i>additional damage</i>, the bullet speed increased significantly. But the ejector needs 5 armor piercings to fire, and the charge and cooldown time increased by 900%", "穿甲磁轨弹造成20000%<i>额外伤害</i>，弹道速度大幅增加，但每次消耗5发弹药，且充能与冷却时间增加900%");
             ProtoRegistry.RegisterString("遗物描述0-7", "The star system with a megastructure will deal <i>additional damage</i> to all enemy ships in the star system during the invasion, higher energy the megastucture generates, higher the damage it deals.\nIf the megastructure is star cannon, then the additional damage increases 200%.", "拥有巨构的星系在战斗时每秒会对星系中所有敌舰造成<i>额外伤害</i>，伤害取决于巨构的能量水平\n如果巨构为恒星炮，该伤害增加200%");
-            ProtoRegistry.RegisterString("遗物描述0-8", "When any damage hit the enemy ships, a random planet that is in the invasion star system will immediately restore shield by 10% of the actual damage", "我方对敌舰造成的任何伤害时，会为正在发生战斗星系的一个随机行星立刻回复相当于实际伤害10%的护盾");
+            ProtoRegistry.RegisterString("遗物描述0-8", "When any damage hit the enemy ships, the planet with the minimum shield that is in the invasion star system will immediately restore shield by 10% of the actual damage", "我方对敌舰造成的任何伤害时，会为正在发生战斗星系的护盾量最低且未达上限的行星立刻回复相当于实际伤害10%的护盾");
             ProtoRegistry.RegisterString("遗物描述0-9", "❤ You will be more lucky ❤", "❤你会更加幸运❤");
             ProtoRegistry.RegisterString("遗物描述0-10", "Every time a droplet destroys an enemy ship, all droplets permanently obtain 10 <i>additional damage</i>. The upper limit is 400 at the begining. After reaching the upper limit, the mecha will automatically consume a droplet in inventory then increase the upper limit by 400. The upper limit growth is unlimited.", "水滴每击杀一个敌人，所有水滴永久获得+10的<i>额外伤害</i>，加成上限初始为400，达到上限后，自动消耗背包中的一个水滴并再次提升400加成上限，提升上限的次数不受限制。");
 
@@ -668,7 +674,8 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("sf组件3火箭", "Expansion module carrier rocket", "扩展模块组件运载火箭");
             ProtoRegistry.RegisterString("sf组件3火箭描述", "Use the Vertical Launching Silo to launch this rocket onto the Star Fortress, carring necessary components to build the expansion module. This will fill the component points of the expansion module on the Star Fortress, but it is not helpful for the construction of any mega structures.", "使用发射井发射此火箭来将构建扩展模块的必须组件发射到恒星要塞上，这会填充恒星要塞的扩展模块的组件点数，但无法推进任何巨构的建造。");
             ProtoRegistry.RegisterString("即将拆除模块标题", "Warning! Destructing modules!", "警告！即将拆除模块");
-            ProtoRegistry.RegisterString("即将拆除模块警告", "Since the module upper limit will be less than the number of completed modules, the overflowing completed modules will be immediately removed, and the module points will be wasted. Are you sure you want to remove them?", "由于模块上限被调整后将少于已建成的模块数，溢出的已建成的模块将被立刻拆除，模块点数将被浪费。是否确认拆除？"); 
+            ProtoRegistry.RegisterString("即将拆除模块警告", "Since the module upper limit will be less than the number of completed modules, the overflowing completed modules will be immediately removed, and the module points will be wasted. Are you sure you want to remove them?", "由于模块上限被调整后将少于已建成的模块数，溢出的已建成的模块将被立刻拆除，模块点数将被浪费。是否确认拆除？");
+
 
             // 物品 Item
             ItemProto bullet1 = ProtoRegistry.RegisterItem(8001, "子弹1", "子弹1描述", "Assets/DSPBattle/bullet1", 2701 + pageBias, 100, EItemType.Material);
@@ -717,7 +724,6 @@ namespace DSP_Battle
             ProtoRegistry.RegisterItem(8037, "sf组件1火箭", "sf组件1火箭描述", "Assets/DSPBattle/rocketSf1", 2307 + pageBias, 100, EItemType.Material);
             ProtoRegistry.RegisterItem(8038, "sf组件2火箭", "sf组件2火箭描述", "Assets/DSPBattle/rocketSf2", 2308 + pageBias, 100, EItemType.Material);
             ProtoRegistry.RegisterItem(8039, "sf组件3火箭", "sf组件3火箭描述", "Assets/DSPBattle/rocketSf3", 2309 + pageBias, 100, EItemType.Material);
-
 
             var Cannon1 = ProtoRegistry.RegisterItem(8011, "弹射器1", "弹射器1描述", "Assets/DSPBattle/cannon1", 2601 + pageBias, 50, EItemType.Production);
             Cannon1.BuildIndex = 607;
@@ -1174,9 +1180,11 @@ namespace DSP_Battle
             LDBTool.SetBuildBar(6, 9, 8014);
             LDBTool.SetBuildBar(6, 10, 8013);
 
-            
-            
+            AddTutorialProtos();
+
+
         }
+
 
         private static ModelProto CopyModelProto(int oriId, int id, Color color)
         {
@@ -1213,6 +1221,57 @@ namespace DSP_Battle
             model.sid = "";
             model.SID = "";
             return model;
+        }
+
+        public static void AddTutorialProtos()
+        {
+            TutorialProto tp1 = LDB.tutorial.Select(1).Copy();
+            tp1.Name = "深空来敌介绍1标题".Translate();
+            tp1.name = "深空来敌介绍1标题".Translate();
+            tp1.Video = "";
+            tp1.PreText = "深空来敌介绍1前字";
+            tp1.PostText = "";
+            tp1.ID = 21;
+            LDBTool.PreAddProto(tp1);
+
+            TutorialProto tp2 = LDB.tutorial.Select(1).Copy();
+            tp2.Name = "深空来敌介绍2标题".Translate();
+            tp2.name = "深空来敌介绍2标题".Translate();
+            tp2.Video = "";
+            tp2.PreText = "深空来敌介绍2前字";
+            tp2.PostText = "";
+            tp2.ID = 22;
+            LDBTool.PreAddProto(tp2);
+
+            TutorialProto tp3 = LDB.tutorial.Select(1).Copy();
+            tp3.Name = "功勋阶级".Translate();
+            tp3.name = "功勋阶级".Translate();
+            tp3.Video = "";
+            tp3.PreText = "深空来敌介绍3前字";
+            tp3.PostText = "";
+            tp3.ID = 23;
+            LDBTool.PreAddProto(tp3);
+
+            ProtoRegistry.RegisterString("深空来敌介绍1标题", "They come from void player guide", "深空来敌玩法介绍");
+            ProtoRegistry.RegisterString("深空来敌介绍1前字", "This is a <color=\"#FD965ECC\">guide text</color>", "在深空来敌中，你将会逐渐面对越来越强大的敌人的进攻，你需要构建地面防御或研究更高的科技来在太空中部署防御，抵抗敌人的进攻，防止其摧毁你的地面建筑和资源。\n\n只有在你建造第一个<color=\"#FD965ECC\">星际物流塔</color>之后，敌人才会开始准备入侵。仔细阅读<color=\"#FD965ECC\">先驱者日记</color>来获得更多的游戏提示，<color=\"#FD965ECC\">先驱者日记</color>会在你解锁关键科技时逐步发放。\n\n每次战斗的实时统计均可在P键统计面板中的战斗统计中查看。");
+
+            ProtoRegistry.RegisterString("深空来敌介绍2标题", "Invasion and Defense", "入侵与防御");
+            ProtoRegistry.RegisterString("深空来敌介绍2前字", "This is a <color=\"#FD965ECC\">guide text</color>", $"敌人会每隔一段时间发动入侵，若无行星力场护盾保护，敌舰会降落并摧毁本星系内的星际物流塔，直到所有星际物流塔被摧毁或所有敌舰被消灭。来袭敌人的总强度会随着进攻总次数不断增加，但这个次数对每个星系来说是独立计算的。\n在你的宇宙矩阵上传数和全星区巨构总能量达到一定阈值后，更多的宇宙矩阵上传量和巨构总能量还会额外地增加敌人每次进攻的总强度。\n\n敌人来袭的间隔会随着次数增加而越来越短，直到间隔为10分钟。但如果你在一次入侵中损失了过多的建筑，下一次入侵的间隔会略微增加。\n你也可以通过按Ctrl和减号手动将下一波次的进攻提前一分钟，但每次手动提前都会使下次入侵敌舰掉落异星矩阵的预期数量减少10%。\n\n敌舰在到达保护星球的护盾附近时，会对护盾开火造成伤害，且随着持续开火的时间增加而越来越快地提升伤害，因此你必须尽可能块地消灭敌舰。\n\n每5次入侵为强大的入侵波次，在强大的入侵波次中，敌人将在三分钟内持续不断地进攻，波次结束后将提供<color=\"#FD965ECC\">圣物</color>可以选择，你也可以花费敌人掉落的异星矩阵来重新随机。\n\n入侵的敌人共有五种类型：\n<color=#b00000>侦查艇    DPS:{Configs.enemyDamagePerBullet[0]*60 / Configs.enemyFireInterval[0]}/s    HP:{Configs.enemyHp[0]}    最大航速:{Configs.enemySpeed[0]}</color>\n<color=#b06000>护卫舰    DPS:{Configs.enemyDamagePerBullet[1] * 60 / Configs.enemyFireInterval[1]}/s    HP:{Configs.enemyHp[1]}    最大航速:{Configs.enemySpeed[1]}</color>\n<color=#b0b000>驱逐舰    自杀性杀伤:{Configs.enemyDamagePerBullet[2]}    HP:{Configs.enemyHp[2]}    最大航速:{Configs.enemySpeed[2]}</color>\n<color=#00c020>巡洋舰    DPS:{Configs.enemyDamagePerBullet[3] * 60 / Configs.enemyFireInterval[3]}/s    HP:{Configs.enemyHp[3]}    最大航速:{Configs.enemySpeed[3]}</color>\n<color=#c00060>战列舰    DPS:{Configs.enemyDamagePerBullet[4] * 60 / Configs.enemyFireInterval[4]}/s    HP:{Configs.enemyHp[4]}    最大航速:{Configs.enemySpeed[4]}</color>\n\n默认的游戏难度为普通（物流塔和其他建筑被毁后会自动转变为待建造的蓝图模式），你可以按P键在战斗统计面板的左下角调整游戏难度为简单（物流塔不会敌舰被破坏；功勋点数获得*0.75）或困难（建筑被摧毁后会消失，敌人战斗力大幅提升；功勋点数获得*1.5）。但你只有一次调整难度的机会。\n\n在强大的波次中，敌舰将获得额外的加成效果:\n护卫舰：有90%概率闪避来自子弹的伤害\n巡洋舰：减免90%受到的范围伤害，免疫任何控制效果\n战列舰：对能量武器和来自护盾的伤害减少80%。");
+
+            ProtoRegistry.RegisterString("深空来敌介绍3前字", "", "通过击毁入侵的敌舰，你可以获得经验点数来提升功勋阶级。每次提升功勋阶级都将带来永久的加成效果，有些为你的生产线提供加成，有些则强化你的防御能力。");
+        }
+
+        // 在import末尾调用
+        public static void UnlockTutorials(int i = -1)
+        {
+            if (i == -1)
+            {
+                GameMain.history.UnlockTutorial(21);
+                GameMain.history.UnlockTutorial(22);
+                GameMain.history.UnlockTutorial(23);
+            }
+            else
+                GameMain.history.UnlockTutorial(i);
         }
 
         public static void PostDataAction()

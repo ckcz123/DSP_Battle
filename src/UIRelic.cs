@@ -689,7 +689,7 @@ namespace DSP_Battle
             Relic.rollCount = Math.Min(Relic.rollCount+1, 8); // 记录本次重随次数，重随消耗有上限
             if (Configs.developerMode)
             {
-                //Relic.alternateRelics[0] = 8;
+                Relic.alternateRelics[0] = 2;
             }
             RefreshSelectionWindowUI();
         }
@@ -813,6 +813,15 @@ namespace DSP_Battle
                             relicSlotImgs[slotNum].sprite = Resources.Load<Sprite>("Assets/DSPBattle/r" + type.ToString() + "-" + num.ToString());
                             relicSlotUIBtns[slotNum].tips.tipTitle = ("遗物名称带颜色" + type.ToString() + "-" + num.ToString()).Translate();
                             relicSlotUIBtns[slotNum].tips.tipText = ("遗物描述" + type.ToString() + "-" + num.ToString()).Translate();
+                            if (type == 0 && num == 2)
+                            {
+                                if (Relic.relic0_2Version == 0)
+                                    relicSlotUIBtns[slotNum].tips.tipText = ("遗物描述" + type.ToString() + "-" + num.ToString() + "old").Translate();
+                                else if(Relic.relic0_2Version == 1)
+                                {
+                                    relicSlotUIBtns[slotNum].tips.tipText = relicSlotUIBtns[slotNum].tips.tipText + "\n\n<color=#61d8ffb4>" + "已充能gm".Translate() + "  " + Relic.relic0_2Charge + " / " + Relic.relic0_2MaxCharge + "</color>";
+                                }
+                            }
                             if(type == 0 && num == 10)
                                 relicSlotUIBtns[slotNum].tips.tipText = relicSlotUIBtns[slotNum].tips.tipText + "\n\n<color=#61d8ffb4>" + "当前加成gm".Translate() + "  " + Droplets.bonusDamage + " / " + Droplets.bonusDamageLimit + "</color>";
                             relicSlotUIBtns[slotNum].tips.offset = new Vector2(160, 70);
@@ -837,6 +846,19 @@ namespace DSP_Battle
                 relicSlotUIBtns[slotNum].tips.offset = new Vector2(160, 70);
                 relicSlotUIBtns[slotNum].tips.delay = 0.05f;
             }
+        }
+
+        // 击杀时刷新左侧数据
+        public static void RefreshTearOfGoddessSlotTips()
+        {
+            int slotNum = 0;
+            for (int rnum = 0; rnum < 2; rnum++)
+            {
+                if (Relic.HaveRelic(0, rnum))
+                    slotNum++;
+            }
+            if (slotNum >= 8) return;
+            relicSlotUIBtns[slotNum].tips.tipText = "遗物描述0-2".Translate() + "\n\n<color=#61d8ffb4>" + "已充能gm".Translate() + "  " + Relic.relic0_2Charge + " / " + Relic.relic0_2MaxCharge + "</color>";
         }
 
         public static void CheckRelicSlotsWindowShowByMouse()

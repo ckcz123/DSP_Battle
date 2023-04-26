@@ -142,6 +142,9 @@ namespace DSP_Battle
             // relic 1-8 2-17
             Configs.relic1_8Protection = Relic.HaveRelic(1, 8) ? 0 : int.MaxValue;
             Configs.relic2_17Activated = Relic.HaveRelic(2, 17) ? 1 : 0;
+
+            // relic 0-2
+            Relic.relic0_2CanActivate = 1;
         }
 
         private static void UpdateWaveStage1(long time)

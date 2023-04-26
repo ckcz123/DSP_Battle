@@ -14,6 +14,11 @@ namespace DSP_Battle
         // type 遗物类型 0=legend 1=epic 2=rare 3=common
         // 二进制存储已获取的遗物，需要存档
         public static int[] relics = { 0, 0, 0, 0 };
+        // 其他需要存档的数据
+        public static int relic0_2Version = 1; // 女神泪重做，老存档此项为0不改效果，新存档此项为1才改效果
+        public static int relic0_2Charge = 0; // 新版女神泪充能计数
+        public static int relic0_2CanActivate = 1; // 新版女神泪在每次入侵中只能激活一次，激活后设置为0。下次入侵才设置为1
+        public static int minShieldPlanetId = -1; // 饮血剑现在会给护盾量最低的星球回盾，但是每秒才更新一次护盾量最低的星球
 
         //不存档的设定参数
         public static int relicHoldMax = 8; // 最多可以持有的遗物数
@@ -32,6 +37,7 @@ namespace DSP_Battle
         public static bool alreadyRecalcDysonStarLumin = false; // 不需要存档，如果需要置false则会在读档时以及选择特定遗物时自动完成
         public static int dropletDamageGrowth = 10; // relic0-10每次水滴击杀的伤害成长
         public static int dropletDamageLimitGrowth = 400; // relic0-10每次消耗水滴提供的伤害成长上限的成长
+        public static int relic0_2MaxCharge = 1000; // 新版女神泪充能上限
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameData), "GameTick")]
@@ -39,6 +45,8 @@ namespace DSP_Battle
         {
             if (time % 60 == 7)
                 RefreshStarsWithMegaStructure();
+            if (time % 60 == 8)
+                RefreshMinShieldPlanet();
 
         }
 
@@ -67,7 +75,14 @@ namespace DSP_Battle
             if (GetRelicCount() >= relicHoldMax) return -3; // 超上限
 
             // 下面是一些特殊的Relic在选择时不是简单地改一个拥有状态就行，需要单独对待
-            if (type == 0 && num == 3)
+            if(type == 0 && num == 2)
+            {
+                relics[type] |= 1 << num;
+                relic0_2Version = 1;
+                relic0_2Charge = 0;
+                relic0_2CanActivate = 1;
+            }
+            else if (type == 0 && num == 3)
             {
                 relics[type] |= 1 << num;
                 RelicFunctionPatcher.CheckAndModifyStarLuminosity();
@@ -213,6 +228,30 @@ namespace DSP_Battle
             }
         }
 
+        // 刷新保存护盾量最低的行星
+        public static void RefreshMinShieldPlanet()
+        {
+            if (Configs.nextWaveState == 3)
+            {
+                int planet100 = (Configs.nextWaveStarIndex + 1) * 100;
+                int minShield = int.MaxValue;
+                for (int i = 0; i < GameMain.galaxy.stars[Configs.nextWaveStarIndex].planetCount; i++)
+                {
+                    int planetId = planet100 + i + 1;
+                    if (ShieldGenerator.currentShield.ContainsKey(planetId))
+                    {
+                        int shd = ShieldGenerator.currentShield.GetOrAdd(planetId, 0);
+                        int max = ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0);
+                        if (shd < max * 1.5 && shd < minShield)
+                        {
+                            minShieldPlanetId = planetId;
+                            minShield = shd;
+                        }
+                    }
+                }
+            }
+        }
+
         public static bool Verify(double possibility)
         {
             if (Utils.RandDouble() < possibility)
@@ -296,6 +335,10 @@ namespace DSP_Battle
             w.Write(relics[1]);
             w.Write(relics[2]);
             w.Write(relics[3]);
+            w.Write(relic0_2Version);
+            w.Write(relic0_2Charge);
+            w.Write(relic0_2CanActivate);
+            w.Write(minShieldPlanetId);
         }
 
         public static void Import(BinaryReader r)
@@ -314,6 +357,20 @@ namespace DSP_Battle
                 relics[1] = 0;
                 relics[2] = 0;
                 relics[3] = 0;
+            }
+            if (Configs.versionWhenImporting >= 30230426)
+            {
+                relic0_2Version = r.ReadInt32();
+                relic0_2Charge = r.ReadInt32();
+                relic0_2CanActivate = r.ReadInt32();
+                minShieldPlanetId = r.ReadInt32();
+            }
+            else
+            {
+                relic0_2Version = 0;
+                relic0_2Charge = 0;
+                relic0_2CanActivate = 1;
+                minShieldPlanetId = -1;
             }
             InitAll();
         }
@@ -619,6 +676,21 @@ namespace DSP_Battle
             return false;
         }
 
+        public static void GoddessRage()
+        {
+            if (Configs.nextWaveState == 3)
+            {
+                Relic.relic0_2CanActivate = 0;
+                Relic.relic0_2Charge = 0;
+                foreach (EnemyShip ship in EnemyShips.ships.Values)
+                {
+                    int maxHp = Configs.enemyHp[Configs.enemyIntensity2TypeMap[ship.intensity]];
+                    int realDamage = ship.BeAttacked((int)(maxHp*0.95));
+                    UIBattleStatistics.RegisterGoddessRage(realDamage);
+                }
+            }
+        }
+
         /// <summary>
         /// relic0-7
         /// </summary>
@@ -659,10 +731,12 @@ namespace DSP_Battle
                 if (starIndex > 0)
                 {
                     int planetId = (starIndex + 1) * 100 + Utils.RandInt(1, GameMain.galaxy.stars[starIndex].planetCount + 1);
+                    if (Relic.minShieldPlanetId > 0 && Relic.minShieldPlanetId / 100 - 1 == Configs.nextWaveStarIndex)
+                        planetId = Relic.minShieldPlanetId;
                     int shieldRestore = (int)(damage * 0.1);
                     if (ShieldGenerator.currentShield.GetOrAdd(planetId, 0) < ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0) * 1.5)
                     {
-                        ShieldGenerator.maxShieldCapacity.AddOrUpdate(planetId, shieldRestore, (x, y) => y + shieldRestore);
+                        ShieldGenerator.currentShield.AddOrUpdate(planetId, shieldRestore, (x, y) => y + shieldRestore);
                         UIBattleStatistics.RegisterShieldRestoreInBattle(shieldRestore);
                     }
                 }
