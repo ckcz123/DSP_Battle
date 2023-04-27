@@ -215,7 +215,7 @@ namespace DSP_Battle
                         slotNum++;
                 }
                 if (slotNum >= 8) return;
-                UIRelic.relicSlotUIBtns[slotNum].tips.tipText = "遗物描述0-10".Translate() + "\n\n<color=#61d8ffb4>" + "当前加成gm".Translate() + "  " + Droplets.bonusDamage + " / " + Droplets.bonusDamageLimit + "</color>";
+                UIRelic.relicSlotUIBtns[slotNum].tips.tipText = "遗物描述0-10".Translate() + "\n" + "relicTipText0-10".Translate() + "\n\n<color=#61d8ffb4>" + "当前加成gm".Translate() + "  " + Droplets.bonusDamage + " / " + Droplets.bonusDamageLimit + "</color>";
                 if (UIRelic.relicSlotUIBtns[slotNum].tipShowing)
                 {
                     UIRelic.relicSlotUIBtns[slotNum].OnPointerExit(null);

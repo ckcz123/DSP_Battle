@@ -171,6 +171,8 @@ namespace DSP_Battle
             {
                 __instance.currPoolEnergy = __instance.currPoolEnergy - __instance.currEnergyPerTick;
             }
+            if (__instance.currPoolEnergy >= __instance.maxPoolEnergy || __instance.currPoolEnergy <= 0)
+                __instance.currPoolEnergy = __instance.currEnergyPerTick;
             if (GameMain.instance.timei % 30 != 1) return;
 
             if (__instance.currPoolEnergy >= __instance.maxPoolEnergy - __instance.energyPerTick)

@@ -50,6 +50,9 @@ namespace DSP_Battle
         static Text relic3Desc;
         static Image relic3Icon;
         static Image relic3BtnImg;
+        static UIButton relic1UIBtn;
+        static UIButton relic2UIBtn;
+        static UIButton relic3UIBtn;
 
         public static Text relicSelectWindowTitle;
         public static Text relicSelectionNoticeText;
@@ -64,11 +67,21 @@ namespace DSP_Battle
         //static string colorRareLeft = "<color=#2080d0>";
         //static string colorCommonLeft = "<color=#30b530>";
         //static string colorRight = "</color>";
-        static Color colorBtnLegend = new Color(0.8f, 0.683f, 0.266f, 0.4f);
-        static Color colorBtnEpic = new Color(0.66f, 0f, 0.875f, 0.178f);
+        static Color colorBtnLegend = new Color(0.827f, 0.603f, 0.15f, 0.162f);
+        static Color colorBtnEpic = new Color(0.66f, 0f, 0.875f, 0.115f);
         static Color colorBtnRare = new Color(0.183f, 0.426f, 0.811f, 0.178f);
-        static Color colorBtnCommon = new Color(0.5f, 0.943f, 0.5f, 0.117f);
+        static Color colorBtnCommon = new Color(0.5f, 0.943f, 0.5f, 0.057f);
+        static Color colorBtnLegendH = new Color(0.793f, 0.569f, 0.104f, 0.259f);
+        static Color colorBtnEpicH = new Color(0.66f, 0.1f, 0.875f, 0.188f);
+        static Color colorBtnRareH = new Color(0.183f, 0.426f, 0.811f, 0.378f);
+        static Color colorBtnCommonH = new Color(0.5f, 0.943f, 0.5f, 0.097f);
+        static Color colorBtnLegendP = new Color(0.827f, 0.603f, 0.15f, 0.091f);
+        static Color colorBtnEpicP = new Color(0.66f, 0f, 0.875f, 0.068f);
+        static Color colorBtnRareP = new Color(0.183f, 0.426f, 0.811f, 0.098f);
+        static Color colorBtnCommonP = new Color(0.5f, 0.943f, 0.5f, 0.04f);
         static Color colorBtnDelete = new Color(0.5f, 0.19f, 0.1f, 0.2f);
+        static Color colorBtnDeleteH = new Color(0.5f, 0.19f, 0.1f, 0.5f);
+        static Color colorBtnDeleteP = new Color(0.5f, 0.19f, 0.1f, 0.1f);
         static Color colorTextLegend = new Color(0.82f, 0.52f, 0.238f, 1f);
         static Color colorTextEpic = new Color(0.563f, 0.25f, 0.813f, 1f);
         static Color colorTextRare = new Color(0.125f, 0.5f, 0.813f, 1f);
@@ -110,6 +123,7 @@ namespace DSP_Battle
                 if (selectedRelicInUI == 0)
                 {
                     relic1BtnImg.color = new Color(relic1BtnImg.color.r, relic1BtnImg.color.g, relic1BtnImg.color.b, relic1BtnImg.color.a * r);
+                    relic1UIBtn.transitions[0].target.color = relic1BtnImg.color;
                     relic1Name.color = new Color(relic1Name.color.r, relic1Name.color.g, relic1Name.color.b, relic1Name.color.a * r);
                     relic1Desc.color = tColor;
                     relic1Icon.color = iColor;
@@ -117,6 +131,7 @@ namespace DSP_Battle
                 else if (selectedRelicInUI == 1)
                 {
                     relic2BtnImg.color = new Color(relic2BtnImg.color.r, relic2BtnImg.color.g, relic2BtnImg.color.b, relic2BtnImg.color.a * r);
+                    relic2UIBtn.transitions[0].target.color = relic2BtnImg.color;
                     relic2Name.color = new Color(relic2Name.color.r, relic2Name.color.g, relic2Name.color.b, relic2Name.color.a * r);
                     relic2Desc.color = tColor;
                     relic2Icon.color = iColor;
@@ -124,6 +139,7 @@ namespace DSP_Battle
                 else if (selectedRelicInUI == 2)
                 {
                     relic3BtnImg.color = new Color(relic3BtnImg.color.r, relic3BtnImg.color.g, relic3BtnImg.color.b, relic3BtnImg.color.a * r);
+                    relic3UIBtn.transitions[0].target.color = relic3BtnImg.color;
                     relic3Name.color = new Color(relic3Name.color.r, relic3Name.color.g, relic3Name.color.b, relic3Name.color.a * r);
                     relic3Desc.color = tColor;
                     relic3Icon.color = iColor;
@@ -227,37 +243,59 @@ namespace DSP_Battle
                 relic3Icon = relic3IconObj.GetComponent<Image>();
                 relic3IconObj.SetActive(true);
 
-                GameObject oriButton = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Station Window/storage-box-0/popup-box/sd-option-button-1");
+                //GameObject oriButton = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Station Window/storage-box-0/popup-box/sd-option-button-1");
+                GameObject oriButtonWOTip = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Station Window/storage-box-0/popup-box/sd-option-button-1");
+                GameObject oriButton = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Dyson Sphere Editor/Dyson Editor Control Panel/hierarchy/layers/buttons-group/buttons/add-button");
                 relic1SelectButtonObj = GameObject.Instantiate(oriButton, relicSelectionWindowObj.transform);
                 relic1SelectButtonObj.name = "btn1";
-                relic1SelectButtonObj.transform.localPosition = new Vector3(-300, 0);
                 relic1SelectButtonObj.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
                 relic1SelectButtonObj.GetComponent<RectTransform>().sizeDelta = new Vector2(250, 450);
+                relic1SelectButtonObj.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+                relic1SelectButtonObj.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+                relic1SelectButtonObj.transform.localPosition = new Vector3(-300, 0);
                 relic1SelectButtonObj.GetComponent<Button>().onClick.RemoveAllListeners();
                 relic1SelectButtonObj.GetComponent<Button>().onClick.AddListener(() => { SelectNewRelic(0); });
-                relic1SelectButtonObj.transform.Find("button-text").GetComponent<Text>().text = "".Translate();
+                relic1SelectButtonObj.transform.Find("Text").GetComponent<Text>().text = "".Translate();
                 relic1BtnImg = relic1SelectButtonObj.GetComponent<Image>();
                 relic1BtnImg.color = colorBtnLegend;
+                relic1UIBtn = relic1SelectButtonObj.GetComponent<UIButton>();
+                relic1UIBtn.tips.delay = 0;
+                relic1UIBtn.tips.offset = new Vector2(-250, 0);
+                relic1UIBtn.tips.width = 300;
+
                 relic2SelectButtonObj = GameObject.Instantiate(oriButton, relicSelectionWindowObj.transform);
                 relic2SelectButtonObj.name = "btn2";
-                relic2SelectButtonObj.transform.localPosition = new Vector3(0, 0);
                 relic2SelectButtonObj.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
                 relic2SelectButtonObj.GetComponent<RectTransform>().sizeDelta = new Vector2(250, 450);
+                relic2SelectButtonObj.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+                relic2SelectButtonObj.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+                relic2SelectButtonObj.transform.localPosition = new Vector3(0, 0);
                 relic2SelectButtonObj.GetComponent<Button>().onClick.RemoveAllListeners();
                 relic2SelectButtonObj.GetComponent<Button>().onClick.AddListener(() => { SelectNewRelic(1); });
-                relic2SelectButtonObj.transform.Find("button-text").GetComponent<Text>().text = "".Translate();
+                relic2SelectButtonObj.transform.Find("Text").GetComponent<Text>().text = "".Translate();
                 relic2BtnImg = relic2SelectButtonObj.GetComponent<Image>();
                 relic2BtnImg.color = colorBtnEpic;
+                relic2UIBtn = relic2SelectButtonObj.GetComponent<UIButton>();
+                relic2UIBtn.tips.delay = 0;
+                relic2UIBtn.tips.offset = new Vector2(250, 0);
+                relic2UIBtn.tips.width = 300;
+
                 relic3SelectButtonObj = GameObject.Instantiate(oriButton, relicSelectionWindowObj.transform);
                 relic3SelectButtonObj.name = "btn3";
-                relic3SelectButtonObj.transform.localPosition = new Vector3(300, 0);
                 relic3SelectButtonObj.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
                 relic3SelectButtonObj.GetComponent<RectTransform>().sizeDelta = new Vector2(250, 450);
+                relic3SelectButtonObj.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+                relic3SelectButtonObj.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+                relic3SelectButtonObj.transform.localPosition = new Vector3(300, 0);
                 relic3SelectButtonObj.GetComponent<Button>().onClick.RemoveAllListeners();
                 relic3SelectButtonObj.GetComponent<Button>().onClick.AddListener(() => { SelectNewRelic(2); });
-                relic3SelectButtonObj.transform.Find("button-text").GetComponent<Text>().text = "".Translate();
+                relic3SelectButtonObj.transform.Find("Text").GetComponent<Text>().text = "".Translate();
                 relic3BtnImg = relic3SelectButtonObj.GetComponent<Image>();
                 relic3BtnImg.color = colorBtnRare;
+                relic3UIBtn = relic3SelectButtonObj.GetComponent<UIButton>();
+                relic3UIBtn.tips.delay = 0;
+                relic3UIBtn.tips.offset = new Vector2(250, 0);
+                relic3UIBtn.tips.width = 300;
 
                 // 提示文本
                 GameObject noticTextObj = GameObject.Instantiate(relic1DescObj, relicSelectionWindowObj.transform);
@@ -286,7 +324,7 @@ namespace DSP_Battle
                 rollCostText.supportRichText = true;
                 rollCostText.text = "免费".Translate();
 
-                reRollBtnObj = GameObject.Instantiate(oriButton, relicSelectionWindowObj.transform);
+                reRollBtnObj = GameObject.Instantiate(oriButtonWOTip, relicSelectionWindowObj.transform);
                 reRollBtnObj.name = "btn-roll";
                 reRollBtnObj.transform.localPosition = new Vector3(380, 250, 0);
                 reRollBtnObj.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
@@ -306,7 +344,7 @@ namespace DSP_Battle
                 matrixIcon.SetActive(true);
 
                 //放弃解译按钮
-                abortBtnObj = GameObject.Instantiate(oriButton, relicSelectionWindowObj.transform);
+                abortBtnObj = GameObject.Instantiate(oriButtonWOTip, relicSelectionWindowObj.transform);
                 abortBtnObj.name = "btn-abort";
                 abortBtnObj.transform.localPosition = new Vector3(0, -260, 0);
                 abortBtnObj.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
@@ -352,6 +390,10 @@ namespace DSP_Battle
                 relic1Name.color = zero;
                 relic1Desc.color = zero;
                 relic1BtnImg.color = zero;
+                relic1UIBtn.transitions[0].target.color = zero;
+                relic1UIBtn.transitions[0].normalColor = zero;
+                relic1UIBtn.transitions[0].mouseoverColor = zero;
+                relic1UIBtn.transitions[0].pressedColor = zero;
             }
             if (selectedRelicInUI != 1)
             {
@@ -359,6 +401,10 @@ namespace DSP_Battle
                 relic2Name.color = zero;
                 relic2Desc.color = zero;
                 relic2BtnImg.color = zero;
+                relic2UIBtn.transitions[0].target.color = zero;
+                relic2UIBtn.transitions[0].normalColor = zero;
+                relic2UIBtn.transitions[0].mouseoverColor = zero;
+                relic2UIBtn.transitions[0].pressedColor = zero;
             }
             if (selectedRelicInUI != 2)
             {
@@ -366,6 +412,10 @@ namespace DSP_Battle
                 relic3Name.color = zero;
                 relic3Desc.color = zero;
                 relic3BtnImg.color = zero;
+                relic3UIBtn.transitions[0].target.color = zero;
+                relic3UIBtn.transitions[0].normalColor = zero;
+                relic3UIBtn.transitions[0].mouseoverColor = zero;
+                relic3UIBtn.transitions[0].pressedColor = zero;
             }
             relicSelectionNoticeText.text = "";
             rollCostText.text = "";
@@ -410,21 +460,40 @@ namespace DSP_Battle
             abortBtnText.text = "放弃解译".Translate() + "500";
             Color white = new Color(1, 1, 1);
 
+            relic1SelectButtonObj.transform.Find("Text").GetComponent<Text>().text = "".Translate();
+            relic2SelectButtonObj.transform.Find("Text").GetComponent<Text>().text = "".Translate();
+            relic3SelectButtonObj.transform.Find("Text").GetComponent<Text>().text = "".Translate();
+            relic1UIBtn.tips.tipTitle = "";
+            relic1UIBtn.tips.tipText = "";
+            relic2UIBtn.tips.tipTitle = "";
+            relic2UIBtn.tips.tipText = "";
+            relic3UIBtn.tips.tipTitle = "";
+            relic3UIBtn.tips.tipText = "";
+
             // 如果是删除遗物的按钮
             if (Relic.alternateRelics[0] == 999)
             {
                 relic1Name.color = colorTextDelete;
                 relic1BtnImg.color = colorBtnDelete;
+                relic1UIBtn.transitions[0].normalColor = colorBtnDelete;
+                relic1UIBtn.transitions[0].mouseoverColor = colorBtnDeleteH;
+                relic1UIBtn.transitions[0].pressedColor = colorBtnDeleteP;
                 relic1Name.text = "删除遗物名称".Translate();
                 relic1Desc.text = "删除遗物描述".Translate();
                 relic1Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/rNULL");
                 relic2Name.color = colorTextDelete;
                 relic2BtnImg.color = colorBtnDelete;
+                relic2UIBtn.transitions[0].normalColor = colorBtnDelete;
+                relic2UIBtn.transitions[0].mouseoverColor = colorBtnDeleteH;
+                relic2UIBtn.transitions[0].pressedColor = colorBtnDeleteP;
                 relic2Name.text = "删除遗物名称".Translate();
                 relic2Desc.text = "删除遗物描述".Translate();
                 relic2Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/rNULL");
                 relic3Name.color = colorTextDelete;
                 relic3BtnImg.color = colorBtnDelete;
+                relic3UIBtn.transitions[0].normalColor = colorBtnDelete;
+                relic3UIBtn.transitions[0].mouseoverColor = colorBtnDeleteH;
+                relic3UIBtn.transitions[0].pressedColor = colorBtnDeleteP;
                 relic3Name.text = "删除遗物名称".Translate();
                 relic3Desc.text = "删除遗物描述".Translate();
                 relic3Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/rNULL");
@@ -444,27 +513,42 @@ namespace DSP_Battle
                 {
                     relic1Name.color = colorTextLegend;
                     relic1BtnImg.color = colorBtnLegend;
+                    relic1UIBtn.transitions[0].normalColor = colorBtnLegend;
+                    relic1UIBtn.transitions[0].mouseoverColor = colorBtnLegendH;
+                    relic1UIBtn.transitions[0].pressedColor = colorBtnLegendP;
                 }
                 else if (r1type == 1)
                 {
                     relic1Name.color = colorTextEpic;
                     relic1BtnImg.color = colorBtnEpic;
+                    relic1UIBtn.transitions[0].normalColor = colorBtnEpic;
+                    relic1UIBtn.transitions[0].mouseoverColor = colorBtnEpicH;
+                    relic1UIBtn.transitions[0].pressedColor= colorBtnEpicP;
                 }
                 else if (r1type == 2)
                 {
                     relic1Name.color = colorTextRare;
                     relic1BtnImg.color = colorBtnRare;
+                    relic1UIBtn.transitions[0].normalColor = colorBtnRare;
+                    relic1UIBtn.transitions[0].mouseoverColor = colorBtnRareH;
+                    relic1UIBtn.transitions[0].pressedColor = colorBtnRareP;
                 }
                 else
                 {
                     relic1Name.color = colorTextCommon;
                     relic1BtnImg.color = colorBtnCommon;
+                    relic1UIBtn.transitions[0].normalColor = colorBtnCommon;
+                    relic1UIBtn.transitions[0].mouseoverColor = colorBtnCommonH;
+                    relic1UIBtn.transitions[0].pressedColor = colorBtnCommonP;
                 }
                 if (isRemove)
                 {
                     relic1Name.text = "移除遗物".Translate() + "  " + ("遗物名称" + r1type.ToString() + "-" + r1num.ToString()).Translate();
                     relic1Name.color = colorTextDelete;
                     relic1BtnImg.color = colorBtnDelete;
+                    relic1UIBtn.transitions[0].normalColor = colorBtnDelete;
+                    relic1UIBtn.transitions[0].mouseoverColor = colorBtnDeleteH;
+                    relic1UIBtn.transitions[0].pressedColor = colorBtnDeleteP;
                 }
                 else
                 {
@@ -472,6 +556,7 @@ namespace DSP_Battle
                 }
                 relic1Desc.text = ("遗物描述" + r1type.ToString() + "-" + r1num.ToString()).Translate();
                 relic1Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/r" + r1type.ToString() + "-" + r1num.ToString());
+                AddTipText(r1type, r1num, relic1UIBtn);
 
                 // Relic2
                 isRemove = Relic.alternateRelics[1] < 0;
@@ -486,27 +571,42 @@ namespace DSP_Battle
                 {
                     relic2Name.color = colorTextLegend;
                     relic2BtnImg.color = colorBtnLegend;
+                    relic2UIBtn.transitions[0].normalColor = colorBtnLegend;
+                    relic2UIBtn.transitions[0].mouseoverColor = colorBtnLegendH;
+                    relic2UIBtn.transitions[0].pressedColor = colorBtnLegendP;
                 }
                 else if (r2type == 1)
                 {
                     relic2Name.color = colorTextEpic;
                     relic2BtnImg.color = colorBtnEpic;
+                    relic2UIBtn.transitions[0].normalColor = colorBtnEpic;
+                    relic2UIBtn.transitions[0].mouseoverColor = colorBtnEpicH;
+                    relic2UIBtn.transitions[0].pressedColor = colorBtnEpicP;
                 }
                 else if (r2type == 2)
                 {
                     relic2Name.color = colorTextRare;
                     relic2BtnImg.color = colorBtnRare;
+                    relic2UIBtn.transitions[0].normalColor = colorBtnRare;
+                    relic2UIBtn.transitions[0].mouseoverColor = colorBtnRareH;
+                    relic2UIBtn.transitions[0].pressedColor = colorBtnRareP;
                 }
                 else
                 {
                     relic2Name.color = colorTextCommon;
                     relic2BtnImg.color = colorBtnCommon;
+                    relic2UIBtn.transitions[0].normalColor = colorBtnCommon;
+                    relic2UIBtn.transitions[0].mouseoverColor = colorBtnCommonH;
+                    relic2UIBtn.transitions[0].pressedColor = colorBtnCommonP;
                 }
                 if (isRemove)
                 {
                     relic2Name.text = "移除遗物".Translate() + "  " + ("遗物名称" + r2type.ToString() + "-" + r2num.ToString()).Translate();
                     relic2Name.color = colorTextDelete;
                     relic2BtnImg.color = colorBtnDelete;
+                    relic2UIBtn.transitions[0].normalColor = colorBtnDelete;
+                    relic2UIBtn.transitions[0].mouseoverColor = colorBtnDeleteH;
+                    relic2UIBtn.transitions[0].pressedColor = colorBtnDeleteP;
                 }
                 else
                 {
@@ -514,6 +614,7 @@ namespace DSP_Battle
                 }
                 relic2Desc.text = ("遗物描述" + r2type.ToString() + "-" + r2num.ToString()).Translate();
                 relic2Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/r" + r2type.ToString() + "-" + r2num.ToString());
+                AddTipText(r2type, r2num, relic2UIBtn);
 
                 // Relic3
                 isRemove = Relic.alternateRelics[2] < 0;
@@ -528,27 +629,42 @@ namespace DSP_Battle
                 {
                     relic3Name.color = colorTextLegend;
                     relic3BtnImg.color = colorBtnLegend;
+                    relic3UIBtn.transitions[0].normalColor = colorBtnLegend;
+                    relic3UIBtn.transitions[0].mouseoverColor = colorBtnLegendH;
+                    relic3UIBtn.transitions[0].pressedColor = colorBtnLegendP;
                 }
                 else if (r3type == 1)
                 {
                     relic3Name.color = colorTextEpic;
                     relic3BtnImg.color = colorBtnEpic;
+                    relic3UIBtn.transitions[0].normalColor = colorBtnEpic;
+                    relic3UIBtn.transitions[0].mouseoverColor = colorBtnEpicH;
+                    relic3UIBtn.transitions[0].pressedColor = colorBtnEpicP;
                 }
                 else if (r3type == 2)
                 {
                     relic3Name.color = colorTextRare;
                     relic3BtnImg.color = colorBtnRare;
+                    relic3UIBtn.transitions[0].normalColor = colorBtnRare;
+                    relic3UIBtn.transitions[0].mouseoverColor = colorBtnRareH;
+                    relic3UIBtn.transitions[0].pressedColor = colorBtnRareP;
                 }
                 else
                 {
                     relic3Name.color = colorTextCommon;
                     relic3BtnImg.color = colorBtnCommon;
+                    relic3UIBtn.transitions[0].normalColor = colorBtnCommon;
+                    relic3UIBtn.transitions[0].mouseoverColor = colorBtnCommonH;
+                    relic3UIBtn.transitions[0].pressedColor = colorBtnCommonP;
                 }
                 if (isRemove)
                 {
                     relic3Name.text = "移除遗物".Translate() + "  " + ("遗物名称" + r3type.ToString() + "-" + r3num.ToString()).Translate();
                     relic3Name.color = colorTextDelete;
                     relic3BtnImg.color = colorBtnDelete;
+                    relic3UIBtn.transitions[0].normalColor = colorBtnDelete;
+                    relic3UIBtn.transitions[0].mouseoverColor = colorBtnDeleteH;
+                    relic3UIBtn.transitions[0].pressedColor = colorBtnDeleteP;
                 }
                 else
                 {
@@ -556,6 +672,7 @@ namespace DSP_Battle
                 }
                 relic3Desc.text = ("遗物描述" + r3type.ToString() + "-" + r3num.ToString()).Translate();
                 relic3Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/r" + r3type.ToString() + "-" + r3num.ToString());
+                AddTipText(r3type, r3num, relic3UIBtn);
             }
 
             if (CheckEnoughMatrixToRoll())
@@ -579,8 +696,19 @@ namespace DSP_Battle
             relicSelectionWindowObj.SetActive(true); // 显示窗口
         }
 
-       
 
+        public static void AddTipText(int type, int num, UIButton uibt)
+        {
+            if ((type == 0 && num == 2 && !(Relic.HaveRelic(0, 2) && Relic.relic0_2Version == 0)) || (type == 0 && num == 7) || (type == 0 && num == 10))
+            {
+                if (uibt.tips.tipTitle.Length == 0)
+                    uibt.tips.tipTitle = ($"relicTipTitle{type}-{num}").Translate();
+                uibt.tips.tipText += "\n" + ($"relicTipText{type}-{num}").Translate();
+            }
+            else
+            {
+            }
+        }
         
 
         // 检查背包里的矩阵是否足够随机，现在不打算每帧检查来刷新按钮和文本的显示以防突然增加矩阵，可能性不大，即使存在这种可能也不影响实际按下按钮触发功能，只是显示灰色按钮这样
@@ -689,7 +817,9 @@ namespace DSP_Battle
             Relic.rollCount = Math.Min(Relic.rollCount+1, 8); // 记录本次重随次数，重随消耗有上限
             if (Configs.developerMode)
             {
-                Relic.alternateRelics[0] = 2;
+                Relic.alternateRelics[0] = 7;
+                Relic.alternateRelics[1] = 2;
+                Relic.alternateRelics[2] = 10;
             }
             RefreshSelectionWindowUI();
         }
@@ -813,6 +943,7 @@ namespace DSP_Battle
                             relicSlotImgs[slotNum].sprite = Resources.Load<Sprite>("Assets/DSPBattle/r" + type.ToString() + "-" + num.ToString());
                             relicSlotUIBtns[slotNum].tips.tipTitle = ("遗物名称带颜色" + type.ToString() + "-" + num.ToString()).Translate();
                             relicSlotUIBtns[slotNum].tips.tipText = ("遗物描述" + type.ToString() + "-" + num.ToString()).Translate();
+                            AddTipText(type, num, relicSlotUIBtns[slotNum]); // 对于一些原本描述较短的，还要将更详细的描述加入
                             if (type == 0 && num == 2)
                             {
                                 if (Relic.relic0_2Version == 0)
@@ -859,6 +990,8 @@ namespace DSP_Battle
             }
             if (slotNum >= 8) return;
             relicSlotUIBtns[slotNum].tips.tipText = "遗物描述0-2".Translate() + "\n\n<color=#61d8ffb4>" + "已充能gm".Translate() + "  " + Relic.relic0_2Charge + " / " + Relic.relic0_2MaxCharge + "</color>";
+
+            AddTipText(0, 2, relicSlotUIBtns[slotNum]);
         }
 
         public static void CheckRelicSlotsWindowShowByMouse()

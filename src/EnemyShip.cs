@@ -303,7 +303,7 @@ namespace DSP_Battle
             {
                 VectorLF3 direction = forceDisplacement - shipData.uPos;
                 double fullDistance = direction.magnitude;
-                if (fullDistance <= 8000)
+                if (true) // 原本判断条件是fullDistance <= 8000
                 {
                     double forceDispDistance = fullDistance * movePerTick + minForcedMove;
                     if (fullDistance <= minForcedMove)
@@ -889,6 +889,7 @@ namespace DSP_Battle
                 fireStart = 0;
                 isBlockedByShield = false;
                 forceDisplacementTime = 0;
+                forceDisplacement = shipData.uPos;
             }
             catch (Exception)
             {

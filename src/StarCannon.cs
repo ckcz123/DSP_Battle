@@ -128,7 +128,7 @@ namespace DSP_Battle
                 else
                 {
                     UIRealtimeTip.Popup("女神之怒".Translate());
-                    RelicFunctionPatcher.GoddessRage();
+                    RelicFunctionPatcher.WrathOfGoddess();
                     return;
                 }
             }

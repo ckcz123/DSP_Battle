@@ -231,6 +231,7 @@ namespace DSP_Battle
         // 刷新保存护盾量最低的行星
         public static void RefreshMinShieldPlanet()
         {
+            minShieldPlanetId = -1;
             if (Configs.nextWaveState == 3)
             {
                 int planet100 = (Configs.nextWaveStarIndex + 1) * 100;
@@ -676,17 +677,33 @@ namespace DSP_Battle
             return false;
         }
 
-        public static void GoddessRage()
+        public static void WrathOfGoddess()
         {
             if (Configs.nextWaveState == 3)
             {
                 Relic.relic0_2CanActivate = 0;
                 Relic.relic0_2Charge = 0;
+                VectorLF3 starUPos = GameMain.galaxy.stars[Configs.nextWaveStarIndex].uPosition;
                 foreach (EnemyShip ship in EnemyShips.ships.Values)
                 {
+                    if(ship.state != EnemyShip.State.active) continue;
                     int maxHp = Configs.enemyHp[Configs.enemyIntensity2TypeMap[ship.intensity]];
                     int realDamage = ship.BeAttacked((int)(maxHp*0.95));
-                    UIBattleStatistics.RegisterGoddessRage(realDamage);
+                    if (ship.state == EnemyShip.State.active)
+                    {
+                        VectorLF3 shipUpos = ship.uPos;
+                        VectorLF3 direction = (shipUpos - starUPos).normalized;
+                        double addDistance = (8 * 40000 - (shipUpos - starUPos).magnitude) * 0.5; // 距离恒星越近击退的距离越多
+                        addDistance = addDistance < 0 ? 0 : addDistance;
+                        addDistance += 40000; // 固定击退至少1AU
+                        ship.InitForceDisplacement(shipUpos + direction * addDistance, 120, 0.02f);
+                        UIBattleStatistics.RegisterWrathOfGoddess(realDamage);
+                    }
+                }
+                if (Configs.developerMode)
+                {
+                    Relic.relic0_2CanActivate = 1;
+                    Relic.relic0_2Charge = 1000;
                 }
             }
         }

@@ -238,6 +238,7 @@ namespace DSP_Battle
 
         public static void OnShipDestroyed(EnemyShip ship)
         {
+            ship.forceDisplacementTime = 0;
             if (Configs.nextWaveElite == 1 && GameMain.instance.timei < Configs.nextWaveFrameIndex + Configs.eliteDurationFrames)
                 ship.Revive();
             else
