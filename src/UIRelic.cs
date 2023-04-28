@@ -377,6 +377,9 @@ namespace DSP_Battle
             closingCountDown = -1; // 取消任何正在关闭的动画
             openingCountDown = openingMaxCountDown; // 如果有打开动画则是=openingMaxCountDown以此开始倒数
             relicSelectionWindowObj.SetActive(true);
+            relic1SelectButtonObj.transform.Find("Text").GetComponent<Text>().text = "".Translate();
+            relic2SelectButtonObj.transform.Find("Text").GetComponent<Text>().text = "".Translate();
+            relic3SelectButtonObj.transform.Find("Text").GetComponent<Text>().text = "".Translate();
         }
 
         // 准备进行关闭选择遗物窗口的动画
@@ -989,9 +992,8 @@ namespace DSP_Battle
                     slotNum++;
             }
             if (slotNum >= 8) return;
-            relicSlotUIBtns[slotNum].tips.tipText = "遗物描述0-2".Translate() + "\n\n<color=#61d8ffb4>" + "已充能gm".Translate() + "  " + Relic.relic0_2Charge + " / " + Relic.relic0_2MaxCharge + "</color>";
+            relicSlotUIBtns[slotNum].tips.tipText = "遗物描述0-2".Translate() +"\n" + "relicTipText0-2".Translate() + "\n\n<color=#61d8ffb4>" + "已充能gm".Translate() + "  " + Relic.relic0_2Charge + " / " + Relic.relic0_2MaxCharge + "</color>";
 
-            AddTipText(0, 2, relicSlotUIBtns[slotNum]);
         }
 
         public static void CheckRelicSlotsWindowShowByMouse()

@@ -230,8 +230,10 @@ namespace DSP_Battle
                         Configs.developerMode = false;
                         Print($"Developer Mode False.");
                         break;
-                    case "goddess":
+                    case "g":
                         Relic.relic0_2Charge = Convert.ToInt32(param[1]);
+                        Relic.relic0_2CanActivate = 1;
+                        UIRelic.RefreshTearOfGoddessSlotTips();
                         break;
                     default:
                         Print($"未知的命令：{param[0]}，输入 \"help\" 查看所有命令说明。", 1, true);

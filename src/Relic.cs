@@ -193,6 +193,7 @@ namespace DSP_Battle
             rollCount = -1; // 从-1开始是因为每次准备给玩家新的relic都要重新随机一次
             canSelectNewRelic = true;
 
+            
             UIRelic.OpenSelectionWindow();
             UIRelic.ShowSlots(); // 打开已有遗物栏
 
@@ -705,6 +706,7 @@ namespace DSP_Battle
                     Relic.relic0_2CanActivate = 1;
                     Relic.relic0_2Charge = 1000;
                 }
+                UIRelic.RefreshTearOfGoddessSlotTips();
             }
         }
 
