@@ -289,9 +289,21 @@ namespace DSP_Battle
             }
         }
 
-        public static void ShowHideUI()
+        public static void ShowHideUI(int force = 0)
         {
-            StarFortressContentObj.SetActive(!StarFortressContentObj.activeSelf);
+            if (StarFortressContentObj == null)
+                return;
+            if (force != 0)
+            {
+                if (force > 0)
+                    StarFortressContentObj.SetActive(true);
+                else
+                    StarFortressContentObj.SetActive(false);
+            }
+            else
+            {
+                StarFortressContentObj.SetActive(!StarFortressContentObj.activeSelf);
+            }
 
             if (StarFortressContentObj.activeSelf) // 避免顶部UI互相遮挡
             {

@@ -211,9 +211,9 @@ namespace DSP_Battle
             if (time % 30 != 1 && !forceRefresh) return;
             helpInfo.text = "UI快捷键提示".Translate();
             difficultyInfo.text =
-                Configs.difficulty == -1 ? "简单难度提示".Translate()
-                   : Configs.difficulty == 1 ? "困难难度提示".Translate()
-                   : "普通难度提示".Translate();
+                Configs.difficulty == -1 ? "简单难度提示短".Translate()
+                   : Configs.difficulty == 1 ? "困难难度提示短".Translate()
+                   : "普通难度提示短".Translate();
             rewardInfo.text = Configs.extraSpeedEnabled && Configs.extraSpeedFrame > time
                 ? ("奖励倒计时：".Translate() + string.Format("{0:00}:{1:00}", new object[] { (Configs.extraSpeedFrame - time) / 60 / 60, (Configs.extraSpeedFrame - time) / 60 % 60 }))
                 : "";
@@ -367,6 +367,8 @@ namespace DSP_Battle
             alertUIObj.SetActive(isActive);
             titleObj.SetActive(isActive);
             statisticObj.SetActive(isActive);
+            if (isActive)
+                UIStarFortress.ShowHideUI(-1);
             RefreshUIAlert(GameMain.instance.timei, true);
         }
 
@@ -380,6 +382,7 @@ namespace DSP_Battle
             if (isActive)
             {
                 RefreshUIAlert(GameMain.instance.timei, true);
+                UIStarFortress.ShowHideUI(-1);
             }
         }
 

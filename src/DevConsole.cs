@@ -122,7 +122,7 @@ namespace DSP_Battle
                         break;
                     case "setstg":
                         Configs.nextWaveIntensity = Convert.ToInt32(param[1]);
-                        Print("Next wave intensity is set to {param[1]}.");
+                        Print($"Next wave intensity is set to {param[1]}.");
                         break;
                     case "seteasy":
                         Configs.difficulty = -1;

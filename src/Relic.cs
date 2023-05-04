@@ -697,7 +697,7 @@ namespace DSP_Battle
                         double addDistance = (8 * 40000 - (shipUpos - starUPos).magnitude) * 0.5; // 距离恒星越近击退的距离越多
                         addDistance = addDistance < 0 ? 0 : addDistance;
                         addDistance += 40000; // 固定击退至少1AU
-                        ship.InitForceDisplacement(shipUpos + direction * addDistance, 120, 0.02f);
+                        ship.InitForceDisplacement(shipUpos + direction * addDistance, 240, 0.02f);
                         UIBattleStatistics.RegisterWrathOfGoddess(realDamage);
                     }
                 }

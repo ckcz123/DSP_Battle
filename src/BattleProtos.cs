@@ -224,6 +224,9 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("简单难度提示", "Difficulty: Easy (Station won't be dismantled; Merit points *0.75)", "当前难度：简单（物流塔不会被破坏；功勋点数获得*0.75）");
             ProtoRegistry.RegisterString("普通难度提示", "Difficulty: Normal (Station attacked will turn to blueprint mode)", "当前难度：普通（物流塔被破坏会进入蓝图模式）");
             ProtoRegistry.RegisterString("困难难度提示", "Difficulty: Hard (Station will be dismantled; Enemy strength increase; Merit points *1.5)", "当前难度：困难（物流塔会被破坏拆除，敌人战斗力大幅提升；功勋点数获得*1.5）");
+            ProtoRegistry.RegisterString("简单难度提示短", "Difficulty: Easy", "当前难度：简单");
+            ProtoRegistry.RegisterString("普通难度提示短", "Difficulty: Normal", "当前难度：普通");
+            ProtoRegistry.RegisterString("困难难度提示短", "Difficulty: Hard", "当前难度：困难");
             ProtoRegistry.RegisterString("奖励倒计时：", "Reward time left: ", "奖励剩余时间：");
 
             ProtoRegistry.RegisterString("快速开局", "Fast Start", "快速开局");
@@ -656,7 +659,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物名称带颜色3-17", "<color=#30b530>Honorary Promotion  [Common]</color>", "<color=#30b530>荣誉晋升  [普通]</color>");
 
             ProtoRegistry.RegisterString("relicTipTitle0-2", "Wrath of Goddess", "女神之怒");
-            ProtoRegistry.RegisterString("relicTipText0-2", "Wrath of Goddess consumes all sorrows, repels all enemy ships by at least 1AU, and deals 95% of their max health as real damage. \nAfter launching the Wrath of Goddess, you will not be able to gain any sorrow until this wave ends.", "女神之怒消耗所有哀痛，将所有敌船击退1AU以上，并对他们造成最大生命值95%的真实伤害。\n在任何一次入侵中发动女神之怒后，该次入侵无法继续叠加哀痛");
+            ProtoRegistry.RegisterString("relicTipText0-2", "Wrath of Goddess consumes all sorrows, repels all enemy ships by at least 1AU, and deals 95% of their max health as true damage. \nAfter launching the Wrath of Goddess, you will not be able to gain any sorrow until this wave ends.", "女神之怒消耗所有哀痛，将所有敌船击退1AU以上，并对他们造成最大生命值95%的真实伤害。\n在任何一次入侵中发动女神之怒后，该次入侵无法继续叠加哀痛");
             ProtoRegistry.RegisterString("relicTipTitle0-7", "For Star Cannon", "对于恒星炮");
             ProtoRegistry.RegisterString("relicTipText0-7", "If the megastructure is star cannon, then the additional damage increases 200%.", "如果巨构为恒星炮，该伤害增加200%");
             ProtoRegistry.RegisterString("relicTipTitle0-10", "Upper Limit", "上限");
