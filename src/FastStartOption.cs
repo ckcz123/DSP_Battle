@@ -66,6 +66,12 @@ namespace DSP_Battle
                 }
             }
 
+            // 地面移速科技点满
+            //for (int techId = 2204; techId <= 2208; techId++)
+            //{
+            //    GameMain.data.history.UnlockTechUnlimited(techId, true);
+            //}
+
             GameMain.data.mainPlayer.TryAddItemToPackage(1131, 1000, 0, false); // 地基
 
             GameMain.data.mainPlayer.TryAddItemToPackage(2001, 280, 0, false); // 一级带
@@ -100,6 +106,8 @@ namespace DSP_Battle
             GameMain.data.mainPlayer.TryAddItemToPackage(2309, 90, 0, false); // 化工厂
 
             GameMain.data.mainPlayer.TryAddItemToPackage(2901, 49, 0, false); // 研究站
+
+            //GameMain.data.mainPlayer.TryAddItemToPackage(1801, 60, 0, false); // 氢燃料棒
         }
     }
 }

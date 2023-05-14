@@ -43,6 +43,10 @@ namespace DSP_Battle
 
             if(gmProtoId == 2312 && MoreMegaStructure.MoreMegaStructure.StarMegaStructureType[starIndex] == 6 && StarCannon.fireStage>0) //如果恒星炮正在开火，停止发射火箭
             {
+                if (__instance.needs != null && __instance.needs.Length > 0)
+                {
+                    __instance.needs[0] = ((__instance.bulletCount >= 20) ? 0 : __instance.bulletId);
+                }
                 __result = 0;
                 return false;
             }

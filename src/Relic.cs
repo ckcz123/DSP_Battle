@@ -858,7 +858,6 @@ namespace DSP_Battle
                     {
                         GameMain.mainPlayer.TryAddItemToPackage(9500, 1, 0, true);
                         Utils.UIItemUp(9500, 1, 180);
-                        Utils.UIItemUp(1210, 1, 180);
                     }
                     if (Relic.HaveRelic(3, 10) && Relic.Verify(0.03))
                     {
@@ -926,7 +925,7 @@ namespace DSP_Battle
         {
             if (Relic.HaveRelic(3, 2))
             {
-                __instance.coreEnergy += __instance.reactorPowerGen * 0.5;
+                __instance.coreEnergy += __instance.reactorPowerGen * 0.5 / 60;
                 if (__instance.coreEnergy > __instance.coreEnergyCap) __instance.coreEnergy = __instance.coreEnergyCap;
             }
         }

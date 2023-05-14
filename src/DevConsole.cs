@@ -217,6 +217,10 @@ namespace DSP_Battle
                         GameMain.mainPlayer.TryAddItemToPackage(8032, Convert.ToInt32(param[1]), 0, true);
                         Print($"Add {param[1]} alien matrixes to mecha storage.");
                         break;
+                    case "give":
+                        GameMain.mainPlayer.TryAddItemToPackage(Convert.ToInt32(param[1]), Convert.ToInt32(param[2]), 0, true);
+                        Print($"Add {param[2]} {LDB.items.Select(Convert.ToInt32(param[1]))?.Name.Translate()} to mecha storage.");
+                        break;
                     case "cool":
                         if(StarCannon.time < 0)
                             StarCannon.time = 0;
@@ -428,9 +432,10 @@ namespace DSP_Battle
                 "<color=#ffffff>rmrelic [param1] [param2]</color> 立刻删除第[param1]类型第[param2]号圣物（如果已经拥有）" + "\n" +
                 "<color=#ffffff>kill</color> 如果在战斗中，立刻击杀所有敌舰" + "\n" +
                 "<color=#ffffff>am [param1]</color> 立刻给予[param1]个异星矩阵" + "\n" +
+                "<color=#ffffff>give [param1] [param2]</color> 立刻给予[param2]个itemId为[param1]的物品" + "\n" +
                 "<color=#ffffff>cool</color> 恒星炮立即冷却完毕" + "\n" +
                 "---------------------- help ----------------------";
-            Print(allCmds,21, false); // 这个forceLineCount传值取决于allCmds的行数
+            Print(allCmds,22, false); // 这个forceLineCount传值取决于allCmds的行数
         }
 
         public static void ClearOutputField()
