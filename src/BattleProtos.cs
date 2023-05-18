@@ -467,6 +467,10 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("已充能gm", "Charged", "已充能");
             ProtoRegistry.RegisterString("女神之怒充能中", "Wrath of Goddess Charging", "女神之怒充能中");
             ProtoRegistry.RegisterString("女神之怒", "† Wrath of Goddess †", "† 女神之怒 †");
+            ProtoRegistry.RegisterString("圣物稀有度0", "<color=#d2853d>Legendary</color>", "<color=#d2853d>传说</color>");
+            ProtoRegistry.RegisterString("圣物稀有度1", "<color=#9040d0>Epic</color>", "<color=#9040d0>史诗</color>");
+            ProtoRegistry.RegisterString("圣物稀有度2", "<color=#2080d0>Rare</color>", "<color=#2080d0>稀有</color>");
+            ProtoRegistry.RegisterString("圣物稀有度3", "<color=#30b530>Common</color>", "<color=#30b530>普通</color>");
 
             ProtoRegistry.RegisterString("遗物名称0-0", "Swallower\n<size=18>- Legend -</size>", "吞噬者\n<size=18>- 传说 -</size>");
             ProtoRegistry.RegisterString("遗物名称0-1", "Blue Buff\n<size=18>- Legend -</size>", "蓝buff\n<size=18>- 传说 -</size>");
@@ -531,7 +535,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物名称3-16", "Void Lens\n<size=18>- Common -</size>", "虚空棱镜\n<size=18>- 普通 -</size>");
             ProtoRegistry.RegisterString("遗物名称3-17", "Honorary Promotion\n<size=18>- Common -</size>", "荣誉晋升\n<size=18>- 普通 -</size>");
 
-            ProtoRegistry.RegisterString("遗物描述0-0", "Every time the enemy ship is destroyed, a random mega structure will be partially auto-constructed according to the intensity of the enemy ship", "每次击毁敌舰，根据敌舰强度有概率略微推进巨构的建造进度");
+            ProtoRegistry.RegisterString("遗物描述0-0", "Every time the enemy ship is destroyed, a random mega structure will be partially auto-constructed according to the intensity of the enemy ship", "每次击毁敌舰，根据敌舰强度略微推进巨构的建造进度");
             ProtoRegistry.RegisterString("遗物描述0-1", "When assembling recipes with at least 2 different materials in assembling machine (except when assembling antimatter fuel rods), every time a product is produced, one material in the first slot will be returned.", "制造厂在制造原材料至少2种的配方时（反物质燃料棒的产线除外），每产出1个产物，会返还1个第1位置的原材料");
             ProtoRegistry.RegisterString("遗物描述0-2", "When destroy an enemy ship in normal wave, gain 1 sorrow (max 1000). Each sorrow deals 0.02% <i>additional damage</i> to all enemy ships. After 1000 sorrow, replace the [star cannon fire] button with [Wrath of Goddess] during invasion.", "我方在非精英波次摧毁敌舰时，叠加1层哀痛(上限1000)，每层哀痛使你造成0.02%<i>额外伤害</i>。满层后，在战斗中将你的[恒星炮开火]替换为[女神之怒]。"); 
             ProtoRegistry.RegisterString("遗物描述0-2old", "When producing recipes with at least 2 different materials in chemical plant, every time a product is produced, all material that is consumed in the first slot will be returned.", "化工厂在生产原材料至少2种的配方时，返还第1位置的全部原材料");
@@ -551,7 +555,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物描述1-4", "Give a droplet immediately, droplets energy consumption -50%", "立刻获得一个水滴，水滴能量消耗-50%");
             ProtoRegistry.RegisterString("遗物描述1-5", "The missile silo will reload a free missile after each launch", "导弹发射井在每次发射后向本体回填一发免费弹药");
             ProtoRegistry.RegisterString("遗物描述1-6", "When producing megastructure rockets, each output returns 2 deuteron fuel rods", "生产巨构火箭时，每个产出返还2个氘核燃料棒");
-            ProtoRegistry.RegisterString("遗物描述1-7", "Solar sial adsorption speed increases 300%", "巨构的太阳帆吸附速度提升300%");
+            ProtoRegistry.RegisterString("遗物描述1-7", "Solar sail absorption speed increases 300%, ejecting speed increases 100%", "巨构的太阳帆吸附速度提升300%，弹射器弹射太阳帆的速度提升100%");
             ProtoRegistry.RegisterString("遗物描述1-8", "The first ten (upto 200 by higher wave intensity) enemy ships' landing will not destroy any buildings or resources in each invasion", "每场入侵中，降落的前十个（随进攻强度最多增至200个）敌舰不会摧毁任何建筑或资源。");
             ProtoRegistry.RegisterString("遗物描述1-9", "When the planet shield is hit, if your mecha energy is higher than 20%, you will lose the energy that is equivalent to 2000 times the damage to replace the shield damage", "行星力场护盾受到伤害时，如果你机甲的能量高于20%，你将损失相当于伤害2000倍的能量，并使该次伤害无效化");
             ProtoRegistry.RegisterString("遗物描述1-10", "Wormholes no longer increase other wormholes' damage reduction when they are destroyed (except the last one)", "虫洞不再随着被连续摧毁的数量增加而提升伤害减免（最后一个除外）");
@@ -1262,13 +1266,83 @@ namespace DSP_Battle
             tp3.ID = 23;
             LDBTool.PreAddProto(tp3);
 
+            TutorialProto tp4 = LDB.tutorial.Select(1).Copy();
+            tp4.Name = "深空来敌介绍4标题".Translate();
+            tp4.name = "深空来敌介绍4标题".Translate();
+            tp4.Video = "";
+            tp4.PreText = "深空来敌介绍4前字";
+            tp4.PostText = "";
+            tp4.ID = 24;
+            LDBTool.PreAddProto(tp4);
+
+            TutorialProto tp5 = LDB.tutorial.Select(1).Copy();
+            tp5.Name = "深空来敌介绍5标题".Translate();
+            tp5.name = "深空来敌介绍5标题".Translate();
+            tp5.Video = "";
+            tp5.PreText = "深空来敌介绍5前字";
+            tp5.PostText = "";
+            tp5.ID = 25;
+            LDBTool.PreAddProto(tp5);
+
+
             ProtoRegistry.RegisterString("深空来敌介绍1标题", "They come from void player guide", "深空来敌玩法介绍");
             ProtoRegistry.RegisterString("深空来敌介绍1前字", "In TheyComeFromVoid, you will gradually face increasingly powerful enemy attacks. You need to build ground defense or research higher technology to deploy defense in space, resist enemy invasions, and prevent them from destroying your ground buildings and resources. \n\nOnly after you build the first <color=\"#FD965ECC\">interstellar logistics station</color> will the enemy begin preparing to invade. Carefully read the <color=\"#FD965ECC\">Pioneer Diary</color> for more game tips. The <color=\"#FD965ECC\">Pioneer Diary</color> will be gradually distributed as you unlock key technologies. \n\nThe real-time statistics of each battle can be viewed in the battle statistics panel (Press P).", "在深空来敌中，你将会逐渐面对越来越强大的敌人的进攻，你需要构建地面防御或研究更高的科技来在太空中部署防御，抵抗敌人的进攻，防止其摧毁你的地面建筑和资源。\n\n只有在你建造第一个<color=\"#FD965ECC\">星际物流塔</color>之后，敌人才会开始准备入侵。仔细阅读<color=\"#FD965ECC\">先驱者日记</color>来获得更多的游戏提示，<color=\"#FD965ECC\">先驱者日记</color>会在你解锁关键科技时逐步发放。\n\n每次战斗的实时统计均可在P键统计面板中的战斗统计中查看。");
 
             ProtoRegistry.RegisterString("深空来敌介绍2标题", "Invasion and Defense", "入侵与防御");
             ProtoRegistry.RegisterString("深空来敌介绍2前字", $"Enemies will invade every 10-60 minutes. If there is no planetary force field shield protection, enemy ships will keep trying to land and destroy the interstellar logistics stations, until all interstellar logistics towers are destroyed or all enemy ships are destroyed. The total strength of incoming enemies will continue to increase with the total number of waves, but this number is calculated independently for each galaxy. \nAfter your universe matrix uploads and the total energy of the mega structures reach a certain threshold, more universe matrix uploads (and more total energy of mega structures) will increase the total intensity of each wave. \n\nThe interval between enemy attacks will become shorter and shorter as the number of invasions increases, until the interval is 10 minutes. But if you lose too many buildings in one invasion, the interval between the next invasion will slightly increase. \n\nYou can also manually advance the next invasion by one minute by pressing Ctrl and minus, but each manual advance will reduce 10% of the expected number of alien matrices dropped by enemy ships(only influnce the next wave). \n\nWhen an enemy ship arrives near the planet shield, it will fire on the shield. As the duration of continuous firing increases, the damage will increase faster and faster. Therefore, you must eliminate the enemy ship as much as possible. \n\nEvery 5 invasions will result in a <color=\"#FD965ECC\">strong invasion</color> wave. During the strong invasion wave, the enemy will continue to attack for three minutes. After the wave ends, the <color=\"#FD965ECC\">Relics</color> will be available for selection, and you can also spend the alien matrix dropped by the enemy to reroll. \n\nThere are five types of invading enemies: \n\n<color=#b00000>Corvette    DPS:{Configs.enemyDamagePerBullet[0] * 60 / Configs.enemyFireInterval[0]}/s    HP:{Configs.enemyHp[0]}    MaxSpeed:{Configs.enemySpeed[0]}</color>\n<color=#b06000>Frigate    DPS:{Configs.enemyDamagePerBullet[1] * 60 / Configs.enemyFireInterval[1]}/s    HP:{Configs.enemyHp[1]}    MaxSpeed:{Configs.enemySpeed[1]}</color>\n<color=#b0b000>Destroyer    SuicideDmg:{Configs.enemyDamagePerBullet[2]}    HP:{Configs.enemyHp[2]}    MaxSpeed:{Configs.enemySpeed[2]}</color>\n<color=#00c020>Cruiser    DPS:{Configs.enemyDamagePerBullet[3] * 60 / Configs.enemyFireInterval[3]}/s    HP:{Configs.enemyHp[3]}    MaxSpeed:{Configs.enemySpeed[3]}</color>\n<color=#c00060>Battleship    DPS:{Configs.enemyDamagePerBullet[4] * 60 / Configs.enemyFireInterval[4]}/s    HP:{Configs.enemyHp[4]}    MaxSpeed:{Configs.enemySpeed[4]}</color>\n\nGame difficulty is normal by default(After the logistics tower and other buildings are destroyed, they will automatically change to the blueprint mode to be built). You can press the P key in the bottom left corner of the combat statistics panel to adjust the game difficulty to easy (logistics towers will not be destroyed by enemy ships, merit points gain * 0.75) or hard (buildings will disappear after being destroyed, and all enemies will be greatly improved, merit points gain * 1.5). But you only have one chance to change the difficulty. \n\nIn powerful waves, enemy ships will gain additional bonus effects: \n<color=#b06000>Frigate: 90% chance to evade bullet damage</color> \n<color=#00c020>Cruiser: reduce 90% damage from any aoe effects, immune crowd control</color> \n<color=#c00060>Battleship: reduce 80% damage from energy weapons, megastructures or shields</color>.", $"敌人会每隔一段时间发动入侵，若无行星力场护盾保护，敌舰会降落并摧毁本星系内的星际物流塔，直到所有星际物流塔被摧毁或所有敌舰被消灭。来袭敌人的总强度会随着进攻总次数不断增加，但这个次数对每个星系来说是独立计算的。\n在你的宇宙矩阵上传数和全星区巨构总能量达到一定阈值后，更多的宇宙矩阵上传量和巨构总能量还会额外地增加敌人每次进攻的总强度。\n\n敌人来袭的间隔会随着次数增加而越来越短，直到间隔为10分钟。但如果你在一次入侵中损失了过多的建筑，下一次入侵的间隔会略微增加。\n你也可以通过按Ctrl和减号手动将下一波次的进攻提前一分钟，但每次手动提前都会使下次入侵敌舰掉落异星矩阵的预期数量减少10%。\n\n敌舰在到达保护星球的护盾附近时，会对护盾开火造成伤害，且随着持续开火的时间增加而越来越快地提升伤害，因此你必须尽可能块地消灭敌舰。\n\n每5次入侵为<color=\"#FD965ECC\">强大的入侵</color>波次，在强大的入侵波次中，敌人将在三分钟内持续不断地进攻，波次结束后将提供<color=\"#FD965ECC\">圣物</color>可以选择，你也可以花费敌人掉落的异星矩阵来重新随机。\n\n入侵的敌人共有五种类型：\n<color=#b00000>侦查艇    DPS:{Configs.enemyDamagePerBullet[0]*60 / Configs.enemyFireInterval[0]}/s    HP:{Configs.enemyHp[0]}    最大航速:{Configs.enemySpeed[0]}</color>\n<color=#b06000>护卫舰    DPS:{Configs.enemyDamagePerBullet[1] * 60 / Configs.enemyFireInterval[1]}/s    HP:{Configs.enemyHp[1]}    最大航速:{Configs.enemySpeed[1]}</color>\n<color=#b0b000>驱逐舰    自杀性杀伤:{Configs.enemyDamagePerBullet[2]}    HP:{Configs.enemyHp[2]}    最大航速:{Configs.enemySpeed[2]}</color>\n<color=#00c020>巡洋舰    DPS:{Configs.enemyDamagePerBullet[3] * 60 / Configs.enemyFireInterval[3]}/s    HP:{Configs.enemyHp[3]}    最大航速:{Configs.enemySpeed[3]}</color>\n<color=#c00060>战列舰    DPS:{Configs.enemyDamagePerBullet[4] * 60 / Configs.enemyFireInterval[4]}/s    HP:{Configs.enemyHp[4]}    最大航速:{Configs.enemySpeed[4]}</color>\n\n默认的游戏难度为普通（物流塔和其他建筑被毁后会自动转变为待建造的蓝图模式），你可以按P键在战斗统计面板的左下角调整游戏难度为简单（物流塔不会敌舰被破坏；功勋点数获得*0.75）或困难（建筑被摧毁后会消失，敌人战斗力大幅提升；功勋点数获得*1.5）。但你只有一次调整难度的机会。\n\n在强大的波次中，敌舰将获得额外的加成效果:\n<color=#b06000>护卫舰：有90%概率闪避来自子弹的伤害</color>\n<color=#00c020>巡洋舰：减免90%受到的范围伤害，免疫任何控制效果</color>\n<color=#c00060>战列舰：对能量武器、来自护盾或来自巨构的伤害减少80%。</color>");
 
-            ProtoRegistry.RegisterString("深空来敌介绍3前字", "By destroying invading enemy ships, you can gain experience points to promote your merit rank. Every time you reach the new merit rank, it will bring permanent bonus effects, some providing bonuses for your production line, while others strengthening your defense capabilities. You can view the bonus effect of the current rank, the experience requirements of the next level, and the bonus effect of the next level by hovering the mouse over the merit rank icon in the upper right corner.", "通过击毁入侵的敌舰，你可以获得经验点数来提升功勋阶级。每次提升功勋阶级都将带来永久的加成效果，有些为你的生产线提供加成，有些则强化你的防御能力。你可以通过将鼠标选停在右上角的功勋阶级图标上来查看当前等级的加成效果，下一等级的经验需求和下一等级的加成效果。");
+            ProtoRegistry.RegisterString("深空来敌介绍3前字", "By destroying invading enemy ships, you can gain experience points to promote your merit rank. Every time you reach the new merit rank, it will bring permanent bonus effects, some providing bonuses for your production line, while others strengthening your defense capabilities. You can view the bonus effect of the current rank, the experience requirements of the next level, and the bonus effect of the next level by hovering the mouse over the merit rank icon in the upper right corner.", "通过击毁入侵的敌舰，你可以获得经验点数来提升功勋阶级。每次提升功勋阶级都将带来永久的加成效果，有些为你的生产线提供加成，有些则强化你的防御能力。你可以通过将鼠标悬停在右上角的功勋阶级图标上来查看当前等级的加成效果，下一等级的经验需求和下一等级的加成效果。");
+
+            ProtoRegistry.RegisterString("深空来敌介绍4标题", "Star Cannon (Nicoll-Dyson beam)", "恒星炮（尼科尔-戴森光束）");
+            ProtoRegistry.RegisterString("深空来敌介绍4前字", "Star cannons can be used to destroy wormholes after they are generated, thereby weakening the overall strength of incoming enemies and reducing the defense difficulty of the next invasion. After the wormhole is generated and before the enemy invasion begins, if the Star Cannon has completed at least the first stage of construction and has cooled down, you can launch the Star Cannon and start destroying the wormhole through the [Star Cannon Fire] button in the top warning UI (After reaching stage 3, the fully charged star cannon will automatically launch after the wormholes are generated). For each invasion, as the number of wormholes you destroy increases, the resistance of the remaining wormholes will also increase, requiring more time to destroy the next wormhole, Until there is only one wormhole left. The enemy will then use all their energy to maintain its stable opening, so the last wormhole will not be destroyed in any case.\n\nJust like building a Dyson sphere or other mega structures, you need to first plan a star cannon, and then launch the carrier rocket of the star cannon and solar sail to build a star cannon. As the nodes and shells you build gradually increase, the construction stage of the Star Cannon will continue to advance, also its attributes such as damage and charging speed, until the fifth stage. The following is the data for each stage of the Star Cannon:\n\nStage\t\tRequired Energy\t\tDps\t\t\t\tMaximum Fire Times per Charging\t\tCharge Time\t\tDamage reduction\nStage1\t\t6GW\t\t\t\t\t\t30000\t\t\t3\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t75min\t\t\t\t\t-3%/ly\nStage2\t\t30GW\t\t\t\t\t\t60000\t\t\t5\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t45min\t\t\t\t\t-3%/ly\nStage3\t\t120GW\t\t\t\t\t\t90000\t\t\t8\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t20min\t\t\t\t\t-2%/ly\nStage4\t\t240GW\t\t\t\t\t120000\t\t15\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t10min\t\t\t\t\t-1%/ly\nStage5\t\t540GW\t\t\t\t\t150000+\t\tInfinite\t\t\t\t\t\t\t\t\t\t\t\t\t\t5min\t\t\t\t\tNone\n\nYou can only build one star cannon at most.", "恒星炮可以用来在虫洞生成后摧毁虫洞，从而削弱即将到来的敌人的总强度，降低下次入侵的防御难度。在虫洞生成后，且敌人入侵开始之前，如果恒星炮已建造了至少第一阶段且冷却完毕，你就可以通过顶部警示UI中的[恒星炮开火]按钮命令恒星炮启动并开始摧毁虫洞（在达到阶段3后，充能完毕的恒星炮会在虫洞生成后自动启动）。每次入侵，随着你不断摧毁虫洞，剩余虫洞的抗性也会不断提升，从而需要花费更多的时间来摧毁，直到只剩一个虫洞时，敌人会将全部的能量用于维持其稳定开启，因此最后一个虫洞无论如何也不会被摧毁。\n\n就像建造戴森球、物质解压器等其他巨构一样，你需要在一个恒星上首先规划恒星炮，然后发射恒星炮组件的运载火箭和太阳帆构建恒星炮。随着你建造的节点、壳面逐渐增大，恒星炮的建造阶段会不断推进，并提高伤害、充能速度等属性，直到第五阶段。以下为恒星炮各阶段的数据：\n\n阶段\t\t所需能量\t\t每秒伤害\t\t连续开火次数\t\t充能时间\t\t伤害衰减\n阶段1\t\t6GW\t\t\t\t30000\t\t\t\t3\t\t\t\t\t\t\t\t\t75min\t\t\t\t-3%/ly\n阶段2\t\t30GW\t\t\t\t60000\t\t\t\t5\t\t\t\t\t\t\t\t\t45min\t\t\t\t-3%/ly\n阶段3\t\t120GW\t\t\t\t90000\t\t\t\t8\t\t\t\t\t\t\t\t\t20min\t\t\t\t-2%/ly\n阶段4\t\t240GW\t\t\t120000\t\t\t15\t\t\t\t\t\t\t\t\t10min\t\t\t\t-1%/ly\n阶段5\t\t540GW\t\t\t150000+\t\t\t无限制\t\t\t\t\t\t5min\t\t\t\t无\n\n你最多只能建造一个恒星炮。");
+            ProtoRegistry.RegisterString("深空来敌介绍5标题", "All Relics", "所有圣物");
+        }
+
+        public static void RewriteTutorioProtosWhenLoad()
+        {
+            TutorialProto relicTutorial = LDB.tutorial.Select(25);
+            if (relicTutorial != null)
+            {
+                try
+                {
+                    string text = "";
+                    string text2 = "";
+                    for (int type = 0; type < 2; type++)
+                    {
+                        text += "<size=16>" + ($"圣物稀有度{type}").Translate() + "</size>\n";
+                        for (int num = 0; num < Relic.relicNumByType[type]; num++)
+                        {
+                            text += $"遗物名称带颜色{type}-{num}".Translate().Split('[')[0].Trim() + "</color>\n";
+                            text += $"遗物描述{type}-{num}".Translate();
+                            if ($"relicTipText{type}-{num}".Translate() != $"relicTipText{type}-{num}")
+                            {
+                                text += "\n" + $"relicTipText{type}-{num}".Translate();
+                            }
+                            text += "\n\n";
+                        }
+                        text += "\n";
+                    }
+                    relicTutorial.PreText = text;
+                    for (int type = 2; type < 4; type++)
+                    {
+                        text2 += "<size=16>" + ($"圣物稀有度{type}").Translate() + "</size>\n";
+                        for (int num = 0; num < Relic.relicNumByType[type]; num++)
+                        {
+                            text2 += $"遗物名称带颜色{type}-{num}".Translate().Split('[')[0].Trim() + "</color>\n";
+                            text2 += $"遗物描述{type}-{num}".Translate();
+                            if ($"relicTipText{type}-{num}".Translate() != $"relicTipText{type}-{num}")
+                            {
+                                text2 += "\n" + $"relicTipText{type}-{num}".Translate();
+                            }
+                            text2 += "\n\n";
+                        }
+                        text2 += "\n";
+                    }
+                    relicTutorial.PostText = text2;
+                }
+                catch (Exception)
+                { }
+            }
         }
 
         // 在import末尾调用
@@ -1276,9 +1350,10 @@ namespace DSP_Battle
         {
             if (i == -1)
             {
-                GameMain.history.UnlockTutorial(21);
-                GameMain.history.UnlockTutorial(22);
-                GameMain.history.UnlockTutorial(23);
+                for (int id = 21; id <= 25; id++)
+                {
+                    GameMain.history.UnlockTutorial(id);
+                }
             }
             else
                 GameMain.history.UnlockTutorial(i);

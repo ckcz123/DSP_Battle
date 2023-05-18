@@ -122,6 +122,24 @@ namespace DSP_Battle
                         break;
                     case "setstg":
                         Configs.nextWaveIntensity = Convert.ToInt32(param[1]);
+                        int intensity = Configs.nextWaveIntensity; 
+                        int avg = Configs.nextWaveIntensity / (Configs.enemyIntensity[0] + Configs.enemyIntensity[1]
+                            + Configs.enemyIntensity[2] + Configs.enemyIntensity[3] + Configs.enemyIntensity[4]);
+                        for (int i = 4; i >= 1; --i)
+                        {
+                            if (Configs.nextWaveIntensity <= 1000)
+                            {
+                                double v = EnemyShips.random.NextDouble() / 2 + 0.25;
+                                Configs.nextWaveEnemy[i] = (int)(intensity * v / Configs.enemyIntensity[i]);
+                            }
+                            else
+                            {
+                                Configs.nextWaveEnemy[i] = Math.Min(intensity / Configs.enemyIntensity[i],
+                                    avg + EnemyShips.random.Next(0, 50) - 25);
+                            }
+                            intensity -= Configs.nextWaveEnemy[i] * Configs.enemyIntensity[i];
+                        }
+                        Configs.nextWaveEnemy[0] = intensity / Configs.enemyIntensity[0];
                         Print($"Next wave intensity is set to {param[1]}.");
                         break;
                     case "seteasy":
@@ -201,6 +219,28 @@ namespace DSP_Battle
                             Relic.relics[type5] = Relic.relics[type5] ^ 1 << num5;
                         UIRelic.RefreshSlotsWindowUI();
                         Print($"Remove relic " + ("遗物名称" + type5.ToString() + "-" + num5.ToString()).Translate().Split('\n')[0]);
+                        break;
+                    case "lsrelic":
+                        string allRelicNames = "";
+                        for (int i = 0; i < 4; i++)
+                        {
+                            if (i == 0)
+                                allRelicNames += "<color=#ffa03d>";
+                            else if (i == 1)
+                                allRelicNames += "<color=#d060ff>";
+                            else if (i == 2)
+                                allRelicNames += "<color=#20c0ff>";
+                            else if (i == 3)
+                                allRelicNames += "<color=#30ff30>";
+                            for (int j = 0; j < Relic.relicNumByType[i]; j++)
+                            {
+                                allRelicNames += $"{i}-{j}:{($"遗物名称{i}-{j}").Translate().Split('\n')[0]}    ";
+                            }
+                            allRelicNames += "</color>";
+                            if (i < 3)
+                                allRelicNames += "\n";
+                        }
+                        Print(allRelicNames, 10);
                         break;
                     case "kill":
                     case "killall":
@@ -364,7 +404,10 @@ namespace DSP_Battle
         public static void Show()
         {
             if (consoleObj != null)
+            {
                 consoleObj.SetActive(true);
+                consoleInputField.ActivateInputField();
+            }
         }
 
         public static void Hide()
@@ -415,9 +458,9 @@ namespace DSP_Battle
             string allCmds = "---------------------- help ----------------------" + "\n" +
                 "<color=#ffffff>h</color>或<color=#ffffff>help</color> 输出所有可用命令" + "\n" +
                 "<color=#ffffff>c</color>或<color=#ffffff>clear</color> 清空输出缓存" + "\n" +
-                "<color=#ffffff>cur</color> 输出伊卡洛斯所在星系的starId和starIndex，并输入伊卡洛斯所在行星的planetId" + "\n" +
+                "<color=#ffffff>cur</color> 输出伊卡洛斯所在星系的starId和starIndex，并输出伊卡洛斯所在行星的planetId" + "\n" +
                 "<color=#ffffff>settime [param1]</color> 设定下次进攻时间为[param1]分钟后开始，若尚未有下次进攻，则立刻生成下次进攻但保留默认进攻的预留时间" + "\n" +
-                "<color=#ffffff>setstar [param1]</color> 更改下次进攻的恒星系为[param1]，若尚未有下次进攻则命令无效" + "\n" +
+                "<color=#ffffff>setstar [param1]</color> 更改下次进攻的恒星系为starIndex=[param1]的恒星，若尚未有下次进攻则命令无效" + "\n" +
                 "<color=#ffffff>setelite</color>或<color=#ffffff>nsetelite</color> 设定下次进攻为或不为精英波次" + "\n" +
                 "<color=#ffffff>setstg [param1]</color> 设定下次进攻强度为[param1]" + "\n" +
                 "<color=#ffffff>seteasy</color>或<color=#ffffff>setnorm</color>或<color=#ffffff>sethard</color> 设定游戏难度为简单、普通或困难" + "\n" +
@@ -430,12 +473,13 @@ namespace DSP_Battle
                 "<color=#ffffff>newrelic</color> 立刻随机并打开选择圣物窗口" + "\n" +
                 "<color=#ffffff>addrelic [param1] [param2]</color> 立刻获得第[param1]类型第[param2]号圣物" + "\n" +
                 "<color=#ffffff>rmrelic [param1] [param2]</color> 立刻删除第[param1]类型第[param2]号圣物（如果已经拥有）" + "\n" +
+                "<color=#ffffff>lsrelic</color> 展示所有圣物名称" + "\n" +
                 "<color=#ffffff>kill</color> 如果在战斗中，立刻击杀所有敌舰" + "\n" +
                 "<color=#ffffff>am [param1]</color> 立刻给予[param1]个异星矩阵" + "\n" +
                 "<color=#ffffff>give [param1] [param2]</color> 立刻给予[param2]个itemId为[param1]的物品" + "\n" +
                 "<color=#ffffff>cool</color> 恒星炮立即冷却完毕" + "\n" +
                 "---------------------- help ----------------------";
-            Print(allCmds,22, false); // 这个forceLineCount传值取决于allCmds的行数
+            Print(allCmds,23, false); // 这个forceLineCount传值取决于allCmds的行数
         }
 
         public static void ClearOutputField()

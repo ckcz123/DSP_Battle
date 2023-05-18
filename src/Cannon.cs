@@ -480,7 +480,7 @@ namespace DSP_Battle
             return result;
         }
 
-        private static bool isCannon(int protoId)
+        public static bool isCannon(int protoId)
         {
             return protoId != 2311;
         }

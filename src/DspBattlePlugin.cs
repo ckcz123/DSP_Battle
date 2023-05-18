@@ -244,6 +244,11 @@ namespace DSP_Battle
             __instance.closeDelayTime = 3f;
         }
 
+        public static void InitStaticDataWhenLoad()
+        { 
+            BattleProtos.RewriteTutorioProtosWhenLoad();
+        }
+
         public void Export(BinaryWriter w)
         {
             Configs.Export(w);
@@ -286,6 +291,8 @@ namespace DSP_Battle
             BattleProtos.ReCheckTechUnlockRecipes();
             BattleProtos.UnlockTutorials();
             BattleBGMController.InitWhenLoad();
+
+            InitStaticDataWhenLoad();
         }
 
         public void IntoOtherSave()
@@ -314,6 +321,7 @@ namespace DSP_Battle
             BattleProtos.UnlockTutorials();
             BattleBGMController.InitWhenLoad();
 
+            InitStaticDataWhenLoad();
         }
 
 

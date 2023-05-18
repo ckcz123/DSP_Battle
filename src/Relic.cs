@@ -983,9 +983,35 @@ namespace DSP_Battle
         }
 
         /// <summary>
+        /// Relic1-7
+        /// </summary>
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(EjectorComponent), "InternalUpdate")]
+        public static void Carbon2Patch(ref EjectorComponent __instance, float power, DysonSwarm swarm, AstroData[] astroPoses, AnimData[] animPool, int[] consumeRegister, ref uint __result)
+        {
+            if (!Relic.HaveRelic(1, 7)) return;
+            int planetId = __instance.planetId;
+            int starIndex = planetId / 100 - 1;
+            PlanetFactory factory = GameMain.galaxy.stars[starIndex].planets[planetId % 100 - 1].factory;
+            int gmProtoId = factory.entityPool[__instance.entityId].protoId;
+            if (Cannon.isCannon(gmProtoId) || power < 0.1f) return;
+
+            float num2 = (float)Cargo.accTableMilli[__instance.incLevel];
+            int num3 = (int)(power * 10000f * (1f + num2) + 0.1f);
+            if(__instance.orbitId != 0)
+            {
+                if (__instance.direction == 1)
+                    __instance.time += num3;
+                else if(__instance.direction == -1)
+                    __instance.time -= num3;
+            }
+            return;
+        }
+
+
+        /// <summary>
         /// 每帧调用检查，不能在import的时候调用，会因为所需的DysonSphere是null而无法完成重新计算和赋值
         /// </summary>
-
         public static void TryRecalcDysonLumin()
         {
             if (!Relic.alreadyRecalcDysonStarLumin && Relic.HaveRelic(0, 3))
