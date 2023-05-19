@@ -20,13 +20,14 @@ namespace DSP_Battle
         public static long energyConsumptionPerLaunch = 1000000000; //发射水滴耗能
         public static long energyConsumptionPerAttack = 10000000; //水滴攻击耗能，不再使用
         public static long energyConsumptionPerTick = 500000; //水滴每帧耗能
-        public static int maxWorkingDroplets = 5;
+        public const int dropletsUpperLimit = 20; // 游戏支持的最大水滴数量
+        public static int maxWorkingDroplets = dropletsUpperLimit; // 受限于机甲当前能量，最大可支持的同时工作的水滴数量
         public static List<int> warpRushCharge = new List<int> { 0, 0, 0, 0, 0 }; // 足够充能时，如果水滴下一个目标距离超过warpRushDistThr，则消耗充能瞬移过去
         public static int warpRushNeed = 180; // 水滴远距离瞬移所需充能时间（帧数）
         public static int warpRushDistThr = 10000; // 水滴下一个目标距离大于此距离才会触发瞬移
 
         //存档内容
-        public static Droplet[] dropletPool = new Droplet[5];
+        public static Droplet[] dropletPool = new Droplet[21];
         public static int maxDroplet = 2;
         public static int bonusDamage = 0;
         public static int bonusDamageLimit = 0;
@@ -34,14 +35,14 @@ namespace DSP_Battle
         public static void InitAll()
         {
             maxDroplet = 2;
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < dropletsUpperLimit; i++)
             {
                 dropletPool[i] = new Droplet(i);
             }
             bonusDamage = 0;
             bonusDamageLimit = Relic.dropletDamageLimitGrowth;
             warpRushCharge = new List<int>();
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < dropletsUpperLimit; i++)
             {
                 warpRushCharge.Add(0);
             }
@@ -73,7 +74,7 @@ namespace DSP_Battle
         public static void GameData_GameTick(ref GameData __instance, long time)
         {
             //根据科技等级确定上限
-            if (GameMain.history.techStates.ContainsKey(4929) && GameMain.history.techStates[4929].unlocked) { maxDroplet = 5; }
+            if (GameMain.history.techStates.ContainsKey(4929) && GameMain.history.techStates[4929].unlocked) { maxDroplet = 20; }
             else if (GameMain.history.techStates.ContainsKey(4928) && GameMain.history.techStates[4928].unlocked) { maxDroplet = 4; }
             else if (GameMain.history.techStates.ContainsKey(4927) && GameMain.history.techStates[4927].unlocked) { maxDroplet = 3; }
             else { maxDroplet = 2; }
@@ -234,7 +235,7 @@ namespace DSP_Battle
 
         public static void Export(BinaryWriter w) 
         {
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < dropletsUpperLimit; i++)
             {
                 dropletPool[i].Export(w);
             }
@@ -249,6 +250,13 @@ namespace DSP_Battle
                 for (int i = 0; i < 5; i++)
                 {
                     dropletPool[i].Import(r);
+                }
+                if (Configs.versionWhenImporting >= 30230519)
+                {
+                    for (int i = 5; i < dropletsUpperLimit; i++)
+                    {
+                        dropletPool[i].Import(r);
+                    }
                 }
             }
             if (Configs.versionWhenImporting >= 30221118)

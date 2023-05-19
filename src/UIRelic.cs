@@ -526,7 +526,7 @@ namespace DSP_Battle
                     relic1BtnImg.color = colorBtnEpic;
                     relic1UIBtn.transitions[0].normalColor = colorBtnEpic;
                     relic1UIBtn.transitions[0].mouseoverColor = colorBtnEpicH;
-                    relic1UIBtn.transitions[0].pressedColor= colorBtnEpicP;
+                    relic1UIBtn.transitions[0].pressedColor = colorBtnEpicP;
                 }
                 else if (r1type == 2)
                 {
@@ -535,6 +535,14 @@ namespace DSP_Battle
                     relic1UIBtn.transitions[0].normalColor = colorBtnRare;
                     relic1UIBtn.transitions[0].mouseoverColor = colorBtnRareH;
                     relic1UIBtn.transitions[0].pressedColor = colorBtnRareP;
+                }
+                else if (r1type == 3)
+                {
+                    relic1Name.color = colorTextCommon;
+                    relic1BtnImg.color = colorBtnCommon;
+                    relic1UIBtn.transitions[0].normalColor = colorBtnCommon;
+                    relic1UIBtn.transitions[0].mouseoverColor = colorBtnCommonH;
+                    relic1UIBtn.transitions[0].pressedColor = colorBtnCommonP;
                 }
                 else
                 {
@@ -756,7 +764,7 @@ namespace DSP_Battle
                 int inc = 0;
                 GameMain.mainPlayer.package.TakeTailItems(ref itemId, ref need, out inc, false);
             }
-            if (Relic.GetRelicCount() >= 8) // 如果遗物已满，则刷新的都是删除随机低稀有度遗物的按钮
+            if (Relic.GetRelicCount() >= 8) // 如果遗物已满，则刷新的都是删除遗物的按钮
             {
                 List<int> relicAlreadyHave = new List<int>();
                 for (int type = 0; type < 4; type++)
@@ -784,7 +792,7 @@ namespace DSP_Battle
                     double rand = Utils.RandDouble();
                     double rollRatio = Relic.HaveRelic(0, 9) ? 1.5 : 1;
                     // relic0-9 五叶草 可以让更高稀有度的遗物刷新概率提高
-                    for (int type = 0; type < 4; type++)
+                    for (int type = 0; type < 5; type++)
                     {
                         if (rand <= Relic.relicTypeProbability[type] * rollRatio || (i == 0 && type == 2 && rand < Relic.firstRelicIsRare)) // 后面的判别条件是，第一个遗物至少是稀有以上的概率为独立的较大的一个概率
                         {
@@ -935,7 +943,7 @@ namespace DSP_Battle
         public static void RefreshSlotsWindowUI()
         {
             int slotNum = 0;
-            for (int type = 0; type < 4; type++)
+            for (int type = 0; type < 5; type++)
             {
                 for (int num = 0; num < Relic.relicNumByType[type]; num++)
                 {

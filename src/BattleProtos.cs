@@ -1279,7 +1279,7 @@ namespace DSP_Battle
             tp5.Name = "深空来敌介绍5标题".Translate();
             tp5.name = "深空来敌介绍5标题".Translate();
             tp5.Video = "";
-            tp5.PreText = "深空来敌介绍5前字";
+            tp5.PreText = "";
             tp5.PostText = "";
             tp5.ID = 25;
             LDBTool.PreAddProto(tp5);
@@ -1306,7 +1306,7 @@ namespace DSP_Battle
                 try
                 {
                     string text = "";
-                    string text2 = "";
+                    string text2 = ""; //这里必须分成两部分要不然英文部分过长，超过65000报错，无法显示
                     for (int type = 0; type < 2; type++)
                     {
                         text += "<size=16>" + ($"圣物稀有度{type}").Translate() + "</size>\n";

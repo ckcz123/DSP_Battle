@@ -11,9 +11,9 @@ namespace DSP_Battle
 {
     public class Relic
     {
-        // type 遗物类型 0=legend 1=epic 2=rare 3=common
+        // type 遗物类型 0=legend 1=epic 2=rare 3=common 4=cursed
         // 二进制存储已获取的遗物，需要存档
-        public static int[] relics = { 0, 0, 0, 0 };
+        public static int[] relics = { 0, 0, 0, 0, 0 };
         // 其他需要存档的数据
         public static int relic0_2Version = 1; // 女神泪重做，老存档此项为0不改效果，新存档此项为1才改效果
         public static int relic0_2Charge = 0; // 新版女神泪充能计数
@@ -22,8 +22,8 @@ namespace DSP_Battle
 
         //不存档的设定参数
         public static int relicHoldMax = 8; // 最多可以持有的遗物数
-        public static int[] relicNumByType = { 11, 12, 18, 18 }; // 当前版本各种类型的遗物各有多少种，每种类型均不能大于30
-        public static double[] relicTypeProbability = { 0.03, 0.09, 0.2, 1 }; // 各类型遗物刷新的概率，注意不是权重，是有次序地判断随机数
+        public static int[] relicNumByType = { 11, 12, 18, 18, 2 }; // 当前版本各种类型的遗物各有多少种，每种类型均不能大于30
+        public static double[] relicTypeProbability = { 0.03, 0.09, 0.2, 0.96, 1 }; // 各类型遗物刷新的概率，注意不是权重，是有次序地判断随机数
         public static double[] relicRemoveProbabilityByRelicCount = { 0, 0, 0, 0, 0.05, 0.1, 0.12, 0.15, 1, 1, 1 }; // 拥有i个reilc时，第三个槽位刷新的是删除relic的概率
         public static double firstRelicIsRare = 0.5; // 第一个遗物至少是稀有的概率
         public static bool canSelectNewRelic = false; // 当canSelectNewRelic为true时点按按钮才是有效的选择
@@ -70,7 +70,7 @@ namespace DSP_Battle
         public static int AddRelic(int type, int num)
         {
             if (num > 30) return -1; // 序号不存在
-            if (type > 3 || type < 0) return -2; // 稀有度不存在
+            if (type > 4 || type < 0) return -2; // 稀有度不存在
             if ((relics[type] & 1 << num) > 0) return 0; // 已有
             if (GetRelicCount() >= relicHoldMax) return -3; // 超上限
 
@@ -128,7 +128,7 @@ namespace DSP_Battle
 
         public static void AskRemoveRelic(int removeType, int removeNum)
         {
-            if (removeType > 3 || removeNum > 30)
+            if (removeType > 4 || removeNum > 30)
             {
                 UIMessageBox.Show("Failed".Translate(), "Failed. Unknown relic.".Translate(), "确定".Translate(), 1);
                 RegretRemoveRelic();
@@ -161,7 +161,7 @@ namespace DSP_Battle
         public static bool HaveRelic(int type, int num)
         {
             //if (Configs.developerMode &&( type == 0 && num == 5 ||  type == 1 && num == 9 )) return true;
-            if (type > 3 || type < 0 || num > 30) return false;
+            if (type > 4 || type < 0 || num > 30) return false;
             if ((relics[type] & (1 << num)) > 0) return true;
             return false;
         }
@@ -169,9 +169,9 @@ namespace DSP_Battle
         // 输出遗物数量，type输入-1为获取全部类型的遗物数量总和
         public static int GetRelicCount(int type = -1)
         {
-            if (type < 0 || type > 3)
+            if (type < 0 || type > 4)
             {
-                return GetRelicCount(0) + GetRelicCount(1) + GetRelicCount(2) + GetRelicCount(3);
+                return GetRelicCount(0) + GetRelicCount(1) + GetRelicCount(2) + GetRelicCount(3) + GetRelicCount(4);
             }
             else
             {
@@ -184,6 +184,12 @@ namespace DSP_Battle
                 }
                 return count;
             }
+        }
+
+        // 返回受诅咒的遗物的数量
+        public static int GetCursedRelicCount()
+        {
+            return GetRelicCount(4);
         }
 
         // 允许玩家选择一个新的遗物
@@ -337,6 +343,7 @@ namespace DSP_Battle
             w.Write(relics[1]);
             w.Write(relics[2]);
             w.Write(relics[3]);
+            w.Write(relics[4]);
             w.Write(relic0_2Version);
             w.Write(relic0_2Charge);
             w.Write(relic0_2CanActivate);
@@ -351,6 +358,10 @@ namespace DSP_Battle
                 relics[1] = r.ReadInt32();
                 relics[2] = r.ReadInt32();
                 relics[3] = r.ReadInt32();
+                if (Configs.versionWhenImporting >= 30230519)
+                    relics[4] = r.ReadInt32();
+                else
+                    relics[4] = 0;
                 RelicFunctionPatcher.CheckAndModifyStarLuminosity();
             }
             else
@@ -359,6 +370,7 @@ namespace DSP_Battle
                 relics[1] = 0;
                 relics[2] = 0;
                 relics[3] = 0;
+                relics[4] = 0;
             }
             if (Configs.versionWhenImporting >= 30230426)
             {
@@ -383,6 +395,7 @@ namespace DSP_Battle
             relics[1] = 0;
             relics[2] = 0;
             relics[3] = 0;
+            relics[4] = 0;
             InitAll();
         }
     }
