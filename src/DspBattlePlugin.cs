@@ -173,6 +173,8 @@ namespace DSP_Battle
                 if (ShieldGenerator.currentShield.ContainsKey(planetId))
                     ShieldGenerator.currentShield.AddOrUpdate(planetId, 100000, (x, y) => y + 100000);
             }
+            if (Input.GetKeyDown(KeyCode.Escape))
+                UIDevConsole.Hide();
             UIRelic.SelectionWindowAnimationUpdate();
             UIRelic.CheckRelicSlotsWindowShowByMouse();
             UIRelic.SlotWindowAnimationUpdate();
