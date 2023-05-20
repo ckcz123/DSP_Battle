@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
@@ -13,7 +14,6 @@ namespace DSP_Battle
     {
         public static List<ConcurrentDictionary<int, int>> MissileTargets; //记录导弹的目标
         public static List<ConcurrentDictionary<int, int>> missileProtoIds; //记录导弹还能造成多少伤害
-
 
         private static MethodInfo methodInfo;
 
@@ -253,7 +253,6 @@ namespace DSP_Battle
                             __instance.RemoveDysonRocket(i);
                             continue;
                         }
-
                         int missileId = missileProtoIds[starIndex][i];
                         float missileMaxSpeed = (float)Configs.missile1Speed;
                         int damage = Configs.missile1Atk;
@@ -273,12 +272,10 @@ namespace DSP_Battle
                         }
                         float missileSpeedUp = (float)missileMaxSpeed / 200f;
 
-
-                        //DysonSphereLayer dysonSphereLayer = __instance.layersIdBased[dysonRocket.node.layerId];
                         AstroData astroPose = astroPoses[dysonRocket.planetId];
                         VectorLF3 vectorLF = astroPose.uPos - dysonRocket.uPos;
                         double num8 = Math.Sqrt(vectorLF.x * vectorLF.x + vectorLF.y * vectorLF.y + vectorLF.z * vectorLF.z) - (double)astroPose.uRadius;
-                        if (dysonRocket.t <= 0f) //如果离地面很近，是个加速从地面直线向上冲的过程
+                        if (dysonRocket.t < 0f)
                         {
                             if (num8 < 200.0) //如果离地面很近，是个加速从地面直线向上冲的过程
                             {
@@ -294,182 +291,226 @@ namespace DSP_Battle
                                 {
                                     dysonRocket.t = -1f;
                                 }
+                                VectorLF3 movingFollowPlanet = Vector3.zero;
+                                VectorLF3 v = dysonRocket.uPos - astroPose.uPos;
+                                VectorLF3 v2 = Maths.QInvRotateLF(astroPose.uRot, v);
+                                VectorLF3 lhs = Maths.QRotateLF(astroPose.uRotNext, v2) + astroPose.uPosNext;
+                                Quaternion rhs3 = Quaternion.Inverse(astroPose.uRot) * dysonRocket.uRot;
+                                Quaternion b2 = astroPose.uRotNext * rhs3;
+                                double disRatioToSurface = (double)(2f - (float)num8 / 200f);
+                                disRatioToSurface = (3.0 - disRatioToSurface - disRatioToSurface) * disRatioToSurface * disRatioToSurface;
+                                movingFollowPlanet = (lhs - dysonRocket.uPos) * disRatioToSurface;
+                                dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b2, (float)disRatioToSurface);
+                                double tickSpeed = dysonRocket.uSpeed * num;
+                                VectorLF3 planetMove = astroPose.uPosNext - astroPose.uPos;
+                                //dysonRocket.uPos.x = dysonRocket.uPos.x + (double)dysonRocket.uVel.x * tickSpeed + movingFollowPlanet.x;
+                                //dysonRocket.uPos.y = dysonRocket.uPos.y + (double)dysonRocket.uVel.y * tickSpeed + movingFollowPlanet.y;
+                                //dysonRocket.uPos.z = dysonRocket.uPos.z + (double)dysonRocket.uVel.z * tickSpeed + movingFollowPlanet.z;
+                                if (num8 < 180.0)
+                                {
+                                    dysonRocket.uPos = astroPose.uPos + Maths.QRotateLF(astroPose.uRot, (VectorLF3)dysonRocket.launch * ((double)astroPose.uRadius + num8)) + planetMove;
+                                    dysonRocket.uRot = astroPose.uRot * Quaternion.LookRotation(dysonRocket.launch);
+                                }
+                                if ((astroPose.uPos - dysonRocket.uPos).magnitude >= 200)
+                                    dysonRocket.t = 0;
+                                __instance.rocketPool[i] = dysonRocket;
                             }
-                            else //离地面超过200
+                            else //离地面超过或等于200
                             {
-
-                                VectorLF3 vectorLF2 = dysonRocket.uPos;
-                                //根据是导弹还是火箭确定
-                                if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]) && EnemyShips.ships[MissileTargets[starIndex][i]].state == EnemyShip.State.active)//如果以前的目标敌人还存在
-                                {
-                                    vectorLF2 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
-                                }
-                                else
-                                {
-                                    int newTargetId = FindTarget(starIndex, dysonRocket.planetId);
-                                    if (newTargetId > 0)
-                                    {
-                                        MissileTargets[starIndex][i] = newTargetId;
-                                        vectorLF2 = EnemyShips.ships[newTargetId].uPos - dysonRocket.uPos;
-                                        dysonRocket.t = 0; //让其回到第一阶段，允许避障
-                                    }
-                                    else
-                                    {
-                                        missileProtoIds[starIndex][i] = 0;
-                                        __instance.RemoveDysonRocket(i);
-                                        goto IL_BDF;
-                                    }
-                                }
-
-                                //根据距离地表的距离设置速度，被我改成一直加速了
-                                double num11 = Math.Sqrt(vectorLF2.x * vectorLF2.x + vectorLF2.y * vectorLF2.y + vectorLF2.z * vectorLF2.z);
-                                if (num11 < missileMaxSpeed * 3) //如果距离目标足够近，则进入下一阶段
-                                {
-                                    dysonRocket.t = 0.0001f;
-                                }
-                                else
-                                {
-                                    dysonRocket.t = 0f;
-                                }
-                                double num12 = num11 / ((double)dysonRocket.uSpeed + 0.1) * 0.382;
-                                double num13 = num11 / (double)num5;
-                                float num14 = (float)((double)dysonRocket.uSpeed * num12) + 150f; //这里对于导弹，num14是没有用的
-                                if (num14 > num5)
-                                {
-                                    num14 = num5;
-                                }
-                                if (dysonRocket.uSpeed < missileMaxSpeed)
-                                {
-                                    dysonRocket.uSpeed += missileSpeedUp;
-                                }
-                                //else if (dysonRocket.uSpeed > num14 + num4)
-                                //{
-                                //	dysonRocket.uSpeed -= num4;
-                                //}
-                                else
-                                {
-                                    dysonRocket.uSpeed = missileMaxSpeed;
-                                }
-
-                                //下面难道是躲避巨星？
-                                int num15 = -1;
-                                double rhs = 0.0;
-                                double num16 = 1E+40;
-                                int num17 = dysonRocket.planetId / 100 * 100;
-                                for (int j = num17; j < num17 + 10; j++)
-                                {
-                                    float uRadius = astroPoses[j].uRadius;
-                                    if (uRadius >= 1f)
-                                    {
-                                        VectorLF3 vectorLF3 = dysonRocket.uPos - astroPoses[j].uPos;
-                                        double num18 = vectorLF3.x * vectorLF3.x + vectorLF3.y * vectorLF3.y + vectorLF3.z * vectorLF3.z;
-                                        double num19 = -((double)dysonRocket.uVel.x * vectorLF3.x + (double)dysonRocket.uVel.y * vectorLF3.y + (double)dysonRocket.uVel.z * vectorLF3.z);
-                                        if ((num19 > 0.0 || num18 < (double)(uRadius * uRadius * 7f)) && num18 < num16)
-                                        {
-                                            rhs = ((num19 < 0.0) ? 0.0 : num19);
-                                            num15 = j;
-                                            num16 = num18;
-                                        }
-                                    }
-                                }
-                                VectorLF3 rhs2 = VectorLF3.zero;
-                                float num20 = 0f;
-                                if (num15 > 0)
-                                {
-                                    float num21 = astroPoses[num15].uRadius;
-                                    bool flag = num15 % 100 == 0;
-                                    if (flag)
-                                    {
-                                        num21 = 1000 - 400f; //dysonSphereLayer.orbitRadius - 400f
-                                    }
-                                    double num22 = 1.25;
-                                    VectorLF3 vectorLF4 = dysonRocket.uPos + (VectorLF3)dysonRocket.uVel * rhs - astroPoses[num15].uPos;
-                                    double num23 = vectorLF4.magnitude / (double)num21;
-                                    if (num23 < num22)
-                                    {
-                                        double num24 = Math.Sqrt(num16) - (double)num21 * 0.82;
-                                        if (num24 < 1.0)
-                                        {
-                                            num24 = 1.0;
-                                        }
-                                        double num25 = (num23 - 1.0) / (num22 - 1.0);
-                                        if (num25 < 0.0)
-                                        {
-                                            num25 = 0.0;
-                                        }
-                                        num25 = 1.0 - num25 * num25;
-                                        double num26 = (double)(dysonRocket.uSpeed - 6f) / num24 * 2.5 - 0.01;
-                                        if (num26 > 1.5)
-                                        {
-                                            num26 = 1.5;
-                                        }
-                                        else if (num26 < 0.0)
-                                        {
-                                            num26 = 0.0;
-                                        }
-                                        num26 = num26 * num26 * num25;
-                                        num20 = (float)(flag ? 0.0 : (num26 * 0.5));
-                                        rhs2 = vectorLF4.normalized * num26 * 2.0;
-                                    }
-                                }
-                                float num27 = 1f / (float)num13 - 0.05f;
-                                num27 += num20;
-                                float t = Mathf.Lerp(0.005f, 0.08f, num27);
-                                dysonRocket.uVel = Vector3.Slerp(dysonRocket.uVel, vectorLF2.normalized + rhs2, t).normalized;
-                                Quaternion b;
-                                if (num11 < 350.0)
-                                {
-                                    float t2 = ((float)num11 - 50f) / 300f;
-                                    b = Quaternion.Slerp(Quaternion.LookRotation(vectorLF2), Quaternion.LookRotation(dysonRocket.uVel), t2);//b = Quaternion.Slerp(dysonSphereLayer.NodeURot(dysonRocket.node), Quaternion.LookRotation(dysonRocket.uVel), t2);
-                                }
-                                else
-                                {
-                                    b = Quaternion.LookRotation(dysonRocket.uVel);
-                                }
-                                if (vectorLF2.magnitude < missileMaxSpeed * 0.5) //如果离得很近，则增大转弯速度
-                                {
-                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.4f);
-                                }
-                                else if (vectorLF2.magnitude < missileMaxSpeed)
-                                {
-                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.3f);
-                                }
-                                else
-                                {
-                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.2f);
-                                }
-
+                                dysonRocket.t = 0;
                             }
+                            if (dysonRocket.t > 0)
+                                dysonRocket.t = 0;
                         }
-                        else
+                        if (dysonRocket.t == 0) // 不是else if 的原因是：当上一个if结尾因为距离地面超过200而将t改为0的状态后，可以直接继续执行t==0的逻辑
                         {
-
-
-                            VectorLF3 vectorLF5 = dysonRocket.uPos;
-                            //之前的目标是否还存活
-                            if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]) && EnemyShips.ships[MissileTargets[starIndex][i]].state == EnemyShip.State.active)//如果以前的目标敌人还存在
+                            VectorLF3 toTarget = dysonRocket.uPos; //这个值下面立刻会修改
+                            bool needFindNewTarget = true;
+                            if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
                             {
-                                vectorLF5 = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
+                                EnemyShip ship = null;
+                                if (EnemyShips.ships.TryGetValue(MissileTargets[starIndex][i], out ship) && ship.state == EnemyShip.State.active)
+                                {
+                                    needFindNewTarget = false;
+                                    toTarget = ship.uPos - dysonRocket.uPos;
+                                }
                             }
-                            else
+
+                            if (needFindNewTarget)
                             {
-                                int newTargetId = FindTarget(starIndex, dysonRocket.planetId);
+                                int newTargetId = FindTarget(starIndex, dysonRocket.planetId, i); // 这个i是种子偏移
                                 if (newTargetId > 0)
                                 {
                                     MissileTargets[starIndex][i] = newTargetId;
-                                    vectorLF5 = EnemyShips.ships[newTargetId].uPos - dysonRocket.uPos;
-                                    dysonRocket.t = 0; //让其回到第一阶段，允许避障
+                                    EnemyShip ship = null;
+                                    if (EnemyShips.ships.TryGetValue(newTargetId, out ship))
+                                        toTarget = ship.uPos - dysonRocket.uPos;
                                 }
                                 else
                                 {
-                                    missileProtoIds[starIndex][i] = 0;
                                     __instance.RemoveDysonRocket(i);
                                     goto IL_BDF;
                                 }
                             }
 
-                            double num28 = Math.Sqrt(vectorLF5.x * vectorLF5.x + vectorLF5.y * vectorLF5.y + vectorLF5.z * vectorLF5.z);
-                            if (num28 < dmgRange * 0.5 && num28 < 400)
+                            //设置速度
+                            double distanceToTarget = Math.Sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y + toTarget.z * toTarget.z);
+                            if (distanceToTarget < missileMaxSpeed * 3) //如果与目标足够近，进入下一阶段
+                            {
+                                dysonRocket.t = 0.0001f;
+                            }
+                            else
+                            {
+                                dysonRocket.t = 0f;
+                            }
+                            double num12 = distanceToTarget / ((double)dysonRocket.uSpeed + 0.1) * 0.382;
+                            double num13 = distanceToTarget / (double)num5;
+                            float num14 = (float)((double)dysonRocket.uSpeed * num12) + 150f; //这里对于导弹，num14是没有用的
+                            if (num14 > num5)
+                            {
+                                num14 = num5;
+                            }
+                            if (dysonRocket.uSpeed < missileMaxSpeed)
+                            {
+                                dysonRocket.uSpeed += missileSpeedUp;
+                            }
+                            else
+                            {
+                                dysonRocket.uSpeed = missileMaxSpeed;
+                            }
+
+                            //躲避距离最近的行星
+                            int num15 = -1;
+                            double rhs = 0.0;
+                            double num16 = 1E+40;
+                            int num17 = dysonRocket.planetId / 100 * 100;
+                            for (int j = num17; j < num17 + 10; j++)
+                            {
+                                float uRadius = astroPoses[j].uRadius;
+                                if (uRadius >= 1f)
+                                {
+                                    VectorLF3 vectorLF3 = dysonRocket.uPos - astroPoses[j].uPos;
+                                    double num18 = vectorLF3.x * vectorLF3.x + vectorLF3.y * vectorLF3.y + vectorLF3.z * vectorLF3.z;
+                                    double num19 = -((double)dysonRocket.uVel.x * vectorLF3.x + (double)dysonRocket.uVel.y * vectorLF3.y + (double)dysonRocket.uVel.z * vectorLF3.z);
+                                    if ((num19 > 0.0 || num18 < (double)(uRadius * uRadius * 7f)) && num18 < num16)
+                                    {
+                                        rhs = ((num19 < 0.0) ? 0.0 : num19);
+                                        num15 = j;
+                                        num16 = num18;
+                                    }
+                                }
+                            }
+                            VectorLF3 rhs2 = VectorLF3.zero;
+                            float num20 = 0f;
+                            if (num15 == dysonRocket.planetId) num15 = -1; // 躲避的时候无视本体行星
+                            if (num15 > 0)
+                            {
+                                float num21 = astroPoses[num15].uRadius;
+                                bool flag = num15 % 100 == 0;
+                                if (flag)
+                                {
+                                    num21 = 1000 - 400f; //dysonSphereLayer.orbitRadius - 400f
+                                }
+                                double num22 = 1.25;
+                                VectorLF3 vectorLF4 = dysonRocket.uPos + (VectorLF3)dysonRocket.uVel * rhs - astroPoses[num15].uPos;
+                                double num23 = vectorLF4.magnitude / (double)num21;
+                                if (num23 < num22)
+                                {
+                                    double num24 = Math.Sqrt(num16) - (double)num21 * 0.82;
+                                    if (num24 < 1.0)
+                                    {
+                                        num24 = 1.0;
+                                    }
+                                    double num25 = (num23 - 1.0) / (num22 - 1.0);
+                                    if (num25 < 0.0)
+                                    {
+                                        num25 = 0.0;
+                                    }
+                                    num25 = 1.0 - num25 * num25;
+                                    double num26 = (double)(dysonRocket.uSpeed - 6f) / num24 * 2.5 - 0.01;
+                                    if (num26 > 1.5)
+                                    {
+                                        num26 = 1.5;
+                                    }
+                                    else if (num26 < 0.0)
+                                    {
+                                        num26 = 0.0;
+                                    }
+                                    num26 = num26 * num26 * num25;
+                                    num20 = (float)(flag ? 0.0 : (num26 * 0.5));
+                                    rhs2 = vectorLF4.normalized * num26 * 2.0;
+                                }
+                            }
+                            float num27 = 1f / (float)num13 - 0.05f;
+                            num27 += num20;
+                            float t = Mathf.Lerp(0.008f, 0.08f, num27); // 0.005f 0.08f
+                            dysonRocket.uVel = Vector3.Slerp(dysonRocket.uVel, toTarget.normalized + rhs2, t).normalized;
+                            Quaternion b;
+                            if (distanceToTarget < 350.0)
+                            {
+                                float t2 = ((float)distanceToTarget - 50f) / 300f;
+                                b = Quaternion.Slerp(Quaternion.LookRotation(toTarget), Quaternion.LookRotation(dysonRocket.uVel), t2);//b = Quaternion.Slerp(dysonSphereLayer.NodeURot(dysonRocket.node), Quaternion.LookRotation(dysonRocket.uVel), t2);
+                            }
+                            else
+                            {
+                                b = Quaternion.LookRotation(dysonRocket.uVel);
+                            }
+                            //if (toTarget.magnitude < missileMaxSpeed * 0.5) //如果离得很近，则增大转弯速度
+                            //{
+                            //    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.4f);
+                            //}
+                            //else if (toTarget.magnitude < missileMaxSpeed)
+                            //{
+                            //    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.3f);
+                            //}
+                            //else
+                            //{
+                            dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.2f);
+                            //}
+
+                            double tickSpeed = dysonRocket.uSpeed * num;
+                            dysonRocket.uPos.x = dysonRocket.uPos.x + (double)dysonRocket.uVel.x * tickSpeed;
+                            dysonRocket.uPos.y = dysonRocket.uPos.y + (double)dysonRocket.uVel.y * tickSpeed;
+                            dysonRocket.uPos.z = dysonRocket.uPos.z + (double)dysonRocket.uVel.z * tickSpeed;
+
+                        }
+                        else if (dysonRocket.t > 0)//远距离 t>0 
+                        {
+
+                            VectorLF3 toTarget = dysonRocket.uPos;
+                            bool needFindNewTarget = true;
+                            //之前的目标是否还存活
+                            if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
+                            {
+                                EnemyShip ship = null;
+                                if (EnemyShips.ships.TryGetValue(MissileTargets[starIndex][i], out ship) && ship.state == EnemyShip.State.active)
+                                {
+                                    needFindNewTarget = false;
+                                    toTarget = ship.uPos - dysonRocket.uPos;
+                                }
+                            }
+                            if (needFindNewTarget)
+                            {
+                                int newTargetId = FindTarget(starIndex, dysonRocket.planetId, i);
+                                if (newTargetId > 0)
+                                {
+                                    MissileTargets[starIndex][i] = newTargetId;
+                                    EnemyShip ship = null;
+                                    if (EnemyShips.ships.TryGetValue(newTargetId, out ship))
+                                        toTarget = ship.uPos - dysonRocket.uPos;
+                                    dysonRocket.t = 0; //让其回到第一阶段，允许避障
+                                }
+                                else
+                                {
+                                    __instance.RemoveDysonRocket(i);
+                                    goto IL_BDF;
+                                }
+                            }
+
+
+
+                            double disToTarget = Math.Sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y + toTarget.z * toTarget.z);
+                            if (disToTarget < dmgRange * 0.5 && disToTarget < 400)
                             {
                                 try
                                 {
@@ -480,11 +521,10 @@ namespace DSP_Battle
                                         lBegin = dysonRocket.uPos,
                                         uEndVel = dysonRocket.uPos,
                                         uBegin = dysonRocket.uPos,
-                                        uEnd = vectorLF5 + dysonRocket.uPos
+                                        uEnd = toTarget + dysonRocket.uPos
                                     }, 1);
 
                                     __instance.swarm.bulletPool[bulletIndex0].state = 0;
-
 
                                     //持续爆炸，以及根据子弹爆炸范围决定爆炸效果
                                     for (int s = 0; s < 10; s++)
@@ -507,9 +547,10 @@ namespace DSP_Battle
                                     }
                                 }
                                 catch (Exception)
-                                { }
-                                
+                                {
 
+                                    throw;
+                                }
                                 //范围伤害和强制位移
                                 var shipsHit = EnemyShips.FindShipsInRange(dysonRocket.uPos, dmgRange);
                                 if (shipsHit.Count > 0) UIBattleStatistics.RegisterHit(missileId, 0, 1); //首先注册一下该导弹击中，但不注册伤害
@@ -530,50 +571,55 @@ namespace DSP_Battle
                                     {
                                         if (EnemyShips.ships.ContainsKey(item))
                                         {
-                                            double distance = (dysonRocket.uPos - EnemyShips.ships[item].uPos).magnitude;
-                                            int aoeDamage = damage;
-                                            int realDamage = 0;
-                                            if (distance > dmgRange * 0.5 && !relic1_1Activated)
+                                            EnemyShip hitShip = null;
+                                            if (EnemyShips.ships.TryGetValue(item, out hitShip))
                                             {
-                                                aoeDamage = (int)(damage * (1.0 - (2 * distance - dmgRange) / dmgRange));
-                                            }
-                                            if (EnemyShips.ships[item] == target) // 对首要目标造成额外伤害
-                                            {
-                                                double bonus = 0;
-                                                if (relic2_7Activated) bonus += 1;
-                                                if (relic2_15Activated && missileId == 8006) bonus += 9;
-                                                aoeDamage = Relic.BonusDamage(aoeDamage, bonus);
-                                                realDamage = EnemyShips.ships[item].BeAttacked(aoeDamage, DamageType.missileMain);
-                                            }
-                                            else
-                                            {
-                                                realDamage = EnemyShips.ships[item].BeAttacked(aoeDamage, DamageType.missileAoe);
-                                            }
-                                            UIBattleStatistics.RegisterHit(missileId, realDamage, 0); //每个目标不再注册新的击中数量，只注册伤害
-                                            //引力导弹的强制位移
-                                            if (forceDisplacement)
-                                            {
-                                                EnemyShip hitShip = EnemyShips.ships[item];
-                                                if (relic1_11Activated) // relic1-11 冰封陵墓 冻结效果
+                                                double distance = (dysonRocket.uPos - hitShip.uPos).magnitude;
+                                                int aoeDamage = damage;
+                                                int realDamage = 0;
+                                                if (distance > dmgRange * 0.5 && !relic1_1Activated) // relic1-1虚空爆发 范围效果不衰减
                                                 {
-                                                    if (relic1_1Activated) // relic1-1无视范围衰减
-                                                        hitShip.InitForceDisplacement(hitShip.uPos, 180, 1);
-                                                    else
-                                                        hitShip.InitForceDisplacement(hitShip.uPos, (int)(180 * (1.0 - (2 * distance - dmgRange) / dmgRange)), 1);
+                                                    aoeDamage = (int)(damage * (1.0 - (2 * distance - dmgRange) / dmgRange));
+                                                }
+                                                if (hitShip == target) // 对首要目标造成额外伤害
+                                                {
+                                                    double bonus = 0;
+                                                    if (relic2_7Activated) bonus += 1;
+                                                    if (relic2_15Activated && missileId == 8006) bonus += 9;
+                                                    aoeDamage = Relic.BonusDamage(aoeDamage, bonus);
+                                                    realDamage = hitShip.BeAttacked(aoeDamage, DamageType.missileMain);
                                                 }
                                                 else
                                                 {
-                                                    hitShip.InitForceDisplacement(dysonRocket.uPos);
+                                                    realDamage = hitShip.BeAttacked(aoeDamage, DamageType.missileAoe);
+                                                }
+                                                UIBattleStatistics.RegisterHit(missileId, realDamage, 0); //每个目标不再注册新的击中数量，只注册伤害
+                                                //引力导弹的强制位移
+                                                if (forceDisplacement)
+                                                {
+                                                    if (relic1_11Activated) // relic1-11 冰封陵墓 冻结效果
+                                                    {
+                                                        if (relic1_1Activated) // relic1-1无视范围衰减
+                                                            hitShip.InitForceDisplacement(hitShip.uPos, 180, 1);
+                                                        else
+                                                            hitShip.InitForceDisplacement(hitShip.uPos, (int)(180 * (1.0 - (2 * distance - dmgRange) / dmgRange)), 1);
+                                                    }
+                                                    else
+                                                    {
+                                                        hitShip.InitForceDisplacement(dysonRocket.uPos);
+                                                    }
                                                 }
                                             }
                                         }
                                     }
                                 }
+
+
                                 missileProtoIds[starIndex][i] = 0;
                                 __instance.RemoveDysonRocket(i);
                                 goto IL_BDF;
                             }
-                            float num29 = (float)(num28 * 0.75 + 15.0);
+                            float num29 = (float)(disToTarget * 0.75 + 15.0);
                             if (num29 > num5)
                             {
                                 num29 = num5;
@@ -581,7 +627,7 @@ namespace DSP_Battle
                             if (dysonRocket.uSpeed <= missileMaxSpeed)
                             {
                                 //离目标过远且没到满速度 或 速度少于1/2的最大速度 或 速度少于5000都会加速；而如果离目标过近且速度超过1/2最大速度，或离得过近的同时速度超过了10000，会减速
-                                if (vectorLF5.magnitude > Math.Min(missileMaxSpeed, 30000))
+                                if (toTarget.magnitude > Math.Min(missileMaxSpeed, 30000))
                                     dysonRocket.uSpeed += missileSpeedUp;
                                 else
                                 {
@@ -595,91 +641,58 @@ namespace DSP_Battle
                             {
                                 dysonRocket.uSpeed = missileMaxSpeed;
                             }
-                            dysonRocket.uVel = Vector3.Slerp(dysonRocket.uVel, vectorLF5.normalized, 0.1f);
                             //dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.2f);
-                            if (vectorLF5.magnitude < Configs.missile1Speed * 0.5f) //如果离得很近，则增大转弯速度
+                            if (toTarget.magnitude < missileMaxSpeed * 0.5f) //如果离得很近，则增大转弯速度
                             {
-                                if (Quaternion.Angle(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5)) < 60)
-                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 1f);
+                                if (Quaternion.Angle(dysonRocket.uRot, Quaternion.LookRotation(toTarget)) < 60)
+                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(toTarget), 1f);
                                 else
-                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.6f);
+                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(toTarget), 0.6f);
+
+                                dysonRocket.uVel = Vector3.Slerp(dysonRocket.uVel, toTarget.normalized, 0.2f).normalized;
                             }
-                            else if (vectorLF5.magnitude < missileMaxSpeed)
+                            else if (toTarget.magnitude < missileMaxSpeed)
                             {
-                                dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.5f);
+                                dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(toTarget), 0.5f);
+                                dysonRocket.uVel = Vector3.Slerp(dysonRocket.uVel, toTarget.normalized, 0.1f).normalized;
                             }
                             else
                             {
-                                dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.4f);
+                                dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(toTarget), 0.4f);
+                                dysonRocket.uVel = Vector3.Slerp(dysonRocket.uVel, toTarget.normalized, 0.01f).normalized;
                             }
-
-                            dysonRocket.t = (350f - (float)num28) / 330f;
-                            if (dysonRocket.t > 1f)
+                            //dysonRocket.t = 0.0001f; // (350f - (float)disToTarget) / 330f;
+                            //下面很关键，如果导弹离目标过于近，则无视旋转直接直线飞过去
+                            double tickSpeed = dysonRocket.uSpeed * num;
+                            if (MissileTargets[starIndex].ContainsKey(i) && EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))
                             {
-                                dysonRocket.t = 1f;
+                                double distance = toTarget.magnitude;
+                                if (distance < tickSpeed && dysonRocket.t > 0) //距离小于一帧的量
+                                {
+                                    dysonRocket.uPos.x += toTarget.x;
+                                    dysonRocket.uPos.y += toTarget.y;
+                                    dysonRocket.uPos.z += toTarget.z;
+                                    dysonRocket.uRot = Quaternion.LookRotation(toTarget);
+                                }
+                                else if (distance < missileMaxSpeed * 0.4 && dysonRocket.t > 0) //直线过去
+                                {
+                                    dysonRocket.uPos = dysonRocket.uPos + toTarget.normalized * tickSpeed;
+                                    dysonRocket.uVel = Vector3.Slerp(dysonRocket.uVel, toTarget.normalized, 1.0f).normalized;
+                                    dysonRocket.uRot = Quaternion.LookRotation(toTarget);
+                                }
+                                else //这是原始规则
+                                {
+                                    dysonRocket.uPos.x = dysonRocket.uPos.x + (double)dysonRocket.uVel.x * tickSpeed;
+                                    dysonRocket.uPos.y = dysonRocket.uPos.y + (double)dysonRocket.uVel.y * tickSpeed;
+                                    dysonRocket.uPos.z = dysonRocket.uPos.z + (double)dysonRocket.uVel.z * tickSpeed;
+                                }
                             }
-                            else if (dysonRocket.t < 0.0001f)
-                            {
-                                dysonRocket.t = 0.0001f;
-                            }
-                        }
-
-
-                        VectorLF3 vectorLF6 = Vector3.zero;
-                        double num30 = (double)(2f - (float)num8 / 200f);
-                        if (num30 > 1.0)
-                        {
-                            num30 = 1.0;
-                        }
-                        else if (num30 < 0.0)
-                        {
-                            num30 = 0.0;
-                        }
-                        if (num30 > 0.0)
-                        {
-                            VectorLF3 v = dysonRocket.uPos - astroPose.uPos;
-                            VectorLF3 v2 = Maths.QInvRotateLF(astroPose.uRot, v);
-                            VectorLF3 lhs = Maths.QRotateLF(astroPose.uRotNext, v2) + astroPose.uPosNext;
-                            Quaternion rhs3 = Quaternion.Inverse(astroPose.uRot) * dysonRocket.uRot;
-                            Quaternion b2 = astroPose.uRotNext * rhs3;
-                            num30 = (3.0 - num30 - num30) * num30 * num30;
-                            vectorLF6 = (lhs - dysonRocket.uPos) * num30;
-                            dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b2, (float)num30);
+                            __instance.rocketPool[i] = dysonRocket;
                         }
 
-                        double num33 = (double)dysonRocket.uSpeed * num;
-                        //下面很关键，如果导弹离目标过于近，则无视旋转直接直线飞过去
-                        if (MissileTargets[starIndex].ContainsKey(i) && EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))
-                        {
-                            VectorLF3 toTarget = EnemyShips.ships[MissileTargets[starIndex][i]].uPos - dysonRocket.uPos;
-                            double distance = toTarget.magnitude;
-                            if (distance < num33) //距离小于一帧的量
-                            {
-                                dysonRocket.uPos.x += toTarget.x;
-                                dysonRocket.uPos.y += toTarget.y;
-                                dysonRocket.uPos.z += toTarget.z;
-                            }
-                            else if (distance < missileMaxSpeed * 0.4) //直线过去
-                            {
-                                dysonRocket.uPos = dysonRocket.uPos + toTarget.normalized * num33;
-                            }
-                            else //这是原始规则
-                            {
-                                dysonRocket.uPos.x = dysonRocket.uPos.x + (double)dysonRocket.uVel.x * num33 + vectorLF6.x;
-                                dysonRocket.uPos.y = dysonRocket.uPos.y + (double)dysonRocket.uVel.y * num33 + vectorLF6.y;
-                                dysonRocket.uPos.z = dysonRocket.uPos.z + (double)dysonRocket.uVel.z * num33 + vectorLF6.z;
-                            }
-
-                        }
-                        vectorLF = astroPose.uPos - dysonRocket.uPos;
-                        num8 = Math.Sqrt(vectorLF.x * vectorLF.x + vectorLF.y * vectorLF.y + vectorLF.z * vectorLF.z) - (double)astroPose.uRadius;
-                        if (num8 < 180.0)
-                        {
-                            dysonRocket.uPos = astroPose.uPos + Maths.QRotateLF(astroPose.uRot, (VectorLF3)dysonRocket.launch * ((double)astroPose.uRadius + num8));
-                            dysonRocket.uRot = astroPose.uRot * Quaternion.LookRotation(dysonRocket.launch);
-                        }
                         __instance.rocketPool[i] = dysonRocket;
-
+                        //Main.logger.LogInfo("Missile track error, might caused by multi-thread.");
+                        //__instance.RemoveDysonRocket(i);
                     }
                     else if (isMissile)
                     {
@@ -967,13 +980,11 @@ namespace DSP_Battle
 
                     if (isMissile && missileProtoIds[starIndex].ContainsKey(i))
                     {
-
                         if (Configs.nextWaveState != 3)
                         {
                             __instance.RemoveDysonRocket(i);
                             continue;
                         }
-
                         int missileId = missileProtoIds[starIndex][i];
                         float missileMaxSpeed = (float)Configs.missile1Speed;
                         int damage = Configs.missile1Atk;
@@ -993,11 +1004,10 @@ namespace DSP_Battle
                         }
                         float missileSpeedUp = (float)missileMaxSpeed / 200f;
 
-                        //DysonSphereLayer dysonSphereLayer = __instance.layersIdBased[dysonRocket.node.layerId];
                         AstroData astroPose = astroPoses[dysonRocket.planetId];
                         VectorLF3 vectorLF = astroPose.uPos - dysonRocket.uPos;
                         double num8 = Math.Sqrt(vectorLF.x * vectorLF.x + vectorLF.y * vectorLF.y + vectorLF.z * vectorLF.z) - (double)astroPose.uRadius;
-                        if (dysonRocket.t <= 0f) //如果离地面很近，是个加速从地面直线向上冲的过程
+                        if (dysonRocket.t < 0f) 
                         {
                             if (num8 < 200.0) //如果离地面很近，是个加速从地面直线向上冲的过程
                             {
@@ -1013,165 +1023,193 @@ namespace DSP_Battle
                                 {
                                     dysonRocket.t = -1f;
                                 }
+                                VectorLF3 movingFollowPlanet = Vector3.zero;
+                                VectorLF3 v = dysonRocket.uPos - astroPose.uPos;
+                                VectorLF3 v2 = Maths.QInvRotateLF(astroPose.uRot, v);
+                                VectorLF3 lhs = Maths.QRotateLF(astroPose.uRotNext, v2) + astroPose.uPosNext;
+                                Quaternion rhs3 = Quaternion.Inverse(astroPose.uRot) * dysonRocket.uRot;
+                                Quaternion b2 = astroPose.uRotNext * rhs3; 
+                                double disRatioToSurface = (double)(2f - (float)num8 / 200f);
+                                disRatioToSurface = (3.0 - disRatioToSurface - disRatioToSurface) * disRatioToSurface * disRatioToSurface;
+                                movingFollowPlanet = (lhs - dysonRocket.uPos) * disRatioToSurface;
+                                dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b2, (float)disRatioToSurface);
+                                double tickSpeed = dysonRocket.uSpeed * num;
+                                VectorLF3 planetMove = astroPose.uPosNext - astroPose.uPos;
+                                //dysonRocket.uPos.x = dysonRocket.uPos.x + (double)dysonRocket.uVel.x * tickSpeed + movingFollowPlanet.x;
+                                //dysonRocket.uPos.y = dysonRocket.uPos.y + (double)dysonRocket.uVel.y * tickSpeed + movingFollowPlanet.y;
+                                //dysonRocket.uPos.z = dysonRocket.uPos.z + (double)dysonRocket.uVel.z * tickSpeed + movingFollowPlanet.z;
+                                if (num8 < 180.0)
+                                {
+                                    dysonRocket.uPos = astroPose.uPos + Maths.QRotateLF(astroPose.uRot, (VectorLF3)dysonRocket.launch * ((double)astroPose.uRadius + num8)) + planetMove;
+                                    dysonRocket.uRot = astroPose.uRot * Quaternion.LookRotation(dysonRocket.launch);
+                                }
+                                if ((astroPose.uPos - dysonRocket.uPos).magnitude >= 200)
+                                    dysonRocket.t = 0;
+                                __instance.rocketPool[i] = dysonRocket;
                             }
                             else //离地面超过或等于200
                             {
-
-                                VectorLF3 vectorLF2 = dysonRocket.uPos; //这个值下面立刻会修改
-
-                                bool needFindNewTarget = true;
-                                if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
-                                {
-                                    EnemyShip ship = null;
-                                    if (EnemyShips.ships.TryGetValue(MissileTargets[starIndex][i], out ship) && ship.state == EnemyShip.State.active)
-                                    {
-                                        needFindNewTarget = false;
-                                        vectorLF2 = ship.uPos - dysonRocket.uPos;
-                                    }
-                                }
-
-                                if(needFindNewTarget)
-                                {
-                                    int newTargetId = FindTarget(starIndex, dysonRocket.planetId, i); // 这个i是种子偏移
-                                    if (newTargetId > 0)
-                                    {
-                                        MissileTargets[starIndex][i] = newTargetId;
-                                        EnemyShip ship = null;
-                                        if (EnemyShips.ships.TryGetValue(newTargetId, out ship))
-                                            vectorLF2 = ship.uPos - dysonRocket.uPos;
-                                        dysonRocket.t = 0; //让其回到第一阶段，允许避障
-                                    }
-                                    else
-                                    {
-                                        __instance.RemoveDysonRocket(i);
-                                        goto IL_BDF;
-                                    }
-                                }
-
-                                //设置速度
-                                double num11 = Math.Sqrt(vectorLF2.x * vectorLF2.x + vectorLF2.y * vectorLF2.y + vectorLF2.z * vectorLF2.z);
-                                if (num11 < missileMaxSpeed * 3) //如果与目标足够近，进入下一阶段
-                                {
-                                    dysonRocket.t = 0.0001f;
-                                }
-                                else
-                                {
-                                    dysonRocket.t = 0f;
-                                }
-                                double num12 = num11 / ((double)dysonRocket.uSpeed + 0.1) * 0.382;
-                                double num13 = num11 / (double)num5;
-                                float num14 = (float)((double)dysonRocket.uSpeed * num12) + 150f; //这里对于导弹，num14是没有用的
-                                if (num14 > num5)
-                                {
-                                    num14 = num5;
-                                }
-                                if (dysonRocket.uSpeed < missileMaxSpeed)
-                                {
-                                    dysonRocket.uSpeed += missileSpeedUp;
-                                }
-                                //else if (dysonRocket.uSpeed > num14 + num4)
-                                //{
-                                //	dysonRocket.uSpeed -= num4;
-                                //}
-                                else
-                                {
-                                    dysonRocket.uSpeed = missileMaxSpeed;
-                                }
-
-                                //下面难道是躲避巨星？
-                                int num15 = -1;
-                                double rhs = 0.0;
-                                double num16 = 1E+40;
-                                int num17 = dysonRocket.planetId / 100 * 100;
-                                for (int j = num17; j < num17 + 10; j++)
-                                {
-                                    float uRadius = astroPoses[j].uRadius;
-                                    if (uRadius >= 1f)
-                                    {
-                                        VectorLF3 vectorLF3 = dysonRocket.uPos - astroPoses[j].uPos;
-                                        double num18 = vectorLF3.x * vectorLF3.x + vectorLF3.y * vectorLF3.y + vectorLF3.z * vectorLF3.z;
-                                        double num19 = -((double)dysonRocket.uVel.x * vectorLF3.x + (double)dysonRocket.uVel.y * vectorLF3.y + (double)dysonRocket.uVel.z * vectorLF3.z);
-                                        if ((num19 > 0.0 || num18 < (double)(uRadius * uRadius * 7f)) && num18 < num16)
-                                        {
-                                            rhs = ((num19 < 0.0) ? 0.0 : num19);
-                                            num15 = j;
-                                            num16 = num18;
-                                        }
-                                    }
-                                }
-                                VectorLF3 rhs2 = VectorLF3.zero;
-                                float num20 = 0f;
-                                if (num15 > 0)
-                                {
-                                    float num21 = astroPoses[num15].uRadius;
-                                    bool flag = num15 % 100 == 0;
-                                    if (flag)
-                                    {
-                                        num21 = 1000 - 400f; //dysonSphereLayer.orbitRadius - 400f
-                                    }
-                                    double num22 = 1.25;
-                                    VectorLF3 vectorLF4 = dysonRocket.uPos + (VectorLF3)dysonRocket.uVel * rhs - astroPoses[num15].uPos;
-                                    double num23 = vectorLF4.magnitude / (double)num21;
-                                    if (num23 < num22)
-                                    {
-                                        double num24 = Math.Sqrt(num16) - (double)num21 * 0.82;
-                                        if (num24 < 1.0)
-                                        {
-                                            num24 = 1.0;
-                                        }
-                                        double num25 = (num23 - 1.0) / (num22 - 1.0);
-                                        if (num25 < 0.0)
-                                        {
-                                            num25 = 0.0;
-                                        }
-                                        num25 = 1.0 - num25 * num25;
-                                        double num26 = (double)(dysonRocket.uSpeed - 6f) / num24 * 2.5 - 0.01;
-                                        if (num26 > 1.5)
-                                        {
-                                            num26 = 1.5;
-                                        }
-                                        else if (num26 < 0.0)
-                                        {
-                                            num26 = 0.0;
-                                        }
-                                        num26 = num26 * num26 * num25;
-                                        num20 = (float)(flag ? 0.0 : (num26 * 0.5));
-                                        rhs2 = vectorLF4.normalized * num26 * 2.0;
-                                    }
-                                }
-                                float num27 = 1f / (float)num13 - 0.05f;
-                                num27 += num20;
-                                float t = Mathf.Lerp(0.005f, 0.08f, num27);
-                                dysonRocket.uVel = Vector3.Slerp(dysonRocket.uVel, vectorLF2.normalized + rhs2, t).normalized;
-                                Quaternion b;
-                                if (num11 < 350.0)
-                                {
-                                    float t2 = ((float)num11 - 50f) / 300f;
-                                    b = Quaternion.Slerp(Quaternion.LookRotation(vectorLF2), Quaternion.LookRotation(dysonRocket.uVel), t2);//b = Quaternion.Slerp(dysonSphereLayer.NodeURot(dysonRocket.node), Quaternion.LookRotation(dysonRocket.uVel), t2);
-                                }
-                                else
-                                {
-                                    b = Quaternion.LookRotation(dysonRocket.uVel);
-                                }
-                                if (vectorLF2.magnitude < missileMaxSpeed * 0.5) //如果离得很近，则增大转弯速度
-                                {
-                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.4f);
-                                }
-                                else if (vectorLF2.magnitude < missileMaxSpeed)
-                                {
-                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.3f);
-                                }
-                                else
-                                {
-                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.2f);
-                                }
-
+                                dysonRocket.t = 0;
                             }
+                            if (dysonRocket.t > 0)
+                                dysonRocket.t = 0;
                         }
-                        else //远距离
+                        if (dysonRocket.t == 0) // 不是else if 的原因是：当上一个if结尾因为距离地面超过200而将t改为0的状态后，可以直接继续执行t==0的逻辑
+                        {
+                            VectorLF3 toTarget = dysonRocket.uPos; //这个值下面立刻会修改
+                            bool needFindNewTarget = true;
+                            if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
+                            {
+                                EnemyShip ship = null;
+                                if (EnemyShips.ships.TryGetValue(MissileTargets[starIndex][i], out ship) && ship.state == EnemyShip.State.active)
+                                {
+                                    needFindNewTarget = false;
+                                    toTarget = ship.uPos - dysonRocket.uPos;
+                                }
+                            }
+
+                            if (needFindNewTarget)
+                            {
+                                int newTargetId = FindTarget(starIndex, dysonRocket.planetId, i); // 这个i是种子偏移
+                                if (newTargetId > 0)
+                                {
+                                    MissileTargets[starIndex][i] = newTargetId;
+                                    EnemyShip ship = null;
+                                    if (EnemyShips.ships.TryGetValue(newTargetId, out ship))
+                                        toTarget = ship.uPos - dysonRocket.uPos;
+                                }
+                                else
+                                {
+                                    __instance.RemoveDysonRocket(i);
+                                    goto IL_BDF;
+                                }
+                            }
+
+                            //设置速度
+                            double distanceToTarget = Math.Sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y + toTarget.z * toTarget.z);
+                            if (distanceToTarget < missileMaxSpeed * 3) //如果与目标足够近，进入下一阶段
+                            {
+                                dysonRocket.t = 0.0001f;
+                            }
+                            else
+                            {
+                                dysonRocket.t = 0f;
+                            }
+                            double num12 = distanceToTarget / ((double)dysonRocket.uSpeed + 0.1) * 0.382;
+                            double num13 = distanceToTarget / (double)num5;
+                            float num14 = (float)((double)dysonRocket.uSpeed * num12) + 150f; //这里对于导弹，num14是没有用的
+                            if (num14 > num5)
+                            {
+                                num14 = num5;
+                            }
+                            if (dysonRocket.uSpeed < missileMaxSpeed)
+                            {
+                                dysonRocket.uSpeed += missileSpeedUp;
+                            }
+                            else
+                            {
+                                dysonRocket.uSpeed = missileMaxSpeed;
+                            }
+
+                            //躲避距离最近的行星
+                            int num15 = -1;
+                            double rhs = 0.0;
+                            double num16 = 1E+40;
+                            int num17 = dysonRocket.planetId / 100 * 100;
+                            for (int j = num17; j < num17 + 10; j++)
+                            {
+                                float uRadius = astroPoses[j].uRadius;
+                                if (uRadius >= 1f)
+                                {
+                                    VectorLF3 vectorLF3 = dysonRocket.uPos - astroPoses[j].uPos;
+                                    double num18 = vectorLF3.x * vectorLF3.x + vectorLF3.y * vectorLF3.y + vectorLF3.z * vectorLF3.z;
+                                    double num19 = -((double)dysonRocket.uVel.x * vectorLF3.x + (double)dysonRocket.uVel.y * vectorLF3.y + (double)dysonRocket.uVel.z * vectorLF3.z);
+                                    if ((num19 > 0.0 || num18 < (double)(uRadius * uRadius * 7f)) && num18 < num16)
+                                    {
+                                        rhs = ((num19 < 0.0) ? 0.0 : num19);
+                                        num15 = j;
+                                        num16 = num18;
+                                    }
+                                }
+                            }
+                            VectorLF3 rhs2 = VectorLF3.zero;
+                            float num20 = 0f;
+                            if (num15 == dysonRocket.planetId) num15 = -1; // 躲避的时候无视本体行星
+                            if (num15 > 0)
+                            {
+                                float num21 = astroPoses[num15].uRadius;
+                                bool flag = num15 % 100 == 0;
+                                if (flag)
+                                {
+                                    num21 = 1000 - 400f; //dysonSphereLayer.orbitRadius - 400f
+                                }
+                                double num22 = 1.25;
+                                VectorLF3 vectorLF4 = dysonRocket.uPos + (VectorLF3)dysonRocket.uVel * rhs - astroPoses[num15].uPos;
+                                double num23 = vectorLF4.magnitude / (double)num21;
+                                if (num23 < num22)
+                                {
+                                    double num24 = Math.Sqrt(num16) - (double)num21 * 0.82;
+                                    if (num24 < 1.0)
+                                    {
+                                        num24 = 1.0;
+                                    }
+                                    double num25 = (num23 - 1.0) / (num22 - 1.0);
+                                    if (num25 < 0.0)
+                                    {
+                                        num25 = 0.0;
+                                    }
+                                    num25 = 1.0 - num25 * num25;
+                                    double num26 = (double)(dysonRocket.uSpeed - 6f) / num24 * 2.5 - 0.01;
+                                    if (num26 > 1.5)
+                                    {
+                                        num26 = 1.5;
+                                    }
+                                    else if (num26 < 0.0)
+                                    {
+                                        num26 = 0.0;
+                                    }
+                                    num26 = num26 * num26 * num25;
+                                    num20 = (float)(flag ? 0.0 : (num26 * 0.5));
+                                    rhs2 = vectorLF4.normalized * num26 * 2.0;
+                                }
+                            }
+                            float num27 = 1f / (float)num13 - 0.05f;
+                            num27 += num20;
+                            float t = Mathf.Lerp(0.008f, 0.08f, num27); // 0.005f 0.08f
+                            dysonRocket.uVel = Vector3.Slerp(dysonRocket.uVel, toTarget.normalized + rhs2, t).normalized;
+                            Quaternion b;
+                            if (distanceToTarget < 350.0)
+                            {
+                                float t2 = ((float)distanceToTarget - 50f) / 300f;
+                                b = Quaternion.Slerp(Quaternion.LookRotation(toTarget), Quaternion.LookRotation(dysonRocket.uVel), t2);//b = Quaternion.Slerp(dysonSphereLayer.NodeURot(dysonRocket.node), Quaternion.LookRotation(dysonRocket.uVel), t2);
+                            }
+                            else
+                            {
+                                b = Quaternion.LookRotation(dysonRocket.uVel);
+                            }
+                            //if (toTarget.magnitude < missileMaxSpeed * 0.5) //如果离得很近，则增大转弯速度
+                            //{
+                            //    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.4f);
+                            //}
+                            //else if (toTarget.magnitude < missileMaxSpeed)
+                            //{
+                            //    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.3f);
+                            //}
+                            //else
+                            //{
+                                dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b, 0.2f);
+                            //}
+
+                            double tickSpeed = dysonRocket.uSpeed * num;
+                            dysonRocket.uPos.x = dysonRocket.uPos.x + (double)dysonRocket.uVel.x * tickSpeed;
+                            dysonRocket.uPos.y = dysonRocket.uPos.y + (double)dysonRocket.uVel.y * tickSpeed;
+                            dysonRocket.uPos.z = dysonRocket.uPos.z + (double)dysonRocket.uVel.z * tickSpeed;
+
+                        }
+                        else if(dysonRocket.t > 0)//远距离 t>0 
                         {
 
-                            VectorLF3 vectorLF5 = dysonRocket.uPos;
+                            VectorLF3 toTarget = dysonRocket.uPos;
                             bool needFindNewTarget = true;
                             //之前的目标是否还存活
                             if (EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))//如果以前的目标敌人还存在
@@ -1180,10 +1218,10 @@ namespace DSP_Battle
                                 if (EnemyShips.ships.TryGetValue(MissileTargets[starIndex][i], out ship) && ship.state == EnemyShip.State.active)
                                 {
                                     needFindNewTarget = false;
-                                    vectorLF5 = ship.uPos - dysonRocket.uPos;
+                                    toTarget = ship.uPos - dysonRocket.uPos;
                                 }
                             }
-                            if(needFindNewTarget)
+                            if (needFindNewTarget)
                             {
                                 int newTargetId = FindTarget(starIndex, dysonRocket.planetId, i);
                                 if (newTargetId > 0)
@@ -1191,7 +1229,7 @@ namespace DSP_Battle
                                     MissileTargets[starIndex][i] = newTargetId;
                                     EnemyShip ship = null;
                                     if (EnemyShips.ships.TryGetValue(newTargetId, out ship))
-                                        vectorLF5 = ship.uPos - dysonRocket.uPos;
+                                        toTarget = ship.uPos - dysonRocket.uPos;
                                     dysonRocket.t = 0; //让其回到第一阶段，允许避障
                                 }
                                 else
@@ -1203,8 +1241,8 @@ namespace DSP_Battle
 
 
 
-                            double num28 = Math.Sqrt(vectorLF5.x * vectorLF5.x + vectorLF5.y * vectorLF5.y + vectorLF5.z * vectorLF5.z);
-                            if (num28 < dmgRange * 0.5 && num28 < 400)
+                            double disToTarget = Math.Sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y + toTarget.z * toTarget.z);
+                            if (disToTarget < dmgRange * 0.5 && disToTarget < 400)
                             {
                                 try
                                 {
@@ -1215,7 +1253,7 @@ namespace DSP_Battle
                                         lBegin = dysonRocket.uPos,
                                         uEndVel = dysonRocket.uPos,
                                         uBegin = dysonRocket.uPos,
-                                        uEnd = vectorLF5 + dysonRocket.uPos
+                                        uEnd = toTarget + dysonRocket.uPos
                                     }, 1);
 
                                     __instance.swarm.bulletPool[bulletIndex0].state = 0;
@@ -1293,12 +1331,12 @@ namespace DSP_Battle
                                                 {
                                                     if (relic1_11Activated) // relic1-11 冰封陵墓 冻结效果
                                                     {
-                                                        if(relic1_1Activated) // relic1-1无视范围衰减
-                                                            hitShip.InitForceDisplacement(hitShip.uPos,180,1);
+                                                        if (relic1_1Activated) // relic1-1无视范围衰减
+                                                            hitShip.InitForceDisplacement(hitShip.uPos, 180, 1);
                                                         else
                                                             hitShip.InitForceDisplacement(hitShip.uPos, (int)(180 * (1.0 - (2 * distance - dmgRange) / dmgRange)), 1);
                                                     }
-                                                    else 
+                                                    else
                                                     {
                                                         hitShip.InitForceDisplacement(dysonRocket.uPos);
                                                     }
@@ -1313,7 +1351,7 @@ namespace DSP_Battle
                                 __instance.RemoveDysonRocket(i);
                                 goto IL_BDF;
                             }
-                            float num29 = (float)(num28 * 0.75 + 15.0);
+                            float num29 = (float)(disToTarget * 0.75 + 15.0);
                             if (num29 > num5)
                             {
                                 num29 = num5;
@@ -1321,7 +1359,7 @@ namespace DSP_Battle
                             if (dysonRocket.uSpeed <= missileMaxSpeed)
                             {
                                 //离目标过远且没到满速度 或 速度少于1/2的最大速度 或 速度少于5000都会加速；而如果离目标过近且速度超过1/2最大速度，或离得过近的同时速度超过了10000，会减速
-                                if (vectorLF5.magnitude > Math.Min(missileMaxSpeed, 30000))
+                                if (toTarget.magnitude > Math.Min(missileMaxSpeed, 30000))
                                     dysonRocket.uSpeed += missileSpeedUp;
                                 else
                                 {
@@ -1335,99 +1373,58 @@ namespace DSP_Battle
                             {
                                 dysonRocket.uSpeed = missileMaxSpeed;
                             }
-                            dysonRocket.uVel = Vector3.Slerp(dysonRocket.uVel, vectorLF5.normalized, 0.1f);
                             //dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.2f);
-                            if (vectorLF5.magnitude < missileMaxSpeed * 0.5f) //如果离得很近，则增大转弯速度
+                            if (toTarget.magnitude < missileMaxSpeed * 0.5f) //如果离得很近，则增大转弯速度
                             {
-                                if (Quaternion.Angle(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5)) < 60)
-                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 1f);
+                                if (Quaternion.Angle(dysonRocket.uRot, Quaternion.LookRotation(toTarget)) < 60)
+                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(toTarget), 1f);
                                 else
-                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.6f);
+                                    dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(toTarget), 0.25f);
+
+                                dysonRocket.uVel = Vector3.Slerp(dysonRocket.uVel, toTarget.normalized, 0.2f).normalized;
                             }
-                            else if (vectorLF5.magnitude < missileMaxSpeed)
+                            else if (toTarget.magnitude < missileMaxSpeed)
                             {
-                                dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.5f);
+                                dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(toTarget), 0.12f);
+                                dysonRocket.uVel = Vector3.Slerp(dysonRocket.uVel, toTarget.normalized, 0.1f).normalized;
                             }
                             else
                             {
-                                dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(vectorLF5), 0.4f);
+                                dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, Quaternion.LookRotation(toTarget), 0.05f);
+                                dysonRocket.uVel = Vector3.Slerp(dysonRocket.uVel, toTarget.normalized, 0.01f).normalized;
                             }
-                            dysonRocket.t = (350f - (float)num28) / 330f;
-                            if (dysonRocket.t > 1f)
+                            //dysonRocket.t = 0.0001f; // (350f - (float)disToTarget) / 330f;
+                            //下面很关键，如果导弹离目标过于近，则无视旋转直接直线飞过去
+                            double tickSpeed = dysonRocket.uSpeed * num;
+                            if (MissileTargets[starIndex].ContainsKey(i) && EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))
                             {
-                                dysonRocket.t = 1f;
+                                double distance = toTarget.magnitude;
+                                if (distance < tickSpeed && dysonRocket.t > 0) //距离小于一帧的量
+                                {
+                                    dysonRocket.uPos.x += toTarget.x;
+                                    dysonRocket.uPos.y += toTarget.y;
+                                    dysonRocket.uPos.z += toTarget.z;
+                                    dysonRocket.uRot = Quaternion.LookRotation(toTarget);
+                                }
+                                else if (distance < missileMaxSpeed * 0.4 && dysonRocket.t > 0) //直线过去
+                                {
+                                    dysonRocket.uPos = dysonRocket.uPos + toTarget.normalized * tickSpeed;
+                                    dysonRocket.uVel = Vector3.Slerp(dysonRocket.uVel, toTarget.normalized, 1.0f).normalized;
+                                    dysonRocket.uRot = Quaternion.LookRotation(toTarget);
+                                }
+                                else //这是原始规则
+                                {
+                                    dysonRocket.uPos.x = dysonRocket.uPos.x + (double)dysonRocket.uVel.x * tickSpeed;
+                                    dysonRocket.uPos.y = dysonRocket.uPos.y + (double)dysonRocket.uVel.y * tickSpeed;
+                                    dysonRocket.uPos.z = dysonRocket.uPos.z + (double)dysonRocket.uVel.z * tickSpeed;
+                                }
                             }
-                            else if (dysonRocket.t < 0.0001f)
-                            {
-                                dysonRocket.t = 0.0001f;
-                            }
+                            __instance.rocketPool[i] = dysonRocket;
                         }
-
-
-                        VectorLF3 vectorLF6 = Vector3.zero;
-                        double num30 = (double)(2f - (float)num8 / 200f);
-                        if (num30 > 1.0)
-                        {
-                            num30 = 1.0;
-                        }
-                        else if (num30 < 0.0)
-                        {
-                            num30 = 0.0;
-                        }
-                        if (num30 > 0.0)
-                        {
-                            VectorLF3 v = dysonRocket.uPos - astroPose.uPos;
-                            VectorLF3 v2 = Maths.QInvRotateLF(astroPose.uRot, v);
-                            VectorLF3 lhs = Maths.QRotateLF(astroPose.uRotNext, v2) + astroPose.uPosNext;
-                            Quaternion rhs3 = Quaternion.Inverse(astroPose.uRot) * dysonRocket.uRot;
-                            Quaternion b2 = astroPose.uRotNext * rhs3;
-                            num30 = (3.0 - num30 - num30) * num30 * num30;
-                            vectorLF6 = (lhs - dysonRocket.uPos) * num30;
-                            dysonRocket.uRot = Quaternion.Slerp(dysonRocket.uRot, b2, (float)num30);
-                        }
-                        double num33 = (double)dysonRocket.uSpeed * num; //这里是乘了1/60
-                        VectorLF3 distanceCheck = new VectorLF3(999, 999, 999);
-                        //下面很关键，如果导弹离目标过于近，则无视旋转直接直线飞过去
-                        if (MissileTargets[starIndex].ContainsKey(i) && EnemyShips.ships.ContainsKey(MissileTargets[starIndex][i]))
-                        {
-                            EnemyShip ship = null;
-                            VectorLF3 toTarget = new VectorLF3(0, 0, 0);
-                            if (EnemyShips.ships.TryGetValue(MissileTargets[starIndex][i], out ship))
-                            {
-                                toTarget = ship.uPos - dysonRocket.uPos;
-
-                            }
-                            double distance = toTarget.magnitude;
-                            if (distance < num33) //距离小于一帧的量
-                            {
-                                dysonRocket.uPos.x += toTarget.x;
-                                dysonRocket.uPos.y += toTarget.y;
-                                dysonRocket.uPos.z += toTarget.z;
-                            }
-                            else if (distance < missileMaxSpeed * 0.4) //直线过去
-                            {
-                                dysonRocket.uPos = dysonRocket.uPos + toTarget.normalized * num33;
-                            }
-                            else //这是原始规则
-                            {
-                                dysonRocket.uPos.x = dysonRocket.uPos.x + (double)dysonRocket.uVel.x * num33 + vectorLF6.x;
-                                dysonRocket.uPos.y = dysonRocket.uPos.y + (double)dysonRocket.uVel.y * num33 + vectorLF6.y;
-                                dysonRocket.uPos.z = dysonRocket.uPos.z + (double)dysonRocket.uVel.z * num33 + vectorLF6.z;
-                            }
-
-                        }
-                        vectorLF = astroPose.uPos - dysonRocket.uPos;
-                        num8 = Math.Sqrt(vectorLF.x * vectorLF.x + vectorLF.y * vectorLF.y + vectorLF.z * vectorLF.z) - (double)astroPose.uRadius;
-                        if (num8 < 180.0)
-                        {
-                            dysonRocket.uPos = astroPose.uPos + Maths.QRotateLF(astroPose.uRot, (VectorLF3)dysonRocket.launch * ((double)astroPose.uRadius + num8));
-                            dysonRocket.uRot = astroPose.uRot * Quaternion.LookRotation(dysonRocket.launch);
-                        }
+                        
                         __instance.rocketPool[i] = dysonRocket;
-
                         //Main.logger.LogInfo("Missile track error, might caused by multi-thread.");
                         //__instance.RemoveDysonRocket(i);
-
                     }
                     else if (isMissile)
                     {
