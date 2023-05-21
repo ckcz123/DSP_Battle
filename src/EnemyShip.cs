@@ -148,7 +148,7 @@ namespace DSP_Battle
             return (pos - uPos).magnitude;
         }
 
-        public int BeAttacked(int atk, DamageType dmgType = DamageType.others)
+        public int BeAttacked(int atk, DamageType dmgType = DamageType.others, bool hasAdditionalDamage = false)
         {
             int result = 0;
             lock (this)
@@ -343,7 +343,7 @@ namespace DSP_Battle
                     //如果在护盾>有效护盾（暂定50000）的情况下撞上了护盾，船承受巨量伤害，同时也会对护盾造成伤害。自爆船将会造成巨量伤害
                     if((GameMain.galaxy.PlanetById(planetId).uPosition - uPos).magnitude <= ShieldRenderer.shieldRadius * 810) // 现在可以因relic效果而闪避和被减免
                     {
-                        UIBattleStatistics.RegisterShieldAttack(BeAttacked(9999999)); // 无需伤害类型，必死
+                        UIBattleStatistics.RegisterShieldAttack(BeAttacked(9999999)); // 立刻击杀
                         int damage = Configs.enemyDamagePerBullet[shipTypeNum];
                         if (Relic.HaveRelic(1, 9) && GameMain.mainPlayer.mecha.coreEnergy >= GameMain.mainPlayer.mecha.coreEnergyCap * 0.2 && GameMain.mainPlayer.mecha.coreEnergy >= damage * 2000) // relic1-9 骑士之誓用机甲能量替代护盾伤害
                         {
@@ -434,11 +434,11 @@ namespace DSP_Battle
                             GameMain.mainPlayer.mecha.coreEnergy -= damage * 2000;
                             GameMain.mainPlayer.mecha.MarkEnergyChange(8, -damage * 2000);
                             UIBattleStatistics.RegisterShieldAvoidDamage(damage);
-                            // relic0-5 荆棘之甲 护盾反伤效果 伤害被转移则反伤系数为0.5基础伤害
+                            // relic0-5 荆棘之甲 护盾反伤效果 伤害被转移则反伤系数为1.0基础伤害
                             if (Relic.HaveRelic(0, 5))
                             {
                                 int reboundDamage = Relic.BonusDamage(Configs.enemyDamagePerBullet[shipTypeNum], 1.0) - Configs.enemyDamagePerBullet[shipTypeNum]; // 注意是基础伤害而非被时间增幅过的伤害
-                                UIBattleStatistics.RegisterShieldAttack(BeAttacked(reboundDamage, DamageType.shield));
+                                UIBattleStatistics.RegisterShieldAttack(BeAttacked(reboundDamage, DamageType.shield, true));
                             }
                         }
                         else
@@ -465,17 +465,17 @@ namespace DSP_Battle
                         if (Relic.HaveRelic(0, 5))
                         {
                             int reboundDamage = Relic.BonusDamage(Configs.enemyDamagePerBullet[shipTypeNum], 0.1) - Configs.enemyDamagePerBullet[shipTypeNum];
-                            UIBattleStatistics.RegisterShieldAttack(BeAttacked(reboundDamage, DamageType.shield));
+                            UIBattleStatistics.RegisterShieldAttack(BeAttacked(reboundDamage, DamageType.shield, true));
                         }
                     }
                     else 
                     {
                         UIBattleStatistics.RegisterShieldAvoidDamage(damage);
-                        // relic0-5 荆棘之甲 护盾反伤效果 伤害被直接规避 则反伤系数为0.5基础伤害
+                        // relic0-5 荆棘之甲 护盾反伤效果 伤害被直接规避 则反伤系数为1.0基础伤害
                         if (Relic.HaveRelic(0, 5))
                         {
                             int reboundDamage = Relic.BonusDamage(Configs.enemyDamagePerBullet[shipTypeNum], 1.0) - Configs.enemyDamagePerBullet[shipTypeNum];
-                            UIBattleStatistics.RegisterShieldAttack(BeAttacked(reboundDamage, DamageType.shield));
+                            UIBattleStatistics.RegisterShieldAttack(BeAttacked(reboundDamage, DamageType.shield, true));
                         }
                     }
                     
@@ -941,7 +941,7 @@ namespace DSP_Battle
         shield, // 护盾造成的伤害
         mega, // 巨构的范围伤害
         droplet, // 水滴伤害
-        others, // 其他伤害
+        others, // 其他伤害，无法被闪避、规避、减免
         goddess, // 女神之怒伤害
     }
 }

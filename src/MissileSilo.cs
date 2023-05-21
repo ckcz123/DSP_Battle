@@ -563,7 +563,7 @@ namespace DSP_Battle
                                     if (relic2_7Activated) bonus += 1;
                                     if (relic2_15Activated && missileId == 8006) bonus += 9;
                                     damage = Relic.BonusDamage(damage, bonus);
-                                    UIBattleStatistics.RegisterHit(missileId, target.BeAttacked(damage, DamageType.missileMain), 0);
+                                    UIBattleStatistics.RegisterHit(missileId, target.BeAttacked(damage, DamageType.missileMain, bonus > 0), 0);
                                 }
                                 else
                                 {
@@ -587,11 +587,11 @@ namespace DSP_Battle
                                                     if (relic2_7Activated) bonus += 1;
                                                     if (relic2_15Activated && missileId == 8006) bonus += 9;
                                                     aoeDamage = Relic.BonusDamage(aoeDamage, bonus);
-                                                    realDamage = hitShip.BeAttacked(aoeDamage, DamageType.missileMain);
+                                                    realDamage = hitShip.BeAttacked(aoeDamage, DamageType.missileMain, bonus > 0);
                                                 }
                                                 else
                                                 {
-                                                    realDamage = hitShip.BeAttacked(aoeDamage, DamageType.missileAoe);
+                                                    realDamage = hitShip.BeAttacked(aoeDamage, DamageType.missileAoe, false);
                                                 }
                                                 UIBattleStatistics.RegisterHit(missileId, realDamage, 0); //每个目标不再注册新的击中数量，只注册伤害
                                                 //引力导弹的强制位移
@@ -1295,7 +1295,7 @@ namespace DSP_Battle
                                     if (relic2_7Activated) bonus += 1;
                                     if (relic2_15Activated && missileId == 8006) bonus += 9;
                                     damage = Relic.BonusDamage(damage, bonus);
-                                    UIBattleStatistics.RegisterHit(missileId, target.BeAttacked(damage, DamageType.missileMain), 0);
+                                    UIBattleStatistics.RegisterHit(missileId, target.BeAttacked(damage, DamageType.missileMain, bonus > 0), 0);
                                 }
                                 else
                                 {
@@ -1319,11 +1319,11 @@ namespace DSP_Battle
                                                     if (relic2_7Activated) bonus += 1;
                                                     if (relic2_15Activated && missileId == 8006) bonus += 9;
                                                     aoeDamage = Relic.BonusDamage(aoeDamage, bonus);
-                                                    realDamage = hitShip.BeAttacked(aoeDamage, DamageType.missileMain);
+                                                    realDamage = hitShip.BeAttacked(aoeDamage, DamageType.missileMain, bonus > 0);
                                                 }
                                                 else
                                                 {
-                                                    realDamage = hitShip.BeAttacked(aoeDamage, DamageType.missileAoe);
+                                                    realDamage = hitShip.BeAttacked(aoeDamage, DamageType.missileAoe, false);
                                                 }
                                                 UIBattleStatistics.RegisterHit(missileId, realDamage, 0); //每个目标不再注册新的击中数量，只注册伤害
                                                 //引力导弹的强制位移

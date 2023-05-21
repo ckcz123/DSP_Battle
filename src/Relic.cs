@@ -22,8 +22,9 @@ namespace DSP_Battle
 
         //不存档的设定参数
         public static int relicHoldMax = 8; // 最多可以持有的遗物数
-        public static int[] relicNumByType = { 11, 12, 18, 18, 2 }; // 当前版本各种类型的遗物各有多少种，每种类型均不能大于30
-        public static double[] relicTypeProbability = { 0.03, 0.09, 0.2, 0.96, 1 }; // 各类型遗物刷新的概率，注意不是权重，是有次序地判断随机数
+        public static int[] relicNumByType = { 11, 12, 18, 18, 6 }; // 当前版本各种类型的遗物各有多少种，每种类型均不能大于30
+        public static double[] relicTypeProbability = { 0.03, 0.09, 0.2, 0.96, 1 }; // 各类型遗物刷新的概率，注意不是权重，是有次序地判断随机数 // 普通0.96
+        public static double[] relicTypeProbabilityBuffed = { 0.045, 0.135, 0.3, 0.92, 1 }; // 普通0.92
         public static double[] relicRemoveProbabilityByRelicCount = { 0, 0, 0, 0, 0.05, 0.1, 0.12, 0.15, 1, 1, 1 }; // 拥有i个reilc时，第三个槽位刷新的是删除relic的概率
         public static double firstRelicIsRare = 0.5; // 第一个遗物至少是稀有的概率
         public static bool canSelectNewRelic = false; // 当canSelectNewRelic为true时点按按钮才是有效的选择
@@ -38,6 +39,8 @@ namespace DSP_Battle
         public static int dropletDamageGrowth = 10; // relic0-10每次水滴击杀的伤害成长
         public static int dropletDamageLimitGrowth = 400; // relic0-10每次消耗水滴提供的伤害成长上限的成长
         public static int relic0_2MaxCharge = 1000; // 新版女神泪充能上限
+
+        public static int starIndexWithMaxLuminosity = 0; // 具有最大光度的恒星系的index， 读档时刷新
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameData), "GameTick")]
@@ -82,7 +85,7 @@ namespace DSP_Battle
                 relic0_2Charge = 0;
                 relic0_2CanActivate = 1;
             }
-            else if (type == 0 && num == 3)
+            else if ((type == 0 && num == 3) || (type == 4 && num == 0))
             {
                 relics[type] |= 1 << num;
                 RelicFunctionPatcher.CheckAndModifyStarLuminosity();
@@ -702,7 +705,7 @@ namespace DSP_Battle
                 {
                     if(ship.state != EnemyShip.State.active) continue;
                     int maxHp = Configs.enemyHp[Configs.enemyIntensity2TypeMap[ship.intensity]];
-                    int realDamage = ship.BeAttacked((int)(maxHp*0.95));
+                    int realDamage = ship.BeAttacked((int)(maxHp*0.95), DamageType.goddess, true);
                     if (ship.state == EnemyShip.State.active)
                     {
                         VectorLF3 shipUpos = ship.uPos;
@@ -743,7 +746,7 @@ namespace DSP_Battle
                         {
                             if (ship.state == EnemyShip.State.active)
                             {
-                                UIBattleStatistics.RegisterMegastructureAttack(ship.BeAttacked(damage, DamageType.mega));
+                                UIBattleStatistics.RegisterMegastructureAttack(ship.BeAttacked(damage, DamageType.mega, true));
                             }
                         }
                     }
@@ -991,7 +994,25 @@ namespace DSP_Battle
                     //还要重新计算并赋值每个戴森球之前已初始化好的属性
                     Relic.alreadyRecalcDysonStarLumin = false;
                 }
-
+            }
+            if (Relic.HaveRelic(4, 0))
+            {
+                float maxL = 0;
+                for (int i = 0; i < GameMain.galaxy.starCount; i++)
+                {
+                    StarData starData = GameMain.galaxy.stars[i];
+                    if((starData != null) && (starData.luminosity > maxL))
+                    {
+                        maxL = starData.luminosity;
+                        Relic.starIndexWithMaxLuminosity = i;
+                    }
+                }
+                for (int i = 0;i< GameMain.galaxy.starCount;i++)
+                {
+                    StarData starData = GameMain.galaxy.stars[i];
+                    if (starData != null && i != Relic.starIndexWithMaxLuminosity)
+                        starData.luminosity *= (float)Math.Pow(0.7, 0.33000001311302185);
+                }
             }
         }
 

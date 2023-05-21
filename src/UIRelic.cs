@@ -42,14 +42,17 @@ namespace DSP_Battle
         static Text relic1Desc;
         static Image relic1Icon;
         static Image relic1BtnImg;
+        static Image relic1Frame;
         static Text relic2Name;
         static Text relic2Desc;
         static Image relic2Icon;
         static Image relic2BtnImg;
+        static Image relic2Frame;
         static Text relic3Name;
         static Text relic3Desc;
         static Image relic3Icon;
         static Image relic3BtnImg;
+        static Image relic3Frame;
         static UIButton relic1UIBtn;
         static UIButton relic2UIBtn;
         static UIButton relic3UIBtn;
@@ -70,15 +73,21 @@ namespace DSP_Battle
         static Color colorBtnLegend = new Color(0.827f, 0.603f, 0.15f, 0.162f);
         static Color colorBtnEpic = new Color(0.66f, 0f, 0.875f, 0.115f);
         static Color colorBtnRare = new Color(0.183f, 0.426f, 0.811f, 0.178f);
-        static Color colorBtnCommon = new Color(0.5f, 0.943f, 0.5f, 0.057f);
+        static Color colorBtnCommon = new Color(0.5f, 0.943f, 0.3f, 0.057f);
+        static Color colorBtnCursed0 = new Color(0f, 0.04f, 0.1f, 1f);
+        static Color colorBtnCursed2 = new Color(0.82f, 0.24f, 0.20f, 0.94f);
+        static Color colorBtnCursed3 = new Color(0.2f, 0.1f, 0.82f, 0.94f);
+        static Color colorBtnCursed = new Color(0f, 1f, 0.86f, 0.076f);
         static Color colorBtnLegendH = new Color(0.793f, 0.569f, 0.104f, 0.259f);
         static Color colorBtnEpicH = new Color(0.66f, 0.1f, 0.875f, 0.188f);
         static Color colorBtnRareH = new Color(0.183f, 0.426f, 0.811f, 0.378f);
-        static Color colorBtnCommonH = new Color(0.5f, 0.943f, 0.5f, 0.097f);
+        static Color colorBtnCommonH = new Color(0.5f, 0.943f, 0.3f, 0.097f);
+        static Color colorBtnCursedH = new Color(0f, 1f, 0.86f, 0.116f);
         static Color colorBtnLegendP = new Color(0.827f, 0.603f, 0.15f, 0.091f);
         static Color colorBtnEpicP = new Color(0.66f, 0f, 0.875f, 0.068f);
         static Color colorBtnRareP = new Color(0.183f, 0.426f, 0.811f, 0.098f);
-        static Color colorBtnCommonP = new Color(0.5f, 0.943f, 0.5f, 0.04f);
+        static Color colorBtnCommonP = new Color(0.5f, 0.943f, 0.3f, 0.04f);
+        static Color colorBtnCursedP = new Color(0f, 1f, 0.86f, 0.036f);
         static Color colorBtnDelete = new Color(0.5f, 0.19f, 0.1f, 0.2f);
         static Color colorBtnDeleteH = new Color(0.5f, 0.19f, 0.1f, 0.5f);
         static Color colorBtnDeleteP = new Color(0.5f, 0.19f, 0.1f, 0.1f);
@@ -86,6 +95,7 @@ namespace DSP_Battle
         static Color colorTextEpic = new Color(0.563f, 0.25f, 0.813f, 1f);
         static Color colorTextRare = new Color(0.125f, 0.5f, 0.813f, 1f);
         static Color colorTextCommon = new Color(0.188f, 0.609f, 0.188f, 1f);
+        static Color colorTextCursed = new Color(0.8f, 0.4f, 0.7f, 1f);
         static Color colorTextDelete = new Color(0.5f, 0.5f, 0.5f, 1f);
         static Color btnDisableColor = new Color(0.4f, 0.4f, 0.4f, 1f);
         static Color btnAbleColor = new Color(0f, 0.499f, 0.824f, 1f);
@@ -106,6 +116,7 @@ namespace DSP_Battle
         public static void SelectionWindowAnimationUpdate()
         {
             if (relicSelectionWindowObj == null) return;
+            // 以下是开关窗口的动画逻辑
             float r = -1;
             if (closingCountDown > 0)
             {
@@ -127,6 +138,7 @@ namespace DSP_Battle
                     relic1Name.color = new Color(relic1Name.color.r, relic1Name.color.g, relic1Name.color.b, relic1Name.color.a * r);
                     relic1Desc.color = tColor;
                     relic1Icon.color = iColor;
+                    relic1Frame.color = iColor;
                 }
                 else if (selectedRelicInUI == 1)
                 {
@@ -135,6 +147,7 @@ namespace DSP_Battle
                     relic2Name.color = new Color(relic2Name.color.r, relic2Name.color.g, relic2Name.color.b, relic2Name.color.a * r);
                     relic2Desc.color = tColor;
                     relic2Icon.color = iColor;
+                    relic2Frame.color = iColor;
                 }
                 else if (selectedRelicInUI == 2)
                 {
@@ -143,6 +156,7 @@ namespace DSP_Battle
                     relic3Name.color = new Color(relic3Name.color.r, relic3Name.color.g, relic3Name.color.b, relic3Name.color.a * r);
                     relic3Desc.color = tColor;
                     relic3Icon.color = iColor;
+                    relic3Frame.color = iColor;
                 }
 
                 if (closingCountDown >= 0)
@@ -194,7 +208,7 @@ namespace DSP_Battle
                 relic1DescObj.GetComponent<RectTransform>().sizeDelta = new Vector2(220, 24);
                 relic1IconObj = relicSelectionContentObj.transform.Find("icon").gameObject;
                 relic1NameObj.transform.localPosition = new Vector3(-300, 180);
-                relic1DescObj.transform.localPosition = new Vector3(-300, -70);
+                relic1DescObj.transform.localPosition = new Vector3(-300, -80);
                 relic1IconObj.transform.localPosition = new Vector3(-300, 95);
                 relic1IconObj.GetComponent<RectTransform>().sizeDelta = new Vector3(120, 120);
                 relic1NameObj.name = "name1";
@@ -205,9 +219,18 @@ namespace DSP_Battle
                 relic1Icon = relic1IconObj.GetComponent<Image>();
                 relic1IconObj.SetActive(true);
                 relic1Desc.fontSize = 16;
+                relic1Desc.alignment = TextAnchor.MiddleCenter;
                 relic1Name.fontSize = 25;
                 relic1Name.supportRichText = true;
                 relic1Name.material = GameObject.Find("UI Root/Overlay Canvas/In Game/AlertUI/battle-alert-title/").GetComponent<Text>().material;
+                GameObject relic1FrameObj = GameObject.Instantiate(relic1IconObj);
+                relic1FrameObj.name = "r1BtnFrame";
+                relic1FrameObj.transform.SetParent(relicSelectionContentObj.transform);
+                relic1FrameObj.transform.localPosition = new Vector3(-300, 250);
+                relic1FrameObj.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 500);
+                relic1FrameObj.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+                relic1Frame = relic1FrameObj.GetComponent<Image>();
+                relic1Frame.sprite = Resources.Load<Sprite>("Assets/DSPBattle/flagCursedBig");
 
                 relic2NameObj = GameObject.Instantiate(relic1NameObj, relicSelectionContentObj.transform);
                 relic2DescObj = GameObject.Instantiate(relic1DescObj, relicSelectionContentObj.transform);
@@ -215,7 +238,7 @@ namespace DSP_Battle
                 relic2DescObj.transform.localScale = new Vector3(1, 1, 1);
                 relic2IconObj = relicSelectionContentObj.transform.Find("icon").gameObject;
                 relic2NameObj.transform.localPosition = new Vector3(0, 180);
-                relic2DescObj.transform.localPosition = new Vector3(0, -70);
+                relic2DescObj.transform.localPosition = new Vector3(0, -80);
                 relic2IconObj.transform.localPosition = new Vector3(0, 95);
                 relic2IconObj.GetComponent<RectTransform>().sizeDelta = new Vector3(120, 120);
                 relic2NameObj.name = "name2";
@@ -225,6 +248,14 @@ namespace DSP_Battle
                 relic2Desc = relic2DescObj.GetComponent<Text>();
                 relic2Icon = relic2IconObj.GetComponent<Image>();
                 relic2IconObj.SetActive(true);
+                GameObject relic2FrameObj = GameObject.Instantiate(relic1IconObj);
+                relic2FrameObj.name = "r2BtnFrame";
+                relic2FrameObj.transform.SetParent(relicSelectionContentObj.transform);
+                relic2FrameObj.transform.localPosition = new Vector3(0, 250);
+                relic2FrameObj.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 500);
+                relic2FrameObj.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+                relic2Frame = relic2FrameObj.GetComponent<Image>();
+                relic2Frame.sprite = Resources.Load<Sprite>("Assets/DSPBattle/flagCursedBig");
 
                 relic3NameObj = GameObject.Instantiate(relic1NameObj, relicSelectionContentObj.transform);
                 relic3DescObj = GameObject.Instantiate(relic1DescObj, relicSelectionContentObj.transform);
@@ -232,7 +263,7 @@ namespace DSP_Battle
                 relic3DescObj.transform.localScale = new Vector3(1, 1, 1);
                 relic3IconObj = relicSelectionContentObj.transform.Find("icon").gameObject;
                 relic3NameObj.transform.localPosition = new Vector3(300, 180);
-                relic3DescObj.transform.localPosition = new Vector3(300, -70);
+                relic3DescObj.transform.localPosition = new Vector3(300, -80);
                 relic3IconObj.transform.localPosition = new Vector3(300, 95);
                 relic3IconObj.GetComponent<RectTransform>().sizeDelta = new Vector3(120, 120);
                 relic3NameObj.name = "name3";
@@ -242,6 +273,14 @@ namespace DSP_Battle
                 relic3Desc = relic3DescObj.GetComponent<Text>();
                 relic3Icon = relic3IconObj.GetComponent<Image>();
                 relic3IconObj.SetActive(true);
+                GameObject relic3FrameObj = GameObject.Instantiate(relic1IconObj);
+                relic3FrameObj.name = "r1BtnFrame";
+                relic3FrameObj.transform.SetParent(relicSelectionContentObj.transform);
+                relic3FrameObj.transform.localPosition = new Vector3(300, 250);
+                relic3FrameObj.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 500);
+                relic3FrameObj.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+                relic3Frame = relic3FrameObj.GetComponent<Image>();
+                relic3Frame.sprite = Resources.Load<Sprite>("Assets/DSPBattle/flagCursedBig");
 
                 //GameObject oriButton = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Station Window/storage-box-0/popup-box/sd-option-button-1");
                 GameObject oriButtonWOTip = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Station Window/storage-box-0/popup-box/sd-option-button-1");
@@ -346,9 +385,9 @@ namespace DSP_Battle
                 //放弃解译按钮
                 abortBtnObj = GameObject.Instantiate(oriButtonWOTip, relicSelectionWindowObj.transform);
                 abortBtnObj.name = "btn-abort";
-                abortBtnObj.transform.localPosition = new Vector3(0, -260, 0);
+                abortBtnObj.transform.localPosition = new Vector3(0, -270, 0);
                 abortBtnObj.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
-                abortBtnObj.GetComponent<RectTransform>().sizeDelta = new Vector2(200, 50);
+                abortBtnObj.GetComponent<RectTransform>().sizeDelta = new Vector2(200, 40);
                 abortBtnText = abortBtnObj.transform.Find("button-text").GetComponent<Text>();
                 abortBtnText.text = "放弃解译".Translate() + Relic.AbortReward.ToString();
                 abortBtnObj.transform.Find("button-text").GetComponent<Text>().resizeTextMaxSize = 20;
@@ -358,7 +397,7 @@ namespace DSP_Battle
 
                 matrixIcon2 = relicSelectionContentObj.transform.Find("icon").gameObject;
                 matrixIcon2.name = "icon-matrix-abort";
-                matrixIcon2.transform.localPosition = new Vector3(23, -239);
+                matrixIcon2.transform.localPosition = new Vector3(23, -249);
                 matrixIcon2.GetComponent<RectTransform>().sizeDelta = new Vector2(40, 40);
                 matrixIcon2.GetComponent<Image>().sprite = Resources.Load<Sprite>("Assets/DSPBattle/alienmatrix");
                 matrixIcon2.SetActive(true);
@@ -367,6 +406,7 @@ namespace DSP_Battle
                 relicSelectionWindowObj.SetActive(false);
             }
         }
+
 
         // 准备打开选择遗物窗口的动画
         public static void OpenSelectionWindow()
@@ -393,6 +433,7 @@ namespace DSP_Battle
                 relic1Name.color = zero;
                 relic1Desc.color = zero;
                 relic1BtnImg.color = zero;
+                relic1Frame.color = zero;
                 relic1UIBtn.transitions[0].target.color = zero;
                 relic1UIBtn.transitions[0].normalColor = zero;
                 relic1UIBtn.transitions[0].mouseoverColor = zero;
@@ -404,6 +445,7 @@ namespace DSP_Battle
                 relic2Name.color = zero;
                 relic2Desc.color = zero;
                 relic2BtnImg.color = zero;
+                relic2Frame.color = zero;
                 relic2UIBtn.transitions[0].target.color = zero;
                 relic2UIBtn.transitions[0].normalColor = zero;
                 relic2UIBtn.transitions[0].mouseoverColor = zero;
@@ -415,6 +457,7 @@ namespace DSP_Battle
                 relic3Name.color = zero;
                 relic3Desc.color = zero;
                 relic3BtnImg.color = zero;
+                relic3Frame.color = zero;
                 relic3UIBtn.transitions[0].target.color = zero;
                 relic3UIBtn.transitions[0].normalColor = zero;
                 relic3UIBtn.transitions[0].mouseoverColor = zero;
@@ -472,6 +515,10 @@ namespace DSP_Battle
             relic2UIBtn.tips.tipText = "";
             relic3UIBtn.tips.tipTitle = "";
             relic3UIBtn.tips.tipText = "";
+
+            relic1Frame.color = new Color(0, 0, 0, 0);
+            relic2Frame.color = new Color(0, 0, 0, 0);
+            relic3Frame.color = new Color(0, 0, 0, 0);
 
             // 如果是删除遗物的按钮
             if (Relic.alternateRelics[0] == 999)
@@ -546,11 +593,12 @@ namespace DSP_Battle
                 }
                 else
                 {
-                    relic1Name.color = colorTextCommon;
-                    relic1BtnImg.color = colorBtnCommon;
-                    relic1UIBtn.transitions[0].normalColor = colorBtnCommon;
-                    relic1UIBtn.transitions[0].mouseoverColor = colorBtnCommonH;
-                    relic1UIBtn.transitions[0].pressedColor = colorBtnCommonP;
+                    relic1Name.color = colorTextCursed;
+                    relic1BtnImg.color = colorBtnCursed;
+                    relic1UIBtn.transitions[0].normalColor = colorBtnCursed;
+                    relic1UIBtn.transitions[0].mouseoverColor = colorBtnCursedH;
+                    relic1UIBtn.transitions[0].pressedColor = colorBtnCursedP;
+                    relic1Frame.color = new Color(1, 1, 1, 1);
                 }
                 if (isRemove)
                 {
@@ -602,13 +650,22 @@ namespace DSP_Battle
                     relic2UIBtn.transitions[0].mouseoverColor = colorBtnRareH;
                     relic2UIBtn.transitions[0].pressedColor = colorBtnRareP;
                 }
-                else
+                else if(r2type == 3)
                 {
                     relic2Name.color = colorTextCommon;
                     relic2BtnImg.color = colorBtnCommon;
                     relic2UIBtn.transitions[0].normalColor = colorBtnCommon;
                     relic2UIBtn.transitions[0].mouseoverColor = colorBtnCommonH;
                     relic2UIBtn.transitions[0].pressedColor = colorBtnCommonP;
+                }
+                else
+                {
+                    relic2Name.color = colorTextCursed;
+                    relic2BtnImg.color = colorBtnCursed;
+                    relic2UIBtn.transitions[0].normalColor = colorBtnCursed;
+                    relic2UIBtn.transitions[0].mouseoverColor = colorBtnCursedH;
+                    relic2UIBtn.transitions[0].pressedColor = colorBtnCursedP;
+                    relic2Frame.color = new Color(1, 1, 1, 1);
                 }
                 if (isRemove)
                 {
@@ -660,13 +717,22 @@ namespace DSP_Battle
                     relic3UIBtn.transitions[0].mouseoverColor = colorBtnRareH;
                     relic3UIBtn.transitions[0].pressedColor = colorBtnRareP;
                 }
-                else
+                else if (r3type == 3)
                 {
                     relic3Name.color = colorTextCommon;
                     relic3BtnImg.color = colorBtnCommon;
                     relic3UIBtn.transitions[0].normalColor = colorBtnCommon;
                     relic3UIBtn.transitions[0].mouseoverColor = colorBtnCommonH;
                     relic3UIBtn.transitions[0].pressedColor = colorBtnCommonP;
+                }
+                else
+                {
+                    relic3Name.color = colorTextCursed;
+                    relic3BtnImg.color = colorBtnCursed;
+                    relic3UIBtn.transitions[0].normalColor = colorBtnCursed;
+                    relic3UIBtn.transitions[0].mouseoverColor = colorBtnCursedH;
+                    relic3UIBtn.transitions[0].pressedColor = colorBtnCursedP;
+                    relic3Frame.color = new Color(1, 1, 1, 1);
                 }
                 if (isRemove)
                 {
@@ -718,6 +784,10 @@ namespace DSP_Battle
             }
             else
             {
+            }
+            if (type == 4)
+            { 
+            
             }
         }
         
@@ -783,6 +853,10 @@ namespace DSP_Battle
                     relicAlreadyHave.Remove(relicId);
                     i++;
                 }
+                if (Relic.alternateRelics[2] == -1 && !Relic.HaveRelic(0, 0)) // 说明可以移除的数量不足3个，第三个格子是默认的-1
+                {
+                    Relic.alternateRelics[2] = 305; // 复活币
+                }
             }
             else
             {
@@ -790,20 +864,27 @@ namespace DSP_Battle
                 for (int i = 0; i < 3; i++)
                 {
                     double rand = Utils.RandDouble();
-                    double rollRatio = Relic.HaveRelic(0, 9) ? 1.5 : 1;
+                    double[] prob = Relic.HaveRelic(0, 9) ? Relic.relicTypeProbability : Relic.relicTypeProbabilityBuffed;
                     // relic0-9 五叶草 可以让更高稀有度的遗物刷新概率提高
                     for (int type = 0; type < 5; type++)
                     {
-                        if (rand <= Relic.relicTypeProbability[type] * rollRatio || (i == 0 && type == 2 && rand < Relic.firstRelicIsRare)) // 后面的判别条件是，第一个遗物至少是稀有以上的概率为独立的较大的一个概率
+                        if (rand <= prob[type] || (i == 0 && type == 2 && rand < Relic.firstRelicIsRare)) // 后面的判别条件是，第一个遗物至少是稀有以上的概率为独立的较大的一个概率
                         {
                             List<int> relicNotHave = new List<int>();
                             for (int num = 0; num < Relic.relicNumByType[type]; num++)
                             {
                                 if (Configs.developerMode) relicNotHave.Add(num);
-                                if (!Relic.HaveRelic(type, num) && !Relic.alternateRelics.Contains(type * 100 + num)) relicNotHave.Add(num); // 因为总共可以获取的遗物数量只有8个，小于任何一种遗物的数量，所以不会把单独一个稀有度拿干净
+                                if (!Relic.HaveRelic(type, num) && !Relic.alternateRelics.Contains(type * 100 + num)) relicNotHave.Add(num); // 因为总共可以获取的遗物数量只有8个，8-1+3小于任何一种遗物的数量，所以不会把单独一个稀有度拿干净。cursed除外
                             }
-                            Relic.alternateRelics[i] = type * 100 + relicNotHave[Utils.RandInt(0, relicNotHave.Count)];
-                            break;
+                            if (relicNotHave.Count > 0)
+                            {
+                                Relic.alternateRelics[i] = type * 100 + relicNotHave[Utils.RandInt(0, relicNotHave.Count)];
+                                break;
+                            }
+                            else if (type == 4)
+                            {
+                                Relic.alternateRelics[i] = 305; // 如果随机的稀有度是cursed但是没有可选的cursed圣物了，则这个位置设定为可选择的复活币
+                            }
                         }
                     }
                     // 有概率在最后一个格子设定为删除一个现有遗物，如果最后一个格子随机到了传说，避免将其改为移除遗物
@@ -828,9 +909,9 @@ namespace DSP_Battle
             Relic.rollCount = Math.Min(Relic.rollCount+1, 8); // 记录本次重随次数，重随消耗有上限
             if (Configs.developerMode)
             {
-                Relic.alternateRelics[0] = 7;
-                Relic.alternateRelics[1] = 2;
-                Relic.alternateRelics[2] = 10;
+                //Relic.alternateRelics[0] = 7;
+                //Relic.alternateRelics[1] = 2;
+                //Relic.alternateRelics[2] = 10;
             }
             RefreshSelectionWindowUI();
         }
@@ -943,7 +1024,7 @@ namespace DSP_Battle
         public static void RefreshSlotsWindowUI()
         {
             int slotNum = 0;
-            for (int type = 0; type < 5; type++)
+            for (int type = 4; type < 5; type = (type + 1) % 5)
             {
                 for (int num = 0; num < Relic.relicNumByType[type]; num++)
                 {
@@ -979,6 +1060,7 @@ namespace DSP_Battle
                         }
                     }
                 }
+                if (type == 3) break;
             }
             for (; slotNum < relicSlotImgs.Count ; slotNum++)
             {

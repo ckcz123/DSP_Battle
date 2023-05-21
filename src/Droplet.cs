@@ -74,11 +74,12 @@ namespace DSP_Battle
         public static void GameData_GameTick(ref GameData __instance, long time)
         {
             //根据科技等级确定上限
-            if (GameMain.history.techStates.ContainsKey(4929) && GameMain.history.techStates[4929].unlocked) { maxDroplet = 20; }
+            if (GameMain.history.techStates.ContainsKey(4929) && GameMain.history.techStates[4929].unlocked) { maxDroplet = 5; }
             else if (GameMain.history.techStates.ContainsKey(4928) && GameMain.history.techStates[4928].unlocked) { maxDroplet = 4; }
             else if (GameMain.history.techStates.ContainsKey(4927) && GameMain.history.techStates[4927].unlocked) { maxDroplet = 3; }
             else { maxDroplet = 2; }
-
+            if (Relic.HaveRelic(4, 1)) 
+                maxDroplet += 15;
             if(DysonSphere.renderPlace == ERenderPlace.Universe)
             {
                 Droplet.maxPosDelta = 5;
@@ -561,8 +562,14 @@ namespace DSP_Battle
                         int damage = Configs.dropletAtk;
                         if (Rank.rank >= 10) damage = 5* Configs.dropletAtk;
                         if (Relic.HaveRelic(0, 10))
+                        {
                             damage = damage + (Relic.BonusDamage(Droplets.bonusDamage, 1) - Droplets.bonusDamage);
-                        UIBattleStatistics.RegisterDropletAttack(EnemyShips.ships[targetShipIndex].BeAttacked(damage, DamageType.droplet));
+                            UIBattleStatistics.RegisterDropletAttack(EnemyShips.ships[targetShipIndex].BeAttacked(damage, DamageType.droplet, true));
+                        }
+                        else
+                        {
+                            UIBattleStatistics.RegisterDropletAttack(EnemyShips.ships[targetShipIndex].BeAttacked(damage, DamageType.droplet));
+                        }
                         state = 3; //击中后继续冲过目标，准备转向的阶段
                     }
                 }

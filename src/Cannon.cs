@@ -538,7 +538,8 @@ namespace DSP_Battle
                                     break;
                             }
 
-                            int realDamage = EnemyShips.ships[bulletTargets[starIndex][i]].BeAttacked(damage, dmgType); //击中造成伤害  //如果在RemoveBullet的postpatch写这个，可以不用每帧循环检测，但是伤害将在爆炸动画后结算，感觉不太合理
+                            bool hasAdditionalDamage = bulletId == 8001 && bullet1Count > 1;
+                            int realDamage = EnemyShips.ships[bulletTargets[starIndex][i]].BeAttacked(damage, dmgType, hasAdditionalDamage); //击中造成伤害  //如果在RemoveBullet的postpatch写这个，可以不用每帧循环检测，但是伤害将在爆炸动画后结算，感觉不太合理
                             if(realDamage > 0) // 被闪避了则不算击中
                                 UIBattleStatistics.RegisterHit(bulletId, realDamage, bulletCount);
                             if (Relic.HaveRelic(3, 7)) // relic3-7 虚空折射 子弹命中时对一个随机敌人造成20%额外伤害
@@ -549,7 +550,7 @@ namespace DSP_Battle
                                     randNum = Utils.RandInt(0, EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex].Count);
                                 if (randNum >= 0 && EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex][randNum] != null && EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex][randNum].state == EnemyShip.State.active)
                                 {
-                                    int realRefDmg = EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex][randNum].BeAttacked(refDmg, dmgType);
+                                    int realRefDmg = EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex][randNum].BeAttacked(refDmg, dmgType, true);
                                     UIBattleStatistics.RegisterHit(bulletId, realRefDmg, 0);
                                 }
                             }

@@ -376,21 +376,21 @@ namespace DSP_Battle
                 }
                 // 立即结算伤害
                 int damage = Configs.lightSpearAtk;
-                int realDamage = enemyShip.BeAttacked(damage, DamageType.laser); //击中造成伤害
+                int realDamage = enemyShip.BeAttacked(damage, DamageType.laser, false); //击中造成伤害
                 if (realDamage > 0) // 被闪避了则不算击中
                     UIBattleStatistics.RegisterHit(8009, realDamage, 1);
-                if (Relic.HaveRelic(3, 7)) // relic3-7 虚空折射 子弹命中时对一个随机敌人造成20%额外伤害
-                {
-                    int refDmg = Relic.BonusDamage(damage, 0.2) - 50000;
-                    int randNum = -1;
-                    if (EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex].Count > 0)
-                        randNum = Utils.RandInt(0, EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex].Count);
-                    if (randNum >= 0 && EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex][randNum] != null && EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex][randNum].state == EnemyShip.State.active)
-                    {
-                        int realRefDmg = EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex][randNum].BeAttacked(refDmg, DamageType.laser);
-                        UIBattleStatistics.RegisterHit(8009, realRefDmg, 0);
-                    }
-                }
+                //if (Relic.HaveRelic(3, 7)) // relic3-7 虚空折射 子弹命中时对一个随机敌人造成20%额外伤害
+                //{
+                //    int refDmg = Relic.BonusDamage(damage, 0.2) - 50000;
+                //    int randNum = -1;
+                //    if (EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex].Count > 0)
+                //        randNum = Utils.RandInt(0, EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex].Count);
+                //    if (randNum >= 0 && EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex][randNum] != null && EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex][randNum].state == EnemyShip.State.active)
+                //    {
+                //        int realRefDmg = EnemyShips.minTargetDisSortedShips[Configs.nextWaveStarIndex][randNum].BeAttacked(refDmg, DamageType.laser, true);
+                //        UIBattleStatistics.RegisterHit(8009, realRefDmg, 0);
+                //    }
+                //}
             }
             catch (Exception)
             {
