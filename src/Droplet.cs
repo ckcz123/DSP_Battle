@@ -78,7 +78,7 @@ namespace DSP_Battle
             else if (GameMain.history.techStates.ContainsKey(4928) && GameMain.history.techStates[4928].unlocked) { maxDroplet = 4; }
             else if (GameMain.history.techStates.ContainsKey(4927) && GameMain.history.techStates[4927].unlocked) { maxDroplet = 3; }
             else { maxDroplet = 2; }
-            if (Relic.HaveRelic(4, 1)) 
+            if (Relic.HaveRelic(4, 2))  // relic 4-2 增加上限
                 maxDroplet += 15;
             if(DysonSphere.renderPlace == ERenderPlace.Universe)
             {
@@ -210,20 +210,21 @@ namespace DSP_Battle
             if (bonusDamage < bonusDamageLimit)
             {
                 Interlocked.Exchange(ref bonusDamage, Math.Min(bonusDamageLimit, bonusDamage + Relic.dropletDamageGrowth));
-                int slotNum = 0;
-                for (int rnum = 0; rnum < 10; rnum++)
-                {
-                    if (Relic.HaveRelic(0, rnum))
-                        slotNum++;
-                }
-                if (slotNum >= 8) return;
-                UIRelic.relicSlotUIBtns[slotNum].tips.tipText = "遗物描述0-10".Translate() + "\n" + "relicTipText0-10".Translate() + "\n\n<color=#61d8ffb4>" + "当前加成gm".Translate() + "  " + Droplets.bonusDamage + " / " + Droplets.bonusDamageLimit + "</color>";
-                if (UIRelic.relicSlotUIBtns[slotNum].tipShowing)
-                {
-                    UIRelic.relicSlotUIBtns[slotNum].OnPointerExit(null);
-                    UIRelic.relicSlotUIBtns[slotNum].OnPointerEnter(null);
-                    UIRelic.relicSlotUIBtns[slotNum].enterTime = 1;
-                }
+                UIRelic.RefreshSlotsWindowUI(true);
+                //int slotNum = 0;
+                //for (int rnum = 0; rnum < 10; rnum++)
+                //{
+                //    if (Relic.HaveRelic(0, rnum))
+                //        slotNum++;
+                //}
+                //if (slotNum >= 8) return;
+                //UIRelic.relicSlotUIBtns[slotNum].tips.tipText = "遗物描述0-10".Translate() + "\n" + "relicTipText0-10".Translate() + "\n\n<color=#61d8ffb4>" + "当前加成gm".Translate() + "  " + Droplets.bonusDamage + " / " + Droplets.bonusDamageLimit + "</color>";
+                //if (UIRelic.relicSlotUIBtns[slotNum].tipShowing)
+                //{
+                //    UIRelic.relicSlotUIBtns[slotNum].OnPointerExit(null);
+                //    UIRelic.relicSlotUIBtns[slotNum].OnPointerEnter(null);
+                //    UIRelic.relicSlotUIBtns[slotNum].enterTime = 1;
+                //}
                 try
                 {
                     int width = (int)Math.Log10(bonusDamage) * 12 + 200;

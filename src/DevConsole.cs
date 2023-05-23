@@ -279,6 +279,10 @@ namespace DSP_Battle
                         Relic.relic0_2CanActivate = 1;
                         UIRelic.RefreshTearOfGoddessSlotTips();
                         break;
+                    case "r020":
+                        Relic.relic0_2Version = 0;
+                        UIRelic.RefreshSlotsWindowUI();
+                        break;
                     default:
                         Print($"未知的命令：{param[0]}，输入 \"help\" 查看所有命令说明。", 1, true);
                         break;

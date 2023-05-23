@@ -614,6 +614,7 @@ namespace DSP_Battle
                     relic1Name.text = ("遗物名称" + r1type.ToString() + "-" + r1num.ToString()).Translate();
                 }
                 relic1Desc.text = ("遗物描述" + r1type.ToString() + "-" + r1num.ToString()).Translate();
+                if (r1type == 4) relic1Desc.text += "\n" + "负面效果警告".Translate();
                 relic1Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/r" + r1type.ToString() + "-" + r1num.ToString());
                 AddTipText(r1type, r1num, relic1UIBtn);
 
@@ -681,6 +682,7 @@ namespace DSP_Battle
                     relic2Name.text = ("遗物名称" + r2type.ToString() + "-" + r2num.ToString()).Translate();
                 }
                 relic2Desc.text = ("遗物描述" + r2type.ToString() + "-" + r2num.ToString()).Translate();
+                if (r2type == 4) relic2Desc.text += "\n" + "负面效果警告".Translate();
                 relic2Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/r" + r2type.ToString() + "-" + r2num.ToString());
                 AddTipText(r2type, r2num, relic2UIBtn);
 
@@ -748,6 +750,7 @@ namespace DSP_Battle
                     relic3Name.text = ("遗物名称" + r3type.ToString() + "-" + r3num.ToString()).Translate();
                 }
                 relic3Desc.text = ("遗物描述" + r3type.ToString() + "-" + r3num.ToString()).Translate();
+                if (r3type == 4) relic3Desc.text += "\n" + "负面效果警告".Translate();
                 relic3Icon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/r" + r3type.ToString() + "-" + r3num.ToString());
                 AddTipText(r3type, r3num, relic3UIBtn);
             }
@@ -774,7 +777,7 @@ namespace DSP_Battle
         }
 
 
-        public static void AddTipText(int type, int num, UIButton uibt)
+        public static void AddTipText(int type, int num, UIButton uibt, bool isLeftSlot = false)
         {
             if ((type == 0 && num == 2 && !(Relic.HaveRelic(0, 2) && Relic.relic0_2Version == 0)) || (type == 0 && num == 7) || (type == 0 && num == 10))
             {
@@ -782,15 +785,42 @@ namespace DSP_Battle
                     uibt.tips.tipTitle = ($"relicTipTitle{type}-{num}").Translate();
                 uibt.tips.tipText += "\n" + ($"relicTipText{type}-{num}").Translate();
             }
-            else
-            {
-            }
             if (type == 4)
-            { 
-            
+            {
+                if (uibt.tips.tipTitle.Length == 0)
+                    uibt.tips.tipTitle = ($"诅咒").Translate();
+                if(isLeftSlot)
+                    uibt.tips.tipText += "\n" + "诅咒描述短".Translate() + ($"relicTipText{type}-{num}").Translate(); // 受诅咒的圣物全都具有后面这项TipText，因为都有负面效果
+                else
+                    uibt.tips.tipText += "诅咒描述".Translate() + ($"relicTipText{type}-{num}").Translate(); // 受诅咒的圣物全都具有后面这项TipText，因为都有负面效果
+            }
+            if ((type == 4 && num == 6)) // relic4-6 符文之书额外显示记录了哪些relic
+            {
+                uibt.tips.tipText += "\n\n" + "已记载".Translate() + "  ";
+                foreach (var item in Relic.recordRelics)
+                {
+                    int rType = item / 100;
+                    int rNum = item % 100;
+                    uibt.tips.tipText += $"遗物名称带颜色{rType}-{rNum}".Translate().Split('[')[0] + "</color>";
+                }
+                foreach (var item in Relic.recordRelics)
+                {
+                    int rType = item / 100;
+                    int rNum = item % 100;
+                    AddTipVarData(rType, rNum, uibt);
+                }
             }
         }
-        
+
+        public static void AddTipVarData(int type, int num, UIButton uibt)
+        {
+            if (type == 0 && num == 2 && Relic.relic0_2Version == 1)
+            {
+                uibt.tips.tipText = uibt.tips.tipText + "\n\n<color=#61d8ffb4>" + "已充能gm".Translate() + "  " + Relic.relic0_2Charge + " / " + Relic.relic0_2MaxCharge + "</color>";   
+            }
+            if (type == 0 && num == 10)
+                uibt.tips.tipText = uibt.tips.tipText + "\n\n<color=#61d8ffb4>" + "当前加成gm".Translate() + "  " + Droplets.bonusDamage + " / " + Droplets.bonusDamageLimit + "</color>";
+        }
 
         // 检查背包里的矩阵是否足够随机，现在不打算每帧检查来刷新按钮和文本的显示以防突然增加矩阵，可能性不大，即使存在这种可能也不影响实际按下按钮触发功能，只是显示灰色按钮这样
         public static bool CheckEnoughMatrixToRoll()
@@ -841,7 +871,7 @@ namespace DSP_Battle
                 {
                     for (int num = 0; num < Relic.relicNumByType[type]; num++)
                     {
-                        if (Relic.HaveRelic(type, num))
+                        if (Relic.HaveRelic(type, num) && !Relic.isRecorded(type, num))
                             relicAlreadyHave.Add(100 * type + num);
                     }
                 }
@@ -868,13 +898,13 @@ namespace DSP_Battle
                     // relic0-9 五叶草 可以让更高稀有度的遗物刷新概率提高
                     for (int type = 0; type < 5; type++)
                     {
-                        if (rand <= prob[type] || (i == 0 && type == 2 && rand < Relic.firstRelicIsRare)) // 后面的判别条件是，第一个遗物至少是稀有以上的概率为独立的较大的一个概率
+                        if (rand <= prob[type] || (i == 0 && type == 2 && rand < Relic.firstRelicIsRare) || (i==1 && type == 0 && Relic.HaveRelic(4,1) && Relic.rollCount == -1)) // 后面的判别条件是，第一个遗物至少是稀有以上的概率为独立的较大的一个概率，第三个判别条件是relic 4-1的效果 第一次必在中间位置刷一个传说
                         {
                             List<int> relicNotHave = new List<int>();
                             for (int num = 0; num < Relic.relicNumByType[type]; num++)
                             {
                                 if (Configs.developerMode) relicNotHave.Add(num);
-                                if (!Relic.HaveRelic(type, num) && !Relic.alternateRelics.Contains(type * 100 + num)) relicNotHave.Add(num); // 因为总共可以获取的遗物数量只有8个，8-1+3小于任何一种遗物的数量，所以不会把单独一个稀有度拿干净。cursed除外
+                                if (!Relic.HaveRelic(type, num) && !Relic.alternateRelics.Contains(type * 100 + num)) relicNotHave.Add(num); 
                             }
                             if (relicNotHave.Count > 0)
                             {
@@ -883,7 +913,7 @@ namespace DSP_Battle
                             }
                             else if (type == 4)
                             {
-                                Relic.alternateRelics[i] = 305; // 如果随机的稀有度是cursed但是没有可选的cursed圣物了，则这个位置设定为可选择的复活币
+                                Relic.alternateRelics[i] = 305; // 如果是最后一个循环但是没有该稀有度可选的圣物了，则这个位置设定为可选择的复活币
                             }
                         }
                     }
@@ -895,7 +925,7 @@ namespace DSP_Battle
                         {
                             for (int num = 0; num < Relic.relicNumByType[type]; num++)
                             {
-                                if (Relic.HaveRelic(type, num))
+                                if (Relic.HaveRelic(type, num) && !Relic.isRecorded(type, num))
                                     relicAlreadyHave.Add(100 * type + num);
                             }
                         }
@@ -1021,37 +1051,51 @@ namespace DSP_Battle
 
         }
 
-        public static void RefreshSlotsWindowUI()
+        public static void RefreshSlotsWindowUI(bool onlyVarTips = false)
         {
             int slotNum = 0;
             for (int type = 4; type < 5; type = (type + 1) % 5)
             {
                 for (int num = 0; num < Relic.relicNumByType[type]; num++)
                 {
-                    if (Relic.HaveRelic(type, num))
+                    if (Relic.HaveRelic(type, num) && !Relic.isRecorded(type, num))
                     {
+                        if (onlyVarTips)
+                        {
+                            if (!(type == 0 && num == 2) && !(type == 0 && num == 0) && !(type == 4 && num == 6 && (Relic.recordRelics.Contains(2) || Relic.recordRelics.Contains(10))))
+                            {
+                                slotNum++;
+                                continue;
+                            }
+                        }
                         if (slotNum < relicSlotImgs.Count)
                         {
                             relicSlotImgs[slotNum].sprite = Resources.Load<Sprite>("Assets/DSPBattle/r" + type.ToString() + "-" + num.ToString());
                             relicSlotUIBtns[slotNum].tips.tipTitle = ("遗物名称带颜色" + type.ToString() + "-" + num.ToString()).Translate();
                             relicSlotUIBtns[slotNum].tips.tipText = ("遗物描述" + type.ToString() + "-" + num.ToString()).Translate();
-                            AddTipText(type, num, relicSlotUIBtns[slotNum]); // 对于一些原本描述较短的，还要将更详细的描述加入
-                            if (type == 0 && num == 2)
+                            if (type == 0 && num == 2 && Relic.relic0_2Version == 0) // 老版女神泪
                             {
-                                if (Relic.relic0_2Version == 0)
-                                    relicSlotUIBtns[slotNum].tips.tipText = ("遗物描述" + type.ToString() + "-" + num.ToString() + "old").Translate();
-                                else if(Relic.relic0_2Version == 1)
-                                {
-                                    relicSlotUIBtns[slotNum].tips.tipText = relicSlotUIBtns[slotNum].tips.tipText + "\n\n<color=#61d8ffb4>" + "已充能gm".Translate() + "  " + Relic.relic0_2Charge + " / " + Relic.relic0_2MaxCharge + "</color>";
-                                }
+                                relicSlotUIBtns[slotNum].tips.tipText = ("遗物描述" + type.ToString() + "-" + num.ToString() + "old").Translate();
                             }
-                            if(type == 0 && num == 10)
-                                relicSlotUIBtns[slotNum].tips.tipText = relicSlotUIBtns[slotNum].tips.tipText + "\n\n<color=#61d8ffb4>" + "当前加成gm".Translate() + "  " + Droplets.bonusDamage + " / " + Droplets.bonusDamageLimit + "</color>";
+                            AddTipText(type, num, relicSlotUIBtns[slotNum], true); // 对于一些原本描述较短的，还要将更详细的描述加入
+                            AddTipVarData(type, num, relicSlotUIBtns[slotNum]); // 对于部分需要展示实时数据的，还需要加入数据
+
                             relicSlotUIBtns[slotNum].tips.offset = new Vector2(160, 70);
-                            relicSlotUIBtns[slotNum].tips.width = 200;
+                            relicSlotUIBtns[slotNum].tips.width = 300;
                             relicSlotUIBtns[slotNum].tips.delay = 0.05f;
                             UIButtonTip uibtnt = relicSlotUIBtns[slotNum].tip as UIButtonTip;
                             if (uibtnt != null) uibtnt.titleComp.supportRichText = true;
+
+                            if (onlyVarTips)
+                            {
+                                if (UIRelic.relicSlotUIBtns[slotNum].tipShowing)
+                                {
+                                    UIRelic.relicSlotUIBtns[slotNum].OnPointerExit(null);
+                                    UIRelic.relicSlotUIBtns[slotNum].OnPointerEnter(null);
+                                    UIRelic.relicSlotUIBtns[slotNum].enterTime = 1;
+                                }
+                            }
+
                             slotNum++;
                         }
                         else
@@ -1075,16 +1119,17 @@ namespace DSP_Battle
         // 击杀时刷新左侧数据
         public static void RefreshTearOfGoddessSlotTips()
         {
-            int slotNum = 0;
-            for (int rnum = 0; rnum < 2; rnum++)
-            {
-                if (Relic.HaveRelic(0, rnum))
-                    slotNum++;
-            }
-            if (slotNum >= 8) return;
-            relicSlotUIBtns[slotNum].tips.tipText = "遗物描述0-2".Translate() +"\n" + "relicTipText0-2".Translate() + "\n\n<color=#61d8ffb4>" + "已充能gm".Translate() + "  " + Relic.relic0_2Charge + " / " + Relic.relic0_2MaxCharge + "</color>";
-
+            RefreshSlotsWindowUI(true);
+            //int slotNum = 0;
+            //for (int rnum = 0; rnum < 2; rnum++)
+            //{
+            //    if (Relic.HaveRelic(0, rnum))
+            //        slotNum++;
+            //}
+            //if (slotNum >= 8) return;
+            //relicSlotUIBtns[slotNum].tips.tipText = "遗物描述0-2".Translate() +"\n" + "relicTipText0-2".Translate() + "\n\n<color=#61d8ffb4>" + "已充能gm".Translate() + "  " + Relic.relic0_2Charge + " / " + Relic.relic0_2MaxCharge + "</color>";
         }
+
 
         public static void CheckRelicSlotsWindowShowByMouse()
         {

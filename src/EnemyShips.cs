@@ -223,6 +223,7 @@ namespace DSP_Battle
                     UIAlert.elimPointRatio *= 0.5f;
                     Configs.nextWaveDelay += 5 * 3600;
                     if (Configs.nextWaveDelay > 30 * 3600) Configs.nextWaveDelay = 30 * 3600;
+                    if (Relic.HaveRelic(4, 2)) Rank.LoseHalfExp(); // relic4-2 负面效果 损失物流塔时，损失经验值
                 }
             }
             if (Relic.HaveRelic(3, 9)) // relic3-9 开摆 敌舰降落时推进一个随机巨构的建造进度
@@ -533,6 +534,44 @@ namespace DSP_Battle
             RemoveEntities.Add(enemyShip, enemyShip.targetStation);
             //ships.TryAdd(nextGid, enemyShip);
 
+        }
+
+        public static void RepelAllEnemyShip(int distance, int needTime = 60, float moveFactor = 0.06f, bool isCenterPlanet = true)
+        {
+            foreach (EnemyShip ship in EnemyShips.ships.Values)
+            {
+                distance = distance + Utils.RandInt(-200,200);
+                AstroData[] astroPoses = GameMain.galaxy.astrosData;
+                if (ship.state != EnemyShip.State.active) continue;
+                VectorLF3 centerUPos = astroPoses[ship.shipData.planetB].uPos;
+                int starIndex = Configs.nextWaveStarIndex;
+                if (!isCenterPlanet && starIndex >= 0)
+                {
+                    centerUPos = GameMain.galaxy.stars[starIndex].uPosition;
+                }
+                centerUPos = centerUPos + Utils.RandPosDelta() * 250; // 增加一个随机偏移
+                VectorLF3 shipUPos = ship.uPos;
+                VectorLF3 finalUPos = shipUPos + (shipUPos - centerUPos).normalized * distance;
+                int planetCount = GameMain.galaxy.stars[starIndex].planetCount;
+                bool canMove = true;
+                for (int i = 0; i < planetCount; i++)
+                {
+                    int planetIdC = (starIndex + 1) * 100 + i + 1;
+                    if ((astroPoses[planetIdC].uPos - finalUPos).magnitude < astroPoses[planetIdC].uRadius + 200)
+                    {
+                        finalUPos = shipUPos + (shipUPos - centerUPos).normalized * Math.Max(0, (distance - 2 * (astroPoses[planetIdC].uRadius + 200))); // 如果位移终点距离星球太近那么位移距离减去那个星球的直径+400，如果还是太近就不位移了
+                        if ((astroPoses[planetIdC].uPos - finalUPos).magnitude < astroPoses[planetIdC].uRadius + 200)
+                        {
+                            canMove = false;
+                            break;
+                        }
+                    }
+                }
+                if (canMove)
+                {
+                    ship.InitForceDisplacement(finalUPos, needTime, moveFactor, true);
+                }
+            }
         }
 
         public static void Export(BinaryWriter w)

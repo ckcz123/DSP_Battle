@@ -64,6 +64,7 @@ namespace DSP_Battle
             // Configs.nextWaveIntensity = 6000;
             int baseIntensity = Configs.nextWaveIntensity;
             Configs.nextWaveMatrixExpectation = (int)(Configs.expectationMatrices[Math.Min(Configs.expectationMatrices.Length - 1, Configs.wavePerStar[starId])] * (deltaFrames * 1.0 / 36000)); //每10分钟间隔均会增加100%期望矩阵掉落量，但手动使进攻提前到来则会减少这个值
+            Configs.eliteDurationFrames = 3600 * 3 + 60 * 20 * (Relic.GetCursedRelicCount());
             // Extra intensity
             int r1 = 1000;
             int r2 = 5;
@@ -281,7 +282,7 @@ namespace DSP_Battle
                     "\n\n<color=#c2853d>" + rewardByRank + "</color>\n\n" +
                     "查看更多战斗信息".Translate()
                     );
-                if (Configs.nextWaveElite == 1 || (Configs.totalWave<=1 && Relic.GetRelicCount()==0)) Relic.PrepareNewRelic(); // 精英波次结束后给予遗物选择，第一次接敌完成也给遗物
+                if ((Configs.nextWaveElite == 1 && (!Relic.HaveRelic(4, 6) || Configs.totalWave % 2 == 0)) || (Configs.totalWave <= 1 && Relic.GetRelicCount() == 0)) Relic.PrepareNewRelic(); // 精英波次结束后给予遗物选择，第一次接敌完成也给遗物。如果有relic4-6，其负面效果导致每两次精英波次才给圣物，由于精英波次每五次出现，所以判断%2==0即可（不用%10是为了测试时手动设置精英波次时也可以每两次生效而不是10次）
                 BattleBGMController.SetWaveFinished();
             }
         }

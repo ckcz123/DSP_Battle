@@ -471,8 +471,13 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("圣物稀有度1", "<color=#9040d0>Epic</color>", "<color=#9040d0>史诗</color>");
             ProtoRegistry.RegisterString("圣物稀有度2", "<color=#2080d0>Rare</color>", "<color=#2080d0>稀有</color>");
             ProtoRegistry.RegisterString("圣物稀有度3", "<color=#30b530>Common</color>", "<color=#30b530>普通</color>");
+            ProtoRegistry.RegisterString("圣物稀有度4", "<color=#00c560>Cursed</color>", "<color=#00c560>被诅咒的</color>");
             ProtoRegistry.RegisterString("诅咒", "Curse", "诅咒");
-            ProtoRegistry.RegisterString("诅咒描述", "For each cursed relic you have, enemies in regular invasions gain 5% damage resistance, and the duration of elite invasions is extended by 20 seconds.\nYou can not remove a cursed relic once you have it.", "每拥有一个受诅咒的圣物，普通入侵中的敌人获得5%全伤害抗性，且精英入侵的持续时间延长20s。\n受诅咒的圣物无法被移除。");
+            ProtoRegistry.RegisterString("诅咒描述", "Cursed relics have different negative effects. Besides, for each cursed relic you have, enemies in regular invasions gain 5% damage resistance, and the duration of elite invasions is extended by 20 seconds.\nYou can not remove a cursed relic once you have it.\n\nNegative effect: ", "受诅咒的圣物均具有各不相同的负面效果，且你每拥有一个受诅咒的圣物，普通入侵中的敌人获得5%全伤害抗性，精英入侵的持续时间延长20s。\n受诅咒的圣物无法被移除。\n\n负面效果：");
+            ProtoRegistry.RegisterString("诅咒描述短", "This relic can not be removed.\nEnemies in regular invasions +5% damage resistance. Duration of elite invasions + 20s. ", "此圣物无法被移除\n普通入侵中敌人抗性+5%，精英入侵持续时间+20s，");
+            ProtoRegistry.RegisterString("负面效果警告", "<color=#ff0000>Warning! This relic has negative effect!</color>", "<color=#ff0000>警告！此圣物具有负面效果！</color>");
+
+            ProtoRegistry.RegisterString("已记载", "Recorded: ", "已记载：");
 
             ProtoRegistry.RegisterString("遗物名称0-0", "Swallower\n<size=18>- Legend -</size>", "吞噬者\n<size=18>- 传说 -</size>");
             ProtoRegistry.RegisterString("遗物名称0-1", "Blue Buff\n<size=18>- Legend -</size>", "蓝buff\n<size=18>- 传说 -</size>");
@@ -521,7 +526,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物名称3-0", "Inferior processing\n<size=18>- Common -</size>", "劣质加工\n<size=18>- 普通 -</size>");
             ProtoRegistry.RegisterString("遗物名称3-1", "Spelltheif's Edge\n<size=18>- Common -</size>", "窃法之刃\n<size=18>- 普通 -</size>");
             ProtoRegistry.RegisterString("遗物名称3-2", "Ark Reactor\n<size=18>- Common -</size>", "方舟反应堆\n<size=18>- 普通 -</size>");
-            ProtoRegistry.RegisterString("遗物名称3-3", "Shepherd of souls\n<size=18>- Common -</size>", "掘墓人\n<size=18>- 普通 -</size>"); // 英文是牧魂人新名字
+            ProtoRegistry.RegisterString("遗物名称3-3", "Shepherd of Souls\n<size=18>- Common -</size>", "掘墓人\n<size=18>- 普通 -</size>"); // 英文是牧魂人新名字
             ProtoRegistry.RegisterString("遗物名称3-4", "Ctrl 6\n<size=18>- Common -</size>",     "装\n<size=18>- 普通 -</size>");
             ProtoRegistry.RegisterString("遗物名称3-5", "Resurrection Coin\n<size=18>- Common -</size>", "复活币\n<size=18>- 普通 -</size>");
             ProtoRegistry.RegisterString("遗物名称3-6", "Mask Aligner\n<size=18>- Common -</size>", "光刻机\n<size=18>- 普通 -</size>");
@@ -532,17 +537,18 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物名称3-11", "Activated Carbon I\n<size=18>- Common -</size>", "活性炭 I\n<size=18>- 普通 -</size>");
             ProtoRegistry.RegisterString("遗物名称3-12", "Dynamic Giant\n<size=18>- Common -</size>", "灵动巨物\n<size=18>- 普通 -</size>");
             ProtoRegistry.RegisterString("遗物名称3-13", "Light Saver I\n<size=18>- Common -</size>", "聚能环 I\n<size=18>- 普通 -</size>");
-            ProtoRegistry.RegisterString("遗物名称3-14", "Lovely motor\n<size=18>- Common -</size>", "阳间马达\n<size=18>- 普通 -</size>");
+            ProtoRegistry.RegisterString("遗物名称3-14", "Lovely Motor\n<size=18>- Common -</size>", "阳间马达\n<size=18>- 普通 -</size>");
             ProtoRegistry.RegisterString("遗物名称3-15", "Super Mind\n<size=18>- Common -</size>", "超级大脑\n<size=18>- 普通 -</size>");
             ProtoRegistry.RegisterString("遗物名称3-16", "Void Lens\n<size=18>- Common -</size>", "虚空棱镜\n<size=18>- 普通 -</size>");
             ProtoRegistry.RegisterString("遗物名称3-17", "Honorary Promotion\n<size=18>- Common -</size>", "荣誉晋升\n<size=18>- 普通 -</size>");
 
-            ProtoRegistry.RegisterString("遗物名称4-0", "Relic4_0\n<size=18>- Cursed -</size>", "编织者\n<size=18>- 受诅咒的 -</size>");
-            ProtoRegistry.RegisterString("遗物名称4-1", "Relic4_1\n<size=18>- Cursed -</size>", "厄运契约\n<size=18>- 受诅咒的 -</size>");
-            ProtoRegistry.RegisterString("遗物名称4-2", "Relic4_2\n<size=18>- Cursed -</size>", "统治之冠\n<size=18>- 受诅咒的 -</size>");
-            ProtoRegistry.RegisterString("遗物名称4-3", "Relic4_3\n<size=18>- Cursed -</size>", "致命回响\n<size=18>- 受诅咒的 -</size>");
-            ProtoRegistry.RegisterString("遗物名称4-4", "Relic4_4\n<size=18>- Cursed -</size>", "启迪回响\n<size=18>- 受诅咒的 -</size>");
-            ProtoRegistry.RegisterString("遗物名称4-5", "Relic4_5\n<size=18>- Cursed -</size>", "余震回响\n<size=18>- 受诅咒的 -</size>");
+            ProtoRegistry.RegisterString("遗物名称4-0", "The Weaver\n<size=18>- Cursed -</size>", "编织者\n<size=18>- 受诅咒的 -</size>");
+            ProtoRegistry.RegisterString("遗物名称4-1", "Contract of Misfortune\n<size=18>- Cursed -</size>", "厄运契约\n<size=18>- 受诅咒的 -</size>");
+            ProtoRegistry.RegisterString("遗物名称4-2", "Crown of Rule\n<size=18>- Cursed -</size>", "统治之冠\n<size=18>- 受诅咒的 -</size>");
+            ProtoRegistry.RegisterString("遗物名称4-3", "Fatal Echo\n<size=18>- Cursed -</size>", "致命回响\n<size=18>- 受诅咒的 -</size>");
+            ProtoRegistry.RegisterString("遗物名称4-4", "Enlightenment Echo\n<size=18>- Cursed -</size>", "启迪回响\n<size=18>- 受诅咒的 -</size>");
+            ProtoRegistry.RegisterString("遗物名称4-5", "Aftershock Echo\n<size=18>- Cursed -</size>", "余震回响\n<size=18>- 受诅咒的 -</size>");
+            ProtoRegistry.RegisterString("遗物名称4-6", "Rune Book\n<size=18>- Cursed -</size>", "符文之书\n<size=18>- 受诅咒的 -</size>");
 
             ProtoRegistry.RegisterString("遗物描述0-0", "Every time the enemy ship is destroyed, a random mega structure will be partially auto-constructed according to the intensity of the enemy ship", "每次击毁敌舰，根据敌舰强度略微推进巨构的建造进度");
             ProtoRegistry.RegisterString("遗物描述0-1", "When assembling recipes with at least 2 different materials in assembling machine (except when assembling antimatter fuel rods), every time a product is produced, one material in the first slot will be returned.", "制造厂在制造原材料至少2种的配方时（反物质燃料棒的产线除外），每产出1个产物，会返还1个第1位置的原材料");
@@ -594,10 +600,10 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物描述3-2", "Icarus will generate additional energy without consuming fuel, which is equivalent to 50% of the base power of the fuel generation reactor", "伊卡洛斯会不消耗燃料地持续获得额外的能量回复，相当于反应堆基础功率的50%");
             ProtoRegistry.RegisterString("遗物描述3-3", "When destroying the enemy ship, obtains sand based on the intensity of the enemy ship", "击毁敌舰时，基于敌舰强度获得沙土");
             ProtoRegistry.RegisterString("遗物描述3-4", "When manually advancing the invasion time, the expected matrix drop due to acceleration is halved", "手动加速敌军来袭时，因加速而损失的预期矩阵掉落数减半");
-            ProtoRegistry.RegisterString("遗物描述3-5", "Immediately reset the total wave count, and adjust the difficulty to ordinary, which gives you an additional chance to adjust the difficulty", "立刻重置敌舰进攻的总计次，并将难度调整为普通，同时给予一次重新调整难度的机会\n不会占用圣物槽位");
+            ProtoRegistry.RegisterString("遗物描述3-5", "Immediately reset the total wave count, and adjust the difficulty to ordinary, which gives you an additional chance to adjust the difficulty. Won't occupy the relic slot", "立刻重置敌舰进攻的总计次，并将难度调整为普通，同时给予一次重新调整难度的机会\n不会占用圣物槽位");
             ProtoRegistry.RegisterString("遗物描述3-6", "When producing processors and quantum chips, the effect of extra product from proliferator is strengthened by 50%", "生产处理器、量子芯片时，来自增产剂的增产效果加强50%");
             ProtoRegistry.RegisterString("遗物描述3-7", "When any bullet hit an enemy ship, it has chance to deal 20% <i>extra damage</i> to a random enemy ship", "任何子弹命中时有几率对一个随机其他敌舰造成相当于20%的<i>额外伤害</i>");
-            ProtoRegistry.RegisterString("遗物描述3-8", "Based on the unlocked matrix technology, immediately give a large number of normal matrix (except the alien matrix and the universe matrix)", "基于已解锁的矩阵科技，立刻获得大量普通矩阵（异星矩阵和宇宙矩阵除外），不会占用圣物槽位");
+            ProtoRegistry.RegisterString("遗物描述3-8", "Based on the unlocked matrix technology, immediately give a large number of normal matrix (except the alien matrix and the universe matrix). Won't occupy the relic slot", "基于已解锁的矩阵科技，立刻获得大量普通矩阵（异星矩阵和宇宙矩阵除外），不会占用圣物槽位");
             ProtoRegistry.RegisterString("遗物描述3-9", "When the enemy ship landed, a random mega structure will be slightly auto-constructed", "敌舰降落时，立刻少量推进随机巨构的建造进度");
             ProtoRegistry.RegisterString("遗物描述3-10", "Every second, if Icaros is on the planet and have moved in the previous second, you have 3% chance to obtain a multi-functional integrated component", "每过一秒，如果伊卡洛斯处于行星上并且在上一秒进行过移动，就有3%的概率获得一个多功能集成组件");
             ProtoRegistry.RegisterString("遗物描述3-11", "Solar sial adsorption speed increases 100%", "巨构的太阳帆吸附速度提升100%");
@@ -608,7 +614,13 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物描述3-16", "Star cannon deals 10% <i>additional damage</i> to the primary target", "恒星炮对主要目标造成10%<i>额外伤害</i>");
             ProtoRegistry.RegisterString("遗物描述3-17", "Each time your merit rank is promoted, random mega structures will be significantly auto-constructed", "每次提升功勋阶级，显著推进各巨构的建造进度");
 
-            ProtoRegistry.RegisterString("遗物描述4-0", "Each time your merit rank is promoted, random mega structures will be significantly auto-constructed", "星区中光度最高的恒星系的巨构会不停地自动建造\n所有其他星系获得一个负的恒星光度修正");
+            ProtoRegistry.RegisterString("遗物描述4-0", "Each time your merit rank is promoted, random mega structures will be significantly auto-constructed", "星区中光度最高的恒星系的巨构会不停地自动建造");
+            ProtoRegistry.RegisterString("遗物描述4-1", "Every time the Relic selection window opened, at least one legendary relic will be available before you reroll.", "每次开启圣物选择窗口时必然刷新一个传说圣物");
+            ProtoRegistry.RegisterString("遗物描述4-2", "Droplet max control limit +15", "可控制的水滴上限+15");
+            ProtoRegistry.RegisterString("遗物描述4-3", "When dealing <i>additional damage</i> to an enemy, there is a 1% chance to kill it immediately", "对敌人造成<i>额外伤害</i>时，有1%的概率使其立即死亡");
+            ProtoRegistry.RegisterString("遗物描述4-4", "Whenever a frame point of the mega structure is built, a free component point will be added to a random module of the star fortress", "每当巨构的框架点数增加时，额外构建该恒星要塞的随机模块的1个点数");
+            ProtoRegistry.RegisterString("遗物描述4-5", "When the shield is hit by a destroyer, repel all enemy ships by 0.1AU. When the shield is destroyed by any damage, repel enemies by 2AU", "护盾被驱逐舰撞击时，将所有敌舰击退0.1AU。当护盾被任意伤害摧毁时，转而击退2AU");
+            ProtoRegistry.RegisterString("遗物描述4-6", "When pick up this relic, permanently record the top three relics that you already have, retaining their effects but no longer occupying the relic slot", "获取此圣物时，将圣物栏位最顶端的三个圣物永久保存在符文之书中，保留他们的效果但使其不再占用圣物栏位");
 
             ProtoRegistry.RegisterString("遗物名称带颜色0-0", "<color=#d2853d>Swallower  [Legend]</color>",  "<color=#d2853d>吞噬者  [传说]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色0-1", "<color=#d2853d>Blue Buff  [Legend]</color>",  "<color=#d2853d>蓝buff  [传说]</color>");
@@ -673,12 +685,13 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物名称带颜色3-16", "<color=#30b530>Void Lens  [Common]</color>",  "<color=#30b530>虚空棱镜  [普通]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色3-17", "<color=#30b530>Honorary Promotion  [Common]</color>", "<color=#30b530>荣誉晋升  [普通]</color>");
 
-            ProtoRegistry.RegisterString("遗物名称带颜色4-0", "<color=#00c560>Relic4_0  [Cursed]</color>", "<color=#00c560>编织者  [被诅咒的]</color>");
-            ProtoRegistry.RegisterString("遗物名称带颜色4-1", "<color=#00c560>Relic4_1  [Cursed]</color>", "<color=#00c560>厄运契约  [被诅咒的]</color>");
-            ProtoRegistry.RegisterString("遗物名称带颜色4-2", "<color=#00c560>Relic4_2  [Cursed]</color>", "<color=#00c560>统治之冠  [被诅咒的]</color>");
-            ProtoRegistry.RegisterString("遗物名称带颜色4-3", "<color=#00c560>Relic4_3  [Cursed]</color>", "<color=#00c560>致命回响  [被诅咒的]</color>");
-            ProtoRegistry.RegisterString("遗物名称带颜色4-4", "<color=#00c560>Relic4_4  [Cursed]</color>", "<color=#00c560>启迪回响  [被诅咒的]</color>");
-            ProtoRegistry.RegisterString("遗物名称带颜色4-5", "<color=#00c560>Relic4_5  [Cursed]</color>", "<color=#00c560>余震回响  [被诅咒的]</color>");
+            ProtoRegistry.RegisterString("遗物名称带颜色4-0", "<color=#00c560>The Weaver  [Cursed]</color>", "<color=#00c560>编织者  [被诅咒的]</color>");
+            ProtoRegistry.RegisterString("遗物名称带颜色4-1", "<color=#00c560>Contract of Misfortune [Cursed]</color>", "<color=#00c560>厄运契约  [被诅咒的]</color>");
+            ProtoRegistry.RegisterString("遗物名称带颜色4-2", "<color=#00c560>Crown of Rule  [Cursed]</color>", "<color=#00c560>统治之冠  [被诅咒的]</color>");
+            ProtoRegistry.RegisterString("遗物名称带颜色4-3", "<color=#00c560>Fatal Echo  [Cursed]</color>", "<color=#00c560>致命回响  [被诅咒的]</color>");
+            ProtoRegistry.RegisterString("遗物名称带颜色4-4", "<color=#00c560>Enlightenment Echo  [Cursed]</color>", "<color=#00c560>启迪回响  [被诅咒的]</color>");
+            ProtoRegistry.RegisterString("遗物名称带颜色4-5", "<color=#00c560>Aftershock Echo  [Cursed]</color>", "<color=#00c560>余震回响  [被诅咒的]</color>");
+            ProtoRegistry.RegisterString("遗物名称带颜色4-6", "<color=#00c560>Rune Book  [Cursed]</color>", "<color=#00c560>符文之书  [被诅咒的]</color>");
 
 
             ProtoRegistry.RegisterString("relicTipTitle0-2", "Wrath of Goddess", "女神之怒");
@@ -687,6 +700,14 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("relicTipText0-7", "If the megastructure is star cannon, then the additional damage increases 200%.", "如果巨构为恒星炮，该伤害增加200%");
             ProtoRegistry.RegisterString("relicTipTitle0-10", "Upper Limit", "上限");
             ProtoRegistry.RegisterString("relicTipText0-10", "The upper limit is 400 at the begining. After reaching the upper limit, the mecha will automatically consume a droplet in inventory then increase the upper limit by 400. The upper limit growth is unlimited.", "加成上限初始为400，达到上限后，自动消耗背包中的一个水滴并再次提升400加成上限，提升上限的次数不受限制");
+
+            ProtoRegistry.RegisterString("relicTipText4-0", "All other galaxies receive a negative luminosity correction", "所有其他星系获得一个负的恒星光度修正");
+            ProtoRegistry.RegisterString("relicTipText4-1", "All relics with probability, their probability is halved", "所有具有概率的圣物，判定成功几率减半");
+            ProtoRegistry.RegisterString("relicTipText4-2", "When losing a logistics station, you will lose half of your current Merit Experience points", "损失物流塔时，你将失去当前一半的功勋经验点数");
+            ProtoRegistry.RegisterString("relicTipText4-3", "When an enemy ship hits a shield, there is a 1% chance of directly removing 10% of the current shield", "敌舰命中护盾时，有1%的概率直接移除10%的当前护盾");
+            ProtoRegistry.RegisterString("relicTipText4-4", "The shooting speed (and its upper limit) of the Star Fortress Light Spear is halved", "恒星要塞光矛的射速和射速上限减半");
+            ProtoRegistry.RegisterString("relicTipText4-5", "The planet shield generator charging speed -30%", "行星护盾生成器提供的护盾充能速度减少30%");
+            ProtoRegistry.RegisterString("relicTipText4-6", "Only after 2 elite waves can you find a new relic", "每两次精英波次才能获得新的圣物");
 
             ProtoRegistry.RegisterString("显示/隐藏", "Show/Hide", "显示/隐藏");
             ProtoRegistry.RegisterString("模块容量", "Module Capacity", "模块容量");
@@ -1326,7 +1347,7 @@ namespace DSP_Battle
                 {
                     string text = "";
                     string text2 = ""; //这里必须分成两部分要不然英文部分过长，超过65000报错，无法显示
-                    for (int type = 0; type < 2; type++)
+                    for (int type = 4; type < 2 || type == 4; type = (type + 1) % 5)
                     {
                         text += "<size=16>" + ($"圣物稀有度{type}").Translate() + "</size>\n";
                         for (int num = 0; num < Relic.relicNumByType[type]; num++)

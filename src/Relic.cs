@@ -19,18 +19,19 @@ namespace DSP_Battle
         public static int relic0_2Charge = 0; // 新版女神泪充能计数
         public static int relic0_2CanActivate = 1; // 新版女神泪在每次入侵中只能激活一次，激活后设置为0。下次入侵才设置为1
         public static int minShieldPlanetId = -1; // 饮血剑现在会给护盾量最低的星球回盾，但是每秒才更新一次护盾量最低的星球
+        public static List<int> recordRelics = new List<int>(); // 被Relic4-6保存的圣物
 
         //不存档的设定参数
         public static int relicHoldMax = 8; // 最多可以持有的遗物数
-        public static int[] relicNumByType = { 11, 12, 18, 18, 6 }; // 当前版本各种类型的遗物各有多少种，每种类型均不能大于30
+        public static int[] relicNumByType = { 11, 12, 18, 18, 7 }; // 当前版本各种类型的遗物各有多少种，每种类型均不能大于30
         public static double[] relicTypeProbability = { 0.03, 0.09, 0.2, 0.96, 1 }; // 各类型遗物刷新的概率，注意不是权重，是有次序地判断随机数 // 普通0.96
-        public static double[] relicTypeProbabilityBuffed = { 0.045, 0.135, 0.3, 0.92, 1 }; // 普通0.92
+        public static double[] relicTypeProbabilityBuffed = { 0.045, 0.135, 0.3, 0.93, 1 }; // 普通0.93
         public static double[] relicRemoveProbabilityByRelicCount = { 0, 0, 0, 0, 0.05, 0.1, 0.12, 0.15, 1, 1, 1 }; // 拥有i个reilc时，第三个槽位刷新的是删除relic的概率
         public static double firstRelicIsRare = 0.5; // 第一个遗物至少是稀有的概率
         public static bool canSelectNewRelic = false; // 当canSelectNewRelic为true时点按按钮才是有效的选择
         public static int[] alternateRelics = { -1, -1, -1 }; // 三个备选，百位数字代表稀有度类型，0代表传说，个位十位是遗物序号。
         public static int basicMatrixCost = 10; // 除每次随机赠送的一次免费随机之外，从第二次开始需要消耗的矩阵的基础值（这个第二次以此基础值的2倍开始）
-        public static int rollCount = 0;
+        public static int rollCount = 0; // 本次连续随机了几次的计数
         public static int AbortReward = 500; // 放弃解译圣物直接获取的矩阵数量
         public static List<int> starsWithMegaStructure = new List<int>(); // 每秒更新，具有巨构的星系。
         public static List<int> starsWithMegaStructureUnfinished = new List<int>(); // 每秒更新，具有巨构且未完成建造的星系.
@@ -68,6 +69,7 @@ namespace DSP_Battle
             Configs.relic1_8Protection = int.MaxValue;
             Configs.relic2_17Activated = 0;
             RelicFunctionPatcher.CheckSolarSailLife();
+            Configs.eliteDurationFrames = 3600 * 3 + 60 * 20 * Relic.GetCursedRelicCount();
         }
 
         public static int AddRelic(int type, int num)
@@ -78,7 +80,7 @@ namespace DSP_Battle
             if (GetRelicCount() >= relicHoldMax) return -3; // 超上限
 
             // 下面是一些特殊的Relic在选择时不是简单地改一个拥有状态就行，需要单独对待
-            if(type == 0 && num == 2)
+            if (type == 0 && num == 2)
             {
                 relics[type] |= 1 << num;
                 relic0_2Version = 1;
@@ -121,6 +123,27 @@ namespace DSP_Battle
                 {
                     GameMain.mainPlayer.ThrowTrash(6001, 400, 0, 0);
                 }
+            }
+            else if (type == 4 && num == 6)
+            {
+                if (Relic.HaveRelic(4, 6)) return 0;
+                recordRelics.Clear();
+                int count = 0;
+                const int maxCount = 3; // 最多记录三个
+                for (int haveType = 4; haveType < 5 && count < maxCount; haveType = (haveType + 1) % 5)
+                {
+                    for (int haveNum = 0; haveNum < relicNumByType[haveType] && count < maxCount; haveNum++)
+                    {
+                        if (Relic.HaveRelic(haveType, haveNum))
+                        {
+                            recordRelics.Add(haveType * 100 + haveNum);
+                            count++;
+                        }
+                    }
+                    if (haveType == 3)
+                        break;
+                }
+                relics[type] |= 1 << num;
             }
             else
             {
@@ -169,6 +192,11 @@ namespace DSP_Battle
             return false;
         }
 
+        public static bool isRecorded(int type, int num)
+        {
+            return recordRelics.Contains(type * 100 + num);
+        }
+
         // 输出遗物数量，type输入-1为获取全部类型的遗物数量总和
         public static int GetRelicCount(int type = -1)
         {
@@ -185,7 +213,16 @@ namespace DSP_Battle
                     r = r & (r - 1);
                     count++;
                 }
-                return count;
+                int recorded = 0;
+                if (recordRelics.Count > 0)
+                {
+                    foreach (var item in recordRelics)
+                    {
+                        if(item / 100 == type)
+                            recorded++;
+                    }
+                }
+                return count - recorded;
             }
         }
 
@@ -265,6 +302,8 @@ namespace DSP_Battle
 
         public static bool Verify(double possibility)
         {
+            if ((relics[4] & 1 << 1) > 0) // relic4-1负面效果：概率减半
+                possibility = 0.5 * possibility; 
             if (Utils.RandDouble() < possibility)
                 return true;
             else if ((relics[0] & 1 << 9) > 0) // 具有增加幸运的遗物，则可以再判断一次
@@ -288,7 +327,7 @@ namespace DSP_Battle
         }
 
         // 有限制地建造某一(starIndex为-1时则是随机的)巨构的固定数量(amount)的进度，不因层数、节点数多少而改变一次函数建造的进度量
-        public static void AutoBuildMegaStructure(int starIndex = -1, int amount = 12)
+        public static void AutoBuildMegaStructure(int starIndex = -1, int amount = 12, int frameCost = 5)
         {
             if (starsWithMegaStructureUnfinished.Count <= 0)
                 return;
@@ -312,13 +351,13 @@ namespace DSP_Battle
                                 DysonNode dysonNode = dysonSphereLayer.nodePool[j];
                                 if (dysonNode != null)
                                 {
-                                    for (int k = 0; k < Math.Min(6, amount); k++)
+                                    for (int k = 0; k < Math.Min(6, amount/frameCost); k++)
                                     {
                                         if (dysonNode.spReqOrder > 0)
                                         {
                                             sphere.OrderConstructSp(dysonNode);
                                             sphere.ConstructSp(dysonNode);
-                                            amount -= 5; // 框架结构点数由于本身是需要火箭才能建造的，自然比细胞点数昂贵一些。这里设置为昂贵五倍。
+                                            amount -= frameCost; // 框架结构点数由于本身是需要火箭才能建造的，自然比细胞点数昂贵一些。这里默认设置为昂贵五倍。
                                         }
                                     }
                                     for (int l = 0; l < Math.Min(6, amount); l++)
@@ -351,6 +390,11 @@ namespace DSP_Battle
             w.Write(relic0_2Charge);
             w.Write(relic0_2CanActivate);
             w.Write(minShieldPlanetId);
+            w.Write(recordRelics.Count);
+            foreach (var item in recordRelics)
+            {
+                w.Write(item);
+            }
         }
 
         public static void Import(BinaryReader r)
@@ -389,6 +433,15 @@ namespace DSP_Battle
                 relic0_2CanActivate = 1;
                 minShieldPlanetId = -1;
             }
+            recordRelics.Clear();
+            if (Configs.versionWhenImporting >= 30230523)
+            {
+                int count = r.ReadInt32();
+                for (int i = 0; i < count; i++)
+                {
+                    recordRelics.Add(r.ReadInt32());
+                }
+            }
             InitAll();
         }
 
@@ -399,6 +452,7 @@ namespace DSP_Battle
             relics[2] = 0;
             relics[3] = 0;
             relics[4] = 0;
+            recordRelics.Clear();
             InitAll();
         }
     }
@@ -419,6 +473,7 @@ namespace DSP_Battle
 
             TryRecalcDysonLumin();
             AutoBuildMegaWhenWaveFinished();
+            AutoBuildMegaOfMaxLuminStar(time);
         }
 
 
@@ -713,7 +768,7 @@ namespace DSP_Battle
                         double addDistance = (8 * 40000 - (shipUpos - starUPos).magnitude) * 0.5; // 距离恒星越近击退的距离越多
                         addDistance = addDistance < 0 ? 0 : addDistance;
                         addDistance += 40000; // 固定击退至少1AU
-                        ship.InitForceDisplacement(shipUpos + direction * addDistance, 240, 0.02f);
+                        ship.InitForceDisplacement(shipUpos + direction * addDistance, 240, 0.02f, true);
                         UIBattleStatistics.RegisterWrathOfGoddess(realDamage);
                     }
                 }
@@ -1063,6 +1118,44 @@ namespace DSP_Battle
                     }
                 }
                 Relic.alreadyRecalcDysonStarLumin = true;
+            }
+        }
+
+        /// <summary>
+        /// Relic 4-0 自动建造光度最高星系的巨构
+        /// </summary>
+        /// <param name="time"></param>
+        public static void AutoBuildMegaOfMaxLuminStar(long time)
+        {
+            if (Relic.HaveRelic(4, 0) && time % 2 == 1)
+            {
+                Relic.AutoBuildMegaStructure(Relic.starIndexWithMaxLuminosity, 70, 30);
+            }
+        }
+
+
+        /// <summary>
+        /// Relic 4-4 启迪回响自动建造恒星要塞，当巨构框架或节点被建造时
+        /// </summary>
+        /// <param name="__instance"></param>
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(DysonSphere), "ConstructSp")]
+        public static void AutoBuildStarFortressWhenNodeConstructed(ref DysonSphere __instance)
+        {
+            if (Relic.HaveRelic(4, 4))
+            {
+                int starIndex = __instance.starData.index;
+                List<int> needCompModules = new List<int>();
+                for (int i = 0; i < 4; i++)
+                {
+                    if (StarFortress.moduleComponentCount[starIndex][i] + StarFortress.moduleComponentInProgress[starIndex][i] < StarFortress.moduleMaxCount[starIndex][i] * StarFortress.compoPerModule[i])
+                        needCompModules.Add(i);
+                }
+                if (needCompModules.Count > 0)
+                {
+                    int moduleIndex = needCompModules[Utils.RandInt(0, needCompModules.Count)];
+                    StarFortress.moduleComponentCount[starIndex][moduleIndex] += 1;
+                }
             }
         }
     }

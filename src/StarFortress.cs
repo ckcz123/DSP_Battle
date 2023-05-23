@@ -209,7 +209,8 @@ namespace DSP_Battle
                     cannonChargeProgress %= 6000;
                 }
                 int cannonModuleCount = battleStarModuleBuiltCount[1];
-                cannonChargeProgress += 1000.0 * (cannonModuleCount)/(299.0+cannonModuleCount); // 充能速度有一个上限，就是1000/帧，也就是说发射速度有每秒10次的上限（因为充能满需要6000）
+                double ratio = Relic.HaveRelic(4, 4) ? 500.0 : 1000.0;
+                cannonChargeProgress += ratio * (cannonModuleCount)/(299.0+cannonModuleCount); // 充能速度有一个上限，就是1000/帧，也就是说发射速度有每秒10次的上限（因为充能满需要6000）
 
 
                 // 发射导弹的速度暂定为：每个导弹模块提供1导弹/10s的发射速度

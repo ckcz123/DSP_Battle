@@ -452,6 +452,12 @@ namespace DSP_Battle
             Interlocked.Add(ref wrathOfGoddessDamage, num);
         }
 
+        //Relic4-3立即击杀记录
+        public static void RegisterFatalEcho()
+        {
+            Utils.Log("FatalEcho!");   
+        }
+
 
         //异星矩阵掉落
         public static void RegisterAlienMatrixGain(int num)

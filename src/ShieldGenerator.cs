@@ -216,6 +216,7 @@ namespace DSP_Battle
                 gen = 0;
             }
             if (Relic.HaveRelic(2, 1)) gen = gen * 1.5;
+            if (Relic.HaveRelic(4, 5)) gen = gen * 0.7;
             calcShieldInc.AddOrUpdate(planetId, gen, (x, y) => y + gen);
 
         }

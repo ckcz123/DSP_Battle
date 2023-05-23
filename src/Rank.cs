@@ -56,6 +56,12 @@ namespace DSP_Battle
             Interlocked.Add(ref exp, realExp);
         }
 
+        public static void LoseHalfExp()
+        {
+            int loss = (int)(exp * 0.5); 
+            Interlocked.Add(ref exp, -loss);
+        }
+
         private static void Promotion()
         {
             Interlocked.Add(ref exp, -Configs.expToNextRank[rank]);

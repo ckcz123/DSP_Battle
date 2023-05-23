@@ -174,10 +174,18 @@ namespace DSP_Battle
                     else if(shipType == 4 && (dmgType == DamageType.laser || dmgType == DamageType.mega || dmgType == DamageType.shield))
                         atk = (int)(0.2 * atk);
                 }
-
+                if(Relic.GetCursedRelicCount() > 0) // 被诅咒的圣物的负面效果
+                {
+                    atk = (int)(atk * (1 - Relic.GetCursedRelicCount() * 0.05));
+                }
                 result = hp < atk ? hp : atk;
                 hp -= atk;
                 RelicFunctionPatcher.ApplyBloodthirster(result);
+                if (Relic.HaveRelic(4, 3) && Relic.Verify(0.01))
+                {
+                    hp = 0;
+                    UIBattleStatistics.RegisterFatalEcho();
+                }
                 if (hp <= 0)
                 {
                     UIBattleStatistics.RegisterEliminate(intensity); //记录某类型的敌人被摧毁
@@ -276,12 +284,14 @@ namespace DSP_Battle
             shipData.planetB = GameMain.data.galacticTransport.stationPool[nextStationId].planetId;
         }
 
-        public void InitForceDisplacement(VectorLF3 targetUPos, int needTime = 40, float moveFactor = 0.04f)
+        public void InitForceDisplacement(VectorLF3 targetUPos, int needTime = 40, float moveFactor = 0.04f, bool ignoreNearPlanet = false)
         {
+            if (distanceToTarget < 3000 && !ignoreNearPlanet) return;
             if (Configs.nextWaveElite == 1 && Configs.enemyIntensity2TypeMap[intensity] == 3) return; // 3号敌舰在精英波次免疫控制
             forceDisplacement = targetUPos;
             forceDisplacementTime = needTime;
             movePerTick = moveFactor;
+            shipData.uSpeed = 0;
         }
 
         public void Update(long time)
@@ -299,7 +309,7 @@ namespace DSP_Battle
             if (state != State.active) return;
 
             //强制位移
-            if (forceDisplacementTime > 0 && forceDisplacement != null && distanceToTarget > 3000) //最后一个判断条件让其不要在距离地表过近的位置被强制位移
+            if (forceDisplacementTime > 0 && forceDisplacement != null) //最后一个判断条件让其不要在距离地表过近的位置被强制位移
             {
                 VectorLF3 direction = forceDisplacement - shipData.uPos;
                 double fullDistance = direction.magnitude;
@@ -356,7 +366,24 @@ namespace DSP_Battle
                             ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => y - damage);
                         }
                         if (ShieldGenerator.currentShield.GetOrAdd(planetId, 0) < 0)
+                        {
                             ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => 0);
+                        }
+                        if (Relic.HaveRelic(4, 5))
+                        {
+                            if (shipTypeNum == 2)
+                            {
+                                int finalShield = ShieldGenerator.currentShield.GetOrAdd(planetId, 0);
+                                if (finalShield > 0)
+                                {
+                                    EnemyShips.RepelAllEnemyShip(4000);
+                                }
+                                else
+                                {
+                                    EnemyShips.RepelAllEnemyShip(80000,180,0.04f);
+                                }
+                            }
+                        }
                         UIBattleStatistics.RegisterShieldTakeDamage(Configs.enemyDamagePerBullet[shipTypeNum]);
 
                         //爆炸效果
@@ -427,6 +454,8 @@ namespace DSP_Battle
                     if (fireStart == 0) fireStart = GameMain.instance.timei;
                     double rootNum = Relic.HaveRelic(2, 16) ? 1.5 : 2.0; // relic2-16 效果
                     int damage = (int)(Configs.enemyDamagePerBullet[shipTypeNum] * Math.Pow(rootNum, (GameMain.instance.timei - fireStart) / 3600.0));
+                    if (Relic.HaveRelic(4, 3) && Relic.Verify(0.01)) // relic4-3 负面效果 造成护盾当前10%的伤害
+                        damage += (int)(ShieldGenerator.currentShield.GetOrAdd(planetId, 0) * 0.1);
                     if (!Relic.HaveRelic(3, 12) || !Relic.Verify(0.15)) // relic3-12 灵动巨物 有概率完全规避伤害
                     {
                         if (Relic.HaveRelic(1, 9) && GameMain.mainPlayer.mecha.coreEnergy >= GameMain.mainPlayer.mecha.coreEnergyCap * 0.2 && GameMain.mainPlayer.mecha.coreEnergy >= damage * 2000) // relic1-9 骑士之誓用机甲能量替代护盾伤害
@@ -447,6 +476,7 @@ namespace DSP_Battle
                             UIBattleStatistics.RegisterShieldTakeDamage(damage);
                             if (ShieldGenerator.currentShield[planetId] <= 0)
                             {
+                                EnemyShips.RepelAllEnemyShip(80000, 180, 0.04f); // relic4-5余震回响，护盾被打破时击退
                                 if (Configs.relic2_17Activated > 0)
                                 {
                                     Interlocked.Exchange(ref Configs.relic2_17Activated, 0);
