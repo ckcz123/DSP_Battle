@@ -474,6 +474,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("圣物稀有度4", "<color=#00c560>Cursed</color>", "<color=#00c560>被诅咒的</color>");
             ProtoRegistry.RegisterString("诅咒", "Curse", "诅咒");
             ProtoRegistry.RegisterString("诅咒描述", "Cursed relics have different negative effects. Besides, for each cursed relic you have, enemies in regular invasions gain 5% damage resistance, and the duration of elite invasions is extended by 20 seconds.\nYou can not remove a cursed relic once you have it.\n\nNegative effect: ", "受诅咒的圣物均具有各不相同的负面效果，且你每拥有一个受诅咒的圣物，普通入侵中的敌人获得5%全伤害抗性，精英入侵的持续时间延长20s。\n受诅咒的圣物无法被移除。\n\n负面效果：");
+            ProtoRegistry.RegisterString("诅咒描述独立", "Cursed relics have different <color=#d00000>negative effects</color>. Besides, for each cursed relic you have, enemies in regular invasions gain 5% damage resistance, and the duration of elite invasions is extended by 20 seconds.\nYou can not remove a cursed relic once you have it.", "受诅咒的圣物均具有各不相同的<color=#d00000>负面效果</color>，且你每拥有一个受诅咒的圣物，普通入侵中的敌人获得5%全伤害抗性，精英入侵的持续时间延长20s。\n受诅咒的圣物无法被移除。");
             ProtoRegistry.RegisterString("诅咒描述短", "This relic can not be removed.\nEnemies in regular invasions +5% damage resistance. Duration of elite invasions + 20s. ", "此圣物无法被移除\n普通入侵中敌人抗性+5%，精英入侵持续时间+20s，");
             ProtoRegistry.RegisterString("负面效果警告", "<color=#ff0000>Warning! This relic has negative effect!</color>", "<color=#ff0000>警告！此圣物具有负面效果！</color>");
 
@@ -1324,6 +1325,14 @@ namespace DSP_Battle
             tp5.ID = 25;
             LDBTool.PreAddProto(tp5);
 
+            TutorialProto tp6 = LDB.tutorial.Select(1).Copy();
+            tp6.Name = "深空来敌介绍6标题".Translate();
+            tp6.name = "深空来敌介绍6标题".Translate();
+            tp6.Video = "";
+            tp6.PreText = "";
+            tp6.PostText = "";
+            tp6.ID = 26;
+            LDBTool.PreAddProto(tp6);
 
             ProtoRegistry.RegisterString("深空来敌介绍1标题", "They come from void player guide", "深空来敌玩法介绍");
             ProtoRegistry.RegisterString("深空来敌介绍1前字", "In TheyComeFromVoid, you will gradually face increasingly powerful enemy attacks. You need to build ground defense or research higher technology to deploy defense in space, resist enemy invasions, and prevent them from destroying your ground buildings and resources. \n\nOnly after you build the first <color=\"#FD965ECC\">interstellar logistics station</color> will the enemy begin preparing to invade. Carefully read the <color=\"#FD965ECC\">Pioneer Diary</color> for more game tips. The <color=\"#FD965ECC\">Pioneer Diary</color> will be gradually distributed as you unlock key technologies. \n\nThe real-time statistics of each battle can be viewed in the battle statistics panel (Press P).", "在深空来敌中，你将会逐渐面对越来越强大的敌人的进攻，你需要构建地面防御或研究更高的科技来在太空中部署防御，抵抗敌人的进攻，防止其摧毁你的地面建筑和资源。\n\n只有在你建造第一个<color=\"#FD965ECC\">星际物流塔</color>之后，敌人才会开始准备入侵。仔细阅读<color=\"#FD965ECC\">先驱者日记</color>来获得更多的游戏提示，<color=\"#FD965ECC\">先驱者日记</color>会在你解锁关键科技时逐步发放。\n\n每次战斗的实时统计均可在P键统计面板中的战斗统计中查看。");
@@ -1335,19 +1344,21 @@ namespace DSP_Battle
 
             ProtoRegistry.RegisterString("深空来敌介绍4标题", "Star Cannon (Nicoll-Dyson beam)", "恒星炮（尼科尔-戴森光束）");
             ProtoRegistry.RegisterString("深空来敌介绍4前字", "Star cannons can be used to destroy wormholes after they are generated, thereby weakening the overall strength of incoming enemies and reducing the defense difficulty of the next invasion. After the wormhole is generated and before the enemy invasion begins, if the Star Cannon has completed at least the first stage of construction and has cooled down, you can launch the Star Cannon and start destroying the wormhole through the [Star Cannon Fire] button in the top warning UI (After reaching stage 3, the fully charged star cannon will automatically launch after the wormholes are generated). For each invasion, as the number of wormholes you destroy increases, the resistance of the remaining wormholes will also increase, requiring more time to destroy the next wormhole, Until there is only one wormhole left. The enemy will then use all their energy to maintain its stable opening, so the last wormhole will not be destroyed in any case.\n\nJust like building a Dyson sphere or other mega structures, you need to first plan a star cannon, and then launch the carrier rocket of the star cannon and solar sail to build a star cannon. As the nodes and shells you build gradually increase, the construction stage of the Star Cannon will continue to advance, also its attributes such as damage and charging speed, until the fifth stage. The following is the data for each stage of the Star Cannon:\n\nStage\t\tRequired Energy\t\tDps\t\t\t\tMaximum Fire Times per Charging\t\tCharge Time\t\tDamage reduction\nStage1\t\t6GW\t\t\t\t\t\t30000\t\t\t3\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t75min\t\t\t\t\t-3%/ly\nStage2\t\t30GW\t\t\t\t\t\t60000\t\t\t5\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t45min\t\t\t\t\t-3%/ly\nStage3\t\t120GW\t\t\t\t\t\t90000\t\t\t8\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t20min\t\t\t\t\t-2%/ly\nStage4\t\t240GW\t\t\t\t\t120000\t\t15\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t10min\t\t\t\t\t-1%/ly\nStage5\t\t540GW\t\t\t\t\t150000+\t\tInfinite\t\t\t\t\t\t\t\t\t\t\t\t\t\t5min\t\t\t\t\tNone\n\nYou can only build one star cannon at most.", "恒星炮可以用来在虫洞生成后摧毁虫洞，从而削弱即将到来的敌人的总强度，降低下次入侵的防御难度。在虫洞生成后，且敌人入侵开始之前，如果恒星炮已建造了至少第一阶段且冷却完毕，你就可以通过顶部警示UI中的[恒星炮开火]按钮命令恒星炮启动并开始摧毁虫洞（在达到阶段3后，充能完毕的恒星炮会在虫洞生成后自动启动）。每次入侵，随着你不断摧毁虫洞，剩余虫洞的抗性也会不断提升，从而需要花费更多的时间来摧毁，直到只剩一个虫洞时，敌人会将全部的能量用于维持其稳定开启，因此最后一个虫洞无论如何也不会被摧毁。\n\n就像建造戴森球、物质解压器等其他巨构一样，你需要在一个恒星上首先规划恒星炮，然后发射恒星炮组件的运载火箭和太阳帆构建恒星炮。随着你建造的节点、壳面逐渐增大，恒星炮的建造阶段会不断推进，并提高伤害、充能速度等属性，直到第五阶段。以下为恒星炮各阶段的数据：\n\n阶段\t\t所需能量\t\t每秒伤害\t\t连续开火次数\t\t充能时间\t\t伤害衰减\n阶段1\t\t6GW\t\t\t\t30000\t\t\t\t3\t\t\t\t\t\t\t\t\t75min\t\t\t\t-3%/ly\n阶段2\t\t30GW\t\t\t\t60000\t\t\t\t5\t\t\t\t\t\t\t\t\t45min\t\t\t\t-3%/ly\n阶段3\t\t120GW\t\t\t\t90000\t\t\t\t8\t\t\t\t\t\t\t\t\t20min\t\t\t\t-2%/ly\n阶段4\t\t240GW\t\t\t120000\t\t\t15\t\t\t\t\t\t\t\t\t10min\t\t\t\t-1%/ly\n阶段5\t\t540GW\t\t\t150000+\t\t\t无限制\t\t\t\t\t\t5min\t\t\t\t无\n\n你最多只能建造一个恒星炮。");
-            ProtoRegistry.RegisterString("深空来敌介绍5标题", "All Relics", "所有圣物");
+            ProtoRegistry.RegisterString("深空来敌介绍5标题", "Regular Relics", "常规圣物");
+            ProtoRegistry.RegisterString("深空来敌介绍6标题", "Cursed Relics", "被诅咒的圣物");
         }
 
         public static void RewriteTutorioProtosWhenLoad()
         {
             TutorialProto relicTutorial = LDB.tutorial.Select(25);
+            TutorialProto relicCursedTutorial = LDB.tutorial.Select(26);
             if (relicTutorial != null)
             {
                 try
                 {
                     string text = "";
                     string text2 = ""; //这里必须分成两部分要不然英文部分过长，超过65000报错，无法显示
-                    for (int type = 4; type < 2 || type == 4; type = (type + 1) % 5)
+                    for (int type = 0; type < 2; type = (type + 1) % 5)
                     {
                         text += "<size=16>" + ($"圣物稀有度{type}").Translate() + "</size>\n";
                         for (int num = 0; num < Relic.relicNumByType[type]; num++)
@@ -1379,6 +1390,22 @@ namespace DSP_Battle
                         text2 += "\n";
                     }
                     relicTutorial.PostText = text2;
+
+                    string text3 = "";
+                    //text3 += "<size=16>" + ("圣物稀有度4").Translate() + "</size>\n";
+                    text3 += "诅咒描述独立".Translate() + "\n\n";
+                    for (int num = 0; num < Relic.relicNumByType[4]; num++)
+                    {
+                        text3 += $"遗物名称带颜色{4}-{num}".Translate().Split('[')[0].Trim() + "</color>\n";
+                        text3 += $"遗物描述{4}-{num}".Translate();
+                        if ($"relicTipText{4}-{num}".Translate() != $"relicTipText{4}-{num}")
+                        {
+                            text3 += "\n" + $"relicTipText{4}-{num}".Translate();
+                        }
+                        text3 += "\n\n";
+                    }
+                    text3 += "\n";
+                    relicCursedTutorial.PreText = text3;
                 }
                 catch (Exception)
                 { }
@@ -1390,7 +1417,7 @@ namespace DSP_Battle
         {
             if (i == -1)
             {
-                for (int id = 21; id <= 25; id++)
+                for (int id = 21; id <= 26; id++)
                 {
                     GameMain.history.UnlockTutorial(id);
                 }
