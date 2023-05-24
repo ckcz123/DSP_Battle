@@ -1062,7 +1062,7 @@ namespace DSP_Battle
                     {
                         if (onlyVarTips)
                         {
-                            if (!(type == 0 && num == 2) && !(type == 0 && num == 0) && !(type == 4 && num == 6 && (Relic.recordRelics.Contains(2) || Relic.recordRelics.Contains(10))))
+                            if (!(type == 0 && num == 2) && !(type == 0 && num == 10) && !(type == 4 && num == 6 && (Relic.recordRelics.Contains(2) || Relic.recordRelics.Contains(10))))
                             {
                                 slotNum++;
                                 continue;

@@ -1874,6 +1874,42 @@ namespace DSP_Battle
         }
 
 
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIMechaEnergy), "EnergyChangeString")]
+        public static void EnergyChangeStringPostPatch(ref UIMechaEnergy __instance, Mecha mecha, int func, ref string __result)
+        {
+            double num = (func < 32) ? (mecha.energyChanges[func] * 60.0) : (mecha.totalEnergyChange * 60.0);
+            bool flag = num < 0.0;
+            long num2 = (long)(num + (flag ? -0.5 : 0.5));
+            if (num2 == 0L)
+            {
+                __result = "";
+            }
+            StringBuilder stringBuilder = (func < 32) ? __instance.textBuilderW : __instance.textBuilderW2;
+            StringBuilderUtility.WriteKMG(stringBuilder, 8, num2, true);
+            string str = stringBuilder.ToString();
+            if (flag)
+            {
+                switch (func)
+                {
+                    case 10:
+                        __result = " - " + "水滴gm2".Translate() + "<color=\"#FD965EC0\">" + str;
+                        return;
+
+                }
+            }
+            else
+            {
+                switch (func)
+                {
+                    case 10:
+                        __result = " - " + "水滴gm2".Translate() + "<color=\"#61D8FFC0\">" + str;
+                        return;
+                }
+            }
+        }
+
+
         public static int[] GetBulletInfos(int protoId)
         {
             switch (protoId)

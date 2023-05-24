@@ -180,7 +180,7 @@ namespace DSP_Battle
             if (GameMain.mainPlayer.mecha.coreEnergy >= energy)
             {
                 GameMain.mainPlayer.mecha.coreEnergy -= energy;
-                GameMain.mainPlayer.mecha.MarkEnergyChange(8, -energy);
+                GameMain.mainPlayer.mecha.MarkEnergyChange(10, -energy);
                 return true;
             }
             else
@@ -194,7 +194,7 @@ namespace DSP_Battle
             double curEnergy = GameMain.mainPlayer.mecha.coreEnergy;
             energy = energy < curEnergy ? energy : curEnergy;
             GameMain.mainPlayer.mecha.coreEnergy -= energy;
-            GameMain.mainPlayer.mecha.MarkEnergyChange(8, -energy);
+            GameMain.mainPlayer.mecha.MarkEnergyChange(10, -energy);
         }
 
         public static void DamageGrow()
@@ -234,6 +234,7 @@ namespace DSP_Battle
                 { }
             }
         }
+
 
         public static void Export(BinaryWriter w) 
         {

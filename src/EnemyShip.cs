@@ -181,7 +181,7 @@ namespace DSP_Battle
                 result = hp < atk ? hp : atk;
                 hp -= atk;
                 RelicFunctionPatcher.ApplyBloodthirster(result);
-                if (Relic.HaveRelic(4, 3) && Relic.Verify(0.01))
+                if (Relic.HaveRelic(4, 3) && hasAdditionalDamage && Relic.Verify(0.01))
                 {
                     hp = 0;
                     UIBattleStatistics.RegisterFatalEcho();

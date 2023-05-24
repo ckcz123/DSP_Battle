@@ -996,7 +996,9 @@ namespace DSP_Battle
         {
             if (Relic.HaveRelic(3, 2))
             {
-                __instance.coreEnergy += __instance.reactorPowerGen * 0.5 / 60;
+                double change = __instance.reactorPowerGen * 0.5 / 60;
+                __instance.coreEnergy += change;
+                GameMain.mainPlayer.mecha.MarkEnergyChange(0, change); // 算在燃烧室发电
                 if (__instance.coreEnergy > __instance.coreEnergyCap) __instance.coreEnergy = __instance.coreEnergyCap;
             }
         }
