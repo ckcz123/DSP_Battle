@@ -263,6 +263,11 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("虫洞干扰半径", "Wormhole interference radius", "虫洞干扰半径");
             ProtoRegistry.RegisterString("效率gm", "Efficiency", "弹药效率");
             ProtoRegistry.RegisterString("额外奖励gm", "★bonus ", "★奖励 ");
+            ProtoRegistry.RegisterString("伤害类型", "Damage type", "伤害类型");
+            ProtoRegistry.RegisterString("伤害类型子弹", "Regular bullet", "常规子弹");
+            ProtoRegistry.RegisterString("伤害类型导弹", "Missile + AOE", "导弹+AOE");
+            ProtoRegistry.RegisterString("伤害类型能量", "Energy", "能量");
+            ProtoRegistry.RegisterString("伤害类型水滴", "Droplet", "水滴");
 
             ProtoRegistry.RegisterString("设定索敌最高优先级", "Set priority to eject", "设定索敌最高优先级");
             ProtoRegistry.RegisterString("最接近物流塔", "Nearest to station", "最接近物流塔");
@@ -276,8 +281,8 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("做好防御提示", "Please prepare next wave in <color=#c2853d>{0}</color>!", "请为<color=#c2853d>{0}</color>做好防御准备。");
             ProtoRegistry.RegisterString("下一波精英攻击即将到来！", "Next ★elite wave★ is coming!", "下一波 ★精英攻击★ 即将到来！");
             ProtoRegistry.RegisterString("做好防御提示精英",
-                "Please prepare next wave in <color=#c2853d>{0}</color>!\nThe enemy's attack will keep in 3 minutes, and the ships will obtain different buff.\nFrigate: 90% chance to evade bullet damage\nCruiser: reduce 90% damage from any aoe effects, immune crowd control\nBattleship: reduce 80% damage from energy weapons, megastructures or shields",
-                "请为<color=#c2853d>{0}</color>做好防御准备！\n 敌人将在三分钟内持续进攻\n敌舰将获得额外的加成效果\n护卫舰：有90%概率闪避来自子弹的伤害\n巡洋舰：减免90%受到的范围伤害，免疫任何控制效果\n战列舰：对能量武器、来自护盾或来自巨构的伤害减少80%");
+                "Please prepare next wave in <color=#c2853d>{0}</color>!\nThe enemy's attack will keep in 3 minutes, and the ships will obtain different buff.\nFrigate: 90% chance to evade regular bullet damage\nCruiser: reduce 90% damage from any aoe effects, immune crowd control\nBattleship: reduce 80% damage from energy weapons, megastructures or shields",
+                "请为<color=#c2853d>{0}</color>做好防御准备！\n 敌人将在三分钟内持续进攻\n敌舰将获得额外的加成效果\n护卫舰：有90%概率闪避来自常规子弹的伤害\n巡洋舰：减免90%受到的范围伤害，免疫任何控制效果\n战列舰：对能量武器、来自护盾或来自巨构的伤害减少80%");
             ProtoRegistry.RegisterString("虫洞已生成！", "Wormhole generated!", "虫洞已生成！");
             ProtoRegistry.RegisterString("虫洞生成提示", "Use starmap or fly to <color=#c2853d>{0}</color> to view details.", "可通过星图或飞往<color=#c2853d>{0}</color>查看具体信息。");
             ProtoRegistry.RegisterString("战斗已结束！", "Wave ended!", "战斗已结束！");
@@ -603,7 +608,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物描述3-4", "When manually advancing the invasion time, the expected matrix drop due to acceleration is halved", "手动加速敌军来袭时，因加速而损失的预期矩阵掉落数减半");
             ProtoRegistry.RegisterString("遗物描述3-5", "Immediately reset the total wave count, and adjust the difficulty to ordinary, which gives you an additional chance to adjust the difficulty. Won't occupy the relic slot", "立刻重置敌舰进攻的总计次，并将难度调整为普通，同时给予一次重新调整难度的机会\n不会占用圣物槽位");
             ProtoRegistry.RegisterString("遗物描述3-6", "When producing processors and quantum chips, the effect of extra product from proliferator is strengthened by 50%", "生产处理器、量子芯片时，来自增产剂的增产效果加强50%");
-            ProtoRegistry.RegisterString("遗物描述3-7", "When any bullet hit an enemy ship, it has chance to deal 20% <i>extra damage</i> to a random enemy ship", "任何子弹命中时有几率对一个随机其他敌舰造成相当于20%的<i>额外伤害</i>");
+            ProtoRegistry.RegisterString("遗物描述3-7", "When regular bullet hit an enemy ship, it has chance to deal 20% <i>extra damage</i> to a random enemy ship", "常规子弹命中时有几率对一个随机其他敌舰造成相当于20%的<i>额外伤害</i>");
             ProtoRegistry.RegisterString("遗物描述3-8", "Based on the unlocked matrix technology, immediately give a large number of normal matrix (except the alien matrix and the universe matrix). Won't occupy the relic slot", "基于已解锁的矩阵科技，立刻获得大量普通矩阵（异星矩阵和宇宙矩阵除外），不会占用圣物槽位");
             ProtoRegistry.RegisterString("遗物描述3-9", "When the enemy ship landed, a random mega structure will be slightly auto-constructed", "敌舰降落时，立刻少量推进随机巨构的建造进度");
             ProtoRegistry.RegisterString("遗物描述3-10", "Every second, if Icaros is on the planet and have moved in the previous second, you have 3% chance to obtain a multi-functional integrated component", "每过一秒，如果伊卡洛斯处于行星上并且在上一秒进行过移动，就有3%的概率获得一个多功能集成组件");
@@ -616,7 +621,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物描述3-17", "Each time your merit rank is promoted, random mega structures will be significantly auto-constructed", "每次提升功勋阶级，显著推进各巨构的建造进度");
 
             ProtoRegistry.RegisterString("遗物描述4-0", "Each time your merit rank is promoted, random mega structures will be significantly auto-constructed", "星区中光度最高的恒星系的巨构会不停地自动建造");
-            ProtoRegistry.RegisterString("遗物描述4-1", "Every time the Relic selection window opened, at least one legendary relic will be available before you reroll.", "每次开启圣物选择窗口时必然刷新一个传说圣物");
+            ProtoRegistry.RegisterString("遗物描述4-1", "Every time the Relic selection window opened, at least one legendary relic will be available before you reroll. Reroll cost is halved", "每次开启圣物选择窗口时必然刷新一个传说圣物，重随消耗减半");
             ProtoRegistry.RegisterString("遗物描述4-2", "Droplet max control limit +15", "可控制的水滴上限+15");
             ProtoRegistry.RegisterString("遗物描述4-3", "When dealing <i>additional damage</i> to an enemy, there is a 1% chance to kill it immediately", "对敌人造成<i>额外伤害</i>时，有1%的概率使其立即死亡");
             ProtoRegistry.RegisterString("遗物描述4-4", "Whenever a frame point of the mega structure is built, a free component point will be added to a random module of the star fortress", "每当巨构的框架点数增加时，额外构建该恒星要塞的随机模块的1个点数");
@@ -694,14 +699,12 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物名称带颜色4-5", "<color=#00c560>Aftershock Echo  [Cursed]</color>", "<color=#00c560>余震回响  [被诅咒的]</color>");
             ProtoRegistry.RegisterString("遗物名称带颜色4-6", "<color=#00c560>Rune Book  [Cursed]</color>", "<color=#00c560>符文之书  [被诅咒的]</color>");
 
-
+            // Relic 由于文本过长放在鼠标悬停显示的Tips里面的说明
             ProtoRegistry.RegisterString("relicTipTitle0-2", "Wrath of Goddess", "女神之怒");
             ProtoRegistry.RegisterString("relicTipText0-2", "Wrath of Goddess consumes all sorrows, repels all enemy ships by at least 1AU, and deals 95% of their max health as true damage. \nAfter launching the Wrath of Goddess, you will not be able to gain any sorrow until this wave ends.", "女神之怒消耗所有哀痛，将所有敌船击退1AU以上，并对他们造成最大生命值95%的真实伤害。\n在任何一次入侵中发动女神之怒后，该次入侵无法继续叠加哀痛");
-            ProtoRegistry.RegisterString("relicTipTitle0-7", "For Star Cannon", "对于恒星炮");
-            ProtoRegistry.RegisterString("relicTipText0-7", "If the megastructure is star cannon, then the additional damage increases 200%.", "如果巨构为恒星炮，该伤害增加200%");
             ProtoRegistry.RegisterString("relicTipTitle0-10", "Upper Limit", "上限");
             ProtoRegistry.RegisterString("relicTipText0-10", "The upper limit is 400 at the begining. After reaching the upper limit, the mecha will automatically consume a droplet in inventory then increase the upper limit by 400. The upper limit growth is unlimited.", "加成上限初始为400，达到上限后，自动消耗背包中的一个水滴并再次提升400加成上限，提升上限的次数不受限制");
-
+            
             ProtoRegistry.RegisterString("relicTipText4-0", "All other galaxies receive a negative luminosity correction", "所有其他星系获得一个负的恒星光度修正");
             ProtoRegistry.RegisterString("relicTipText4-1", "All relics with probability, their probability is halved", "所有具有概率的圣物，判定成功几率减半");
             ProtoRegistry.RegisterString("relicTipText4-2", "When losing a logistics station, you will lose half of your current Merit Experience points", "损失物流塔时，你将失去当前一半的功勋经验点数");
@@ -709,6 +712,30 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("relicTipText4-4", "The shooting speed (and its upper limit) of the Star Fortress Light Spear is halved", "恒星要塞光矛的射速和射速上限减半");
             ProtoRegistry.RegisterString("relicTipText4-5", "The planet shield generator charging speed -30%", "行星护盾生成器提供的护盾充能速度减少30%");
             ProtoRegistry.RegisterString("relicTipText4-6", "Only after 2 elite waves can you find a new relic", "每两次精英波次才能获得新的圣物");
+
+            // 有关对额外伤害的说明
+            ProtoRegistry.RegisterString("relicTipTitle0-5", "Additional damage", "额外伤害");
+            ProtoRegistry.RegisterString("relicTipTitle0-6", "Additional damage", "额外伤害");
+            ProtoRegistry.RegisterString("relicTipTitle0-7", "Additional damage", "额外伤害");
+            ProtoRegistry.RegisterString("relicTipTitle0-10", "Additional damage", "额外伤害");
+            ProtoRegistry.RegisterString("relicTipTitle1-3", "Additional damage", "额外伤害");
+            ProtoRegistry.RegisterString("relicTipTitle2-7", "Additional damage", "额外伤害");
+            ProtoRegistry.RegisterString("relicTipTitle2-12", "Additional damage", "额外伤害");
+            ProtoRegistry.RegisterString("relicTipTitle2-13", "Additional damage", "额外伤害");
+            ProtoRegistry.RegisterString("relicTipTitle2-15", "Additional damage", "额外伤害");
+            ProtoRegistry.RegisterString("relicTipTitle3-7", "Additional damage", "额外伤害");
+            ProtoRegistry.RegisterString("relicTipTitle3-16", "Additional damage", "额外伤害");
+            ProtoRegistry.RegisterString("relicTipText0-5", "The type of additional damage is energy damage, and the source of this damage is planet shield.", "该额外伤害的类型为能量伤害，伤害来源是护盾。");
+            ProtoRegistry.RegisterString("relicTipText0-6", "The type of additional damage is consistent with the original damage type.", "额外伤害类型与原有的伤害的类型一致。");
+            ProtoRegistry.RegisterString("relicTipText0-7", "The type of additional damage is energy damage and AOE damage. The source of this damage is mega structure.\nIf the megastructure is star cannon, then the additional damage increases 200%.", "该额外伤害的类型为能量伤害以及AOE伤害，伤害来源是巨构。如果巨构为恒星炮，该伤害增加200%");
+            ProtoRegistry.RegisterString("relicTipText0-10", "The type of additional damage is consistent with the original damage type.", "额外伤害类型与原有的伤害的类型一致。");
+            ProtoRegistry.RegisterString("relicTipText1-3", "The type of additional damage is consistent with the original damage type.", "额外伤害类型与原有的伤害的类型一致。");
+            ProtoRegistry.RegisterString("relicTipText2-7", "This additional damage only applies to the target directly hit by the missile. It's type is missile damage, and will NOT be considered as AOE damage.", "该额外伤害只作用于导弹直接击中的目标，其伤害类型为导弹伤害，且不会被认作为AOE伤害。");
+            ProtoRegistry.RegisterString("relicTipText2-12", "The type of additional damage is consistent with the original damage type.", "额外伤害类型与原有的伤害的类型一致。");
+            ProtoRegistry.RegisterString("relicTipText2-13", "Any additional damage described in the relics will be increased.", "任何来自圣物中所描述的额外伤害都将被增幅。");
+            ProtoRegistry.RegisterString("relicTipText2-15", "This additional damage only applies to the target directly hit by the missile. It's type is missile damage, and will NOT be considered as AOE damage.", "该额外伤害只作用于导弹直接击中的目标，其伤害类型为导弹伤害，且不会被认作为AOE伤害。");
+            ProtoRegistry.RegisterString("relicTipText3-7", "This additional damage can only be triggered by regular bullets, and the damage type is also regular bullet damage.", "此额外伤害只能被常规子弹触发，伤害类型同样为常规子弹伤害。");
+            ProtoRegistry.RegisterString("relicTipText3-16", "The type of additional damage is consistent with the original damage type.", "额外伤害类型与原有的伤害的类型一致。");
 
             ProtoRegistry.RegisterString("显示/隐藏", "Show/Hide", "显示/隐藏");
             ProtoRegistry.RegisterString("模块容量", "Module Capacity", "模块容量");
@@ -756,13 +783,13 @@ namespace DSP_Battle
                 proliferator4.DescFields = new int[] { 29, 41, 42, 43, 1, 40 };
             }
 
-            bullet1.DescFields = new int[] { 50, 51, 1 };
-            bullet2.DescFields = new int[] { 50, 51, 1 };
-            bullet3.DescFields = new int[] { 50, 51, 1 };
-            bullet4.DescFields = new int[] { 50, 51 };
-            missile1.DescFields = new int[] { 50, 51, 52, 1 };
-            missile2.DescFields = new int[] { 50, 51, 52, 1 };
-            missile3.DescFields = new int[] { 50, 51, 52, 1 };
+            bullet1.DescFields = new int[] { 50, 60, 51, 1 };
+            bullet2.DescFields = new int[] { 50, 60, 51, 1 };
+            bullet3.DescFields = new int[] { 50, 60, 51, 1 };
+            bullet4.DescFields = new int[] { 50, 60, 51 };
+            missile1.DescFields = new int[] { 50, 60, 51, 52, 1 };
+            missile2.DescFields = new int[] { 50, 60, 51, 52, 1 };
+            missile3.DescFields = new int[] { 50, 60, 51, 52, 1 };
 
             ProtoRegistry.RegisterItem(8021, "彩蛋1", "彩蛋1描述", "Assets/DSPBattle/notes-of-pioneer-01", 9999, 100, EItemType.Material);
             ProtoRegistry.RegisterItem(8022, "彩蛋2", "彩蛋2描述", "Assets/DSPBattle/notes-of-pioneer-02", 9999, 100, EItemType.Material);
@@ -809,7 +836,7 @@ namespace DSP_Battle
             Cannon3.Upgrades = new int[] { };
             //Cannon3.Grade = 3;
             //Cannon3.Upgrades = new int[] { 8011, 8012, 8014 };
-            Cannon3.DescFields = new int[] { 50, 51, 53, 59, 11, 12, 1, 40 };
+            Cannon3.DescFields = new int[] { 50, 60, 51, 53, 59, 11, 12, 1, 40 };
 
 
             var Silo = ProtoRegistry.RegisterItem(8013, "发射器1", "发射器1描述", "Assets/DSPBattle/missilesilo", 2603 + pageBias, 50, EItemType.Production);
@@ -1753,6 +1780,9 @@ namespace DSP_Battle
                 case 59:
                     __result = "伤害衰减".Translate();
                     return;
+                case 60:
+                    __result = "伤害类型".Translate();
+                    return;
             }
         }
 
@@ -1805,6 +1835,9 @@ namespace DSP_Battle
                     return;
                 case 59:
                     __result = ((int)(Configs.laserDamageReducePerAU * 100)).ToString() + "%/AU";
+                    return;
+                case 60:
+                    __result = GetBulletDamageType(__instance.ID);
                     return;
             }
         }
@@ -1934,6 +1967,33 @@ namespace DSP_Battle
                 default:
                     return new int[] { 0, 0, 0 };
             }
+        }
+
+        public static string GetBulletDamageType(int protoId)
+        {
+            switch (protoId)
+            {
+                case 8001:
+                    return "伤害类型子弹".Translate();
+                case 8002:
+                    return "伤害类型子弹".Translate();
+                case 8003:
+                    return "伤害类型子弹".Translate();
+                case 8004:
+                    return "伤害类型导弹".Translate();
+                case 8005:
+                    return "伤害类型导弹".Translate();
+                case 8006:
+                    return "伤害类型导弹".Translate();
+                case 8007:
+                case 8014:
+                    return "伤害类型能量".Translate();
+                case 9511: 
+                    return "伤害类型水滴".Translate();
+                default:
+                    return "伤害类型其他".Translate();
+            }
+
         }
 
         public static void ChangeTabName(Proto proto)

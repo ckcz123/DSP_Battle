@@ -542,7 +542,7 @@ namespace DSP_Battle
                             int realDamage = EnemyShips.ships[bulletTargets[starIndex][i]].BeAttacked(damage, dmgType, hasAdditionalDamage); //击中造成伤害  //如果在RemoveBullet的postpatch写这个，可以不用每帧循环检测，但是伤害将在爆炸动画后结算，感觉不太合理
                             if(realDamage > 0) // 被闪避了则不算击中
                                 UIBattleStatistics.RegisterHit(bulletId, realDamage, bulletCount);
-                            if (Relic.HaveRelic(3, 7)) // relic3-7 虚空折射 子弹命中时对一个随机敌人造成20%额外伤害
+                            if (Relic.HaveRelic(3, 7) && dmgType == DamageType.bullet) // relic3-7 虚空折射 子弹命中时对一个随机敌人造成20%额外伤害
                             {
                                 int refDmg = Relic.BonusDamage(damage, 0.2) - damage;
                                 int randNum = -1;

@@ -779,7 +779,10 @@ namespace DSP_Battle
 
         public static void AddTipText(int type, int num, UIButton uibt, bool isLeftSlot = false)
         {
-            if ((type == 0 && num == 2 && !(Relic.HaveRelic(0, 2) && Relic.relic0_2Version == 0)) || (type == 0 && num == 7) || (type == 0 && num == 10))
+            if(Relic.HaveRelic(0, 2) && Relic.relic0_2Version == 0 && type == 0 && num == 2)
+            { return; }
+            //if ((type == 0 && num == 2 && !(Relic.HaveRelic(0, 2) && Relic.relic0_2Version == 0)) || (type == 0 && num == 7) || (type == 0 && num == 10))
+            if($"relicTipText{type}-{num}".Translate() != $"relicTipText{type}-{num}" && type != 4)
             {
                 if (uibt.tips.tipTitle.Length == 0)
                     uibt.tips.tipTitle = ($"relicTipTitle{type}-{num}").Translate();
@@ -794,7 +797,7 @@ namespace DSP_Battle
                 else
                     uibt.tips.tipText += "诅咒描述".Translate() + ($"relicTipText{type}-{num}").Translate(); // 受诅咒的圣物全都具有后面这项TipText，因为都有负面效果
             }
-            if ((type == 4 && num == 6)) // relic4-6 符文之书额外显示记录了哪些relic
+            if ((type == 4 && num == 6) && isLeftSlot) // relic4-6 符文之书额外显示记录了哪些relic
             {
                 uibt.tips.tipText += "\n\n" + "已记载".Translate() + "  ";
                 foreach (var item in Relic.recordRelics)

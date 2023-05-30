@@ -30,6 +30,7 @@ namespace DSP_Battle
         public static double firstRelicIsRare = 0.5; // 第一个遗物至少是稀有的概率
         public static bool canSelectNewRelic = false; // 当canSelectNewRelic为true时点按按钮才是有效的选择
         public static int[] alternateRelics = { -1, -1, -1 }; // 三个备选，百位数字代表稀有度类型，0代表传说，个位十位是遗物序号。
+        public const int defaultBasicMatrixCost = 10; // 除每次随机赠送的一次免费随机之外，从第二次开始需要消耗的矩阵的基础值（这个第二次以此基础值的2倍开始）
         public static int basicMatrixCost = 10; // 除每次随机赠送的一次免费随机之外，从第二次开始需要消耗的矩阵的基础值（这个第二次以此基础值的2倍开始）
         public static int rollCount = 0; // 本次连续随机了几次的计数
         public static int AbortReward = 500; // 放弃解译圣物直接获取的矩阵数量
@@ -70,6 +71,7 @@ namespace DSP_Battle
             Configs.relic2_17Activated = 0;
             RelicFunctionPatcher.CheckSolarSailLife();
             Configs.eliteDurationFrames = 3600 * 3 + 60 * 20 * Relic.GetCursedRelicCount();
+            RelicFunctionPatcher.CheckRerollCost();
         }
 
         public static int AddRelic(int type, int num)
@@ -149,6 +151,8 @@ namespace DSP_Battle
             {
                 relics[type] |= 1 << num;
             }
+
+            RelicFunctionPatcher.CheckRerollCost();
             return 1;
         }
 
@@ -1159,6 +1163,14 @@ namespace DSP_Battle
                     StarFortress.moduleComponentCount[starIndex][moduleIndex] += 1;
                 }
             }
+        }
+
+        public static void CheckRerollCost()
+        {
+            if (Relic.HaveRelic(4, 1))
+                Relic.basicMatrixCost = (int)(0.5 * Relic.defaultBasicMatrixCost);
+            else
+                Relic.basicMatrixCost = Relic.defaultBasicMatrixCost;
         }
     }
 }

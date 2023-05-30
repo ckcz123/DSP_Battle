@@ -162,6 +162,7 @@ namespace DSP_Battle
                 if (Relic.HaveRelic(0, 2) && Relic.relic0_2Version == 1)
                     bonus += 0.0003 * Relic.relic0_2Charge;
                 atk = Relic.BonusDamage(atk, bonus);
+                if(bonus > 0) hasAdditionalDamage = true;
 
                 int shipType = Configs.enemyIntensity2TypeMap[intensity];
                 // 精英波次减伤
