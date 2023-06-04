@@ -612,7 +612,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物描述3-8", "Based on the unlocked matrix technology, immediately give a large number of normal matrix (except the alien matrix and the universe matrix). Won't occupy the relic slot", "基于已解锁的矩阵科技，立刻获得大量普通矩阵（异星矩阵和宇宙矩阵除外），不会占用圣物槽位");
             ProtoRegistry.RegisterString("遗物描述3-9", "When the enemy ship landed, a random mega structure will be slightly auto-constructed", "敌舰降落时，立刻少量推进随机巨构的建造进度");
             ProtoRegistry.RegisterString("遗物描述3-10", "Every second, if Icaros is on the planet and have moved in the previous second, you have 3% chance to obtain a multi-functional integrated component", "每过一秒，如果伊卡洛斯处于行星上并且在上一秒进行过移动，就有3%的概率获得一个多功能集成组件");
-            ProtoRegistry.RegisterString("遗物描述3-11", "Solar sial adsorption speed increases 100%", "巨构的太阳帆吸附速度提升100%");
+            ProtoRegistry.RegisterString("遗物描述3-11", "Solar sail adsorption speed increases 100%", "巨构的太阳帆吸附速度提升100%");
             ProtoRegistry.RegisterString("遗物描述3-12", "Planet shield has a 15% chance to avoid the damage", "行星力场护盾有15%的概率完全规避伤害");
             ProtoRegistry.RegisterString("遗物描述3-13", "Star cannon's recharging speed +25%", "恒星炮充能速度提高25%");
             ProtoRegistry.RegisterString("遗物描述3-14", "When producing electric motors or electromagnetic turbines , every time a product is produced, one magnetic coil will be returned", "生产电动机、电磁涡轮时，每生产一个产物，回填1个磁线圈作为原材料");
