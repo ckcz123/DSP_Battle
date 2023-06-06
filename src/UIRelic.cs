@@ -25,12 +25,15 @@ namespace DSP_Battle
         static GameObject relic1NameObj;
         static GameObject relic1DescObj;
         static GameObject relic1IconObj;
+        static GameObject relic1FrameObj;
         static GameObject relic2NameObj;
         static GameObject relic2DescObj;
         static GameObject relic2IconObj;
+        static GameObject relic2FrameObj;
         static GameObject relic3NameObj;
         static GameObject relic3DescObj;
         static GameObject relic3IconObj;
+        static GameObject relic3FrameObj;
         static GameObject relic1SelectButtonObj;
         static GameObject relic2SelectButtonObj;
         static GameObject relic3SelectButtonObj;
@@ -223,7 +226,7 @@ namespace DSP_Battle
                 relic1Name.fontSize = 25;
                 relic1Name.supportRichText = true;
                 relic1Name.material = GameObject.Find("UI Root/Overlay Canvas/In Game/AlertUI/battle-alert-title/").GetComponent<Text>().material;
-                GameObject relic1FrameObj = GameObject.Instantiate(relic1IconObj);
+                relic1FrameObj = GameObject.Instantiate(relic1IconObj);
                 relic1FrameObj.name = "r1BtnFrame";
                 relic1FrameObj.transform.SetParent(relicSelectionContentObj.transform);
                 relic1FrameObj.transform.localPosition = new Vector3(-300, 250);
@@ -248,7 +251,7 @@ namespace DSP_Battle
                 relic2Desc = relic2DescObj.GetComponent<Text>();
                 relic2Icon = relic2IconObj.GetComponent<Image>();
                 relic2IconObj.SetActive(true);
-                GameObject relic2FrameObj = GameObject.Instantiate(relic1IconObj);
+                relic2FrameObj = GameObject.Instantiate(relic1IconObj);
                 relic2FrameObj.name = "r2BtnFrame";
                 relic2FrameObj.transform.SetParent(relicSelectionContentObj.transform);
                 relic2FrameObj.transform.localPosition = new Vector3(0, 250);
@@ -273,7 +276,7 @@ namespace DSP_Battle
                 relic3Desc = relic3DescObj.GetComponent<Text>();
                 relic3Icon = relic3IconObj.GetComponent<Image>();
                 relic3IconObj.SetActive(true);
-                GameObject relic3FrameObj = GameObject.Instantiate(relic1IconObj);
+                relic3FrameObj = GameObject.Instantiate(relic1IconObj);
                 relic3FrameObj.name = "r1BtnFrame";
                 relic3FrameObj.transform.SetParent(relicSelectionContentObj.transform);
                 relic3FrameObj.transform.localPosition = new Vector3(300, 250);
@@ -519,6 +522,9 @@ namespace DSP_Battle
             relic1Frame.color = new Color(0, 0, 0, 0);
             relic2Frame.color = new Color(0, 0, 0, 0);
             relic3Frame.color = new Color(0, 0, 0, 0);
+            relic1FrameObj.SetActive(false);
+            relic2FrameObj.SetActive(false); 
+            relic3FrameObj.SetActive(false);
 
             // 如果是删除遗物的按钮
             if (Relic.alternateRelics[0] == 999)
@@ -598,6 +604,7 @@ namespace DSP_Battle
                     relic1UIBtn.transitions[0].normalColor = colorBtnCursed;
                     relic1UIBtn.transitions[0].mouseoverColor = colorBtnCursedH;
                     relic1UIBtn.transitions[0].pressedColor = colorBtnCursedP;
+                    relic1FrameObj.SetActive(true);
                     relic1Frame.color = new Color(1, 1, 1, 1);
                 }
                 if (isRemove)
@@ -666,6 +673,7 @@ namespace DSP_Battle
                     relic2UIBtn.transitions[0].normalColor = colorBtnCursed;
                     relic2UIBtn.transitions[0].mouseoverColor = colorBtnCursedH;
                     relic2UIBtn.transitions[0].pressedColor = colorBtnCursedP;
+                    relic2FrameObj.SetActive(true);
                     relic2Frame.color = new Color(1, 1, 1, 1);
                 }
                 if (isRemove)
@@ -734,6 +742,7 @@ namespace DSP_Battle
                     relic3UIBtn.transitions[0].normalColor = colorBtnCursed;
                     relic3UIBtn.transitions[0].mouseoverColor = colorBtnCursedH;
                     relic3UIBtn.transitions[0].pressedColor = colorBtnCursedP;
+                    relic3FrameObj.SetActive(true);
                     relic3Frame.color = new Color(1, 1, 1, 1);
                 }
                 if (isRemove)

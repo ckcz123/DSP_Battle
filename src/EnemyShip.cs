@@ -477,7 +477,8 @@ namespace DSP_Battle
                             UIBattleStatistics.RegisterShieldTakeDamage(damage);
                             if (ShieldGenerator.currentShield[planetId] <= 0)
                             {
-                                EnemyShips.RepelAllEnemyShip(80000, 180, 0.04f); // relic4-5余震回响，护盾被打破时击退
+                                if (Relic.HaveRelic(4, 5))
+                                    EnemyShips.RepelAllEnemyShip(80000, 180, 0.04f); // relic4-5余震回响，护盾被打破时击退
                                 if (Configs.relic2_17Activated > 0)
                                 {
                                     Interlocked.Exchange(ref Configs.relic2_17Activated, 0);

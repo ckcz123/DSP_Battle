@@ -44,6 +44,7 @@
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>D:\SteamLibrary\steamapps\common\Dyson Sphere Program\BepInEx\core\BepInEx.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="CommonAPI">
       <HintPath>D:\SteamLibrary\steamapps\common\Dyson Sphere Program\BepInEx\plugins\CommonAPI\CommonAPI.dll</HintPath>

@@ -92,7 +92,7 @@ namespace DSP_Battle
             else if ((type == 0 && num == 3) || (type == 4 && num == 0))
             {
                 relics[type] |= 1 << num;
-                RelicFunctionPatcher.CheckAndModifyStarLuminosity();
+                RelicFunctionPatcher.CheckAndModifyStarLuminosity(type*100+num);
             }
             else if (type == 1 && num == 4)
             {
@@ -1042,9 +1042,9 @@ namespace DSP_Battle
         /// <summary>
         /// relic0-3
         /// </summary>
-        public static void CheckAndModifyStarLuminosity()
+        public static void CheckAndModifyStarLuminosity(int newRelic = -1)
         {
-            if (Relic.HaveRelic(0, 3))
+            if (Relic.HaveRelic(0, 3) && (newRelic == -1 || newRelic == 3))
             {
                 for (int i = 0; i < GameMain.galaxy.starCount; i++)
                 {
@@ -1056,7 +1056,7 @@ namespace DSP_Battle
                     Relic.alreadyRecalcDysonStarLumin = false;
                 }
             }
-            if (Relic.HaveRelic(4, 0))
+            if (Relic.HaveRelic(4, 0) && (newRelic == -1 || newRelic == 400))
             {
                 float maxL = 0;
                 for (int i = 0; i < GameMain.galaxy.starCount; i++)

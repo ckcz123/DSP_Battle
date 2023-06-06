@@ -717,7 +717,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("relicTipTitle0-5", "Additional damage", "额外伤害");
             ProtoRegistry.RegisterString("relicTipTitle0-6", "Additional damage", "额外伤害");
             ProtoRegistry.RegisterString("relicTipTitle0-7", "Additional damage", "额外伤害");
-            ProtoRegistry.RegisterString("relicTipTitle0-10", "Additional damage", "额外伤害");
+            //ProtoRegistry.RegisterString("relicTipTitle0-10", "Additional damage", "额外伤害"); // 重复了
             ProtoRegistry.RegisterString("relicTipTitle1-3", "Additional damage", "额外伤害");
             ProtoRegistry.RegisterString("relicTipTitle2-7", "Additional damage", "额外伤害");
             ProtoRegistry.RegisterString("relicTipTitle2-12", "Additional damage", "额外伤害");
@@ -728,7 +728,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("relicTipText0-5", "The type of additional damage is energy damage, and the source of this damage is planet shield.", "该额外伤害的类型为能量伤害，伤害来源是护盾。");
             ProtoRegistry.RegisterString("relicTipText0-6", "The type of additional damage is consistent with the original damage type.", "额外伤害类型与原有的伤害的类型一致。");
             ProtoRegistry.RegisterString("relicTipText0-7", "The type of additional damage is energy damage and AOE damage. The source of this damage is mega structure.\nIf the megastructure is star cannon, then the additional damage increases 200%.", "该额外伤害的类型为能量伤害以及AOE伤害，伤害来源是巨构。如果巨构为恒星炮，该伤害增加200%");
-            ProtoRegistry.RegisterString("relicTipText0-10", "The type of additional damage is consistent with the original damage type.", "额外伤害类型与原有的伤害的类型一致。");
+            //ProtoRegistry.RegisterString("relicTipText0-10", "The type of additional damage is consistent with the original damage type.", "额外伤害类型与原有的伤害的类型一致。"); // 重复了
             ProtoRegistry.RegisterString("relicTipText1-3", "The type of additional damage is consistent with the original damage type.", "额外伤害类型与原有的伤害的类型一致。");
             ProtoRegistry.RegisterString("relicTipText2-7", "This additional damage only applies to the target directly hit by the missile. It's type is missile damage, and will NOT be considered as AOE damage.", "该额外伤害只作用于导弹直接击中的目标，其伤害类型为导弹伤害，且不会被认作为AOE伤害。");
             ProtoRegistry.RegisterString("relicTipText2-12", "The type of additional damage is consistent with the original damage type.", "额外伤害类型与原有的伤害的类型一致。");
@@ -1625,7 +1625,6 @@ namespace DSP_Battle
                     }
                 }
             }
-
 
             GameMain.gpuiManager.Init();
         }

@@ -119,6 +119,5 @@ namespace DSP_Battle
             return false;
         }
 
-
     }
 }
