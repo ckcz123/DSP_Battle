@@ -1040,23 +1040,43 @@ namespace DSP_Battle
         }
 
         /// <summary>
-        /// relic0-3
+        /// relic0-3。如果移除了relic0-3则需要重新进游戏才能应用，因为不太好算就特别地写一个移除relic0-3的计算了。
         /// </summary>
-        public static void CheckAndModifyStarLuminosity(int newRelic = -1)
+        public static void CheckAndModifyStarLuminosity(int newRelic = -1) // -1代表是游戏加载存档的操作，按顺序进行0-3和4-0的计算即可。如果不是-1，则序号代表此次增加的relic是哪个，则按条件计算
         {
             if (Relic.HaveRelic(0, 3) && (newRelic == -1 || newRelic == 3))
             {
+                if (Relic.HaveRelic(4, 0) && newRelic == 3) // 说明是此次仅增加relic0-3，之前已经有了relic4-0编织者额负面buff了，则先还原其负面buff
+                {
+                    float maxL = 0;
+                    for (int i = 0; i < GameMain.galaxy.starCount; i++)
+                    {
+                        StarData starData = GameMain.galaxy.stars[i];
+                        if ((starData != null) && (starData.luminosity > maxL))
+                        {
+                            maxL = starData.luminosity;
+                            Relic.starIndexWithMaxLuminosity = i;
+                        }
+                    }
+                    for (int i = 0; i < GameMain.galaxy.starCount; i++)
+                    {
+                        StarData starData = GameMain.galaxy.stars[i];
+                        if (starData != null && i != Relic.starIndexWithMaxLuminosity)
+                            starData.luminosity /= (float)Math.Pow(0.7, 0.33000001311302185); // 此处是除
+                    }
+                }
+
                 for (int i = 0; i < GameMain.galaxy.starCount; i++)
                 {
                     StarData starData = GameMain.galaxy.stars[i];
                     if (starData != null)
                         starData.luminosity = (float)(Math.Pow((Mathf.Round((float)Math.Pow((double)starData.luminosity, 0.33000001311302185) * 1000f) / 1000f + 1.0), 1.0 / 0.33000001311302185) - starData.luminosity);
 
-                    //还要重新计算并赋值每个戴森球之前已初始化好的属性
-                    Relic.alreadyRecalcDysonStarLumin = false;
                 }
+                //还要重新计算并赋值每个戴森球之前已初始化好的属性
+                Relic.alreadyRecalcDysonStarLumin = false;
             }
-            if (Relic.HaveRelic(4, 0) && (newRelic == -1 || newRelic == 400))
+            if (Relic.HaveRelic(4, 0)) // 无论如何只要有relic4-0都要计算一遍，因为，即使只是addrelic0-3，那么在其功能里已经还原过4-0了，因此还要再正向计算一次4-0把debuff加回来
             {
                 float maxL = 0;
                 for (int i = 0; i < GameMain.galaxy.starCount; i++)
@@ -1074,6 +1094,8 @@ namespace DSP_Battle
                     if (starData != null && i != Relic.starIndexWithMaxLuminosity)
                         starData.luminosity *= (float)Math.Pow(0.7, 0.33000001311302185);
                 }
+                //还要重新计算并赋值每个戴森球之前已初始化好的属性
+                Relic.alreadyRecalcDysonStarLumin = false;
             }
         }
 
@@ -1109,7 +1131,7 @@ namespace DSP_Battle
         /// </summary>
         public static void TryRecalcDysonLumin()
         {
-            if (!Relic.alreadyRecalcDysonStarLumin && Relic.HaveRelic(0, 3))
+            if (!Relic.alreadyRecalcDysonStarLumin && (Relic.HaveRelic(0, 3) || Relic.HaveRelic(4, 0)))
             {
                 for (int i = 0; i < GameMain.galaxy.starCount; i++)
                 {
@@ -1133,7 +1155,21 @@ namespace DSP_Battle
         /// <param name="time"></param>
         public static void AutoBuildMegaOfMaxLuminStar(long time)
         {
-            if (Relic.HaveRelic(4, 0) && time % 2 == 1)
+            int timeStep = 2;
+            if (GameMain.data.dysonSpheres.Length > Relic.starIndexWithMaxLuminosity && GameMain.data.dysonSpheres[Relic.starIndexWithMaxLuminosity] != null)
+            {
+                DysonSphere sphere = GameMain.data.dysonSpheres[Relic.starIndexWithMaxLuminosity];
+                long energy = sphere.energyGenCurrentTick_Layers;
+                if (energy > 16666666667) // 1T
+                    timeStep = 4;
+                else if (energy > 1000000000) // 60G
+                    timeStep = 60;
+                else if (energy > 16666667) // 1G
+                    timeStep = 10;
+                else
+                    timeStep = 2;
+            }
+            if (Relic.HaveRelic(4, 0) && time % timeStep == 1)
             {
                 Relic.AutoBuildMegaStructure(Relic.starIndexWithMaxLuminosity, 70, 30);
             }

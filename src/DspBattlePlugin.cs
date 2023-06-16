@@ -175,6 +175,14 @@ namespace DSP_Battle
             }
             if (Input.GetKeyDown(KeyCode.Escape))
                 UIDevConsole.Hide();
+            if (Input.GetKeyDown(KeyCode.UpArrow) && UIDevConsole.consoleObj != null && UIDevConsole.consoleObj.activeSelf)
+            {
+                DevConsole.PrevCommand();
+            }
+            if (Input.GetKeyDown(KeyCode.DownArrow) && UIDevConsole.consoleObj != null && UIDevConsole.consoleObj.activeSelf)
+            {
+                DevConsole.NextCommand();
+            }
             UIRelic.SelectionWindowAnimationUpdate();
             UIRelic.CheckRelicSlotsWindowShowByMouse();
             UIRelic.SlotWindowAnimationUpdate();

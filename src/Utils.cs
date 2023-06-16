@@ -188,5 +188,16 @@ namespace DSP_Battle
             _this.time = (flag ? 0f : 0.3f);
         }
 
+        /// <summary>
+        /// 限定范围 min和max本身的值均包含！！！！
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        public static int Limit(int data, int min, int max)
+        {
+            return data > max ? max : data < min ? min : data;
+        }
     }
 }

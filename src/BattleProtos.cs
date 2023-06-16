@@ -612,7 +612,7 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("遗物描述3-8", "Based on the unlocked matrix technology, immediately give a large number of normal matrix (except the alien matrix and the universe matrix). Won't occupy the relic slot", "基于已解锁的矩阵科技，立刻获得大量普通矩阵（异星矩阵和宇宙矩阵除外），不会占用圣物槽位");
             ProtoRegistry.RegisterString("遗物描述3-9", "When the enemy ship landed, a random mega structure will be slightly auto-constructed", "敌舰降落时，立刻少量推进随机巨构的建造进度");
             ProtoRegistry.RegisterString("遗物描述3-10", "Every second, if Icaros is on the planet and have moved in the previous second, you have 3% chance to obtain a multi-functional integrated component", "每过一秒，如果伊卡洛斯处于行星上并且在上一秒进行过移动，就有3%的概率获得一个多功能集成组件");
-            ProtoRegistry.RegisterString("遗物描述3-11", "Solar sial adsorption speed increases 100%", "巨构的太阳帆吸附速度提升100%");
+            ProtoRegistry.RegisterString("遗物描述3-11", "Solar sail absorption speed increases 100%", "巨构的太阳帆吸附速度提升100%");
             ProtoRegistry.RegisterString("遗物描述3-12", "Planet shield has a 15% chance to avoid the damage", "行星力场护盾有15%的概率完全规避伤害");
             ProtoRegistry.RegisterString("遗物描述3-13", "Star cannon's recharging speed +25%", "恒星炮充能速度提高25%");
             ProtoRegistry.RegisterString("遗物描述3-14", "When producing electric motors or electromagnetic turbines , every time a product is produced, one magnetic coil will be returned", "生产电动机、电磁涡轮时，每生产一个产物，回填1个磁线圈作为原材料");
@@ -704,7 +704,9 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("relicTipText0-2", "Wrath of Goddess consumes all sorrows, repels all enemy ships by at least 1AU, and deals 95% of their max health as true damage. \nAfter launching the Wrath of Goddess, you will not be able to gain any sorrow until this wave ends.", "女神之怒消耗所有哀痛，将所有敌船击退1AU以上，并对他们造成最大生命值95%的真实伤害。\n在任何一次入侵中发动女神之怒后，该次入侵无法继续叠加哀痛");
             ProtoRegistry.RegisterString("relicTipTitle0-10", "Upper Limit", "上限");
             ProtoRegistry.RegisterString("relicTipText0-10", "The upper limit is 400 at the begining. After reaching the upper limit, the mecha will automatically consume a droplet in inventory then increase the upper limit by 400. The upper limit growth is unlimited.", "加成上限初始为400，达到上限后，自动消耗背包中的一个水滴并再次提升400加成上限，提升上限的次数不受限制");
-            
+            ProtoRegistry.RegisterString("relicTipTitle1-4", "Shortcut Action", "快捷操作");
+            ProtoRegistry.RegisterString("relicTipText1-4", "When you have Echo II, if you are holding missiles in your hand and you click a Missile Silo, automatically put one handheld missile into that silo immediately when you click. (If that silo is empty)", "当你拥有回声II圣物后，手持导弹并点击导弹发射井时，若该导弹发射井为空，则在点击时立刻填充1个手持的导弹。");
+
             ProtoRegistry.RegisterString("relicTipText4-0", "All other galaxies receive a negative luminosity correction", "所有其他星系获得一个负的恒星光度修正");
             ProtoRegistry.RegisterString("relicTipText4-1", "All relics with probability, their probability is halved", "所有具有概率的圣物，判定成功几率减半");
             ProtoRegistry.RegisterString("relicTipText4-2", "When losing a logistics station, you will lose half of your current Merit Experience points", "损失物流塔时，你将失去当前一半的功勋经验点数");
@@ -1236,6 +1238,8 @@ namespace DSP_Battle
             SiloModel.prefabDesc.siloBulletId = 8004; // 导弹的Id
             SiloModel.prefabDesc.siloChargeFrame = 120;
             SiloModel.prefabDesc.siloColdFrame = 360;
+            SiloModel.prefabDesc.dragBuild = true;
+            SiloModel.prefabDesc.dragBuildDist = new Vector2(15, 18.2f);
             LDBTool.PreAddProto(SiloModel);
 
             //var StarFortressSiloModel = CopyModelProto(74, 317, Color.yellow);

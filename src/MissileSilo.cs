@@ -186,9 +186,11 @@ namespace DSP_Battle
                             UIBattleStatistics.RegisterShootOrLaunch(__instance.bulletId, damage);
 
                             __instance.autoIndex++;
-                            __instance.bulletInc -= __instance.bulletInc / __instance.bulletCount;
-                            if(!Relic.HaveRelic(1,5))
+                            if (!Relic.HaveRelic(1, 5))
+                            {
+                                __instance.bulletInc -= __instance.bulletInc / __instance.bulletCount;
                                 __instance.bulletCount--;
+                            }
                             if (__instance.bulletCount == 0)
                             {
                                 __instance.bulletInc = 0;
@@ -1873,9 +1875,35 @@ namespace DSP_Battle
                     siloPickerTitle.text = "火箭模式提示".Translate();
                     siloEditButtonText.text = "打开统计面板".Translate();
                     productIconObj.SetActive(false);
+                    if (Relic.HaveRelic(1, 5)) // 具有回声II时，点击/切换导弹发射井时，如果手中有合适的导弹，且发射井为空，则自动添加1枚导弹
+                    {
+                        if (siloComponent.bulletCount == 0 && __instance.player.inhandItemId > 0)
+                        { 
+                            int itemId = __instance.player.inhandItemId;
+                            if (itemId == 8004 || itemId == 8005 || itemId == 8006)
+                            {
+                                int afterCount = __instance.player.inhandItemCount - 1;
+                                int gotInc = __instance.player.inhandItemInc / __instance.player.inhandItemCount;
+                                int afterInc = __instance.player.inhandItemInc - gotInc;
+                                __instance.factorySystem.siloPool[__instance.siloId].bulletId = itemId;
+                                __instance.factorySystem.siloPool[__instance.siloId].bulletCount = 1;
+                                __instance.factorySystem.siloPool[__instance.siloId].bulletInc = gotInc;
+                                __instance.player.SetHandItemCount_Unsafe(afterCount);
+                                __instance.player.SetHandItemInc_Unsafe(afterInc);
+                                if (__instance.player.inhandItemCount <= 0)
+                                {
+                                    __instance.player.SetHandItemId_Unsafe(0);
+                                    __instance.player.SetHandItemCount_Unsafe(0);
+                                    __instance.player.SetHandItemInc_Unsafe(0);
+                                }
+
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception) { }
+
         }
 
         [HarmonyPostfix]
@@ -1897,6 +1925,34 @@ namespace DSP_Battle
             }
 
         }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UISiloWindow), "_OnOpen")]
+        public static bool UISiloWindow_OnOpen(ref UISiloWindow __instance)
+        {
+            if (Relic.HaveRelic(1, 4))
+            {
+                if (GameMain.localPlanet != null && GameMain.localPlanet.factory != null)
+                {
+                    __instance.factory = GameMain.localPlanet.factory;
+                    __instance.factorySystem = __instance.factory.factorySystem;
+                    __instance.powerSystem = __instance.factory.powerSystem;
+                    __instance.player = GameMain.mainPlayer;
+                    __instance.dysonSphere = __instance.factory.dysonSphere;
+                    if (__instance.player != null)
+                    {
+                        __instance.player.controller.actionInspect.onFastFillIn += __instance.SyncServingStorage;
+                    }
+                    __instance.OnSiloIdChange();
+                    __instance.autoButton.onClick += __instance.OnAutoToggleClick;
+                    __instance.editButton.onClick += __instance.OnEditNodeClick;
+                }
+                __instance.transform.SetAsLastSibling();
+                return false;
+            }
+            return true;
+        }
+
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(UISiloWindow), "OnEditNodeClick")]

@@ -11,11 +11,37 @@ using System.Threading;
 
 namespace DSP_Battle
 {
+    public class StrNode
+    {
+        public string cmd;
+        public StrNode prev;
+        public StrNode next;
+        public StrNode(string cmd) 
+        {
+            this.cmd = cmd;
+            this.prev = null; 
+            this.next = null;
+        }
+        public StrNode(string cmd, StrNode prev) 
+        {
+            this.cmd = cmd;
+            this.prev = prev;
+            this.next = null;
+        }
+    }
+
+
     public class DevConsole
     {
         public static int num = 0;
         public static int password = 1597531;
         public static int shortpassword = 1597531;
+
+        public static StrNode cur = null;
+        public static StrNode last = null;
+        public static StrNode root = null;
+        public static int lineCount = 0;
+        public static int maxLineCount = 100;
 
         public static void InitAll()
         {
@@ -24,8 +50,8 @@ namespace DSP_Battle
         }
 
         public static void InitData()
-        { 
-        
+        {
+
         }
 
         public static void Update()
@@ -71,6 +97,7 @@ namespace DSP_Battle
 
         public static void ExecuteCommand(string cmd)
         {
+            RegNewLine(cmd);
             Print("<color=#ffffff>>>" + cmd + "</color>");
             string[] param = cmd.Split(' '); // 已确定cmd必定不为空
             try
@@ -283,6 +310,9 @@ namespace DSP_Battle
                         Relic.relic0_2Version = 0;
                         UIRelic.RefreshSlotsWindowUI();
                         break;
+                    case "bgm":
+                        BattleBGMController.currentGroup = Utils.Limit(Convert.ToInt32(param[1]),1,6);
+                        break;
                     default:
                         Print($"未知的命令：{param[0]}，输入 \"help\" 查看所有命令说明。", 1, true);
                         break;
@@ -298,6 +328,67 @@ namespace DSP_Battle
         public static void Print(string msg, int forceLineCount = 1, bool err = false)
         {
             UIDevConsole.Print(msg, forceLineCount, err);
+        }
+
+        public static void RegNewLine(string command)
+        {
+            if (root == null)
+            {
+                root = new StrNode(command);
+                last = root;
+                lineCount = 1;
+            }
+            else if (last == null)
+            {
+                Utils.Log("Dev console err with lastNode is null. Now ReInit");
+                root = new StrNode(command);
+                last = root;
+                lineCount = 1;
+            }
+            else
+            {
+                last.next = new StrNode(command, last);
+                last = last.next;
+                lineCount++;
+            }
+            cur = null;
+
+            if(lineCount > maxLineCount)
+            {
+                root = root.next;
+                root.prev = null;
+                lineCount--;
+                GC.Collect();
+            }
+        }
+
+        public static void PrevCommand()
+        {
+            if (cur == null)
+            {
+                if (last == null)
+                    return;
+                cur = last;
+            }
+            else if (cur.prev != null)
+                cur = cur.prev;
+            else
+                return;
+
+            UIDevConsole.consoleInputField.text = cur.cmd;
+            UIDevConsole.consoleInputField.caretPosition = UIDevConsole.consoleInputField.text.Length;
+        }
+
+        public static void NextCommand()
+        {
+            if (cur == null)
+                return;
+            if (cur.next == null)
+                return;
+            cur = cur.next;
+
+            UIDevConsole.consoleInputField.text = cur.cmd;
+            UIDevConsole.consoleInputField.caretPosition = UIDevConsole.consoleInputField.text.Length;
         }
 
         public static void Export(BinaryWriter w)

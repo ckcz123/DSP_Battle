@@ -263,7 +263,7 @@ namespace DSP_Battle
 
         public static bool atBarEnd(float time, float bpm)
         {
-            float barLength = 60f / bpm * 4;
+            float barLength = 60f / bpm * 8;
             float dif = time / barLength - (int)(time / barLength);
             return (dif <= 0.02f || dif >= barLength - 0.03f);
         }
