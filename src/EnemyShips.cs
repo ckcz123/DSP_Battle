@@ -51,8 +51,22 @@ namespace DSP_Battle
             ships.TryAdd(nextGid, enemyShip);
         }
 
-        public static bool ValidStellarStation(StationComponent s)
+        public static bool ValidStellarStation(StationComponent s, int mode = 0)
         {
+            if (mode == 1)
+            {
+                if (s == null)
+                {
+                    Debug.Log("is null");
+                    return false;
+                }
+                //if (s.id == 0) Debug.Log("id is 0");
+                //if (s.gid == 0) Debug.Log("gid is 0");
+                //if (!s.isStellar) Debug.Log("not stellar");
+                //if (s.isCollector) Debug.Log("is collector");
+                //if (RemoveEntities.distroyedStation.ContainsKey(s.gid)) Debug.Log("already contains this key");
+                //Debug.Log($"gid {s.gid}");
+            }
             return s != null && s.id != 0 && s.gid != 0 && s.isStellar && !s.isCollector && !RemoveEntities.distroyedStation.ContainsKey(s.gid);
         }
 
@@ -211,24 +225,29 @@ namespace DSP_Battle
         */
         public static void OnShipLanded(EnemyShip ship)
         {
-            DspBattlePlugin.logger.LogInfo("=========> Ship " + ship.shipIndex + " landed at station " + ship.shipData.otherGId);
+            //DspBattlePlugin.logger.LogInfo("=========> Ship " + ship.shipIndex + " landed at station " + ship.shipData.otherGId);
             int relic1_8Protection_Max = Math.Max(10, Math.Min(200, Configs.nextWaveIntensity / 50));
             if (shouldDistroy && Configs.relic1_8Protection > relic1_8Protection_Max) // relic1-8前十个不被摧毁。这个值在每次开始战斗时如果有该遗物则重置为0，但是每次读档设定为99
             {
                 StationComponent station = ship.targetStation;
-                if (ValidStellarStation(station))
+                if (ValidStellarStation(station, 1))
                 {
                     RemoveEntities.Add(ship, station);
-
                     UIAlert.elimPointRatio *= 0.5f;
                     Configs.nextWaveDelay += 5 * 3600;
                     if (Configs.nextWaveDelay > 30 * 3600) Configs.nextWaveDelay = 30 * 3600;
                     if (Relic.HaveRelic(4, 2)) Rank.LoseHalfExp(); // relic4-2 负面效果 损失物流塔时，损失经验值
                 }
+                else
+                {
+                }
             }
             if (Relic.HaveRelic(3, 9)) // relic3-9 开摆 敌舰降落时推进一个随机巨构的建造进度
                 Relic.AutoBuildMegaStructure();
-            Interlocked.Add(ref Configs.relic1_8Protection, 1); // relic1-8前十个不被摧毁 计数
+            if (Configs.relic1_8Protection < relic1_8Protection_Max)
+            {
+                Interlocked.Add(ref Configs.relic1_8Protection, 1); // relic1-8前十个不被摧毁 计数。 如果没有relic则把1-8设定为inx.MaxValue，则不能不判断就+1，否则会变成负数导致一直无法摧毁
+            }
             ship.shipData.inc--;
             if (ship.shipData.inc > 0)
             {

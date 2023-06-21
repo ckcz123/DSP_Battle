@@ -421,5 +421,31 @@ namespace DSP_Battle
             }
             RefreshAll();
         }
+
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIStationWindow), "_OnOpen")]
+        public static void TestPatch(UIStationWindow __instance)
+        {
+            if (__instance == null)
+            {
+                Debug.Log("instance is null"); 
+                return;
+            }
+            if (__instance.transport == null)
+            {
+                Debug.Log("transport is null");
+                return;
+            }
+            if (__instance.transport.stationPool == null)
+            {
+                Debug.Log("__instance.transport.stationPool is null");
+                return;
+            }
+            StationComponent stationComponent = __instance.transport.stationPool[__instance.stationId];
+            if(stationComponent == null) { Debug.Log("station is null"); return; }
+            Debug.Log($"UI window station id {stationComponent.id} gid {stationComponent.gid}");
+        }
+
     }
 }

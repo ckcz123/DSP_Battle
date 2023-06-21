@@ -46,10 +46,14 @@ namespace DSP_Battle
                 PlanetData planet = GameMain.galaxy.PlanetById(entry.Key);
                 PlanetFactory planetFactory = planet.factory;
                 bool freePhysics = false;
+                int done = 0;
+                int idx = 0;
                 try
                 {
                     for (int i = 0; i < planetFactory.entityPool.Length; ++i)
                     {
+                        idx = i;
+                        done = 0;
                         if (planetFactory.entityPool[i].isNull ||
                             planetFactory.entityPool[i].beltId != 0 ||
                             planetFactory.entityPool[i].inserterId != 0 ||
@@ -81,7 +85,7 @@ namespace DSP_Battle
                         }
                     }
                 }
-                catch (Exception) { }
+                catch (Exception) { Debug.Log($"removing err in i = {idx} with done {done}"); }
                 finally { removingComponets = false; }
                 if (freePhysics)
                 {
@@ -164,11 +168,13 @@ namespace DSP_Battle
 
         private static void RemoveEntity(PlanetFactory factory, int entityId)
         {
-            if (!removingComponets) return;
+            if (!removingComponets)
+            {
+                return;
+            }
             try
             {
                 if (entityId < 0 || entityId >= factory.entityPool.Length || factory.entityPool[entityId].isNull) return;
-
                 int labId = factory.entityPool[entityId].labId;
                 if (labId != 0 && labId < factory.factorySystem.labPool.Length && factory.factorySystem.labPool[labId].id != 0)
                 {
