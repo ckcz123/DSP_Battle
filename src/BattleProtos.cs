@@ -558,7 +558,7 @@ namespace DSP_Battle
 
             ProtoRegistry.RegisterString("遗物描述0-0", "Every time the enemy ship is destroyed, a random mega structure will be partially auto-constructed according to the intensity of the enemy ship", "每次击毁敌舰，根据敌舰强度略微推进巨构的建造进度");
             ProtoRegistry.RegisterString("遗物描述0-1", "When assembling recipes with at least 2 different materials in assembling machine (except when assembling antimatter fuel rods), every time a product is produced, one material in the first slot will be returned.", "制造厂在制造原材料至少2种的配方时（反物质燃料棒的产线除外），每产出1个产物，会返还1个第1位置的原材料");
-            ProtoRegistry.RegisterString("遗物描述0-2", "When destroy an enemy ship in normal wave, gain 1 sorrow (max 1000). Each sorrow deals 0.02% <i>additional damage</i> to all enemy ships. After 1000 sorrow, replace the [star cannon fire] button with [Wrath of Goddess] during invasion.", "我方在非精英波次摧毁敌舰时，叠加1层哀痛(上限1000)，每层哀痛使你造成0.02%<i>额外伤害</i>。满层后，在战斗中将你的[恒星炮开火]替换为[女神之怒]。"); 
+            ProtoRegistry.RegisterString("遗物描述0-2", "When destroy an enemy ship in normal wave, gain 1 sorrow (max 1000). Each sorrow gives you 0.02% <i>additional damage</i> buff to all weapons. After 1000 sorrow, replace the [star cannon fire] button with [Wrath of Goddess] during invasion.", "我方在非精英波次摧毁敌舰时，叠加1层哀痛(上限1000)，每层哀痛使你造成0.02%<i>额外伤害</i>。满层后，在战斗中将你的[恒星炮开火]替换为[女神之怒]。"); 
             ProtoRegistry.RegisterString("遗物描述0-2old", "When producing recipes with at least 2 different materials in chemical plant, every time a product is produced, all material that is consumed in the first slot will be returned.", "化工厂在生产原材料至少2种的配方时，返还第1位置的全部原材料");
             ProtoRegistry.RegisterString("遗物描述0-3", "When calculating the energy level, the giant structure is regarded as a higher star luminosity", "巨构在计算能量水平时，视作拥有更高的恒星光度修正");
             ProtoRegistry.RegisterString("遗物描述0-4", "The ray receiver does not need to consume the lens to achieve the maximum output efficiency, and it will no longer be blocked at night", "射线接受器无需消耗透镜即可达到最大输出效率，且不再因背向恒星影响接收效率");
@@ -704,8 +704,8 @@ namespace DSP_Battle
             ProtoRegistry.RegisterString("relicTipText0-2", "Wrath of Goddess consumes all sorrows, repels all enemy ships by at least 1AU, and deals 95% of their max health as true damage. \nAfter launching the Wrath of Goddess, you will not be able to gain any sorrow until this wave ends.", "女神之怒消耗所有哀痛，将所有敌船击退1AU以上，并对他们造成最大生命值95%的真实伤害。\n在任何一次入侵中发动女神之怒后，该次入侵无法继续叠加哀痛");
             ProtoRegistry.RegisterString("relicTipTitle0-10", "Upper Limit", "上限");
             ProtoRegistry.RegisterString("relicTipText0-10", "The upper limit is 400 at the begining. After reaching the upper limit, the mecha will automatically consume a droplet in inventory then increase the upper limit by 400. The upper limit growth is unlimited.", "加成上限初始为400，达到上限后，自动消耗背包中的一个水滴并再次提升400加成上限，提升上限的次数不受限制");
-            ProtoRegistry.RegisterString("relicTipTitle1-4", "Shortcut Action", "快捷操作");
-            ProtoRegistry.RegisterString("relicTipText1-4", "When you have Echo II, if you are holding missiles in your hand and you click a Missile Silo, automatically put one handheld missile into that silo immediately when you click. (If that silo is empty)", "当你拥有回声II圣物后，手持导弹并点击导弹发射井时，若该导弹发射井为空，则在点击时立刻填充1个手持的导弹。");
+            ProtoRegistry.RegisterString("relicTipTitle1-5", "Shortcut Action", "快捷操作");
+            ProtoRegistry.RegisterString("relicTipText1-5", "When you have Echo II, if you are holding missiles in your hand and you click a Missile Silo, automatically put one handheld missile into that silo immediately when you click. (If that silo is empty)", "当你拥有回声II圣物后，手持导弹并点击导弹发射井时，若该导弹发射井为空，则在点击时立刻填充1个手持的导弹。");
 
             ProtoRegistry.RegisterString("relicTipText4-0", "All other galaxies receive a negative luminosity correction", "所有其他星系获得一个负的恒星光度修正");
             ProtoRegistry.RegisterString("relicTipText4-1", "All relics with probability, their probability is halved", "所有具有概率的圣物，判定成功几率减半");

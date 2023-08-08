@@ -1063,7 +1063,12 @@ namespace DSP_Battle
 
         }
 
-        public static void RefreshSlotsWindowUI(bool onlyVarTips = false)
+        public static void RefreshSlotsWindowUI()
+        {
+            RefreshSlotsWindowUI(false);
+        }
+
+        public static void RefreshSlotsWindowUI(bool onlyVarTips)
         {
             int slotNum = 0;
             for (int type = 4; type < 5; type = (type + 1) % 5)

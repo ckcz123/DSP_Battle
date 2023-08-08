@@ -416,84 +416,96 @@ namespace DSP_Battle
         public static int maxOutputClearCount = 25;
         public static void InitAll()
         {
-            if (consoleObj == null)
+            try
             {
-                GameObject oriBlueprintPanelObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Blueprint Browser");
-                //consoleObj = GameObject.Instantiate(GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Research Result Window/"));
-                GameObject parentObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows");
-                //consoleObj = new GameObject();
-                consoleObj = GameObject.Instantiate(oriBlueprintPanelObj) as GameObject;
-                consoleObj.name = "tcfv-dev-console";
+                if (consoleObj == null)
+                {
+                    GameObject oriBlueprintPanelObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Blueprint Browser");
+                    if(oriBlueprintPanelObj == null) oriBlueprintPanelObj = GameObject.Find("Blueprint Browser");
+                    //consoleObj = GameObject.Instantiate(GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Research Result Window/"));
+                    GameObject parentObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows");
+                    //consoleObj = new GameObject();
+                    consoleObj = GameObject.Instantiate(oriBlueprintPanelObj) as GameObject;
+                    consoleObj.name = "tcfv-dev-console";
 
-                GameObject.Destroy(consoleObj.transform.Find("view-group").gameObject);
-                GameObject.Destroy(consoleObj.transform.Find("inspector-group-bg").gameObject);
-                GameObject.Destroy(consoleObj.transform.Find("inspector-group").gameObject);
-                GameObject.Destroy(consoleObj.transform.Find("folder-info-group").gameObject);
-                GameObject.Destroy(consoleObj.transform.Find("title-group").gameObject);
-                GameObject.Destroy(consoleObj.transform.Find("panel-bg/title-text").gameObject);
-                GameObject.Destroy(consoleObj.transform.Find("panel-bg/x").gameObject);
+                    GameObject.Destroy(consoleObj.transform.Find("view-group").gameObject);
+                    GameObject.Destroy(consoleObj.transform.Find("inspector-group-bg").gameObject);
+                    GameObject.Destroy(consoleObj.transform.Find("inspector-group").gameObject);
+                    GameObject.Destroy(consoleObj.transform.Find("folder-info-group").gameObject);
+                    GameObject.Destroy(consoleObj.transform.Find("title-group").gameObject);
+                    GameObject.Destroy(consoleObj.transform.Find("panel-bg/title-text").gameObject);
+                    GameObject.Destroy(consoleObj.transform.Find("panel-bg/x").gameObject);
 
-                consoleObj.transform.SetParent(parentObj.transform);
-                consoleObj.transform.localScale = new Vector3(1, 1, 1);
-                consoleObj.transform.localPosition = new Vector3(0, 0);
-                consoleObj.AddComponent<Image>();
-                consoleObj.GetComponent<Image>().color = new Color(0f, 0.096f, 0.32f, 0.8f);
-                consoleObj.GetComponent<RectTransform>().sizeDelta = new Vector2(800, 600);
-                //consoleObj.AddComponent<UIWindowDrag>();
-                consoleObj.GetComponent<UIWindowDrag>().refTrans = consoleObj.GetComponent<RectTransform>();
-                consoleObj.GetComponent<UIWindowDrag>().dragTrans = consoleObj.GetComponent<RectTransform>();
+                    consoleObj.transform.SetParent(parentObj.transform);
+                    consoleObj.transform.localScale = new Vector3(1, 1, 1);
+                    consoleObj.transform.localPosition = new Vector3(0, 0);
+                    consoleObj.AddComponent<Image>();
+                    consoleObj.GetComponent<Image>().color = new Color(0f, 0.096f, 0.32f, 0.8f);
+                    consoleObj.GetComponent<RectTransform>().sizeDelta = new Vector2(800, 600);
+                    //consoleObj.AddComponent<UIWindowDrag>();
+                    consoleObj.GetComponent<UIWindowDrag>().refTrans = consoleObj.GetComponent<RectTransform>();
+                    consoleObj.GetComponent<UIWindowDrag>().dragTrans = consoleObj.GetComponent<RectTransform>();
 
-                GameObject inputBgObj = new GameObject();
-                inputBgObj.name = "input-bg";
-                inputBgObj.transform.SetParent(consoleObj.transform);
-                inputBgObj.AddComponent<Image>();
-                inputBgObj.GetComponent<Image>().color = new Color(1, 1, 1, 0.15f);
-                inputBgObj.GetComponent<RectTransform>().sizeDelta = new Vector2(780, 27);
-                inputBgObj.transform.localScale = new Vector3(1, 1, 1);
-                inputBgObj.transform.localPosition = new Vector3(0, -278, 0);
+                    GameObject inputBgObj = new GameObject();
+                    inputBgObj.name = "input-bg";
+                    inputBgObj.transform.SetParent(consoleObj.transform);
+                    inputBgObj.AddComponent<Image>();
+                    inputBgObj.GetComponent<Image>().color = new Color(1, 1, 1, 0.15f);
+                    inputBgObj.GetComponent<RectTransform>().sizeDelta = new Vector2(780, 27);
+                    inputBgObj.transform.localScale = new Vector3(1, 1, 1);
+                    inputBgObj.transform.localPosition = new Vector3(0, -278, 0);
 
-                GameObject oriInputFieldObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Blueprint Browser/inspector-group/group-1/input-desc-text");
-                GameObject inputFieldObj = GameObject.Instantiate(oriInputFieldObj, consoleObj.transform);
-                inputFieldObj.name = "inputfield";
-                inputFieldObj.GetComponent<UIButton>().tips.tipTitle = "Command";
-                inputFieldObj.GetComponent<UIButton>().tips.tipText = consoleHelpTip;
-                inputFieldObj.transform.localScale = new Vector3(1, 1, 1);
-                inputFieldObj.transform.localPosition = new Vector3(-390, -265);
-                inputFieldObj.GetComponent<RectTransform>().sizeDelta = new Vector2(-20, 26);
-                inputFieldObj.transform.Find("value-text").GetComponent<Text>().color = Color.white;
-                //inputFieldObj.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
-                consoleInputField = inputFieldObj.GetComponent<InputField>();
-                consoleInputField.onValueChange.RemoveAllListeners();
-                consoleInputField.onValueChange.AddListener((x) => { DevConsole.OnInputFieldValueChange(x); });
+                    GameObject oriInputFieldObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Blueprint Browser/inspector-group/group-1/input-desc-text");
+                    if(oriInputFieldObj ==  null) oriInputFieldObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Blueprint Browser/inspector-group/BP-panel-scroll(Clone)/Viewport/pane/group-1/input-desc-text/");
+                    GameObject inputFieldObj = GameObject.Instantiate(oriInputFieldObj, consoleObj.transform);
+                    inputFieldObj.name = "inputfield";
+                    inputFieldObj.GetComponent<UIButton>().tips.tipTitle = "Command";
+                    inputFieldObj.GetComponent<UIButton>().tips.tipText = consoleHelpTip;
+                    inputFieldObj.transform.localScale = new Vector3(1, 1, 1);
+                    inputFieldObj.transform.localPosition = new Vector3(-390, -265);
+                    inputFieldObj.GetComponent<RectTransform>().sizeDelta = new Vector2(-20, 26);
+                    inputFieldObj.transform.Find("value-text").GetComponent<Text>().color = Color.white;
+                    //inputFieldObj.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
+                    consoleInputField = inputFieldObj.GetComponent<InputField>();
+                    consoleInputField.onValueChange.RemoveAllListeners();
+                    consoleInputField.onValueChange.AddListener((x) => { DevConsole.OnInputFieldValueChange(x); });
 
-                GameObject oriCloseXMarkObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Blueprint Browser/panel-bg/x");
-                GameObject XObj = GameObject.Instantiate(oriCloseXMarkObj, consoleObj.transform);
-                XObj.name = "x";
-                XObj.GetComponent<Button>().onClick.RemoveAllListeners();
-                XObj.GetComponent<Button>().onClick.AddListener(() => { Hide(); });
-                XObj.transform.localScale = new Vector3(1, 1, 1);
-                XObj.transform.localPosition = new Vector3(390, 290);
+                    GameObject oriCloseXMarkObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Blueprint Browser/panel-bg/x");
+                    if (oriCloseXMarkObj == null) oriCloseXMarkObj = GameObject.Find("x");
+                    GameObject XObj = GameObject.Instantiate(oriCloseXMarkObj, consoleObj.transform);
+                    XObj.name = "x";
+                    XObj.GetComponent<Button>().onClick.RemoveAllListeners();
+                    XObj.GetComponent<Button>().onClick.AddListener(() => { Hide(); });
+                    XObj.transform.localScale = new Vector3(1, 1, 1);
+                    XObj.transform.localPosition = new Vector3(390, 290);
 
-                GameObject outputFieldObj = GameObject.Instantiate(oriInputFieldObj, consoleObj.transform);
-                outputFieldObj.name = "outputfield";
-                outputFieldObj.GetComponent<UIButton>().tips.delay = 999999;
-                outputFieldObj.GetComponent<UIButton>().tips.tipTitle = "Outputs";
-                outputFieldObj.GetComponent<UIButton>().tips.tipText = "This console is only for mod devs.";
-                outputFieldObj.transform.localScale = new Vector3(1, 1, 1);
-                outputFieldObj.transform.localPosition = new Vector3(-390, 265);
-                outputFieldObj.GetComponent<RectTransform>().sizeDelta = new Vector2(-20, 500);
-                outputFieldObj.transform.Find("value-text").GetComponent<Text>().supportRichText = true;
-                outputFieldObj.transform.Find("value-text").GetComponent<Text>().alignment = TextAnchor.LowerLeft;
-                outputFieldObj.transform.Find("value-text").GetComponent<Text>().color = new Color(0.1875f,0.8125f,1f);
-                consoleOutputField = outputFieldObj.GetComponent<InputField>();
-                consoleOutputField.onValueChange.RemoveAllListeners();
-                consoleOutputField.interactable = false;
-                consoleOutputField.characterLimit = 5000;
+                    GameObject outputFieldObj = GameObject.Instantiate(oriInputFieldObj, consoleObj.transform);
+                    outputFieldObj.name = "outputfield";
+                    outputFieldObj.GetComponent<UIButton>().tips.delay = 999999;
+                    outputFieldObj.GetComponent<UIButton>().tips.tipTitle = "Outputs";
+                    outputFieldObj.GetComponent<UIButton>().tips.tipText = "This console is only for mod devs.";
+                    outputFieldObj.transform.localScale = new Vector3(1, 1, 1);
+                    outputFieldObj.transform.localPosition = new Vector3(-390, 265);
+                    outputFieldObj.GetComponent<RectTransform>().sizeDelta = new Vector2(-20, 500);
+                    outputFieldObj.transform.Find("value-text").GetComponent<Text>().supportRichText = true;
+                    outputFieldObj.transform.Find("value-text").GetComponent<Text>().alignment = TextAnchor.LowerLeft;
+                    outputFieldObj.transform.Find("value-text").GetComponent<Text>().color = new Color(0.1875f, 0.8125f, 1f);
+                    consoleOutputField = outputFieldObj.GetComponent<InputField>();
+                    consoleOutputField.onValueChange.RemoveAllListeners();
+                    consoleOutputField.interactable = false;
+                    consoleOutputField.characterLimit = 5000;
 
-                outputClearCount = 0;
+                    outputClearCount = 0;
+                }
+
+                Hide();
+
             }
+            catch (Exception)
+            {
 
-            Hide();
+                Debug.Log("Error when initiate dev console UI.");
+            }
         }
 
         public static void Show()
