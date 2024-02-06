@@ -419,7 +419,7 @@ namespace DSP_Battle
             RegisterString("巨构伤害", "Megastructure damage", "巨构伤害");
             RegisterString("恒星要塞导弹伤害", "StarFortress Missile dmg.", "恒星要塞导弹伤害");
             RegisterString("恒星要塞光矛伤害", "StarFortress LightSpear dmg.", "恒星要塞光矛伤害");
-            RegisterString("女神之怒伤害", "Wrath of Goddess dmg.", "女神之怒伤害");
+            RegisterString("女神之怒伤害", "Wrath of Goddess dmg.", "女神之怒伤害"); 
 
             RegisterString("异星矩阵", "Alien matrix", "异星矩阵");
             RegisterString("异星矩阵描述", "A matrix containing high-density data accidentally dropped by invading swarms. Can be analyzed by mechas and used to unlock more advanced alien technologies. The matrix itself also seems to have potentially high-dimensional spatiotemporal properties", "由入侵的虫群偶然掉落的载有高密度数据的矩阵，可以由机甲分析并用于解锁更高级的异星科技。矩阵本身似乎还具有潜在的高维时空特性。");
@@ -478,10 +478,19 @@ namespace DSP_Battle
             RegisterString("已充能gm", "Charged", "已充能");
             RegisterString("女神之怒充能中", "Wrath of Goddess Charging", "女神之怒充能中");
             RegisterString("女神之怒", "† Wrath of Goddess †", "† 女神之怒 †");
+            
             RegisterString("圣物稀有度0", "<color=#d2853d>Legendary</color>", "<color=#d2853d>传说</color>");
             RegisterString("圣物稀有度1", "<color=#9040d0>Epic</color>", "<color=#9040d0>史诗</color>");
             RegisterString("圣物稀有度2", "<color=#2080d0>Rare</color>", "<color=#2080d0>稀有</color>");
             RegisterString("圣物稀有度3", "<color=#30b530>Common</color>", "<color=#30b530>普通</color>");
+            RegisterString("圣物稀有度4", "<color=#00c560>Cursed</color>", "<color=#00c560>被诅咒的</color>");
+            RegisterString("诅咒", "Curse", "诅咒");
+            RegisterString("诅咒描述", "Cursed relics have different negative effects. Besides, for each cursed relic you have, enemies in regular invasions gain 5% damage resistance, and the duration of elite invasions is extended by 20 seconds.\nYou can not remove a cursed relic once you have it.\n\nNegative effect: ", "受诅咒的圣物均具有各不相同的负面效果，且你每拥有一个受诅咒的圣物，普通入侵中的敌人获得5%全伤害抗性，精英入侵的持续时间延长20s。\n受诅咒的圣物无法被移除。\n\n负面效果：");
+            RegisterString("诅咒描述独立", "Cursed relics have different <color=#d00000>negative effects</color>. Besides, for each cursed relic you have, enemies in regular invasions gain 5% damage resistance, and the duration of elite invasions is extended by 20 seconds.\nYou can not remove a cursed relic once you have it.", "受诅咒的圣物均具有各不相同的<color=#d00000>负面效果</color>，且你每拥有一个受诅咒的圣物，普通入侵中的敌人获得5%全伤害抗性，精英入侵的持续时间延长20s。\n受诅咒的圣物无法被移除。");
+            RegisterString("诅咒描述短", "This relic can not be removed.\nEnemies in regular invasions +5% damage resistance. Duration of elite invasions + 20s. ", "此圣物无法被移除\n普通入侵中敌人抗性+5%，精英入侵持续时间+20s，");
+            RegisterString("负面效果警告", "<color=#ff0000>Warning! This relic has negative effect!</color>", "<color=#ff0000>警告！此圣物具有负面效果！</color>");
+
+            RegisterString("已记载", "Recorded: ", "已记载：");
 
             RegisterString("遗物名称0-0", "Swallower\n<size=18>- Legend -</size>", "吞噬者\n<size=18>- 传说 -</size>");
             RegisterString("遗物名称0-1", "Blue Buff\n<size=18>- Legend -</size>", "蓝buff\n<size=18>- 传说 -</size>");
@@ -545,6 +554,14 @@ namespace DSP_Battle
             RegisterString("遗物名称3-15", "Super Mind\n<size=18>- Common -</size>", "超级大脑\n<size=18>- 普通 -</size>");
             RegisterString("遗物名称3-16", "Void Lens\n<size=18>- Common -</size>", "虚空棱镜\n<size=18>- 普通 -</size>");
             RegisterString("遗物名称3-17", "Honorary Promotion\n<size=18>- Common -</size>", "荣誉晋升\n<size=18>- 普通 -</size>");
+
+            RegisterString("遗物名称4-0", "The Weaver\n<size=18>- Cursed -</size>", "编织者\n<size=18>- 受诅咒的 -</size>");
+            RegisterString("遗物名称4-1", "Contract of Misfortune\n<size=18>- Cursed -</size>", "厄运契约\n<size=18>- 受诅咒的 -</size>");
+            RegisterString("遗物名称4-2", "Crown of Rule\n<size=18>- Cursed -</size>", "统治之冠\n<size=18>- 受诅咒的 -</size>");
+            RegisterString("遗物名称4-3", "Fatal Echo\n<size=18>- Cursed -</size>", "致命回响\n<size=18>- 受诅咒的 -</size>");
+            RegisterString("遗物名称4-4", "Enlightenment Echo\n<size=18>- Cursed -</size>", "启迪回响\n<size=18>- 受诅咒的 -</size>");
+            RegisterString("遗物名称4-5", "Aftershock Echo\n<size=18>- Cursed -</size>", "余震回响\n<size=18>- 受诅咒的 -</size>");
+            RegisterString("遗物名称4-6", "Rune Book\n<size=18>- Cursed -</size>", "符文之书\n<size=18>- 受诅咒的 -</size>");
 
             RegisterString("遗物描述0-0", "Every time the enemy ship is destroyed, a random mega structure will be partially auto-constructed according to the intensity of the enemy ship", "每次击毁敌舰，根据敌舰强度略微推进巨构的建造进度");
             RegisterString("遗物描述0-1", "When assembling recipes with at least 2 different materials in assembling machine (except when assembling antimatter fuel rods), every time a product is produced, one material in the first slot will be returned.", "制造厂在制造原材料至少2种的配方时（反物质燃料棒的产线除外），每产出1个产物，会返还1个第1位置的原材料");
@@ -610,6 +627,14 @@ namespace DSP_Battle
             RegisterString("遗物描述3-16", "Star cannon deals 10% <i>additional damage</i> to the primary target", "恒星炮对主要目标造成10%<i>额外伤害</i>");
             RegisterString("遗物描述3-17", "Each time your merit rank is promoted, random mega structures will be significantly auto-constructed", "每次提升功勋阶级，显著推进各巨构的建造进度");
 
+            RegisterString("遗物描述4-0", "Each time your merit rank is promoted, random mega structures will be significantly auto-constructed", "星区中光度最高的恒星系的巨构会不停地自动建造");
+            RegisterString("遗物描述4-1", "Every time the Relic selection window opened, at least one legendary relic will be available before you reroll. Reroll cost is halved", "每次开启圣物选择窗口时必然刷新一个传说圣物，重随消耗减半");
+            RegisterString("遗物描述4-2", "Droplet max control limit +15", "可控制的水滴上限+15");
+            RegisterString("遗物描述4-3", "When dealing <i>additional damage</i> to an enemy, there is a 1% chance to kill it immediately", "对敌人造成<i>额外伤害</i>时，有1%的概率使其立即死亡");
+            RegisterString("遗物描述4-4", "Whenever a frame point of the mega structure is built, a free component point will be added to a random module of the star fortress", "每当巨构的框架点数增加时，额外构建该恒星要塞的随机模块的1个点数");
+            RegisterString("遗物描述4-5", "When the shield is hit by a destroyer, repel all enemy ships by 0.1AU. When the shield is destroyed by any damage, repel enemies by 2AU", "护盾被驱逐舰撞击时，将所有敌舰击退0.1AU。当护盾被任意伤害摧毁时，转而击退2AU");
+            RegisterString("遗物描述4-6", "When pick up this relic, permanently record the top three relics that you already have, retaining their effects but no longer occupying the relic slot", "获取此圣物时，将圣物栏位最顶端的三个圣物永久保存在符文之书中，保留他们的效果但使其不再占用圣物栏位");
+
             RegisterString("遗物名称带颜色0-0", "<color=#d2853d>Swallower  [Legend]</color>",  "<color=#d2853d>吞噬者  [传说]</color>");
             RegisterString("遗物名称带颜色0-1", "<color=#d2853d>Blue Buff  [Legend]</color>",  "<color=#d2853d>蓝buff  [传说]</color>");
             RegisterString("遗物名称带颜色0-2", "<color=#d2853d>Tear of the Goddess  [Legend]</color> ", "<color=#d2853d>女神之泪  [传说]</color>");
@@ -673,12 +698,39 @@ namespace DSP_Battle
             RegisterString("遗物名称带颜色3-16", "<color=#30b530>Void Lens  [Common]</color>",  "<color=#30b530>虚空棱镜  [普通]</color>");
             RegisterString("遗物名称带颜色3-17", "<color=#30b530>Honorary Promotion  [Common]</color>", "<color=#30b530>荣誉晋升  [普通]</color>");
 
+            RegisterString("遗物名称带颜色4-0", "<color=#00c560>The Weaver  [Cursed]</color>", "<color=#00c560>编织者  [被诅咒的]</color>");
+            RegisterString("遗物名称带颜色4-1", "<color=#00c560>Contract of Misfortune [Cursed]</color>", "<color=#00c560>厄运契约  [被诅咒的]</color>");
+            RegisterString("遗物名称带颜色4-2", "<color=#00c560>Crown of Rule  [Cursed]</color>", "<color=#00c560>统治之冠  [被诅咒的]</color>");
+            RegisterString("遗物名称带颜色4-3", "<color=#00c560>Fatal Echo  [Cursed]</color>", "<color=#00c560>致命回响  [被诅咒的]</color>");
+            RegisterString("遗物名称带颜色4-4", "<color=#00c560>Enlightenment Echo  [Cursed]</color>", "<color=#00c560>启迪回响  [被诅咒的]</color>");
+            RegisterString("遗物名称带颜色4-5", "<color=#00c560>Aftershock Echo  [Cursed]</color>", "<color=#00c560>余震回响  [被诅咒的]</color>");
+            RegisterString("遗物名称带颜色4-6", "<color=#00c560>Rune Book  [Cursed]</color>", "<color=#00c560>符文之书  [被诅咒的]</color>");
+
             RegisterString("relicTipTitle0-2", "Wrath of Goddess", "女神之怒");
             RegisterString("relicTipText0-2", "Wrath of Goddess consumes all sorrows, repels all enemy ships by at least 1AU, and deals 95% of their max health as true damage. \nAfter launching the Wrath of Goddess, you will not be able to gain any sorrow until this wave ends.", "女神之怒消耗所有哀痛，将所有敌船击退1AU以上，并对他们造成最大生命值95%的真实伤害。\n在任何一次入侵中发动女神之怒后，该次入侵无法继续叠加哀痛");
             RegisterString("relicTipTitle0-7", "For Star Cannon", "对于恒星炮");
             RegisterString("relicTipText0-7", "If the megastructure is star cannon, then the additional damage increases 200%.", "如果巨构为恒星炮，该伤害增加200%");
             RegisterString("relicTipTitle0-10", "Upper Limit", "上限");
             RegisterString("relicTipText0-10", "The upper limit is 400 at the begining. After reaching the upper limit, the mecha will automatically consume a droplet in inventory then increase the upper limit by 400. The upper limit growth is unlimited.", "加成上限初始为400，达到上限后，自动消耗背包中的一个水滴并再次提升400加成上限，提升上限的次数不受限制");
+
+            RegisterString("relicTipText4-0", "All other galaxies receive a negative luminosity correction", "所有其他星系获得一个负的恒星光度修正");
+            RegisterString("relicTipText4-1", "All relics with probability, their probability is halved", "所有具有概率的圣物，判定成功几率减半");
+            RegisterString("relicTipText4-2", "When losing a logistics station, you will lose half of your current Merit Experience points", "损失物流塔时，你将失去当前一半的功勋经验点数");
+            RegisterString("relicTipText4-3", "When an enemy ship hits a shield, there is a 1% chance of directly removing 10% of the current shield", "敌舰命中护盾时，有1%的概率直接移除10%的当前护盾");
+            RegisterString("relicTipText4-4", "The shooting speed (and its upper limit) of the Star Fortress Light Spear is halved", "恒星要塞光矛的射速和射速上限减半");
+            RegisterString("relicTipText4-5", "The planet shield generator charging speed -30%", "行星护盾生成器提供的护盾充能速度减少30%");
+            RegisterString("relicTipText4-6", "Only after 2 elite waves can you find a new relic", "每两次精英波次才能获得新的圣物");
+
+            RegisterString("relicTipTitle0-5", "Additional damage", "额外伤害");
+            RegisterString("relicTipTitle0-6", "Additional damage", "额外伤害");
+            RegisterString("relicTipTitle0-7", "Additional damage", "额外伤害");
+            RegisterString("relicTipTitle1-3", "Additional damage", "额外伤害");
+            RegisterString("relicTipTitle2-7", "Additional damage", "额外伤害");
+            RegisterString("relicTipTitle2-12", "Additional damage", "额外伤害");
+            RegisterString("relicTipTitle2-13", "Additional damage", "额外伤害");
+            RegisterString("relicTipTitle2-15", "Additional damage", "额外伤害");
+            RegisterString("relicTipTitle3-7", "Additional damage", "额外伤害");
+            RegisterString("relicTipTitle3-16", "Additional damage", "额外伤害");
 
             RegisterString("显示/隐藏", "Show/Hide", "显示/隐藏");
             RegisterString("模块容量", "Module Capacity", "模块容量");
@@ -711,7 +763,8 @@ namespace DSP_Battle
 
             RegisterString("深空来敌介绍4标题", "Star Cannon (Nicoll-Dyson beam)", "恒星炮（尼科尔-戴森光束）");
             RegisterString("深空来敌介绍4前字", "Star cannons can be used to destroy wormholes after they are generated, thereby weakening the overall strength of incoming enemies and reducing the defense difficulty of the next invasion. After the wormhole is generated and before the enemy invasion begins, if the Star Cannon has completed at least the first stage of construction and has cooled down, you can launch the Star Cannon and start destroying the wormhole through the [Star Cannon Fire] button in the top warning UI (After reaching stage 3, the fully charged star cannon will automatically launch after the wormholes are generated). For each invasion, as the number of wormholes you destroy increases, the resistance of the remaining wormholes will also increase, requiring more time to destroy the next wormhole, Until there is only one wormhole left. The enemy will then use all their energy to maintain its stable opening, so the last wormhole will not be destroyed in any case.\n\nJust like building a Dyson sphere or other mega structures, you need to first plan a star cannon, and then launch the carrier rocket of the star cannon and solar sail to build a star cannon. As the nodes and shells you build gradually increase, the construction stage of the Star Cannon will continue to advance, also its attributes such as damage and charging speed, until the fifth stage. The following is the data for each stage of the Star Cannon:\n\nStage\t\tRequired Energy\t\tDps\t\t\t\tMaximum Fire Times per Charging\t\tCharge Time\t\tDamage reduction\nStage1\t\t6GW\t\t\t\t\t\t30000\t\t\t3\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t75min\t\t\t\t\t-3%/ly\nStage2\t\t30GW\t\t\t\t\t\t60000\t\t\t5\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t45min\t\t\t\t\t-3%/ly\nStage3\t\t120GW\t\t\t\t\t\t90000\t\t\t8\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t20min\t\t\t\t\t-2%/ly\nStage4\t\t240GW\t\t\t\t\t120000\t\t15\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t10min\t\t\t\t\t-1%/ly\nStage5\t\t540GW\t\t\t\t\t150000+\t\tInfinite\t\t\t\t\t\t\t\t\t\t\t\t\t\t5min\t\t\t\t\tNone\n\nYou can only build one star cannon at most.", "恒星炮可以用来在虫洞生成后摧毁虫洞，从而削弱即将到来的敌人的总强度，降低下次入侵的防御难度。在虫洞生成后，且敌人入侵开始之前，如果恒星炮已建造了至少第一阶段且冷却完毕，你就可以通过顶部警示UI中的[恒星炮开火]按钮命令恒星炮启动并开始摧毁虫洞（在达到阶段3后，充能完毕的恒星炮会在虫洞生成后自动启动）。每次入侵，随着你不断摧毁虫洞，剩余虫洞的抗性也会不断提升，从而需要花费更多的时间来摧毁，直到只剩一个虫洞时，敌人会将全部的能量用于维持其稳定开启，因此最后一个虫洞无论如何也不会被摧毁。\n\n就像建造戴森球、物质解压器等其他巨构一样，你需要在一个恒星上首先规划恒星炮，然后发射恒星炮组件的运载火箭和太阳帆构建恒星炮。随着你建造的节点、壳面逐渐增大，恒星炮的建造阶段会不断推进，并提高伤害、充能速度等属性，直到第五阶段。以下为恒星炮各阶段的数据：\n\n阶段\t\t所需能量\t\t每秒伤害\t\t连续开火次数\t\t充能时间\t\t伤害衰减\n阶段1\t\t6GW\t\t\t\t30000\t\t\t\t3\t\t\t\t\t\t\t\t\t75min\t\t\t\t-3%/ly\n阶段2\t\t30GW\t\t\t\t60000\t\t\t\t5\t\t\t\t\t\t\t\t\t45min\t\t\t\t-3%/ly\n阶段3\t\t120GW\t\t\t\t90000\t\t\t\t8\t\t\t\t\t\t\t\t\t20min\t\t\t\t-2%/ly\n阶段4\t\t240GW\t\t\t120000\t\t\t15\t\t\t\t\t\t\t\t\t10min\t\t\t\t-1%/ly\n阶段5\t\t540GW\t\t\t150000+\t\t\t无限制\t\t\t\t\t\t5min\t\t\t\t无\n\n你最多只能建造一个恒星炮。");
-            RegisterString("深空来敌介绍5标题", "All Relics", "所有圣物");
+            RegisterString("深空来敌介绍5标题", "Regular Relics", "常规圣物");
+            RegisterString("深空来敌介绍6标题", "Cursed Relics", "被诅咒的圣物");
 
             //// 物品 Item
             //ItemProto bullet1 = ProtoRegistry.RegisterItem(8001, "子弹1", "子弹1描述", "Assets/DSPBattle/bullet1", 2701 + pageBias, 100, EItemType.Material);
@@ -1303,18 +1356,28 @@ namespace DSP_Battle
             tp5.PostText = "";
             tp5.ID = 35;
             LDBTool.PreAddProto(tp5);
+
+            TutorialProto tp6 = LDB.tutorial.Select(1).Copy();
+            tp6.Name = "深空来敌介绍6标题".Translate();
+            tp6.name = "深空来敌介绍6标题".Translate();
+            tp6.Video = "";
+            tp6.PreText = "";
+            tp6.PostText = "";
+            tp6.ID = 36;
+            LDBTool.PreAddProto(tp6);
         }
 
         public static void RewriteTutorialProtosWhenLoad()
         {
             TutorialProto relicTutorial = LDB.tutorial.Select(35);
+            TutorialProto relicCursedTutorial = LDB.tutorial.Select(36);
             if (relicTutorial != null)
             {
                 try
                 {
                     string text = "";
-                    string text2 = "";
-                    for (int type = 0; type < 2; type++)
+                    string text2 = ""; //这里必须分成两部分要不然英文部分过长，超过65000报错，无法显示
+                    for (int type = 0; type < 2; type = (type + 1) % 5)
                     {
                         text += "<size=16>" + ($"圣物稀有度{type}").Translate() + "</size>\n";
                         for (int num = 0; num < Relic.relicNumByType[type]; num++)
@@ -1346,10 +1409,25 @@ namespace DSP_Battle
                         text2 += "\n";
                     }
                     relicTutorial.PostText = text2;
+
+                    string text3 = "";
+                    //text3 += "<size=16>" + ("圣物稀有度4").Translate() + "</size>\n";
+                    text3 += "诅咒描述独立".Translate() + "\n\n";
+                    for (int num = 0; num < Relic.relicNumByType[4]; num++)
+                    {
+                        text3 += $"遗物名称带颜色{4}-{num}".Translate().Split('[')[0].Trim() + "</color>\n";
+                        text3 += $"遗物描述{4}-{num}".Translate();
+                        if ($"relicTipText{4}-{num}".Translate() != $"relicTipText{4}-{num}")
+                        {
+                            text3 += "\n" + $"relicTipText{4}-{num}".Translate();
+                        }
+                        text3 += "\n\n";
+                    }
+                    text3 += "\n";
+                    relicCursedTutorial.PreText = text3;
                 }
                 catch (Exception)
-                {
-                }
+                { }
             }
         }
 

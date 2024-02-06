@@ -11,6 +11,25 @@ using System.Threading;
 
 namespace DSP_Battle
 {
+    public class StrNode
+    {
+        public string cmd;
+        public StrNode prev;
+        public StrNode next;
+        public StrNode(string cmd)
+        {
+            this.cmd = cmd;
+            this.prev = null;
+            this.next = null;
+        }
+        public StrNode(string cmd, StrNode prev)
+        {
+            this.cmd = cmd;
+            this.prev = prev;
+            this.next = null;
+        }
+    }
+
     public class DevConsole
     {
         public static int num = 0;
