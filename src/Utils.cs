@@ -61,7 +61,7 @@ namespace DSP_Battle
             return RandInt(min, max);
         }
 
-        public static void Check(int num = 1, string str = "check ")
+        public static void Check(int num = 0, string str = "check ")
         {
             DspBattlePlugin.logger.LogInfo(str + num.ToString());
         }

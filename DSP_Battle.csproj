@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>D:\SteamLibrary\steamapps\common\Dyson Sphere Program\BepInEx\plugins\</OutputPath>
+    <OutputPath>..\..\..\Steam\steamapps\common\Dyson Sphere Program\BepInEx\plugins\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -38,15 +38,17 @@
       <HintPath>..\..\..\Steam\steamapps\common\Dyson Sphere Program\BepInEx\core\0Harmony20.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp-nstrip-allpublic20220927">
-      <HintPath>dependencies\Assembly-CSharp-nstrip-allpublic20220927.dll</HintPath>
+    <Reference Include="Assembly-CSharp-publicized">
+      <HintPath>dependencies\Assembly-CSharp-publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>D:\SteamLibrary\steamapps\common\Dyson Sphere Program\BepInEx\core\BepInEx.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="CommonAPI">
-      <HintPath>D:\SteamLibrary\steamapps\common\Dyson Sphere Program\BepInEx\plugins\CommonAPI\CommonAPI.dll</HintPath>
+    <Reference Include="CommonAPI, Version=1.6.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Steam\steamapps\common\Dyson Sphere Program\BepInEx\plugins\CommonAPI\plugins\CommonAPI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DSPModSave, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -62,10 +64,6 @@
     <Reference Include="MoreMegaStructure, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>dependencies\MoreMegaStructure.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\ProjectGenesis\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -130,27 +128,16 @@
     <Compile Include="src\BattleProtos.cs" />
     <Compile Include="src\DevConsole.cs" />
     <Compile Include="src\Droplet.cs" />
+    <Compile Include="src\DropletFleetPatchers.cs" />
     <Compile Include="src\FastStartOption.cs" />
     <Compile Include="src\Rank.cs" />
     <Compile Include="src\Relic.cs" />
-    <Compile Include="src\SpaceForceShip.cs" />
-    <Compile Include="src\EnemyShipRenderer.cs" />
-    <Compile Include="src\EnemyShipUIRenderer.cs" />
     <Compile Include="src\PlanetEngine.cs" />
-    <Compile Include="src\RemoveEntities.cs" />
     <Compile Include="src\RendererSphere.cs" />
-    <Compile Include="src\ShieldGenerator.cs" />
-    <Compile Include="src\ShieldRenderer.cs" />
-    <Compile Include="src\StarCannon.cs" />
     <Compile Include="src\StarFortress.cs" />
     <Compile Include="src\StarFortressSilo.cs" />
     <Compile Include="src\StationOrderFixPatch.cs" />
-    <Compile Include="src\UIBattleStatistics.cs" />
-    <Compile Include="src\Cannon.cs" />
     <Compile Include="src\Configs.cs" />
-    <Compile Include="src\EjectorUIPatch.cs" />
-    <Compile Include="src\EnemyShip.cs" />
-    <Compile Include="src\EnemyShips.cs" />
     <Compile Include="src\DspBattlePlugin.cs" />
     <Compile Include="src\MissileSilo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -158,11 +145,7 @@
     <Compile Include="src\UIRank.cs" />
     <Compile Include="src\UIRelic.cs" />
     <Compile Include="src\UIStarFortress.cs" />
-    <Compile Include="src\WaveStages.cs" />
     <Compile Include="src\Utils.cs" />
-    <Compile Include="src\Wormhole.cs" />
-    <Compile Include="src\WormholeUIPatch.cs" />
-    <Compile Include="src\UIAlert.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="battlebgm" />

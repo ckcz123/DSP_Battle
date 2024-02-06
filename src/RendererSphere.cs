@@ -32,7 +32,7 @@ namespace DSP_Battle
                 dropletSpheres.Add(new DysonSphere());
                 dropletSpheres[i].Init(GameMain.data, GameMain.galaxy.stars[i]);
                 dropletSpheres[i].ResetNew();
-                dropletSpheres[i].swarm.bulletMaterial.SetColor("_Color0", new Color(0, 1, 1, 1)); 
+                dropletSpheres[i].swarm.bulletMaterial.SetColor("_Color0", new Color(0, 1, 1, 1));
                 dropletSpheres[i].layerCount = -1;
             }
         }
@@ -50,7 +50,7 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(GameData), "GameTick")]
         public static bool BeforeGameTick()
         {
-            if (enemySpheres.Count <= 0) 
+            if (enemySpheres.Count <= 0)
                 InitAll();
 
             return true;
@@ -62,7 +62,7 @@ namespace DSP_Battle
         public static void RSphereGameTick(long time)
         {
             if (enemySpheres.Count <= 0) InitAll();
-            if (Configs.nextWaveStarIndex >= 0 && Configs.nextWaveStarIndex < enemySpheres.Count && (Configs.nextWaveState == 3|| Configs.nextWaveState == 0))
+            if (Configs.nextWaveStarIndex >= 0 && Configs.nextWaveStarIndex < enemySpheres.Count && (Configs.nextWaveState == 3 || Configs.nextWaveState == 0))
                 enemySpheres[Configs.nextWaveStarIndex].swarm.GameTick(time);
             if (GameMain.localStar != null)
                 dropletSpheres[GameMain.localStar.index].swarm.GameTick(time);
@@ -74,7 +74,7 @@ namespace DSP_Battle
         public static void DrawPatch1(GameData __instance)
         {
             if (enemySpheres.Count <= 0) return;
-            if (__instance.localStar!=null && DysonSphere.renderPlace == ERenderPlace.Universe && Configs.nextWaveState == 3)
+            if (__instance.localStar != null && DysonSphere.renderPlace == ERenderPlace.Universe && Configs.nextWaveState == 3)
             {
                 int index = __instance.localStar.index;
                 if (enemySpheres[index] != null)

@@ -232,26 +232,7 @@ namespace DSP_Battle
         // 刷新保存护盾量最低的行星
         public static void RefreshMinShieldPlanet()
         {
-            minShieldPlanetId = -1;
-            if (Configs.nextWaveState == 3)
-            {
-                int planet100 = (Configs.nextWaveStarIndex + 1) * 100;
-                int minShield = int.MaxValue;
-                for (int i = 0; i < GameMain.galaxy.stars[Configs.nextWaveStarIndex].planetCount; i++)
-                {
-                    int planetId = planet100 + i + 1;
-                    if (ShieldGenerator.currentShield.ContainsKey(planetId))
-                    {
-                        int shd = ShieldGenerator.currentShield.GetOrAdd(planetId, 0);
-                        int max = ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0);
-                        if (shd < max * 1.5 && shd < minShield && shd > 0)
-                        {
-                            minShieldPlanetId = planetId;
-                            minShield = shd;
-                        }
-                    }
-                }
-            }
+            
         }
 
         public static bool Verify(double possibility)
@@ -680,34 +661,7 @@ namespace DSP_Battle
 
         public static void WrathOfGoddess()
         {
-            if (Configs.nextWaveState == 3)
-            {
-                Relic.relic0_2CanActivate = 0;
-                Relic.relic0_2Charge = 0;
-                VectorLF3 starUPos = GameMain.galaxy.stars[Configs.nextWaveStarIndex].uPosition;
-                foreach (EnemyShip ship in EnemyShips.ships.Values)
-                {
-                    if(ship.state != EnemyShip.State.active) continue;
-                    int maxHp = Configs.enemyHp[Configs.enemyIntensity2TypeMap[ship.intensity]];
-                    int realDamage = ship.BeAttacked((int)(maxHp*0.95));
-                    if (ship.state == EnemyShip.State.active)
-                    {
-                        VectorLF3 shipUpos = ship.uPos;
-                        VectorLF3 direction = (shipUpos - starUPos).normalized;
-                        double addDistance = (8 * 40000 - (shipUpos - starUPos).magnitude) * 0.5; // 距离恒星越近击退的距离越多
-                        addDistance = addDistance < 0 ? 0 : addDistance;
-                        addDistance += 40000; // 固定击退至少1AU
-                        ship.InitForceDisplacement(shipUpos + direction * addDistance, 240, 0.02f);
-                        UIBattleStatistics.RegisterWrathOfGoddess(realDamage);
-                    }
-                }
-                if (Configs.developerMode)
-                {
-                    Relic.relic0_2CanActivate = 1;
-                    Relic.relic0_2Charge = 1000;
-                }
-                UIRelic.RefreshTearOfGoddessSlotTips();
-            }
+            
         }
 
         /// <summary>
@@ -715,27 +669,7 @@ namespace DSP_Battle
         /// </summary>
         public static void CheckMegaStructureAttack()
         {
-            if (Configs.nextWaveState == 3 && Relic.HaveRelic(0, 7) && Relic.starsWithMegaStructure.Contains(Configs.nextWaveStarIndex))
-            {
-                int starIndex = Configs.nextWaveStarIndex;
-                if (starIndex < GameMain.data.dysonSpheres.Length && starIndex >= 0) // 不用判断starIndex<1000了吧
-                {
-                    if (GameMain.data.dysonSpheres[starIndex] != null)
-                    {
-                        int damage = (int)(Math.Sqrt(Math.Max(0, GameMain.data.dysonSpheres[starIndex].energyGenCurrentTick_Layers)) / 100.0); // 伤害=每tick能量开平方后除以10
-                        if (Configs.developerMode) damage = damage * 10;
-                        damage = Relic.BonusDamage(damage, 1) - damage;
-                        if (MoreMegaStructure.MoreMegaStructure.StarMegaStructureType[starIndex] == 6) damage *= 3;
-                        foreach (var ship in EnemyShips.minTargetDisSortedShips[starIndex])
-                        {
-                            if (ship.state == EnemyShip.State.active)
-                            {
-                                UIBattleStatistics.RegisterMegastructureAttack(ship.BeAttacked(damage, DamageType.mega));
-                            }
-                        }
-                    }
-                }
-            }
+            
         }
 
         /// <summary>
@@ -746,19 +680,7 @@ namespace DSP_Battle
         {
             if (Relic.HaveRelic(0, 8)) // relic0-8 饮血剑效果
             {
-                int starIndex = Configs.nextWaveStarIndex;
-                if (starIndex >= 0)
-                {
-                    int planetId = (starIndex + 1) * 100 + Utils.RandInt(1, GameMain.galaxy.stars[starIndex].planetCount + 1);
-                    if (Relic.minShieldPlanetId > 0 && Relic.minShieldPlanetId / 100 - 1 == Configs.nextWaveStarIndex)
-                        planetId = Relic.minShieldPlanetId;
-                    int shieldRestore = (int)(damage * 0.1);
-                    if (ShieldGenerator.currentShield.GetOrAdd(planetId, 0) < ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0) * 1.5 && ShieldGenerator.currentShield.GetOrAdd(planetId, 0) > 0)
-                    {
-                        ShieldGenerator.currentShield.AddOrUpdate(planetId, shieldRestore, (x, y) => y + shieldRestore);
-                        UIBattleStatistics.RegisterShieldRestoreInBattle(shieldRestore);
-                    }
-                }
+                
             }
         }
 
@@ -781,30 +703,7 @@ namespace DSP_Battle
         {
             if (Relic.HaveRelic(1, 2))
             {
-                foreach (var starIndex in Relic.starsWithMegaStructure)
-                {
-                    if (starIndex >= 0 && starIndex < GameMain.data.dysonSpheres.Length)
-                    {
-                        if (Configs.nextWaveStarIndex == starIndex && Configs.nextWaveState == 3)
-                            continue;
-                        if (GameMain.data.dysonSpheres[starIndex] != null)
-                        {
-                            long energyPerTick = GameMain.data.dysonSpheres[starIndex].energyGenCurrentTick_Layers;
-                            if (energyPerTick > 0)
-                            {
-                                for (int i = 0; i < GameMain.galaxy.stars[starIndex].planetCount; i++)
-                                {
-                                    int planetId = (starIndex + 1) * 100 + i + 1;
-                                    int shieldGen = (int)(energyPerTick / 200000);
-                                    if (ShieldGenerator.currentShield.GetOrAdd(planetId, 0) < ShieldGenerator.maxShieldCapacity.GetOrAdd(planetId, 0))
-                                        ShieldGenerator.currentShield.AddOrUpdate(planetId, 0, (x, y) => y + shieldGen);
-                                    if (starIndex == Configs.nextWaveStarIndex && Configs.nextWaveState == 3)
-                                        UIBattleStatistics.RegisterShieldRestoreInBattle(shieldGen);
-                                }
-                            }
-                        }
-                    }
-                }
+                
             }
         }
 
@@ -940,7 +839,6 @@ namespace DSP_Battle
                 Configs.wavePerStar[i] = 0;
             }
             Configs.difficulty = 0;
-            UIBattleStatistics.InitSelectDifficulty();
         }
 
         /// <summary>
@@ -989,22 +887,7 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(EjectorComponent), "InternalUpdate")]
         public static void Carbon2Patch(ref EjectorComponent __instance, float power, DysonSwarm swarm, AstroData[] astroPoses, AnimData[] animPool, int[] consumeRegister, ref uint __result)
         {
-            if (!Relic.HaveRelic(1, 7)) return;
-            int planetId = __instance.planetId;
-            int starIndex = planetId / 100 - 1;
-            PlanetFactory factory = GameMain.galaxy.stars[starIndex].planets[planetId % 100 - 1].factory;
-            int gmProtoId = factory.entityPool[__instance.entityId].protoId;
-            if (Cannon.isCannon(gmProtoId) || power < 0.1f) return;
-
-            float num2 = (float)Cargo.accTableMilli[__instance.incLevel];
-            int num3 = (int)(power * 10000f * (1f + num2) + 0.1f);
-            if(__instance.orbitId != 0)
-            {
-                if (__instance.direction == 1)
-                    __instance.time += num3;
-                else if(__instance.direction == -1)
-                    __instance.time -= num3;
-            }
+            
             return;
         }
 

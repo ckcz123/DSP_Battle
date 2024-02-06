@@ -207,7 +207,7 @@ namespace DSP_Battle
                 relic1Desc.fontSize = 16;
                 relic1Name.fontSize = 25;
                 relic1Name.supportRichText = true;
-                relic1Name.material = GameObject.Find("UI Root/Overlay Canvas/In Game/AlertUI/battle-alert-title/").GetComponent<Text>().material;
+                relic1Name.material = GameObject.Find("UI Root/Overlay Canvas/Milky Way UI/milky-way-screen-ui/statistics/desc-mask/desc/dyson-cnt-text").GetComponent<Text>().material;
 
                 relic2NameObj = GameObject.Instantiate(relic1NameObj, relicSelectionContentObj.transform);
                 relic2DescObj = GameObject.Instantiate(relic1DescObj, relicSelectionContentObj.transform);
@@ -245,6 +245,8 @@ namespace DSP_Battle
 
                 //GameObject oriButton = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Station Window/storage-box-0/popup-box/sd-option-button-1");
                 GameObject oriButtonWOTip = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Station Window/storage-box-0/popup-box/sd-option-button-1");
+                if(oriButtonWOTip == null)
+                    oriButtonWOTip = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Station Window/Station-scroll(Clone)/Viewport/pane/storage-box-0(Clone)/popup-box/sd-option-button-1");
                 GameObject oriButton = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Dyson Sphere Editor/Dyson Editor Control Panel/hierarchy/layers/buttons-group/buttons/add-button");
                 relic1SelectButtonObj = GameObject.Instantiate(oriButton, relicSelectionWindowObj.transform);
                 relic1SelectButtonObj.name = "btn1";
@@ -340,7 +342,7 @@ namespace DSP_Battle
                 matrixIcon.name = "icon-matrix-cost";
                 matrixIcon.transform.localPosition = new Vector3(430, 263);
                 matrixIcon.GetComponent<RectTransform>().sizeDelta = new Vector2(25, 25);
-                matrixIcon.GetComponent<Image>().sprite = Resources.Load<Sprite>("Assets/DSPBattle/alienmatrix");
+                matrixIcon.GetComponent<Image>().sprite = LDB.items.Select(5201).iconSprite; // Resources.Load<Sprite>("Assets/DSPBattle/alienmatrix");
                 matrixIcon.SetActive(true);
 
                 //放弃解译按钮
@@ -360,7 +362,7 @@ namespace DSP_Battle
                 matrixIcon2.name = "icon-matrix-abort";
                 matrixIcon2.transform.localPosition = new Vector3(23, -239);
                 matrixIcon2.GetComponent<RectTransform>().sizeDelta = new Vector2(40, 40);
-                matrixIcon2.GetComponent<Image>().sprite = Resources.Load<Sprite>("Assets/DSPBattle/alienmatrix");
+                matrixIcon2.GetComponent<Image>().sprite = LDB.items.Select(5201).iconSprite; // Resources.Load<Sprite>("Assets/DSPBattle/alienmatrix");
                 matrixIcon2.SetActive(true);
 
                 relicSelectionContentObj.transform.SetAsLastSibling();
@@ -723,7 +725,7 @@ namespace DSP_Battle
             int need = Relic.basicMatrixCost << Relic.rollCount;
             StorageComponent package = GameMain.mainPlayer.package;
             int num = need;
-            int itemId = 8032;
+            int itemId = 5201;
 
             for (int i = package.size - 1; i >= 0; i--)
             {
@@ -752,7 +754,7 @@ namespace DSP_Battle
             if (Relic.rollCount > 0)
             {
                 int need = Relic.basicMatrixCost << Relic.rollCount;
-                int itemId = 8032;
+                int itemId = 5201;
                 int inc = 0;
                 GameMain.mainPlayer.package.TakeTailItems(ref itemId, ref need, out inc, false);
             }
@@ -820,9 +822,9 @@ namespace DSP_Battle
             Relic.rollCount = Math.Min(Relic.rollCount+1, 8); // 记录本次重随次数，重随消耗有上限
             if (Configs.developerMode)
             {
-                Relic.alternateRelics[0] = 7;
-                Relic.alternateRelics[1] = 2;
-                Relic.alternateRelics[2] = 10;
+                //Relic.alternateRelics[0] = 7;
+                //Relic.alternateRelics[1] = 2;
+                //Relic.alternateRelics[2] = 10;
             }
             RefreshSelectionWindowUI();
         }
@@ -857,10 +859,9 @@ namespace DSP_Battle
             Relic.canSelectNewRelic = false;
             selectedRelicInUI = -1;
             int addCount = Relic.AbortReward;
-            int matrixId = 8032;
+            int matrixId = 5201;
             GameMain.mainPlayer.TryAddItemToPackage(matrixId, addCount, 0, true);
             Utils.UIItemUp(matrixId, addCount, 180);
-            UIBattleStatistics.RegisterAlienMatrixGain(addCount);
 
             CloseSelectionWindow();
             RefreshSlotsWindowUI();

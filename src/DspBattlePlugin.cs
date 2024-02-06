@@ -3,6 +3,7 @@ using BepInEx.Configuration;
 using BepInEx.Logging;
 using CommonAPI;
 using CommonAPI.Systems;
+using CommonAPI.Systems.ModLocalization;
 using crecheng.DSPModSave;
 using HarmonyLib;
 using System;
@@ -21,6 +22,8 @@ namespace DSP_Battle
     [BepInDependency("Gnimaerd.DSP.plugin.MoreMegaStructure")]
     [CommonAPISubmoduleDependency(nameof(ProtoRegistry))]
     [CommonAPISubmoduleDependency(nameof(TabSystem))]
+    [CommonAPISubmoduleDependency(nameof(LocalizationModule))]
+    
     public class DspBattlePlugin : BaseUnityPlugin, IModCanSave
     {
         public static string GUID = "com.ckcz123.DSP_Battle";
@@ -49,7 +52,6 @@ namespace DSP_Battle
                 using (ProtoRegistry.StartModLoad(GUID))
                 {
                     //pagenum = TabSystem.RegisterTab($"{MODID_tab}:{MODID_tab}Tab", new TabData("轨道防御", "Assets/DSPBattle/dspbattletabicon"));
-                    //不再使用自己的tab页，而使用巨构的页，于此同时巨构的tab图标也改成了轨道防御的图标，且此mod开启后名称也改成了轨道防御(后面调用了ChangeTabName)
                     pagenum = MoreMegaStructure.MoreMegaStructure.pagenum;
                     BattleProtos.pageBias = (pagenum - 2) * 1000;
                     MoreMegaStructure.MoreMegaStructure.battlePagenum = pagenum;
@@ -60,29 +62,19 @@ namespace DSP_Battle
                 pagenum = 0;
             }
             starCannonRenderLevel = Config.Bind<int>("config", "StarCannonRenderLevel", 2, "[0-3] Higher Level will provide more star cannon effect and particles but might decrease the UPS and FPS when star cannon is firing. 更高的设置会提供更多的恒星炮特效，但可能会在恒星炮开火时降低帧率，反之则可能提高开火时的帧率。");
-            starCannonDirectionReverse = Config.Bind<bool>("config", "starCannonDirectionReverse", false, "Setting to true will cause all star cannons to fire from the North Pole instead of the South Pole. 设置为true将会使所有恒星炮的从北极而非南极开火。");
-            if(starCannonDirectionReverse.Value)
-                StarCannon.reverseDirection = 1;
+            starCannonDirectionReverse = Config.Bind<bool>("config", "starCannonDirectionReverse", false, "Deprecated. 已弃用。");
+
             
-            StarCannon.renderLevel = starCannonRenderLevel.Value;
-            StarCannon.renderLevel = StarCannon.renderLevel > 3 ? 3 : StarCannon.renderLevel;
-            StarCannon.renderLevel = StarCannon.renderLevel < 0 ? 0 : StarCannon.renderLevel;
-            EnemyShips.Init();
+            MoreMegaStructure.StarCannon.renderLevel = starCannonRenderLevel.Value;
+            MoreMegaStructure.StarCannon.renderLevel = MoreMegaStructure.StarCannon.renderLevel > 3 ? 3 : MoreMegaStructure.StarCannon.renderLevel;
+            MoreMegaStructure.StarCannon.renderLevel = MoreMegaStructure.StarCannon.renderLevel < 0 ? 0 : MoreMegaStructure.StarCannon.renderLevel;
+            //EnemyShips.Init();
             Harmony.CreateAndPatchAll(typeof(DspBattlePlugin));
-            Harmony.CreateAndPatchAll(typeof(EnemyShips));
-            Harmony.CreateAndPatchAll(typeof(RemoveEntities));
-            Harmony.CreateAndPatchAll(typeof(Cannon));
+            
             Harmony.CreateAndPatchAll(typeof(BattleProtos));
             Harmony.CreateAndPatchAll(typeof(FastStartOption));
-            Harmony.CreateAndPatchAll(typeof(EjectorUIPatch));
-            Harmony.CreateAndPatchAll(typeof(UIAlert));
             Harmony.CreateAndPatchAll(typeof(MissileSilo));
-            Harmony.CreateAndPatchAll(typeof(WormholeUIPatch));
-            Harmony.CreateAndPatchAll(typeof(UIBattleStatistics));
             Harmony.CreateAndPatchAll(typeof(UIDialogPatch));
-            Harmony.CreateAndPatchAll(typeof(StarCannon));
-            Harmony.CreateAndPatchAll(typeof(ShieldGenerator));
-            Harmony.CreateAndPatchAll(typeof(ShieldRenderer));
             Harmony.CreateAndPatchAll(typeof(Droplets));
             Harmony.CreateAndPatchAll(typeof(RendererSphere));
             Harmony.CreateAndPatchAll(typeof(PlanetEngine));
@@ -94,16 +86,17 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(StarFortress));
             Harmony.CreateAndPatchAll(typeof(UIStarFortress));
             Harmony.CreateAndPatchAll(typeof(StationOrderFixPatch));
+            Harmony.CreateAndPatchAll(typeof(DropletFleetPatchers));
 
             LDBTool.PreAddDataAction += BattleProtos.AddProtos;
-            LDBTool.PostAddDataAction += BattleProtos.PostDataAction;
-            LDBTool.EditDataAction += BattleProtos.ChangeTabName;
+            BattleProtos.AddTranslate();
+            //LDBTool.PostAddDataAction += BattleProtos.PostDataAction;
 
         }
 
         public void Start()
         {
-            BattleBGMController.InitAudioSources();
+            //BattleBGMController.InitAudioSources();
 
         }
 
@@ -125,15 +118,15 @@ namespace DSP_Battle
                     int starIndex = MoreMegaStructure.MoreMegaStructure.curStar.index;
                     if (isControlDown)
                     {
-                        StarFortress.ConstructStarFortPoint(starIndex, 8037, 10000);
+                        //StarFortress.ConstructStarFortPoint(starIndex, 8037, 10000);
                         //StarFortress.ConstructStarFortPoint(starIndex, 8038, 10000);
-                        StarFortress.ConstructStarFortPoint(starIndex, 8039, 10000);
+                        //StarFortress.ConstructStarFortPoint(starIndex, 8039, 10000);
                     }
                     else
                     {
-                        StarFortress.ConstructStarFortPoint(starIndex, 8037, 743);
+                        //StarFortress.ConstructStarFortPoint(starIndex, 8037, 743);
                         //StarFortress.ConstructStarFortPoint(starIndex, 8038, 743);
-                        StarFortress.ConstructStarFortPoint(starIndex, 8039, 743);
+                        //StarFortress.ConstructStarFortPoint(starIndex, 8039, 743);
                     }
                 }
             }
@@ -160,23 +153,17 @@ namespace DSP_Battle
                 int minExpectation = (int)(Configs.expectationMatrices[Math.Min(Configs.expectationMatrices.Length - 1, Configs.wavePerStar[Configs.nextWaveStarIndex])] * 0.1f);
                 if (Configs.nextWaveMatrixExpectation < minExpectation) Configs.nextWaveMatrixExpectation = minExpectation;
             }
-            if (Input.GetKeyDown(KeyCode.Backspace) && !GameMain.isPaused && UIRoot.instance?.uiGame?.buildMenu?.currentCategory == 0)
-            {
-                UIAlert.OnActiveChange();
-            }
             if(Configs.developerMode && isControlDown && Input.GetKeyDown(KeyCode.Z))
             {
                 Relic.PrepareNewRelic();
                 int planetId = 103;
                 if (GameMain.localPlanet != null)
                     planetId = GameMain.localPlanet.id;
-                if (ShieldGenerator.currentShield.ContainsKey(planetId))
-                    ShieldGenerator.currentShield.AddOrUpdate(planetId, 100000, (x, y) => y + 100000);
             }
             UIRelic.SelectionWindowAnimationUpdate();
             UIRelic.CheckRelicSlotsWindowShowByMouse();
             UIRelic.SlotWindowAnimationUpdate();
-            BattleBGMController.BGMLogicUpdate();
+            //BattleBGMController.BGMLogicUpdate();
             DevConsole.Update();
         }
         [HarmonyPostfix]
@@ -223,7 +210,7 @@ namespace DSP_Battle
             var mainLogo = GameObject.Find("UI Root/Overlay Canvas/Main Menu/dsp-logo");
             var escLogo = GameObject.Find("UI Root/Overlay Canvas/In Game/Esc Menu/logo");
 
-            var iconstr = Localization.language == Language.zhCN
+            var iconstr = DSPGame.globalOption.languageLCID == 2052
                 ? "Assets/DSPBattle/logocn"
                 : "Assets/DSPBattle/logoen";
             var texture = Resources.Load<Sprite>(iconstr).texture;
@@ -246,51 +233,31 @@ namespace DSP_Battle
 
         public static void InitStaticDataWhenLoad()
         { 
-            BattleProtos.RewriteTutorioProtosWhenLoad();
+            BattleProtos.RewriteTutorialProtosWhenLoad();
         }
 
         public void Export(BinaryWriter w)
         {
             Configs.Export(w);
-            EnemyShips.Export(w);
-            Cannon.Export(w);
-            MissileSilo.Export(w);
-            UIAlert.Export(w);
-            WormholeProperties.Export(w);
-            StarCannon.Export(w);
-            ShieldGenerator.Export(w);
             Droplets.Export(w);
             Rank.Export(w);
             Relic.Export(w);
-            StarFortress.Export(w);
-            DevConsole.Export(w);
+            //StarFortress.Export(w);
+            //DevConsole.Export(w);
         }
 
         public void Import(BinaryReader r)
         {
             Configs.Import(r);
-            EnemyShips.Import(r);
-            Cannon.Import(r);
-            MissileSilo.Import(r);
-            UIAlert.Import(r);
-            WormholeProperties.Import(r);
-            StarCannon.Import(r);
-            ShieldGenerator.Import(r);
             Droplets.Import(r);
             Rank.Import(r);
             Relic.Import(r);
-            StarFortress.Import(r);
+            //StarFortress.Import(r);
+            //DevConsole.Import(r);
 
-            DevConsole.Import(r);
-
-            WaveStages.ResetCargoAccIncTable(Configs.extraSpeedEnabled && Rank.rank>=5);
-            UIBattleStatistics.InitAll();
-            UIBattleStatistics.InitSelectDifficulty();
-            EnemyShipUIRenderer.Init();
-            EnemyShipRenderer.Init();
             BattleProtos.ReCheckTechUnlockRecipes();
             BattleProtos.UnlockTutorials();
-            BattleBGMController.InitWhenLoad();
+            //BattleBGMController.InitWhenLoad();
 
             InitStaticDataWhenLoad();
         }
@@ -298,13 +265,8 @@ namespace DSP_Battle
         public void IntoOtherSave()
         {
             Configs.IntoOtherSave();
-            EnemyShips.IntoOtherSave();
-            Cannon.IntoOtherSave();
-            MissileSilo.IntoOtherSave();
-            UIAlert.IntoOtherSave();
-            WormholeProperties.IntoOtherSave();
-            StarCannon.IntoOtherSave();
-            ShieldGenerator.IntoOtherSave();
+            //EnemyShips.IntoOtherSave();
+            //MissileSilo.IntoOtherSave();
             Droplets.IntoOtherSave();
             Rank.IntoOtherSave();
             Relic.IntoOtherSave();
@@ -312,14 +274,11 @@ namespace DSP_Battle
 
             DevConsole.IntoOtherSave();
 
-            WaveStages.ResetCargoAccIncTable(Configs.extraSpeedEnabled && Rank.rank >= 5);
-            UIBattleStatistics.InitAll();
-            UIBattleStatistics.InitSelectDifficulty();
-            EnemyShipUIRenderer.Init();
-            EnemyShipRenderer.Init();
+            //EnemyShipUIRenderer.Init();
+            //EnemyShipRenderer.Init();
             BattleProtos.ReCheckTechUnlockRecipes();
             BattleProtos.UnlockTutorials();
-            BattleBGMController.InitWhenLoad();
+            //BattleBGMController.InitWhenLoad();
 
             InitStaticDataWhenLoad();
         }

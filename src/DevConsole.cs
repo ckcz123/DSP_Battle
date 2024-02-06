@@ -120,28 +120,6 @@ namespace DSP_Battle
                         Configs.nextWaveElite = 0;
                         Print("Next wave is now normal wave.");
                         break;
-                    case "setstg":
-                        Configs.nextWaveIntensity = Convert.ToInt32(param[1]);
-                        int intensity = Configs.nextWaveIntensity; 
-                        int avg = Configs.nextWaveIntensity / (Configs.enemyIntensity[0] + Configs.enemyIntensity[1]
-                            + Configs.enemyIntensity[2] + Configs.enemyIntensity[3] + Configs.enemyIntensity[4]);
-                        for (int i = 4; i >= 1; --i)
-                        {
-                            if (Configs.nextWaveIntensity <= 1000)
-                            {
-                                double v = EnemyShips.random.NextDouble() / 2 + 0.25;
-                                Configs.nextWaveEnemy[i] = (int)(intensity * v / Configs.enemyIntensity[i]);
-                            }
-                            else
-                            {
-                                Configs.nextWaveEnemy[i] = Math.Min(intensity / Configs.enemyIntensity[i],
-                                    avg + EnemyShips.random.Next(0, 50) - 25);
-                            }
-                            intensity -= Configs.nextWaveEnemy[i] * Configs.enemyIntensity[i];
-                        }
-                        Configs.nextWaveEnemy[0] = intensity / Configs.enemyIntensity[0];
-                        Print($"Next wave intensity is set to {param[1]}.");
-                        break;
                     case "seteasy":
                         Configs.difficulty = -1;
                         Print("Easy mode.");
@@ -153,12 +131,6 @@ namespace DSP_Battle
                     case "sethard":
                         Configs.difficulty = 1;
                         Print("Hard mode.");
-                        break;
-                    case "setshield":
-                        int planetId = Convert.ToInt32(param[1]);
-                        int result = Convert.ToInt32(param[2]);
-                        ShieldGenerator.currentShield.AddOrUpdate(planetId, result, (x, y) => result);
-                        Print($"Shield of planet {planetId} is set to {result}.");
                         break;
                     case "setmega":
                         int idx = Convert.ToInt32(param[1]);
@@ -176,22 +148,7 @@ namespace DSP_Battle
                         Configs.wavePerStar[idx2] = num2;
                         Print($"Wave count of starIndex {idx2} is set to {num2}.");
                         break;
-                    case "setsf":
-                        int idx3 = Convert.ToInt32(param[1]);
-                        int type3 = Convert.ToInt32(param[2]);
-                        //if (type3 < 0 || type3 > 3) type3 = 2;
-                        int num3 = Convert.ToInt32(param[3]);
-                        int cnum3 = num3 * StarFortress.compoPerModule[type3]; // 这里会因为越界或者负数的索引抛出异常，防止后面的字典加入无效的数据
-                        StarFortress.moduleComponentCount[idx3].AddOrUpdate(type3, cnum3, (x, y) => cnum3);
-                        StarFortress.moduleMaxCount[idx3][type3] = Math.Max(StarFortress.moduleMaxCount[idx3][type3], num3);
-                        if (StarFortress.CapacityRemaining(idx3) < 0)
-                        {
-                            int addModule2 = -StarFortress.CapacityRemaining(idx3);
-                            StarFortress.moduleComponentCount[idx3].AddOrUpdate(2, addModule2 * StarFortress.compoPerModule[2], (x, y) => y + addModule2 * StarFortress.compoPerModule[2]);
-                            StarFortress.moduleMaxCount[idx3][2] = Math.Max(StarFortress.moduleMaxCount[idx3][2], (StarFortress.moduleComponentCount[idx3].GetOrAdd(2, 0) + addModule2)/ StarFortress.compoPerModule[2]);
-                        }
-                        Print($"Set starIndex {idx3} star fortress module{type3} built count to {num3}.");
-                        break;
+                    
                     case "setrank":
                         Rank.rank = Math.Min(Math.Max(Convert.ToInt32(param[1]), 0), 10);
                         Interlocked.Exchange(ref Rank.exp, 0);
@@ -244,14 +201,7 @@ namespace DSP_Battle
                         break;
                     case "kill":
                     case "killall":
-                        if (Configs.nextWaveState == 3)
-                        {
-                            foreach (EnemyShip ship in EnemyShips.ships.Values)
-                            {
-                                ship.BeAttacked(9999999);
-                            }
-                        }
-                        Print($"Kill all remaining enemies.");
+                        
                         break;
                     case "am":
                         GameMain.mainPlayer.TryAddItemToPackage(8032, Convert.ToInt32(param[1]), 0, true);
@@ -262,8 +212,8 @@ namespace DSP_Battle
                         Print($"Add {param[2]} {LDB.items.Select(Convert.ToInt32(param[1]))?.Name.Translate()} to mecha storage.");
                         break;
                     case "cool":
-                        if(StarCannon.time < 0)
-                            StarCannon.time = 0;
+                        if(MoreMegaStructure.StarCannon.time < 0)
+                            MoreMegaStructure.StarCannon.time = 0;
                         Print($"Star cannon cool down.");
                         break;
                     case "dev":
@@ -321,6 +271,7 @@ namespace DSP_Battle
         public static int maxOutputClearCount = 25;
         public static void InitAll()
         {
+            return;
             if (consoleObj == null)
             {
                 GameObject oriBlueprintPanelObj = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Blueprint Browser");
@@ -403,6 +354,7 @@ namespace DSP_Battle
 
         public static void Show()
         {
+            return;
             if (consoleObj != null)
             {
                 consoleObj.SetActive(true);

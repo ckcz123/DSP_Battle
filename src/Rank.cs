@@ -68,7 +68,7 @@ namespace DSP_Battle
                 }
                 else if (rank == 5)
                 {
-                    WaveStages.ResetCargoAccIncTable(true);
+
                 }
                 else if (rank == 7)
                 {
