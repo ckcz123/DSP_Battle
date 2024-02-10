@@ -73,7 +73,6 @@ namespace DSP_Battle
             
             Harmony.CreateAndPatchAll(typeof(BattleProtos));
             Harmony.CreateAndPatchAll(typeof(FastStartOption));
-            Harmony.CreateAndPatchAll(typeof(MissileSilo));
             Harmony.CreateAndPatchAll(typeof(UIDialogPatch));
             Harmony.CreateAndPatchAll(typeof(Droplets));
             Harmony.CreateAndPatchAll(typeof(RendererSphere));
@@ -234,6 +233,7 @@ namespace DSP_Battle
         public static void InitStaticDataWhenLoad()
         { 
             BattleProtos.RewriteTutorialProtosWhenLoad();
+            BattleProtos.EditProtossWhenLoad();
         }
 
         public void Export(BinaryWriter w)

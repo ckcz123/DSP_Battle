@@ -29,9 +29,10 @@ namespace DSP_Battle
             return new VectorLF3(randSeed.Value.NextDouble() - 0.5, randSeed.Value.NextDouble() - 0.5, randSeed.Value.NextDouble() - 0.5);
         }
 
-        public static VectorLF3 RandPosDelta(int Seed)
+        public static VectorLF3 RandPosDelta(ref int Seed)
         {
             System.Random rand = new System.Random(Seed);
+            Seed = RandNext();
             return new VectorLF3(rand.NextDouble() - 0.5, rand.NextDouble() - 0.5, rand.NextDouble() - 0.5);
         }
 
@@ -66,15 +67,18 @@ namespace DSP_Battle
             DspBattlePlugin.logger.LogInfo(str + num.ToString());
         }
 
-        public static void Log(string str, int isWarning = 0)
+        public static void Log(string str, int perFrame = 1, int isWarning = 0)
         {
-            if(isWarning>0)
+            if (GameMain.instance.timei % perFrame == 0)
             {
-                DspBattlePlugin.logger.LogWarning(str);
-            }
-            else
-            {
-                DspBattlePlugin.logger.LogInfo(str);
+                if (isWarning > 0)
+                {
+                    DspBattlePlugin.logger.LogWarning(str);
+                }
+                else
+                {
+                    DspBattlePlugin.logger.LogInfo(str);
+                }
             }
         }
 

@@ -139,7 +139,6 @@
     <Compile Include="src\StationOrderFixPatch.cs" />
     <Compile Include="src\Configs.cs" />
     <Compile Include="src\DspBattlePlugin.cs" />
-    <Compile Include="src\MissileSilo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\UIDialogPatch.cs" />
     <Compile Include="src\UIRank.cs" />

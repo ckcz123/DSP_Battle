@@ -12,6 +12,8 @@ namespace DSP_Battle
     public class DropletFleetPatchers
     {
 		public static int dropletId = 9511;
+		public static int fleetConfigId1 = 9; // 紧接着游戏的下一个id应该是6，但是怕游戏后续更新新的舰队组成
+		public static int fleetConfigId2 = 10;
 
 		public static UIButton[] dropletFleetTypeButtons = new UIButton[2];
 		public static ECraftSize dropletSize = (ECraftSize)9;
@@ -50,7 +52,7 @@ namespace DSP_Battle
 				return;
 			}
 			FleetProto fleetProto = LDB.fleets.Select(__instance.protoId);
-			if (fleetProto == null && __instance.protoId != 6 && __instance.protoId != 7)
+			if (fleetProto == null && __instance.protoId != fleetConfigId1 && __instance.protoId != fleetConfigId2)
 			{
 				__result = false;
 				return;
@@ -62,7 +64,7 @@ namespace DSP_Battle
 				return;
 			}
 			
-			if (__instance.protoId >=6 && __instance.protoId <= 7)
+			if (__instance.protoId >= fleetConfigId1 && __instance.protoId <= fleetConfigId2)
 			{
 				if (itemId == dropletId)
 				{
@@ -92,7 +94,7 @@ namespace DSP_Battle
 		{
 			var _this = __instance;
 			int num = _this.mecha.groundCombatModule.moduleFleets.Length;
-			if (_this.fleetConfigIndex >= num)
+			if (_this.fleetConfigIndex >= num && _this.fleetConfigIndex < num + 8) // 防止某些mod增加的额外的太空舰队栏位也能选择水滴
 			{
 				UIButton uibutton = UnityEngine.Object.Instantiate<UIButton>(_this.spaceFleetTypeButton, _this.spaceFleetTypeButton.transform.parent);
 				int i = 4;
@@ -138,12 +140,16 @@ namespace DSP_Battle
 			__instance.fleetConfigFrame = 0;
 		}
 
+		/// <summary>
+		/// 更换为水滴的舰队类型
+		/// </summary>
+		/// <param name="obj"></param>
 		public static void OnDropletFleetTypeButtonClick(int obj)
         {
 			var _this = UIRoot.instance.uiGame.mechaWindow;
 			if (_this.fleetTabIndex == 1)
 			{
-				ChangeFleetConfigToDroplet(ref _this.mecha.spaceCombatModule, _this.fleetConfigIndex - _this.mecha.groundCombatModule.moduleFleets.Length, 6, _this.mecha.fighterStorage, _this.mecha.player);
+				ChangeFleetConfigToDroplet(ref _this.mecha.spaceCombatModule, _this.fleetConfigIndex - _this.mecha.groundCombatModule.moduleFleets.Length, fleetConfigId1, _this.mecha.fighterStorage, _this.mecha.player);
 			}
 			_this.fleetConfigIndex = -1;
 		}
@@ -175,8 +181,7 @@ namespace DSP_Battle
 						}
 					}
 					ptr = CreateDropletModuleFleet(newConfigId);
-					//ptr.SetItemId(-1, ItemProto.kFighterSpaceSmallIds[0], ECraftSize.Small);
-					ptr.SetItemId(-1, dropletId, ECraftSize.Large);
+					//ptr.SetItemId(-1, dropletId, dropletSize); // 由于在CreateDropletModuleFleet里面已经对fighter的itemId赋值了，这个可能就不需要了。
 					return;
 				}
 			}
@@ -192,7 +197,7 @@ namespace DSP_Battle
 			PrefabDesc prefabDesc = fleetProto.prefabDesc;
 			FleetPortDesc[] fleetPorts2 = prefabDesc.fleetPorts;
 			FleetPortDesc fleetPortDesc = fleetPorts2[1];
-			Utils.Log($"{fleetPortDesc.rowInUI}/{fleetPortDesc.colInUI}. pos x y z {fleetPortDesc.pose.position.x}/{fleetPortDesc.pose.position.y}/{fleetPortDesc.pose.position.z}. rot {fleetPortDesc.pose.rotation}");
+			//Utils.Log($"{fleetPortDesc.rowInUI}/{fleetPortDesc.colInUI}. pos x y z {fleetPortDesc.pose.position.x}/{fleetPortDesc.pose.position.y}/{fleetPortDesc.pose.position.z}. rot {fleetPortDesc.pose.rotation}");
 
 			ModuleFleet moduleFleet;
 			moduleFleet.fleetAstroId = 0;
@@ -234,5 +239,169 @@ namespace DSP_Battle
 			rectTransform.anchoredPosition = new Vector2(10f, 0f);
 			rectTransform.sizeDelta = new Vector2(40f, 40f);
 		}
+
+
+		/// <summary>
+		/// 对于水滴编队的逻辑，单击整个大框，强行调出水滴，并攻击本星系内的目标
+		/// </summary>
+		/// <param name="__instance"></param>
+		/// <param name="obj"></param>
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(UIZS_FleetEntry), "OnCommandButtonClick")]
+		public static void OnCommandButtonClickPostPatch(ref UIZS_FleetEntry __instance, int obj)
+        {
+			if (__instance.isSpace)
+			{
+				CombatModuleComponent combatModuleComponent = __instance.mecha.spaceCombatModule;
+				if (combatModuleComponent.moduleFleets[__instance.fleetIndex].protoId == fleetConfigId1 || combatModuleComponent.moduleFleets[__instance.fleetIndex].protoId == fleetConfigId2) // 判断是水滴编队
+				{
+					int idx = __instance.fleetIndex * 3;
+					if (idx + 2 < Droplets.dropletArrayLength)
+					{
+						for (int i = idx; i < idx + 3; i++)
+						{
+							int ori = Droplets.dropletPool[i].forceLaunchState;
+							Droplets.dropletPool[i].forceLaunchState = 1 - ori;
+							if (ori > 0)
+								Droplets.dropletPool[i].Retreat();
+						}
+						//combatModuleComponent.moduleFleets[__instance.fleetIndex].fleetEnabled = !combatModuleComponent.moduleFleets[__instance.fleetIndex].fleetEnabled;
+						combatModuleComponent.moduleFleets[__instance.fleetIndex].inCommand = false; // 水滴编队不接受手动调遣，但是通过这个标志告诉玩家是强制launch的状态
+					}
+					
+				}
+			}
+		}
+
+		/// <summary>
+		/// 右击，强制收回水滴
+		/// </summary>
+		/// <param name="__instance"></param>
+		/// <param name="obj"></param>
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(UIZS_FleetEntry), "OnCommandButtonRightClick")]
+		public static void OnCommandButtonRightClickPostPatch(ref UIZS_FleetEntry __instance, int obj)
+		{
+			if (__instance.isSpace)
+			{
+                CombatModuleComponent combatModuleComponent = __instance.mecha.spaceCombatModule;
+                if (combatModuleComponent.moduleFleets[__instance.fleetIndex].protoId == fleetConfigId1 || combatModuleComponent.moduleFleets[__instance.fleetIndex].protoId == fleetConfigId2)
+                {
+					int idx = __instance.fleetIndex * 3;
+					if (idx + 2 < Droplets.dropletArrayLength)
+					{
+						for (int i = idx; i < idx + 3; i++)
+						{
+							Droplets.dropletPool[i].forceLaunchState = 0;
+							Droplets.dropletPool[i].Retreat();
+						}
+					}
+					//combatModuleComponent.moduleFleets[__instance.fleetIndex].fleetEnabled = false;
+					combatModuleComponent.moduleFleets[__instance.fleetIndex].inCommand = false;
+                }
+            }
+        }
+
+		/// <summary>
+		/// UI高亮效果
+		/// </summary>
+		/// <param name="__instance"></param>
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(UIZS_FleetEntry), "_OnUpdate")]
+		public static void UIZSFleetEntryOnUpdatePostPatch(ref UIZS_FleetEntry __instance)
+        {
+			if (__instance.isSpace)
+			{
+				CombatModuleComponent combatModuleComponent = __instance.mecha.spaceCombatModule;
+				if (combatModuleComponent.moduleFleets[__instance.fleetIndex].protoId == fleetConfigId1 || combatModuleComponent.moduleFleets[__instance.fleetIndex].protoId == fleetConfigId2)
+				{
+					int idx = __instance.fleetIndex * 3;
+					__instance.commandButton.highlighted = Droplets.dropletPool[idx].state > 0 || Droplets.dropletPool[idx + 1].state > 0 || Droplets.dropletPool[idx + 2].state > 0;
+				}
+			}
+		}
+
+		/// <summary>
+		/// 全队调遣按钮
+		/// </summary>
+		/// <param name="__instance"></param>
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(UIZS_FleetPanel), "OnAllCommandButtonClick")]
+		public static void OnAllCommandButtonClickPostPatch(ref UIZS_FleetPanel __instance)
+        {
+			if(__instance.fleetTypeIndex == 1)
+            {
+				CombatModuleComponent combatModuleComponent = __instance.mecha.spaceCombatModule;
+				for (int f = 0; f < 8 && f < combatModuleComponent.moduleFleets.Length && f < combatModuleComponent.fleetCount; f++)
+                {
+					if (combatModuleComponent.moduleFleets[f].protoId == fleetConfigId1 || combatModuleComponent.moduleFleets[f].protoId == fleetConfigId2) // 判断是水滴编队
+					{
+						int idx = f * 3;
+						if (idx + 2 < Droplets.dropletArrayLength)
+						{
+							for (int i = idx; i < idx + 3; i++)
+							{
+								int ori = Droplets.dropletPool[i].forceLaunchState;
+								Droplets.dropletPool[i].forceLaunchState = 1 - ori;
+								if (ori > 0)
+									Droplets.dropletPool[i].Retreat();
+							}
+							//combatModuleComponent.moduleFleets[__instance.fleetIndex].fleetEnabled = !combatModuleComponent.moduleFleets[__instance.fleetIndex].fleetEnabled;
+							combatModuleComponent.moduleFleets[f].inCommand = false; // 水滴编队不接受手动调遣，但是通过这个标志告诉玩家是强制攻击整个星系目标的状态
+						}
+
+					}
+				}
+            }
+        }
+
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(UIZS_FleetPanel), "OnAllCommandButtonRightClick")]
+		public static void OnAllCommandButtonRightClickPostPatch(ref UIZS_FleetPanel __instance)
+		{
+			if (__instance.fleetTypeIndex == 1)
+			{
+				CombatModuleComponent combatModuleComponent = __instance.mecha.spaceCombatModule;
+				for (int f = 0; f < 8 && f < combatModuleComponent.moduleFleets.Length && f < combatModuleComponent.fleetCount; f++)
+				{
+					if (combatModuleComponent.moduleFleets[f].protoId == fleetConfigId1 || combatModuleComponent.moduleFleets[f].protoId == fleetConfigId2) // 判断是水滴编队
+					{
+						int idx = f * 3;
+						if (idx + 2 < Droplets.dropletArrayLength)
+						{
+							for (int i = idx; i < idx + 3; i++)
+							{
+								Droplets.dropletPool[i].forceLaunchState = 0;
+								Droplets.dropletPool[i].Retreat();
+							}
+							//combatModuleComponent.moduleFleets[__instance.fleetIndex].fleetEnabled = !combatModuleComponent.moduleFleets[__instance.fleetIndex].fleetEnabled;
+							combatModuleComponent.moduleFleets[f].inCommand = false;
+						}
+
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Z面板，正确显示水滴的图标大小
+		/// </summary>
+		/// <param name="__instance"></param>
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(UIZS_FighterEntry), "SetTrans")]
+		public static void UIZSFighterEntrySetTransPostPatch(ref UIZS_FighterEntry __instance)
+        {
+			var _this = __instance;
+			RectTransform rectTransform = _this.fighterIconSprite.transform as RectTransform;
+			ECraftSize size = _this.fighter.size;
+			if(size == dropletSize)
+            {
+				_this.rectTrans.sizeDelta = new Vector2(62f, 46f);
+				rectTransform = (_this.fighterIconSprite.transform as RectTransform);
+				rectTransform.anchoredPosition = new Vector2(10f, 0f);
+				rectTransform.sizeDelta = new Vector2(40f, 40f);
+			}
+		}
+
 	}
 }

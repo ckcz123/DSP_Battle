@@ -59,7 +59,7 @@ namespace DSP_Battle
 
         public static int missile3Range;
 
-        public static int dropletAtk = 4000;
+        public static int dropletAtk = 400000;
 
         public static double dropletSpd = 30000.0;
 

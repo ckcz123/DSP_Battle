@@ -266,6 +266,7 @@ namespace DSP_Battle
             RegisterString("导弹伤害", "Missile damage", "导弹伤害");
             RegisterString("相位裂解光束伤害", "Phase-cracking beam damage", "相位裂解光束伤害");
             RegisterString("子弹相位伤害", "Bullet / Beam damage", "子弹/相位光束伤害");
+            RegisterString("伤害类型特殊", " (Special)", " (特殊)");
             RegisterString("子弹速度", "Bullet speed", "子弹速度");
             RegisterString("导弹速度", "Missile speed", "导弹速度");
             RegisterString("子弹飞行速度", "Bullet speed", "子弹飞行速度");
@@ -1431,6 +1432,21 @@ namespace DSP_Battle
             }
         }
 
+
+        public static void EditProtossWhenLoad()
+        {
+            ItemProto dropletItem = LDB.items.Select(9511);
+            if (dropletItem == null)
+                return;
+            dropletItem.DescFields = new int[] { 81, 82, 80, 59, 11, 1 };
+            dropletItem.AmmoType = EAmmoType.Bullet;
+            if (dropletItem.prefabDesc == null)
+                dropletItem.prefabDesc = new PrefabDesc();
+            dropletItem.prefabDesc.isCraftUnit = true;
+            dropletItem.prefabDesc.craftUnitMaxMovementSpeed = 30000;
+            dropletItem.prefabDesc.workEnergyPerTick = 500000;
+        }
+
         // 在import末尾调用
         public static void UnlockTutorials(int i = -1)
         {
@@ -1708,8 +1724,14 @@ namespace DSP_Battle
             }
             switch (__instance.DescFields[index])
             {
-                case 50:
+                case 80:
                     __result = "伤害".Translate();
+                    break;
+                case 81:
+                    __result = "最大耐久度".Translate();
+                    break;
+                case 82:
+                    __result = "伤害类型".Translate();
                     return;
             }
         }
@@ -1725,7 +1747,16 @@ namespace DSP_Battle
             }
             switch (__instance.DescFields[index])
             {
-                case 50:
+                case 80:
+                    __result = Relic.HaveRelic(0, 10) 
+                        ? (Configs.dropletAtk / 100).ToString("0.0") + "<color=#61D8FFB8> + " + (Droplets.bonusDamage / 100).ToString("0.0#") + "</color> hp" 
+                        : (Configs.dropletAtk / 100).ToString("0.0") + " hp";
+                    break;
+                case 81:
+                    __result = "∞";
+                    break;
+                case 82:
+                    __result = "子弹伤害类型".Translate() + "伤害类型特殊".Translate();
                     return;
             }
         }
