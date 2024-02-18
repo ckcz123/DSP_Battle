@@ -72,6 +72,8 @@ namespace DSP_Battle
             RelicFunctionPatcher.CheckSolarSailLife();
             Configs.eliteDurationFrames = 3600 * 3 + 60 * 20 * Relic.GetCursedRelicCount();
             RelicFunctionPatcher.CheckRerollCost();
+            UIEventSystem.InitAll();
+            UIEventSystem.InitWhenLoad();
         }
 
         public static int AddRelic(int type, int num)

@@ -10,8 +10,8 @@ namespace DSP_Battle
 {
     public class UIRelic
     {
-        static int resolutionX = 1920;
-        static int resolutionY = 1080;
+        public static int resolutionX = 1920;
+        public static int resolutionY = 1080;
 
         // 以下为选择Relic的窗口
         static int closingMaxCountDown = 30;
@@ -1000,7 +1000,7 @@ namespace DSP_Battle
 
         
         //  以下为左侧Relic 预览窗口
-        static GameObject relicSlotsWindowObj = null;
+        public static GameObject relicSlotsWindowObj = null;
         public static List<GameObject> relicSlotObjs = new List<GameObject>();
         public static List<Image> relicSlotImgs = new List<Image>();
         public static List<UIButton> relicSlotUIBtns = new List<UIButton>();
@@ -1045,7 +1045,7 @@ namespace DSP_Battle
                     GameObject iconObj = GameObject.Instantiate(oriIconWithTips);
                     iconObj.name = "slot" + i.ToString();
                     iconObj.transform.SetParent(relicSlotsWindowObj.transform);
-                    iconObj.transform.localPosition = new Vector3(50, 0.5f * resolutionY - 0.5f*slotDis - slotDis * i, 0);
+                    iconObj.transform.localPosition = new Vector3(50, 0.5f * resolutionY - 0.5f * slotDis - slotDis * i, 0);
                     iconObj.transform.localScale = new Vector3(1, 1, 1);
                     iconObj.GetComponent<RectTransform>().sizeDelta = new Vector2(90, 90);
                     relicSlotObjs.Add(iconObj);

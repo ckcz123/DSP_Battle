@@ -86,11 +86,12 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(UIStarFortress));
             Harmony.CreateAndPatchAll(typeof(StationOrderFixPatch));
             Harmony.CreateAndPatchAll(typeof(DropletFleetPatchers));
+            Harmony.CreateAndPatchAll(typeof(EventSystem));
 
             LDBTool.PreAddDataAction += BattleProtos.AddProtos;
             BattleProtos.AddTranslate();
             //LDBTool.PostAddDataAction += BattleProtos.PostDataAction;
-
+            BattleProtos.InitEventProtos();
         }
 
         public void Start()
@@ -159,9 +160,22 @@ namespace DSP_Battle
                 if (GameMain.localPlanet != null)
                     planetId = GameMain.localPlanet.id;
             }
+            if (Configs.developerMode && isControlDown && Input.GetKeyDown(KeyCode.G))
+            {
+                EventSystem.InitNewEvent();
+            }
+            if (Configs.developerMode && isControlDown && Input.GetKeyDown(KeyCode.H))
+            {
+                EventSystem.ClearEvent();
+            }
+            if (Configs.developerMode && isControlDown && Input.GetKeyDown(KeyCode.J))
+            {
+                EventSystem.TestIfGroudBaseInited();
+            }
             UIRelic.SelectionWindowAnimationUpdate();
             UIRelic.CheckRelicSlotsWindowShowByMouse();
             UIRelic.SlotWindowAnimationUpdate();
+            UIEventSystem.OnUpdate();
             //BattleBGMController.BGMLogicUpdate();
             DevConsole.Update();
         }
@@ -242,6 +256,7 @@ namespace DSP_Battle
             Droplets.Export(w);
             Rank.Export(w);
             Relic.Export(w);
+            EventSystem.Exprot(w);
             //StarFortress.Export(w);
             //DevConsole.Export(w);
         }
@@ -252,6 +267,7 @@ namespace DSP_Battle
             Droplets.Import(r);
             Rank.Import(r);
             Relic.Import(r);
+            EventSystem.Import(r);
             //StarFortress.Import(r);
             //DevConsole.Import(r);
 
@@ -270,6 +286,7 @@ namespace DSP_Battle
             Droplets.IntoOtherSave();
             Rank.IntoOtherSave();
             Relic.IntoOtherSave();
+            EventSystem.IntoOtherSave();
             StarFortress.IntoOtherSave();
 
             DevConsole.IntoOtherSave();

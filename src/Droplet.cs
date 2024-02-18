@@ -726,7 +726,7 @@ namespace DSP_Battle
                         state = 2;
                     VectorLF3 newBegin = GetCurrentUPos();
                     VectorLF3 newEnd = GetIdleUPos();
-                    if ((newEnd - newBegin).magnitude <= Configs.dropletSpd * 0.05f || lastMaxt - lastT <= 0.05f)
+                    if ((newEnd - newBegin).magnitude <= Configs.dropletSpd * 0.034f || lastMaxt - lastT <= 0.034f)
                     {
                         SetStandby();
                     }

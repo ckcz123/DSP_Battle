@@ -468,12 +468,12 @@ namespace DSP_Battle
             RegisterString("删除遗物确认警告",
                 "This will remove {0} and return the slot occupied by the relic!", 
                 "这将移除圣物 {0}，并返还该圣物所占用的圣物槽位！");
-            RegisterString("成功移除！", "Relic removed", "成功移除圣物");
-            RegisterString("已移除遗物描述", "You've removed relic ", "你已移除");
-            RegisterString("未能移除！", "No relic can be removed", "没有可移除的圣物");
-            RegisterString("未能移除遗物描述", "No matched relic can be removed", "你没有稀有度匹配的圣物可供移除");
-            RegisterString("未获取遗物标题", "Unknown relic", "未知圣物");
-            RegisterString("未获取遗物描述", "This slot can place a decrypted relic", "此位置可供已解译的圣物放置");
+            RegisterString("成功移除！", "Meta drive removed", "成功移除元驱动");
+            RegisterString("已移除遗物描述", "You've removed meta drive ", "你已移除");
+            RegisterString("未能移除！", "No mate drive can be removed", "没有可移除的元驱动");
+            RegisterString("未能移除遗物描述", "No matched meta drive can be removed", "你没有稀有度匹配的圣物可供移除");
+            RegisterString("未获取遗物标题", "Unknown mata drive", "未知元驱动");
+            RegisterString("未获取遗物描述", "This slot can place a decrypted meta drive", "此位置可供已解译的元驱动放置");
             RegisterString("水滴伤害增加", "Droplet Bonus Damage", "水滴额外伤害");
             RegisterString("当前加成gm", "Current bonus damage", "当前伤害加成");
             RegisterString("已充能gm", "Charged", "已充能");
@@ -767,509 +767,59 @@ namespace DSP_Battle
             RegisterString("深空来敌介绍5标题", "Regular Relics", "常规圣物");
             RegisterString("深空来敌介绍6标题", "Cursed Relics", "被诅咒的圣物");
 
-            //// 物品 Item
-            //ItemProto bullet1 = ProtoRegistry.RegisterItem(8001, "子弹1", "子弹1描述", "Assets/DSPBattle/bullet1", 2701 + pageBias, 100, EItemType.Material);
-            //ItemProto bullet2 = ProtoRegistry.RegisterItem(8002, "子弹2", "子弹2描述", "Assets/DSPBattle/bullet2", 2702 + pageBias, 100, EItemType.Material);
-            //ItemProto bullet3 = ProtoRegistry.RegisterItem(8003, "子弹3", "子弹3描述", "Assets/DSPBattle/bullet3", 2703 + pageBias, 100, EItemType.Material);
-            //ItemProto missile1 = ProtoRegistry.RegisterItem(8004, "导弹1", "导弹1描述", "Assets/DSPBattle/missile1", 2705 + pageBias, 100, EItemType.Material);
-            //ItemProto missile2 = ProtoRegistry.RegisterItem(8005, "导弹2", "导弹2描述", "Assets/DSPBattle/missile2", 2706 + pageBias, 100, EItemType.Material);
-            //ItemProto missile3 = ProtoRegistry.RegisterItem(8006, "导弹3", "导弹3描述", "Assets/DSPBattle/missile3", 2707 + pageBias, 100, EItemType.Material);
-            //ItemProto bullet4 = ProtoRegistry.RegisterItem(8007, "脉冲", "脉冲描述", "Assets/DSPBattle/bullet4", 9999, 100, EItemType.Material);
-            //var icondesc = ProtoRegistry.GetDefaultIconDesc(Color.white, new Color(0f, 0.1f, 1f));
-            //icondesc.solidAlpha = 0f;
-            //ItemProto alienMatrix = ProtoRegistry.RegisterItem(8032, "异星矩阵", "异星矩阵描述", "Assets/DSPBattle/alienmatrix", 2712 + pageBias, 1000000, EItemType.Matrix, icondesc);
-            //alienMatrix.Productive = true;
-            //ItemProto alienMeta = ProtoRegistry.RegisterItem(8033, "异星元数据", "异星元数据描述", "Assets/DSPBattle/alienmeta", 2711 + pageBias, 1000000000, EItemType.Matrix, icondesc);
-            //alienMeta.Productive = false;
-            //if (Configs.enableProliferator4)
-            //{
-            //    var icondesc2 = ProtoRegistry.GetDefaultIconDesc(new Color(1f, 1f, 1f), new Color(0f, 1f, 1f), new Color(0, 0.2f, 0.3f), new Color(0, 0.4f, 0.5f));
-            //    ItemProto proliferator4 = ProtoRegistry.RegisterItem(8034, "量子增产剂", "量子增产剂描述", "Assets/DSPBattle/accelerator4", 2710 + pageBias, 200, EItemType.Material, icondesc2);
-            //    proliferator4.Productive = true;
-            //    proliferator4.Ability = 6;
-            //    proliferator4.HpMax = 120;
-            //    proliferator4.DescFields = new int[] { 29, 41, 42, 43, 1, 40 };
-            //}
-
-            //bullet1.DescFields = new int[] { 50, 51, 1 };
-            //bullet2.DescFields = new int[] { 50, 51, 1 };
-            //bullet3.DescFields = new int[] { 50, 51, 1 };
-            //bullet4.DescFields = new int[] { 50, 51 };
-            //missile1.DescFields = new int[] { 50, 51, 52, 1 };
-            //missile2.DescFields = new int[] { 50, 51, 52, 1 };
-            //missile3.DescFields = new int[] { 50, 51, 52, 1 };
-
-            //ProtoRegistry.RegisterItem(8021, "彩蛋1", "彩蛋1描述", "Assets/DSPBattle/notes-of-pioneer-01", 9999, 100, EItemType.Material);
-            //ProtoRegistry.RegisterItem(8022, "彩蛋2", "彩蛋2描述", "Assets/DSPBattle/notes-of-pioneer-02", 9999, 100, EItemType.Material);
-            //ProtoRegistry.RegisterItem(8023, "彩蛋3", "彩蛋3描述", "Assets/DSPBattle/notes-of-pioneer-03", 9999, 100, EItemType.Material);
-            //ProtoRegistry.RegisterItem(8024, "彩蛋4", "彩蛋4描述", "Assets/DSPBattle/notes-of-pioneer-04", 9999, 100, EItemType.Material);
-            //ProtoRegistry.RegisterItem(8025, "彩蛋5", "彩蛋5描述", "Assets/DSPBattle/notes-of-pioneer-05", 9999, 100, EItemType.Material);
-            //ProtoRegistry.RegisterItem(8026, "彩蛋6", "彩蛋6描述", "Assets/DSPBattle/notes-of-pioneer-06", 9999, 100, EItemType.Material);
-            //ProtoRegistry.RegisterItem(8027, "彩蛋7", "彩蛋7描述", "Assets/DSPBattle/notes-of-pioneer-07", 9999, 100, EItemType.Material);
-            //ProtoRegistry.RegisterItem(8028, "彩蛋8", "彩蛋8描述", "Assets/DSPBattle/notes-of-pioneer-08", 9999, 100, EItemType.Material);
-            //ProtoRegistry.RegisterItem(8029, "彩蛋9", "彩蛋9描述", "Assets/DSPBattle/notes-of-pioneer-09", 9999, 100, EItemType.Material);
-
-
             ProtoRegistry.RegisterItem(8035, "水滴伤害增加", "", "Assets/DSPBattle/r0-10", 9999, 100, EItemType.Material);
-            //ProtoRegistry.RegisterItem(8037, "sf组件1火箭", "sf组件1火箭描述", "Assets/DSPBattle/rocketSf1", 2307 + pageBias, 100, EItemType.Material);
-            //ProtoRegistry.RegisterItem(8038, "sf组件2火箭", "sf组件2火箭描述", "Assets/DSPBattle/rocketSf2", 2308 + pageBias, 100, EItemType.Material);
-            //ProtoRegistry.RegisterItem(8039, "sf组件3火箭", "sf组件3火箭描述", "Assets/DSPBattle/rocketSf3", 2309 + pageBias, 100, EItemType.Material);
-
-            //var Cannon1 = ProtoRegistry.RegisterItem(8011, "弹射器1", "弹射器1描述", "Assets/DSPBattle/cannon1", 2601 + pageBias, 50, EItemType.Production);
-            //Cannon1.BuildIndex = 607;
-            //Cannon1.BuildMode = 1;
-            //Cannon1.IsEntity = true;
-            //Cannon1.isRaw = false;
-            //Cannon1.CanBuild = true;
-            //Cannon1.Upgrades = new int[] { };
-            ////Cannon1.Grade = 1;
-            ////Cannon1.Upgrades = new int[] { 8011, 8012, 8014 };
-            //Cannon1.DescFields = new int[] { 53, 11, 12, 1, 40 };
-            //var Cannon2 = ProtoRegistry.RegisterItem(8012, "弹射器2", "弹射器2描述", "Assets/DSPBattle/cannon2", 2602 + pageBias, 50, EItemType.Production);
-            //Cannon2.BuildIndex = 608;
-            //Cannon2.BuildMode = 1;
-            //Cannon2.IsEntity = true;
-            //Cannon2.isRaw = false;
-            //Cannon2.CanBuild = true;
-            //Cannon2.Upgrades = new int[] { };
-            ////Cannon2.Grade = 2;
-            ////Cannon2.Upgrades = new int[] { 8011, 8012, 8014 };
-            //Cannon2.DescFields = new int[] { 53, 11, 12, 1, 40 };
-            //var Cannon3 = ProtoRegistry.RegisterItem(8014, "脉冲炮", "脉冲炮描述", "Assets/DSPBattle/cannon3", 2604 + pageBias, 50, EItemType.Production);
-            //Cannon3.BuildIndex = 609;
-            //Cannon3.BuildMode = 1;
-            //Cannon3.IsEntity = true;
-            //Cannon3.isRaw = false;
-            //Cannon3.CanBuild = true;
-            //Cannon3.Upgrades = new int[] { };
-            ////Cannon3.Grade = 3;
-            ////Cannon3.Upgrades = new int[] { 8011, 8012, 8014 };
-            //Cannon3.DescFields = new int[] { 50, 51, 53, 59, 11, 12, 1, 40 };
 
 
-            //var Silo = ProtoRegistry.RegisterItem(8013, "发射器1", "发射器1描述", "Assets/DSPBattle/missilesilo", 2603 + pageBias, 50, EItemType.Production);
-            //Silo.BuildIndex = 610;
-            //Silo.BuildMode = 1;
-            //Silo.IsEntity = true;
-            //Silo.isRaw = false;
-            //Silo.CanBuild = true;
-            //Silo.Upgrades = new int[] { };
-            //Silo.DescFields = new int[] { 35, 11, 12, 1, 40 };
-
-            ////var StarFortressSilo = ProtoRegistry.RegisterItem(8036, "恒星要塞组件发射井", "恒星要塞组件发射井描述", "Assets/DSPBattle/missilesilo", 2607 + pageBias, 50, EItemType.Production);
-            ////StarFortressSilo.BuildIndex = 610;
-            ////StarFortressSilo.BuildMode = 1;
-            ////StarFortressSilo.IsEntity = true;
-            ////StarFortressSilo.isRaw = false;
-            ////StarFortressSilo.CanBuild = true;
-            ////StarFortressSilo.Upgrades = new int[] { };
-            ////StarFortressSilo.DescFields = new int[] { 35, 11, 12, 1, 40 };
-
-
-            //var ShieldGenerator = ProtoRegistry.RegisterItem(8030, "行星护盾生成器", "行星护盾生成器描述", "Assets/MegaStructureTab/shieldGen", 2605 + pageBias, 10, EItemType.Production);
-            //ShieldGenerator.BuildMode = 1;
-            //ShieldGenerator.IsEntity = true;
-            //ShieldGenerator.isRaw = false;
-            //ShieldGenerator.CanBuild = true;
-            //ShieldGenerator.Upgrades = new int[] { };
-            //ShieldGenerator.DescFields = new int[] { 11, 57, 58, 1, 40 };
-
-            //int hideMask = 393;
-            //if (Configs.developerMode) hideMask = 0;
-            //var TestEngine = ProtoRegistry.RegisterItem(8031, "测试用发动机", "测试用发动机描述", "Assets/MegaStructureTab/shieldGen", 2606 + hideMask + pageBias, 10, EItemType.Production);
-            //TestEngine.BuildMode = 1;
-            //TestEngine.IsEntity = true;
-            //TestEngine.isRaw = false;
-            //TestEngine.CanBuild = true;
-            //TestEngine.Upgrades = new int[] { };
-
-            //// 配方
-            //ProtoRegistry.RegisterRecipe(801, ERecipeType.Assemble, 60, new int[] { 1112, 1103 }, new int[] { 1, 1 }, new int[] { 8001 }, new int[] { 1 }, "子弹1描述",
-            //    1901, 2701 + pageBias, "Assets/DSPBattle/bullet1");
-            //ProtoRegistry.RegisterRecipe(802, ERecipeType.Assemble, 90, new int[] { 1118, 1110, 1116 }, new int[] { 1, 1, 1 }, new int[] { 8002 }, new int[] { 2 }, "子弹2描述",
-            //    1902, 2702 + pageBias, "Assets/DSPBattle/bullet2");
-            //ProtoRegistry.RegisterRecipe(803, ERecipeType.Assemble, 120, new int[] { 1118, 1121, 1206 }, new int[] { 1, 4, 1 }, new int[] { 8003 }, new int[] { 1 }, "子弹3描述",
-            //    1903, 2703 + pageBias, "Assets/DSPBattle/bullet3");
-            //ProtoRegistry.RegisterRecipe(804, ERecipeType.Assemble, 120, new int[] { 1802, 1303, 1406 }, new int[] { 1, 1, 1 }, new int[] { 8004 }, new int[] { 1 }, "导弹1描述",
-            //    1911, 2704 + pageBias, "Assets/DSPBattle/missile1");
-            //ProtoRegistry.RegisterRecipe(805, ERecipeType.Assemble, 120, new int[] { 1803, 1303, 1406 }, new int[] { 1, 1, 1 }, new int[] { 8005 }, new int[] { 1 }, "导弹2描述",
-            //    1912, 2705 + pageBias, "Assets/DSPBattle/missile2");
-            //ProtoRegistry.RegisterRecipe(806, ERecipeType.Assemble, 120, new int[] { 1209, 1303, 1406 }, new int[] { 1, 2, 1 }, new int[] { 8006 }, new int[] { 1 }, "导弹3描述",
-            //    1914, 2706 + pageBias, "Assets/DSPBattle/missile3");
-            //ProtoRegistry.RegisterRecipe(811, ERecipeType.Assemble, 360, new int[] { 1103, 1201, 1303, 1205 }, new int[] { 10, 10, 10, 5 }, new int[] { 8011 }, new int[] { 1 }, "弹射器1描述",
-            //    1901, 2601 + pageBias, "Assets/DSPBattle/cannon1");
-            //ProtoRegistry.RegisterRecipe(812, ERecipeType.Assemble, 360, new int[] { 1107, 9480, 1303, 1209 }, new int[] { 10, 10, 10, 3 }, new int[] { 8012 }, new int[] { 1 }, "弹射器2描述",
-            //    1914, 2602 + pageBias, "Assets/DSPBattle/cannon2");
-            //ProtoRegistry.RegisterRecipe(813, ERecipeType.Assemble, 900, new int[] { 1107, 1125, 1209, 1305 }, new int[] { 40, 15, 5, 5 }, new int[] { 8013 }, new int[] { 1 }, "发射器1描述",
-            //    1911, 2603 + pageBias, "Assets/DSPBattle/missilesilo");
-            //ProtoRegistry.RegisterRecipe(814, ERecipeType.Assemble, 900, new int[] { 1125, 9481, 9486 }, new int[] { 20, 5, 2 }, new int[] { 8014 }, new int[] { 1 }, "脉冲炮描述",
-            //    1915, 2604 + pageBias, "Assets/DSPBattle/cannon3");
-            //ProtoRegistry.RegisterRecipe(815, ERecipeType.Assemble, 900, new int[] { 9503, 1305, 1125 }, new int[] { 30, 20, 30 }, new int[] { 8030 }, new int[] { 1 }, "行星护盾生成器描述",
-            //    1916, 2605 + pageBias, "Assets/MegaStructureTab/shieldGen");
-            //ProtoRegistry.RegisterRecipe(816, ERecipeType.Assemble, 10, new int[] { 1101 }, new int[] { 1 }, new int[] { 8031 }, new int[] { 1 }, "测试用发动机描述",
-            //    1916, 2607 + hideMask + pageBias, "Assets/MegaStructureTab/shieldGen");
-            //ProtoRegistry.RegisterRecipe(817, ERecipeType.Research, 60, new int[] { 8032 }, new int[] { 2 }, new int[] { 8032 }, new int[] { 1 }, "异星矩阵描述",
-            //    1901, 9999 + pageBias, "Assets/DSPBattle/alienmatrix");
-            ////ProtoRegistry.RegisterRecipe(821, ERecipeType.Assemble, 10, new int[] { 1101 }, new int[] { 1 }, new int[] { 8036 }, new int[] { 1 }, "恒星要塞组件发射井描述",
-            ////    1917, 2606 + pageBias, "Assets/DSPBattle/missilesilo");
-            //ProtoRegistry.RegisterRecipe(822, ERecipeType.Assemble, 480, new int[] { 9482, 9487, 1802 }, new int[] { 1, 1, 2 }, new int[] { 8037 }, new int[] { 1 }, "sf组件1火箭描述",
-            //    1917, 2307 + pageBias, "Assets/DSPBattle/rocketSf1");
-            //ProtoRegistry.RegisterRecipe(823, ERecipeType.Assemble, 480, new int[] { 9508, 1209, 1802 }, new int[] { 1, 2, 2 }, new int[] { 8038 }, new int[] { 1 }, "sf组件2火箭描述",
-            //    1918, 2308 + pageBias, "Assets/DSPBattle/rocketSf2");
-            //ProtoRegistry.RegisterRecipe(824, ERecipeType.Assemble, 360, new int[] { 1502, 1802, 1305 }, new int[] { 1, 2, 1 }, new int[] { 8039 }, new int[] { 1 }, "sf组件3火箭描述",
-            //    1917, 2309 + pageBias, "Assets/DSPBattle/rocketSf3");
-
-            //RecipeProto decompileRecipe0 = ProtoRegistry.RegisterRecipe(818, ERecipeType.Research, 60, new int[] { 8032 }, new int[] { 10 }, new int[] { 8033 }, new int[] { 500 }, "异星元数据描述",
-            //    1924, 2712 + pageBias, "异星矩阵反编译", "Assets/DSPBattle/alienmetax100");
-            //decompileRecipe0.Explicit = true;
-            //decompileRecipe0.NonProductive = true;
-            ////RecipeProto decompileRecipe1 = ProtoRegistry.RegisterRecipe(819, ERecipeType.Research, 60, new int[] { 8032 }, new int[] { 10 }, new int[] { 8033 }, new int[] { 500 }, "异星元数据描述",
-            ////     1924, 2712 + pageBias, "异星矩阵反编译 x10", "Assets/DSPBattle/alienmetax100");
-            ////decompileRecipe1.Explicit = true;
-            //if (Configs.enableProliferator4)
-            //{
-            //    RecipeProto proliferator4Recipe = ProtoRegistry.RegisterRecipe(820, ERecipeType.Assemble, 240, new int[] { 1143, 8032 }, new int[] { 8, 1 }, new int[] { 8034 }, new int[] { 4 }, "量子增产剂描述",
-            //         1925, 2711 + pageBias, "量子增产剂", "Assets/DSPBattle/accelerator4");
-            //}
-
-
-            ////给船染色用物品
-            //ProtoRegistry.RegisterItem(8040, "侦查艇".Translate(), "敌船0".Translate(), "Assets/DSPBattle/enemyShip0", 9999, 200,
-            //    EItemType.Component, ProtoRegistry.GetDefaultIconDesc(new Color(0.8f, 0f, 0f), new Color(0.8f, 0f, 0f), new Color(0.8f, 0f, 0f), new Color(0.8f, 0f, 0f)));
-            //ProtoRegistry.RegisterItem(8041, "护卫舰".Translate(), "敌船1".Translate(), "Assets/DSPBattle/enemyShip1", 9999, 200,
-            //    EItemType.Component, ProtoRegistry.GetDefaultIconDesc(new Color(0.5f, 0.2f, 0f), new Color(0.5f, 0.2f, 0f), new Color(0.5f, 0.2f, 0f), new Color(0.5f, 0.2f, 0f)));
-            //ProtoRegistry.RegisterItem(8042, "驱逐舰".Translate(), "敌船2".Translate(), "Assets/DSPBattle/enemyShip2", 9999, 200,
-               
-            //    EItemType.Component, ProtoRegistry.GetDefaultIconDesc(new Color(1f, 0.8f, 0f), new Color(1f, 0.8f, 0f), new Color(1f, 0.7f, 0f), new Color(1f, 0.7f, 0f)));
-            //ProtoRegistry.RegisterItem(8043, "重型巡洋舰".Translate(), "敌船3".Translate(), "Assets/DSPBattle/enemyShip3", 9999, 200,
-            //    EItemType.Component, ProtoRegistry.GetDefaultIconDesc(new Color(0f, 1f, 0f), new Color(0f, 1f, 0f), new Color(0f, 1f, 0f), new Color(0f, 1f, 0f)));
-            //ProtoRegistry.RegisterItem(8044, "战列舰".Translate(), "敌船4".Translate(), "Assets/DSPBattle/enemyShip4", 9999, 200,
-            //    EItemType.Component, ProtoRegistry.GetDefaultIconDesc(new Color(1f, 0f, 0.6f), new Color(1f, 0f, 0.6f), new Color(1f, 0f, 0.6f), new Color(1f, 0f, 0.6f)));
-            ////ProtoRegistry.RegisterRecipe(820, ERecipeType.Assemble, 1, new int[] { 1101 }, new int[] { 1 }, new int[] { 8040 }, new int[] { 1 }, "测试用1",
-            ////    1901, 9999, "Assets/DSPBattle/enemyShip");
-            ////ProtoRegistry.RegisterRecipe(821, ERecipeType.Assemble, 1, new int[] { 1101 }, new int[] { 1 }, new int[] { 8041 }, new int[] { 1 }, "测试用1",
-            ////    1901, 9999, "Assets/DSPBattle/enemyShip");
-            ////ProtoRegistry.RegisterRecipe(822, ERecipeType.Assemble, 1, new int[] { 1101 }, new int[] { 1 }, new int[] { 8042 }, new int[] { 1 }, "测试用1",
-            ////    1901, 9999, "Assets/DSPBattle/enemyShip");
-            ////ProtoRegistry.RegisterRecipe(823, ERecipeType.Assemble, 1, new int[] { 1101 }, new int[] { 1 }, new int[] { 8043 }, new int[] { 1 }, "测试用1",
-            ////    1901, 9999, "Assets/DSPBattle/enemyShip");
-            ////ProtoRegistry.RegisterRecipe(824, ERecipeType.Assemble, 1, new int[] { 1101 }, new int[] { 1 }, new int[] { 8044 }, new int[] { 1 }, "测试用1",
-            ////    1901, 9999, "Assets/DSPBattle/enemyShip");
-
-
-            //// 科技
-            //TechProto techBullet1 = ProtoRegistry.RegisterTech(1901, "近地防卫系统", "近地防卫系统描述", "近地防卫系统结论", "Assets/DSPBattle/bullet1tech", new int[] { 1711 }, new int[] { 6001, 6002 }, new int[] { 20, 20 },
-            //    72000, new int[] { 801, 811, 817 }, new Vector2(29, -43));
-
-            //techBullet1.PreTechsImplicit = new int[] { 1503 };
-            //techBullet1.AddItems = new int[] { 8021 };
-            //techBullet1.AddItemCounts = new int[] { 1 };
-            //TechProto techBullet2 = ProtoRegistry.RegisterTech(1902, "子弹2", "子弹2tech描述", "子弹2结论", "Assets/DSPBattle/bullet2tech", new int[] { 1901 }, new int[] { 6001, 6002, 6003 }, new int[] { 12, 12, 12 },
-            //    150000, new int[] { 802 }, new Vector2(33, -43));
-            //techBullet2.AddItems = new int[] { 8022 };
-            //techBullet2.AddItemCounts = new int[] { 1 };
-            //TechProto techBullet3 = ProtoRegistry.RegisterTech(1903, "子弹3", "子弹3tech描述", "子弹3结论", "Assets/DSPBattle/bullet3tech", new int[] { 1902 }, new int[] { 6001, 6002, 6003, 6004 },
-            //    new int[] { 12, 48, 24, 24 }, 150000, new int[] { 803 }, new Vector2(37, -43));
-            //techBullet3.PreTechsImplicit = new int[] { 1911 };
-            //techBullet3.AddItems = new int[] { 8024 };
-            //techBullet3.AddItemCounts = new int[] { 1 };
-            //TechProto techMissile1 = ProtoRegistry.RegisterTech(1911, "深空防卫系统", "深空防卫系统描述", "深空防卫系统结论", "Assets/DSPBattle/missile1tech", new int[] { 1114 }, new int[] { 6001, 6002, 6003, 6004 },
-            //    new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 804, 813 }, new Vector2(37, -31));
-            //techMissile1.PreTechsImplicit = new int[] { 1522, 1416 };
-            //techMissile1.AddItems = new int[] { 8023 };
-            //techMissile1.AddItemCounts = new int[] { 1 };
-            //TechProto techMissile2 = ProtoRegistry.RegisterTech(1912, "导弹2", "导弹2tech描述", "导弹2结论", "Assets/DSPBattle/missile2tech", new int[] { 1911 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-            //    new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 805 }, new Vector2(41, -31));
-            //techMissile2.AddItems = new int[] { 8025 };
-            //techMissile2.AddItemCounts = new int[] { 1 };
-            ////ProtoRegistry.RegisterTech(1913, "导弹3", "导弹3描述", "导弹3结论", "Icons/Tech/1112", new int[] { 1914 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-            ////    new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 804, 813 }, new Vector2(49, -41));
-
-            //TechProto techMissile3 = ProtoRegistry.RegisterTech(1914, "引力操控技术", "引力操控技术描述", "引力操控技术结论", "Assets/DSPBattle/missile3tech", new int[] { 1704 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-            //    new int[] { 12, 48, 24, 24, 24 }, 150000, new int[] { 812, 806 }, new Vector2(49, -43));
-            //techMissile3.AddItems = new int[] { 8026 };
-            //techMissile3.AddItemCounts = new int[] { 1 };
-            //TechProto techBullet4 = ProtoRegistry.RegisterTech(1915, "相位裂解技术", "相位裂解技术描述", "相位裂解技术结论", "Assets/DSPBattle/cannon3tech", new int[] { 1914 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-            //    new int[] { 24, 24, 24, 24, 24 }, 300000, new int[] { 814 }, new Vector2(53, -43));
-            //techBullet4.AddItems = new int[] { 8027 };
-            //techBullet4.AddItemCounts = new int[] { 1 };
-
-
-            //TechProto techShield1 = ProtoRegistry.RegisterTech(1916, "行星力场护盾", "行星力场护盾描述", "行星力场护盾结论", "Assets/DSPBattle/shieldtech", new int[] { 1705 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-            //    new int[] { 24, 24, 24, 24, 24 }, 300000, new int[] { 565,815 }, new Vector2(53, -31));
-            
-            //TechProto techStellarFortress = ProtoRegistry.RegisterTech(1917, "恒星要塞", "恒星要塞描述", "恒星要塞结论", "Assets/DSPBattle/shield1", new int[] { 1903 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-            //    new int[] { 24, 24, 24, 24, 24 }, 150000, new int[] { 822, 824 }, new Vector2(41, -43));
-            //techStellarFortress.PreTechsImplicit = new int[] { 1912 };
-
-            //TechProto techStarCannon = ProtoRegistry.RegisterTech(1918, "尼科尔戴森光束", "尼科尔戴森光束描述", "尼科尔戴森光束结论", "Assets/DSPBattle/starcannontech", new int[] { 1144 }, new int[] { 8032 },
-            //    new int[] { 200 }, 36000, new int[] { 570, 571, 572, 823 }, new Vector2(65, -3));
-            
-            //TechProto techDrop = ProtoRegistry.RegisterTech(1919, "玻色子操控", "玻色子操控描述", "玻色子操控结论", "Assets/DSPBattle/bosontech", new int[] { 1915 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-            //    new int[] { 24, 24, 24, 24, 24 }, 300000, new int[] { 566, 567, 568, 569 }, new Vector2(57, -43));
-            //ProtoRegistry.RegisterTech(1930, "水滴gm2", "水滴科技描述", "水滴科技结论", "Assets/DSPBattle/bosontech", new int[] { 1919 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-            //    new int[] { 24, 24, 24, 24, 24 }, 375000, new int[] { 573 }, new Vector2(61, -43));
-
-
-            //TechProto techMegaMD = ProtoRegistry.RegisterTech(1920, "物质解压器", "物质解压器科技描述", "物质解压器科技结论", "Assets/DSPBattle/techMD", new int[] {  }, new int[] { 8032 },
-            //    new int[] { 150 }, 36000, new int[] { 538 }, new Vector2(65, -7)); 
-            //techMegaMD.PreTechsImplicit = new int[] { 1522 };
-            //TechProto techMegaWBA = ProtoRegistry.RegisterTech(1921, "折跃场广播阵列", "折跃场广播阵列科技描述", "折跃场广播阵列科技结论", "Assets/DSPBattle/techWBA", new int[] { }, new int[] { 8032 },
-            //    new int[] { 240 }, 27000, new int[] { 540 }, new Vector2(65, -11));
-            //techMegaWBA.PreTechsImplicit = new int[] { 1522 };
-            //TechProto techMegaIA = ProtoRegistry.RegisterTech(1922, "星际组装厂", "星际组装厂科技描述", "星际组装厂科技结论", "Assets/DSPBattle/techIA", new int[] { }, new int[] { 8032 },
-            //    new int[] { 200 }, 36000, new int[] { 537, 541 }, new Vector2(65, -15));
-            //techMegaIA.PreTechsImplicit = new int[] { 1522 };
-            //TechProto techMegaCR = ProtoRegistry.RegisterTech(1923, "晶体重构器", "晶体重构器科技描述", "晶体重构器科技结论", "Assets/DSPBattle/techCR", new int[] { }, new int[] { 8032 },
-            //    new int[] { 240 }, 27000, new int[] { 542 }, new Vector2(65, -19));
-            //techMegaCR.PreTechsImplicit = new int[] { 1522 };
-            //TechProto techMegaSN = ProtoRegistry.RegisterTech(1924, "科学枢纽", "科学枢纽科技描述", "科学枢纽科技结论", "Assets/DSPBattle/techSN", new int[] { 1918, 1920, 1921, 1922, 1923 }, new int[] { 8032 },
-            //    new int[] { 200 }, 45000, new int[] { 539, 818, 819 }, new Vector2(69, -11));
-            //techMegaSN.PreTechsImplicit = new int[] { 1522 };
-
-            //if (Configs.enableProliferator4)
-            //{
-            //    TechProto techProliferator4 = ProtoRegistry.RegisterTech(1925, "量子增产剂", "量子增产剂科技描述", "量子增产剂科技结论", "Assets/DSPBattle/accelerator4tech", new int[] { 1153 }, new int[] { 6001, 6002, 6003, 6004 },
-            //    new int[] { 8, 6, 4, 4 }, 450000, new int[] { 820 }, new Vector2(37, -11));
-            //    techMegaSN.PreTechsImplicit = new int[] { 1522 };
-            //}
-
-            //TechProto winGame = LDB.techs.Select(1508);
-            //winGame.AddItems = new int[] { 8028, 8029 };
-            //winGame.AddItemCounts = new int[] { 1, 1 };
-
-            ////循环科技 分别是+20%子弹伤害  +10%子弹速度和2%导弹速度  以及扩充虫洞安全区
-            //TechProto techBulletDamage1 = ProtoRegistry.RegisterTech(4901, "定向爆破1", "定向爆破描述", "定向爆破结论", "Assets/DSPBattle/attack-level1_tech", new int[] { }, new int[] { 6001, 6002, 6003 },
-            //    new int[] { 20, 20, 20 }, 180000, new int[] { }, new Vector2(9, -51));
-            //techBulletDamage1.PreTechsImplicit = new int[] { 1911 };
-            //techBulletDamage1.UnlockFunctions = new int[] { 50 };
-            //techBulletDamage1.UnlockValues = new double[] { 0.15 };
-            //techBulletDamage1.Level = 1;
-            //techBulletDamage1.MaxLevel = 1;
-            //techBulletDamage1.LevelCoef1 = 0;
-            //techBulletDamage1.LevelCoef2 = 0;
-            //TechProto techBulletDamage2 = ProtoRegistry.RegisterTech(4902, "定向爆破2", "定向爆破描述", "定向爆破结论", "Assets/DSPBattle/attack-level2_tech", new int[] { 4901 }, new int[] { 6001, 6002, 6003, 6004 },
-            //    new int[] { 20, 20, 20, 20 }, 180000, new int[] { }, new Vector2(13, -51));
-            //techBulletDamage2.UnlockFunctions = new int[] { 50 };
-            //techBulletDamage2.UnlockValues = new double[] { 0.15 };
-            //techBulletDamage2.Level = 2;
-            //techBulletDamage2.MaxLevel = 2;
-            //techBulletDamage2.LevelCoef1 = 0;
-            //techBulletDamage2.LevelCoef2 = 0;
-            //TechProto techBulletDamage3 = ProtoRegistry.RegisterTech(4903, "定向爆破3", "定向爆破描述", "定向爆破结论", "Assets/DSPBattle/attack-level3_tech", new int[] { 4902 }, new int[] { 6001, 6002, 6003, 6004 },
-            //    new int[] { 12, 12, 12, 12 }, 480000, new int[] { }, new Vector2(17, -51));
-            //techBulletDamage3.UnlockFunctions = new int[] { 50 };
-            //techBulletDamage3.UnlockValues = new double[] { 0.15 };
-            //techBulletDamage3.Level = 3;
-            //techBulletDamage3.MaxLevel = 3;
-            //techBulletDamage3.LevelCoef1 = 0;
-            //techBulletDamage3.LevelCoef2 = 0;
-            //TechProto techBulletDamage4 = ProtoRegistry.RegisterTech(4904, "定向爆破4", "定向爆破描述", "定向爆破结论", "Assets/DSPBattle/attack-level4_tech", new int[] { 4903 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-            //    new int[] { 4, 4, 4, 4, 4 }, 1800000, new int[] { }, new Vector2(21, -51));
-            //techBulletDamage4.UnlockFunctions = new int[] { 50 };
-            //techBulletDamage4.UnlockValues = new double[] { 0.15 };
-            //techBulletDamage4.Level = 4;
-            //techBulletDamage4.MaxLevel = 4;
-            //techBulletDamage4.LevelCoef1 = 0;
-            //techBulletDamage4.LevelCoef2 = 0;
-            //TechProto techBulletDamage5 = ProtoRegistry.RegisterTech(4905, "定向爆破5", "定向爆破描述", "定向爆破结论", "Assets/DSPBattle/attack-level5_tech", new int[] { 4904 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-            //    new int[] { 4, 4, 4, 4, 4 }, 2700000, new int[] { }, new Vector2(25, -51));
-            //techBulletDamage5.UnlockFunctions = new int[] { 50 };
-            //techBulletDamage5.UnlockValues = new double[] { 0.15 };
-            //techBulletDamage5.Level = 5;
-            //techBulletDamage5.MaxLevel = 5;
-            //techBulletDamage5.LevelCoef1 = 0;
-            //techBulletDamage5.LevelCoef2 = 0;
-            //TechProto techBulletDamageInf = ProtoRegistry.RegisterTech(4906, "定向爆破6", "定向爆破描述", "定向爆破结论", "Assets/DSPBattle/attack-level-infinitude_tech", new int[] { 4905 }, new int[] { 6006 },
-            //    new int[] { 4 }, -18000000, new int[] { }, new Vector2(29, -51));
-            //techBulletDamageInf.UnlockFunctions = new int[] { 50 };
-            //techBulletDamageInf.UnlockValues = new double[] { 0.15 };
-            //techBulletDamageInf.Level = 6;
-            //techBulletDamageInf.MaxLevel = 10000;
-            //techBulletDamageInf.LevelCoef1 = 3600000;
-            //techBulletDamageInf.LevelCoef2 = 0;
-
-
-            //TechProto techBulletSpeed1 = ProtoRegistry.RegisterTech(4911, "引力波引导1", "引力波引导描述", "引力波引导结论", "Assets/DSPBattle/bulletspeedtech1", new int[] { }, new int[] { 6001, 6002, 6003 },
-            //     new int[] { 20, 20, 20 }, 180000, new int[] { }, new Vector2(9, -55));
-            //techBulletSpeed1.PreTechsImplicit = new int[] { 1911 };
-            //techBulletSpeed1.UnlockFunctions = new int[] { 51 };
-            //techBulletSpeed1.UnlockValues = new double[] { 0.1 };
-            //techBulletSpeed1.Level = 1;
-            //techBulletSpeed1.MaxLevel = 1;
-            //techBulletSpeed1.LevelCoef1 = 0;
-            //techBulletSpeed1.LevelCoef2 = 0;
-            //TechProto techBulletSpeed2 = ProtoRegistry.RegisterTech(4912, "引力波引导2", "引力波引导描述", "引力波引导结论", "Assets/DSPBattle/bulletspeedtech2", new int[] { 4911 }, new int[] { 6001, 6002, 6003, 6004 },
-            //     new int[] { 20, 20, 20, 20 }, 180000, new int[] { }, new Vector2(13, -55));
-            //techBulletSpeed2.UnlockFunctions = new int[] { 51 };
-            //techBulletSpeed2.UnlockValues = new double[] { 0.1 };
-            //techBulletSpeed2.Level = 2;
-            //techBulletSpeed2.MaxLevel = 2;
-            //techBulletSpeed2.LevelCoef1 = 0;
-            //techBulletSpeed2.LevelCoef2 = 0;
-            //TechProto techBulletSpeed3 = ProtoRegistry.RegisterTech(4913, "引力波引导3", "引力波引导描述", "引力波引导结论", "Assets/DSPBattle/bulletspeedtech3", new int[] { 4912 }, new int[] { 6001, 6002, 6003, 6004 },
-            //    new int[] { 12, 12, 12, 12 }, 480000, new int[] { }, new Vector2(17, -55));
-            //techBulletSpeed3.UnlockFunctions = new int[] { 51 };
-            //techBulletSpeed3.UnlockValues = new double[] { 0.1 };
-            //techBulletSpeed3.Level = 3;
-            //techBulletSpeed3.MaxLevel = 3;
-            //techBulletSpeed3.LevelCoef1 = 0;
-            //techBulletSpeed3.LevelCoef2 = 0;
-            //TechProto techBulletSpeed4 = ProtoRegistry.RegisterTech(4914, "引力波引导4", "引力波引导描述", "引力波引导结论", "Assets/DSPBattle/bulletspeedtech4", new int[] { 4913 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-            //    new int[] { 4, 4, 4, 4, 4 }, 1800000, new int[] { }, new Vector2(21, -55));
-            //techBulletSpeed4.UnlockFunctions = new int[] { 51 };
-            //techBulletSpeed4.UnlockValues = new double[] { 0.1 };
-            //techBulletSpeed4.Level = 4;
-            //techBulletSpeed4.MaxLevel = 4;
-            //techBulletSpeed4.LevelCoef1 = 0;
-            //techBulletSpeed4.LevelCoef2 = 0;
-            //TechProto techBulletSpeed5 = ProtoRegistry.RegisterTech(4915, "引力波引导5", "引力波引导描述", "引力波引导结论", "Assets/DSPBattle/bulletspeedtech5", new int[] { 4914 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-            //    new int[] { 4, 4, 4, 4, 4 }, 2700000, new int[] { }, new Vector2(25, -55));
-            //techBulletSpeed5.UnlockFunctions = new int[] { 51 };
-            //techBulletSpeed5.UnlockValues = new double[] { 0.1 };
-            //techBulletSpeed5.Level = 5;
-            //techBulletSpeed5.MaxLevel = 5;
-            //techBulletSpeed5.LevelCoef1 = 0;
-            //techBulletSpeed5.LevelCoef2 = 0;
-            //TechProto techBulletSpeedInf = ProtoRegistry.RegisterTech(4916, "引力波引导6", "引力波引导描述", "引力波引导结论", "Assets/DSPBattle/bulletspeedtech0", new int[] { 4915 }, new int[] { 6006 },
-            //    new int[] { 4 }, -18000000, new int[] { }, new Vector2(29, -55));
-            //techBulletSpeedInf.UnlockFunctions = new int[] { 51 };
-            //techBulletSpeedInf.UnlockValues = new double[] { 0.1 };
-            //techBulletSpeedInf.Level = 6;
-            //techBulletSpeedInf.MaxLevel = 100;
-            //techBulletSpeedInf.LevelCoef1 = 3600000;
-            //techBulletSpeedInf.LevelCoef2 = 0;
-
-            //TechProto techWormDistance1 = ProtoRegistry.RegisterTech(4921, "相位干扰技术1", "相位干扰技术描述", "相位干扰技术结论", "Assets/DSPBattle/signal-interference-level1_tech", new int[] { }, new int[] { 6001, 6002, 6003 },
-            //    new int[] { 20, 20, 20 }, 144000, new int[] { }, new Vector2(9, -59));
-            //techWormDistance1.PreTechsImplicit = new int[] { 1911 };
-            //techWormDistance1.UnlockFunctions = new int[] { 52 };
-            //techWormDistance1.UnlockValues = new double[] { 10000 };
-            //techWormDistance1.Level = 1;
-            //techWormDistance1.MaxLevel = 1;
-            //techWormDistance1.LevelCoef1 = 0;
-            //techWormDistance1.LevelCoef2 = 0;
-            //TechProto techWormDistance2 = ProtoRegistry.RegisterTech(4922, "相位干扰技术2", "相位干扰技术描述", "相位干扰技术结论", "Assets/DSPBattle/signal-interference-level2_tech", new int[] { 4921 }, new int[] { 6001, 6002, 6003, 6004 },
-            //    new int[] { 12, 12, 12, 12 }, 300000, new int[] { }, new Vector2(13, -59));
-            //techWormDistance2.UnlockFunctions = new int[] { 52 };
-            //techWormDistance2.UnlockValues = new double[] { 10000 };
-            //techWormDistance2.Level = 2;
-            //techWormDistance2.MaxLevel = 2;
-            //techWormDistance2.LevelCoef1 = 0;
-            //techWormDistance2.LevelCoef2 = 0;
-            //TechProto techWormDistance3 = ProtoRegistry.RegisterTech(4923, "相位干扰技术3", "相位干扰技术描述", "相位干扰技术结论", "Assets/DSPBattle/signal-interference-level3_tech", new int[] { 4922 }, new int[] { 6001, 6002, 6003, 6004 },
-            //     new int[] { 12, 12, 12, 12 }, 360000, new int[] { }, new Vector2(17, -59));
-            //techWormDistance3.UnlockFunctions = new int[] { 52 };
-            //techWormDistance3.UnlockValues = new double[] { 10000 };
-            //techWormDistance3.Level = 3;
-            //techWormDistance3.MaxLevel = 3;
-            //techWormDistance3.LevelCoef1 = 0;
-            //techWormDistance3.LevelCoef2 = 0;
-            //TechProto techWormDistance4 = ProtoRegistry.RegisterTech(4924, "相位干扰技术4", "相位干扰技术描述", "相位干扰技术结论", "Assets/DSPBattle/signal-interference-level4_tech", new int[] { 4923 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-            //     new int[] { 12, 12, 12, 12, 12 }, 360000, new int[] { }, new Vector2(21, -59));
-            //techWormDistance4.UnlockFunctions = new int[] { 52 };
-            //techWormDistance4.UnlockValues = new double[] { 10000 };
-            //techWormDistance4.Level = 4;
-            //techWormDistance4.MaxLevel = 4;
-            //techWormDistance4.LevelCoef1 = 0;
-            //techWormDistance4.LevelCoef2 = 0;
-            //TechProto techWormDistance5 = ProtoRegistry.RegisterTech(4925, "相位干扰技术5", "相位干扰技术描述", "相位干扰技术结论", "Assets/DSPBattle/signal-interference-level5_tech", new int[] { 4924 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-            //     new int[] { 4, 4, 4, 4, 4 }, 1440000, new int[] { }, new Vector2(25, -59));
-            //techWormDistance5.UnlockFunctions = new int[] { 52 };
-            //techWormDistance5.UnlockValues = new double[] { 10000 };
-            //techWormDistance5.Level = 5;
-            //techWormDistance5.MaxLevel = 5;
-            //techWormDistance5.LevelCoef1 = 0;
-            //techWormDistance5.LevelCoef2 = 0;
-            //TechProto techWormDistanceInf = ProtoRegistry.RegisterTech(4926, "相位干扰技术6", "相位干扰技术描述", "相位干扰技术结论", "Assets/DSPBattle/signal-interference-level-infinitude_tech", new int[] { 4925 }, new int[] { 6006 },
-            //     new int[] { 4 }, 45000000, new int[] { }, new Vector2(29, -59));
-            //techWormDistanceInf.UnlockFunctions = new int[] { 52 };
-            //techWormDistanceInf.UnlockValues = new double[] { 10000 };
-            //techWormDistanceInf.Level = 6;
-            //techWormDistanceInf.MaxLevel = 60;
-            //techWormDistanceInf.LevelCoef1 = -18000000;
-            //techWormDistanceInf.LevelCoef2 = 1800000;
-
-
-            //TechProto dorpletControll1 = ProtoRegistry.RegisterTech(4927, "超距信号处理1", "超距信号处理描述", "超距信号处理结论", "Assets/DSPBattle/dropletcontroltech1", new int[] { }, new int[] { 6001, 6002, 6003, 6004 },
-            //     new int[] { 20, 20, 20, 20 }, 180000, new int[] { }, new Vector2(33, -51));
-            //dorpletControll1.PreTechsImplicit = new int[] { 1919 };
-            //dorpletControll1.UnlockFunctions = new int[] { 53 };
-            //dorpletControll1.UnlockValues = new double[] { 1 };
-            //dorpletControll1.Level = 1;
-            //dorpletControll1.MaxLevel = 1;
-            //dorpletControll1.LevelCoef1 = 0;
-            //dorpletControll1.LevelCoef2 = 0;
-            //TechProto dorpletControll2 = ProtoRegistry.RegisterTech(4928, "超距信号处理2", "超距信号处理描述", "超距信号处理结论", "Assets/DSPBattle/dropletcontroltech2", new int[] { 4927 }, new int[] { 6001, 6002, 6003, 6004, 6005 },
-            //      new int[] { 20, 20, 20, 20, 20 }, 360000, new int[] { }, new Vector2(37, -51));
-            //dorpletControll2.UnlockFunctions = new int[] { 53 };
-            //dorpletControll2.UnlockValues = new double[] { 1 };
-            //dorpletControll2.Level = 2;
-            //dorpletControll2.MaxLevel = 2;
-            //dorpletControll2.LevelCoef1 = 0;
-            //dorpletControll2.LevelCoef2 = 0;
-            //TechProto dorpletControll3 = ProtoRegistry.RegisterTech(4929, "超距信号处理3", "超距信号处理描述", "超距信号处理结论", "Assets/DSPBattle/dropletcontroltech3", new int[] { 4928 }, new int[] { 6006 },
-            //      new int[] { 20 }, 900000, new int[] { }, new Vector2(41, -51));
-            //dorpletControll3.UnlockFunctions = new int[] { 53 };
-            //dorpletControll3.UnlockValues = new double[] { 1 };
-            //dorpletControll3.Level = 3;
-            //dorpletControll3.MaxLevel = 3;
-            //dorpletControll3.LevelCoef1 = 0;
-            //dorpletControll3.LevelCoef2 = 0;
-
-
-            //var CannonModel = CopyModelProto(72, 311, Color.red);
-            //CannonModel.prefabDesc.ejectorBulletId = 8001; //子弹的Id
-            //CannonModel.prefabDesc.ejectorChargeFrame = 40; //充能时间（所需帧数，下同）
-            //CannonModel.prefabDesc.ejectorColdFrame = 20; //冷却时间
-            //LDBTool.PreAddProto(CannonModel);
-
-            //var CannonModel2 = CopyModelProto(72, 312, Color.green);
-            //CannonModel2.prefabDesc.ejectorBulletId = 8001; //子弹的Id
-            //CannonModel2.prefabDesc.ejectorChargeFrame = 20;
-            //CannonModel2.prefabDesc.ejectorColdFrame = 10;
-            //CannonModel2.prefabDesc.workEnergyPerTick = 80000;
-            //CannonModel2.prefabDesc.idleEnergyPerTick = 2000;
-            //LDBTool.PreAddProto(CannonModel2);
-
-            //var CannonModel3 = CopyModelProto(72, 314, Color.yellow);
-            //CannonModel3.prefabDesc.ejectorBulletId = 8007; //子弹的Id
-            //CannonModel3.prefabDesc.ejectorChargeFrame = 1;
-            //CannonModel3.prefabDesc.ejectorColdFrame = 1;
-            //CannonModel3.prefabDesc.workEnergyPerTick = 300000;
-            //CannonModel3.prefabDesc.idleEnergyPerTick = 2000;
-            //LDBTool.PreAddProto(CannonModel3);
-
-            //var SiloModel = CopyModelProto(74, 313, Color.red);
-            //SiloModel.prefabDesc.siloBulletId = 8004; // 导弹的Id
-            //SiloModel.prefabDesc.siloChargeFrame = 120;
-            //SiloModel.prefabDesc.siloColdFrame = 360;
-            //LDBTool.PreAddProto(SiloModel);
-
-            ////var StarFortressSiloModel = CopyModelProto(74, 317, Color.yellow);
-            ////StarFortressSiloModel.prefabDesc.siloBulletId = 8037; // 恒星要塞组件运载火箭的id
-            ////StarFortressSiloModel.prefabDesc.siloChargeFrame = 120;
-            ////StarFortressSiloModel.prefabDesc.siloColdFrame = 360;
-            ////LDBTool.PreAddProto(StarFortressSiloModel);
-
-            //var ShieldGenModel = CopyModelProto(45, 315, Color.blue);
-            //ShieldGenModel.prefabDesc.emptyId = 9999;
-            //ShieldGenModel.prefabDesc.fullId = 1208;
-            //ShieldGenModel.prefabDesc.exchangeEnergyPerTick = 1500000;
-            //ShieldGenModel.prefabDesc.workEnergyPerTick = 1500000;
-            //LDBTool.PreAddProto(ShieldGenModel);
-
-
-            //ModelProto TestEngineModel = CopyModelProto(68, 316, new Color(0,1,1,1));
-            //TestEngineModel.prefabDesc.idleEnergyPerTick = 500000; //卫星配电站只走idle耗电，数还需要改
-            //LDBTool.PreAddProto(TestEngineModel);
-
-
-            //LDBTool.SetBuildBar(6, 7, 8011);
-            //LDBTool.SetBuildBar(6, 8, 8012);
-            //LDBTool.SetBuildBar(6, 9, 8014);
-            //LDBTool.SetBuildBar(6, 10, 8013);
-
+            RegisterString("事件链窗口标题", "Meta Drive Event Chain", "元驱动事件链");
+            RegisterString("执行此决定你", "Choose this decision", "执行此决定");
+            RegisterString("需要gm", "<color=#61d8ffb4>Need:</color>", "<color=#61d8ffb4>需要:</color>");
+            RegisterString("功勋阶级", "Merit rank level", "功勋阶级");
+            RegisterString("伊卡洛斯被摧毁次数", "Icarus destroyed time", "伊卡洛斯被摧毁次数");
+            RegisterString("消灭地面黑雾", "Kill ground dark fog units", "消灭地面黑雾单位");
+            RegisterString("消灭太空黑雾", "Kill space dark fog units", "消灭太空黑雾单位");
+            RegisterString("消灭任意黑雾", "Kill dark fog units", "消灭任意黑雾单位");
+            RegisterString("提供物品", "Provide ", "提供 ");
+            RegisterString("物品产量", "Produce speed of ", "物品产量:");
+            RegisterString("解锁任意科技", "Unlock/Upgrade any technology", "解锁/升级任意科技");
+            RegisterString("解锁gm", "Upgrade ", "升级");
+            RegisterString("至等级", " to level", "至等级");
+            RegisterString("消灭恒星系全部地面单位", "Kill all ground enemy in {0}{1}\n    remaining:{2}", "消灭恒星系{0}的全部地面单位{1}\n    剩余 {2}");
+            RegisterString("数量未知gm", "unknown, please land on every planet in that star system at least once", "未知，请先降落该恒星系的所有行星至少一次");
+            RegisterString("数量未知gm2", "unknown, please land on the planet at least once", "未知，请先降落该行星至少一次");
+            RegisterString("点击以导航", " (click to navigate)", "(点击以导航)");
+            RegisterString("消灭恒星系地面单位", "Kill ground enemy in {0}:  {1}/{2}{3}", "消灭恒星系{0}的地面单位  {1}/{2}{3}");
+            RegisterString("消灭恒星系全部太空单位", "Kill all space enemy in {0}{1}\n    remaining:{2}", "消灭恒星系{0}的全部太空单位{1}\n    剩余 {2}");
+            RegisterString("消灭恒星系太空单位", "Kill space enemy in {0}:  {1}/{2}{3}", "消灭恒星系{0}的太空单位  {1}/{2}{3}");
+            RegisterString("提升恒星系威胁等级", "Raise any DF space hive's threat level in {0}  {1}/{2}{3}", "提升恒星系{0}的任意一个太空黑雾巢穴的威胁等级  {1}/{2}{3}");
+            RegisterString("肃清恒星系", "Kill all enemies in {0}{1}\n    remaining:{2}", "清理恒星系{0}的全部黑雾单位{1}\n    剩余 {2}");
+            RegisterString("提升巨构能量水平", "In {0} star system, build megastructure with energy level  {1}/{2}GW {3}", "提升{0}恒星系的巨构能量水平  {1}/{2}GW {3}");
+            RegisterString("任意gm", "any", "任意");
+            RegisterString("提升太空黑雾巢穴等级", "Any DF space hive in {0} reaches level  {1}/{2}{3}", "使{0}中任意一个太空黑雾巢穴等级达到  {1}/{2}{3}");
+            RegisterString("消灭太空黑雾巢穴的所有单位", "Kill all enemies of {1} in {0}  {2} remaining{3}", "消灭{0}中{1}的所有单位  剩余{2}{3}");
+            RegisterString("消灭行星全部黑雾单位", "Kill all DF ground enemies on {0}{1}\n    remaining:{2}", "消灭行星{0}上的全部地面黑雾单位{1}\n    剩余 {2}");
+            RegisterString("消灭行星黑雾单位", "Kill DF ground enemies on {0}  {1}/{2}{3}", "消灭行星{0}上的地面黑雾单位  {1}/{2}{3}");
+            RegisterString("消灭行星全部黑雾单位", "Kill all DF ground bases on {0}{1}\n    remaining:{2}", "消灭行星{0}上的全部地面黑雾巢穴{1}\n    剩余 {2}");
+            RegisterString("到达行星gm", "Land planet {0}  {1}", "到达行星{0}  {1}");
+            RegisterString("已到达gm", "accomplished", "已完成");
+            RegisterString("这将终止序列", "End this event chain", "此事件链将终止");
+            RegisterString("未知后果", "Unknow consequences", "未知后果");
+            RegisterString("解译元驱动", "Interpret meta drive", "解译元驱动");
+            RegisterString("获得功勋点数", "Obtain merit points ", "获得功勋点数 ");
+            RegisterString("失去功勋点数", "Lose merit points ", "失去功勋点数");
+            RegisterString("提升功勋阶级", "Upgrade merit rank ", "提升功勋阶级 ");
+            RegisterString("降低功勋阶级", "Downgrade merit rank ", "降低功勋阶级 ");
+            RegisterString("推进随机巨构", "Auto-constructed random megastructures construct points", "推进星区中随机巨构的建造进度");
+            RegisterString("本次圣物解译普通概率", "Common decode-tracks appearing probability this time ", "本次解译出普通解码轨的概率 ");
+            RegisterString("本次圣物解译稀有概率", "Rare decode-tracks appearing probability this time ", "本次解译出稀有解码轨的概率 ");
+            RegisterString("本次圣物解译史诗概率", "Epic decode-tracks appearing probability this time ", "本次解译出史诗解码轨的概率 ");
+            RegisterString("本次圣物解译传说概率", "Legendary decode-tracks appearing probability this time ", "本次解译出传说解码轨的概率 ");
+            RegisterString("本次圣物解译被诅咒的概率", "Cursed decode-tracks appearing probability this time ", "本次解译出被诅咒的解码轨的概率 ");
+            RegisterString("免费随机次数", "Decode-track free re-roll ", "本次解码轨免费随机次数 ");
+            RegisterString("获得物品", "Obtain ", "获得 ");
+            RegisterString("此选项将导致", "<color=#FD965EC0>This decision will lead to:</color>", "<color=#FD965EC0>此选项将导致：</color>");
+            RegisterString("打开解译事件链", "Open meta drive interpretation event chain", "打开元驱动解译事件链");
+            RegisterString("aaa", "aaa", "aaa");
+            RegisterString("aaa", "aaa", "aaa");
 
         }
 
@@ -1711,7 +1261,601 @@ namespace DSP_Battle
         //    }
         //}
 
-      
+        public static void InitEventProtos()
+        {
+            EventSystem.protos = new Dictionary<int, EventProto>();
+            // 1 接入点
+            {
+                int id = 1001; // 没有任何圣物时，获得圣物必定为此事件
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { }, new int[] { });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { }, new int[] { 19997, 24 }, new int[] { 0, 600 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "What ...... is this?", "这是……什么？");
+                RegisterString("epd" + id.ToString(), "", "分析模块从黑雾基地的残骸中偶然发现了一个带有自解译系统的元驱动，这种驱动似乎载有高效利用宇宙底层物理逻辑的高维API，但目前还无法确定它的具体功能。幸运的是，它带有的自解译系统被保留得相当完好，只需要连接伊卡洛斯的研究中枢就可以直接对其进行解码。");
+                RegisterString("epdt" + id.ToString() + "-0", "Don't connect", "不要连接");
+                RegisterString("epdt" + id.ToString() + "-1", "Connect it!", "连接它！");
+            }
+            {
+                int id = 1002; // 通用圣物发现的首个事件
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { }, new int[] { });
+                ep.SetDecision(0, new int[] { }, new int[] { -1, 25201 }, new int[] { 0, 100 });
+                ep.SetDecision(1, new int[] { }, new int[] { 12, 21 }, new int[] { 0, 1800 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "发现潜在的元驱动");
+                RegisterString("epd" + id.ToString(), "", "在黑雾残骸的日志文件中发现了高维API的调用痕迹，这可能预示着宇宙元驱动的存在。但记载日志文件的实体极其不稳定，分析日志文件将破坏其物理结构，使其不再可用。或者伊卡洛斯可以选择将这个载有高维信息的日志文件在其存储体中直接编译为实体黑雾矩阵。");
+                RegisterString("epdt" + id.ToString() + "-0", "Compile it directly into the matrix", "将日志文件直接编译为矩阵");
+                RegisterString("epdt" + id.ToString() + "-1", "Analyze log file", "分析日志文件");
+            }
+            // 2
+            {
+                int id = 2101;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 1 }, new int[] { 300 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 19999, 25 }, new int[] { 0, 3600 * 3 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "分析模块完成了对日志的破坏性分析，发现其载体本身就是元驱动的实体化矩阵。幸运的是，借助其残存的自解译系统，伊卡洛斯或许可以尝试修复元驱动，使其变得可以被解译，但这将消耗一些必要的材料。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort repairing", "放弃修复");
+                RegisterString("epdt" + id.ToString() + "-1", "Attempt to repair", "尝试修复");
+            }
+            {
+                int id = 2102;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 400 }, new int[] { 0 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 18101 }, new int[] { 0 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "分析模块完成了对日志的破坏性分析，日志模糊地指向了一个行星，或许探测该行星可以找到元驱动的痕迹。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort searching", "放弃搜寻");
+                RegisterString("epdt" + id.ToString() + "-1", "Search on the planet", "在行星上搜寻"); // 需要到达：行星名称（点击标记）
+            }
+            {
+                int id = 2103;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 9999 }, new int[] { 100 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 19999, 24 }, new int[] { 0, 1800 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "分析模块完成了对日志的破坏性分析，奇怪的是，这个驱动是以无实体的形式被编码在整个星区的能量波动上的，并且对黑雾单位的解体过程有反应。每当有黑雾单位被摧毁，都会激发整个星区编码的规律性波动，分析模块或许可以通过学习大量的规律性波动数据来寻找解译驱动的方法。一旦样本量足够，伊卡洛斯就可以启动解译程序。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort", "放弃解译");
+                RegisterString("epdt" + id.ToString() + "-1", "Run interpretation procedure", "执行解译程序");
+            }
+            {
+                int id = 2104;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 11305, 30000 }, new int[] { 50, 1 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 19999, 24 }, new int[] { 0, 3600 * 8 });
+                ep.SetDecision(2, new int[] { 1 }, new int[] { 19999, 24 }, new int[] { 0, 1200 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "分析模块完成了对日志的破坏性分析，并轻松定位了元驱动的解译位点，伊卡洛斯需要在研究过程中将编译在内的物理规则与可理解的代码结构进行同步，来完成解译过程。或者，也可以直接使用量子芯片辅助解译，但这将花费较长的时间。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort interpretation", "放弃解译");
+                RegisterString("epdt" + id.ToString() + "-1", "Use quantum chip to support the interpretation", "使用量子芯片解译");
+                RegisterString("epdt" + id.ToString() + "-2", "Sync physical rules", "同步物理规则");
+            }
+            {
+                int id = 2201;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 1 }, new int[] { 400 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 13, 23 }, new int[] { 0, 3600 * 3 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "分析模块发现记载日志的物理存储结构已经受到了严重的损伤，不过该损伤似乎是可逆的。在执行分析之前，首先需要提供一些必要的材料来修复日志。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort repairing", "放弃修复");
+                RegisterString("epdt" + id.ToString() + "-1", "Attempt to repair and analyze", "尝试修复并分析");
+            }
+            {
+                int id = 2202;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 210 }, new int[] { 0 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 13, 21 }, new int[] { 0, 1800 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "分析模块发现了日志本身被高度加密了，加密的方式是通过在时间维度上快速改变密文实现的，显然，维持该加密需要能量的供给。伊卡洛斯轻易地定位到了这个能量来自于某个行星上的地面黑雾巢穴。如果摧毁了该行星上的全部黑雾基地，应该就可以执行日志的解密与分析程序了。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort decryption", "放弃解密");
+                RegisterString("epdt" + id.ToString() + "-1", "Decryption and analyze", "解密并分析"); // 需要消灭：行星名称上的黑雾基地（点击标记）
+            }
+            {
+                int id = 2203;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 300 }, new int[] { 0 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 14 }, new int[] { 0 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "分析模块完成了对日志的破坏性分析，数据指示元驱动的物理实体被分散保存在某行星上的地面黑雾基地中。摧毁该行星上的全部巢穴就可以取回驱动实体，以便进行下一步的解译了。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort", "放弃搜寻");
+                RegisterString("epdt" + id.ToString() + "-1", "Retrieve meta drive", "取回元驱动");
+            }
+            {
+                int id = 2204;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 89999 }, new int[] { 1000 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 13, 21 }, new int[] { 0, 1800 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "分析模块发现日志实体似乎被一股未知的能量密封在高维空间中，伊卡洛斯无法探查到任何信息。不过，借助恒星级别的能量或许能打破该能量屏障，这需要巨构的帮助。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort analyze", "放弃分析");
+                RegisterString("epdt" + id.ToString() + "-1", "Break the energy barrier and analyze", "打破能量屏障并分析");
+            }
+            {
+                int id = 2301;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 1, 1 }, new int[] { 500, 500 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 13, 23 }, new int[] { 0, 3600 * 3 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "分析模块发现记载日志的物理存储结构已经受到了严重的损伤，不过该损伤似乎是可逆的。在执行分析之前，首先需要提供一些必要的材料来修复日志。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort repairing", "放弃修复");
+                RegisterString("epdt" + id.ToString() + "-1", "Attempt to repair and analyze", "尝试修复并分析");
+            }
+            {
+                int id = 2302;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 200 }, new int[] { 0 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 13, 21 }, new int[] { 0, 3600 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "分析模块发现了日志本身被高度加密了，加密的方式是通过在时间维度上快速改变密文实现的，显然，维持该加密需要能量的供给。伊卡洛斯轻易地定位到了这个能量来自于某个行星上的地面黑雾单位。如果摧毁了该行星上全部的地面黑雾单位，应该就可以执行日志的解密与分析程序了。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort decryption", "放弃解密");
+                RegisterString("epdt" + id.ToString() + "-1", "Decryption and analyze", "解密并分析"); // 需要消灭：行星名称上的某个黑雾基地（点击标记）
+            }
+            {
+                int id = 2303;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 5 }, new int[] { 50 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 13, 21 }, new int[] { 0, 7200 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "分析模块发现，分析日志被一种高阶的机械活体密钥加密了，如果不获取完整的密钥，便无法解密并分析。不过，星区中的某个恒星附近发现了携带密钥片段的黑雾单位，若能摧毁足够多的太空黑雾单位，或许就能获取完整的机械活体密钥。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort decryption", "放弃解密");
+                RegisterString("epdt" + id.ToString() + "-1", "Decryption and analyze", "解密并分析");
+            }
+            {
+                int id = 2304;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 89999 }, new int[] { 10000 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 13, 21 }, new int[] { 0, 3600 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "分析模块发现日志实体似乎被一股未知的能量密封在高维空间中，伊卡洛斯无法探查到任何信息。不过，借助恒星级别的能量或许能打破该能量屏障，这需要巨构的帮助。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort analyze", "放弃分析");
+                RegisterString("epdt" + id.ToString() + "-1", "Break the energy barrier and analyze", "打破能量屏障并分析");
+            }
+            // 3
+            {
+                int id = 3201;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 1 }, new int[] { 300 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 19999, 25 }, new int[] { 0, 3600 * 3 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "分析模块完成了对日志的破坏性分析，发现其载体本身就是元驱动的实体化矩阵。幸运的是，借助其残存的自解译系统，伊卡洛斯或许可以尝试修复元驱动，使其变得可以被解译，但这将消耗一些必要的材料。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort repairing", "放弃修复");
+                RegisterString("epdt" + id.ToString() + "-1", "Attempt to repair", "尝试修复");
+            }
+            {
+                int id = 3202;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 400 }, new int[] { 0 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 18101 }, new int[] { 0 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "分析模块完成了对日志的破坏性分析，日志模糊地指向了一个行星，或许探测该行星可以找到元驱动的痕迹。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort searching", "放弃搜寻");
+                RegisterString("epdt" + id.ToString() + "-1", "Search on the planet", "在行星上搜寻"); // 需要到达：行星名称（点击标记）
+            }
+            {
+                int id = 3203;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 9999 }, new int[] { 150 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 19999, 24 }, new int[] { 0, 1800 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "分析模块完成了对日志的破坏性分析，这个驱动似乎是以无实体的形式被编码在整个星区的能量波动上的，并且对黑雾单位的解体过程有反应。每当有黑雾单位被摧毁，都会激发整个星区编码的规律性波动，分析模块或许可以通过学习大量的规律性波动数据来寻找解译驱动的方法。一旦样本量足够，伊卡洛斯就可以启动解译程序。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort", "放弃解译");
+                RegisterString("epdt" + id.ToString() + "-1", "Run interpretation procedure", "执行解译程序");
+            }
+            {
+                int id = 3204;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 11305, 30000 }, new int[] { 80, 1 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 19999, 24 }, new int[] { 0, 3600 * 8 });
+                ep.SetDecision(2, new int[] { 1 }, new int[] { 19999, 24 }, new int[] { 0, 1200 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "分析模块完成了对日志的破坏性分析，并轻松定位了元驱动的解译位点，伊卡洛斯需要在研究过程中将编译在内的物理规则与可理解的代码结构进行同步，来完成解译过程。或者，也可以直接使用量子芯片辅助解译，但这将花费较长的时间。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort interpretation", "放弃解译");
+                RegisterString("epdt" + id.ToString() + "-1", "Use quantum chip to support the interpretation", "使用量子芯片解译");
+                RegisterString("epdt" + id.ToString() + "-2", "Sync physical rules", "同步物理规则");
+            }
+            {
+                int id = 3301;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 100, 100 }, new int[] { 100, 0 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 14, 6, 7 }, new int[] { 0, -25, -25 });
+                ep.SetDecision(2, new int[] { 1 }, new int[] { 14 }, new int[] { 0 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "分析模块完成了对日志的破坏性分析，发现元驱动的具体定位指向了一个太空黑雾巢穴，似乎元驱动的数据被分布式存储在了属于该太空黑雾巢穴的多个单位和节点中，如果想取回完整的元驱动，必须消灭该黑雾巢穴所有的单位和结构，包括中继站。或者，在伊卡洛斯获取了足够多的元驱动相关数据时立刻尝试进行解译，但不完整的数据会导致最终的解码轨分离得不够彻底，使得解码轨包含大量冗余代码，这会降低找到更高阶API的概率。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort searching", "放弃搜寻");
+                RegisterString("epdt" + id.ToString() + "-1", "Retrieve partial meta drive", "取回部分元驱动");
+                RegisterString("epdt" + id.ToString() + "-2", "Retrieve meta drive", "取回元驱动");
+            }
+            {
+                int id = 3302;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 9 }, new int[] { 15 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 14 }, new int[] { 0 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "分析模块完成了对日志的破坏性分析，日志提到了元驱动的数据会出现在某恒星系高阶单位中，如果能够提升该恒星系太空黑雾巢穴的等级，伊卡洛斯应该就能找到足够的元驱动数据。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort searching", "放弃搜寻");
+                RegisterString("epdt" + id.ToString() + "-1", "Retrieve meta drive", "取回元驱动");
+            }
+            {
+                int id = 3303;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 9999, 9996, 11305 }, new int[] { 400, 3, 500 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1, 25201 }, new int[] { 0, 800 });
+                ep.SetDecision(1, new int[] { 2 }, new int[] { 14 }, new int[] { 0 });
+                ep.SetDecision(2, new int[] { 1 }, new int[] { 14 }, new int[] { 0 });
+                ep.SetDecision(3, new int[] { 0 }, new int[] { 14 }, new int[] { 0 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "这个分析日志似乎拥有来自低阶生命的非机械的情感倾向，分析模块在对其进行破坏性分析的过程中，发现了类似于恐惧、同情、兴奋和好奇的生物情感。显然，单纯的日志文件没有承载复杂情感编码的需要。分析模块推测日志本身就携带着元驱动信息。但不幸的是，日志的人格牢牢地保护着自身的数据，分析模块无法直接读取。我们可以尝试杀死他的同类来让它恐惧，从而找到漏洞进行攻击性破译。或者利用它的同情降低它的戒备，还可以尝试使用大量的复杂物体引起它的好奇来试图转移其注意。如果放弃对它的入侵，它似乎愿意为我们提供一些感谢。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort", "放弃");
+                RegisterString("epdt" + id.ToString() + "-1", "Distract it", "分散它的注意力");
+                RegisterString("epdt" + id.ToString() + "-2", "Arouse its sympathy", "引起它的同情");
+                RegisterString("epdt" + id.ToString() + "-3", "Make it afraid", "让它恐惧");
+            }
+            {
+                int id = 3304;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 9995, 15201 }, new int[] { 10, 1000 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 14, 8 }, new int[] { 0, 100 });
+                ep.SetDecision(2, new int[] { 1 }, new int[] { 14 }, new int[] { 0 });
+                ep.SetDecision(3, new int[] { }, new int[] { 14, 2 }, new int[] { 0, -1 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "你尝试利用高维宇宙物理法则的违规行为已被COSMO技术伦理委员会发现，他们警告你必须立刻终止相关行动。我们可以无视他们的警告，继续获取元驱动数据，但这可能会带来后果，或者停止违反宇宙公约的行为。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort interpretation", "放弃解译");
+                RegisterString("epdt" + id.ToString() + "-1", "Warn the COSMO Technology Ethics Committee not to meddle", "警告COSMO技术伦理委员会不要多管闲事");
+                RegisterString("epdt" + id.ToString() + "-2", "Bribe the COSMO Technology Ethics Committee", "贿赂COSMO技术伦理委员会");
+                RegisterString("epdt" + id.ToString() + "-3", "Ignore them", "无视他们");
+            }
+            {
+                int id = 3401;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 5 }, new int[] { 0 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 14 }, new int[] { 0 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "分析模块完成了对日志的破坏性分析，发现元驱动的具体定位指向了一个恒星系，似乎元驱动的数据被分布式存储在了属于该星系的所有太空黑雾单位和巢穴中，我们不得不消灭该星系的全部太空黑雾单位来获取完整的元驱动。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort searching", "放弃搜寻");
+                RegisterString("epdt" + id.ToString() + "-1", "Retrieve meta drive", "取回元驱动");
+            }
+            {
+                int id = 3402;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 89999 }, new int[] { 30000 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 14 }, new int[] { 0 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "分析模块完成了对日志的破坏性分析，日志显示，元驱动居然被黑雾封闭在了恒星之中，尽管不知道他们是如何做到的，但是这种由机械生物进行的恒星级操作显然可以通过恒星级的能量破解。使用足够的恒星能量应该能够将元驱动以量子波涨落的形式从恒星中攫取出来。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort", "放弃搜寻");
+                RegisterString("epdt" + id.ToString() + "-1", "Retrieve meta drive", "取回元驱动");
+            }
+            {
+                int id = 3403;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 9999, 9996, 11305 }, new int[] { 500, 5, 600 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1, 25201 }, new int[] { 0, 800 });
+                ep.SetDecision(1, new int[] { 2 }, new int[] { 14 }, new int[] { 0 });
+                ep.SetDecision(2, new int[] { 1 }, new int[] { 14 }, new int[] { 0 });
+                ep.SetDecision(3, new int[] { 0 }, new int[] { 14 }, new int[] { 0 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "这个分析日志似乎拥有来自低阶生命的非机械的情感倾向，分析模块在对其进行破坏性分析的过程中，发现了类似于恐惧、同情、兴奋和好奇的生物情感。显然，单纯的日志文件没有承载复杂情感编码的需要。分析模块推测日志本身就携带着元驱动信息。但不幸的是，日志的人格牢牢地保护着自身的数据，分析模块无法直接读取。我们可以尝试杀死他的同类来让它恐惧，从而找到漏洞进行攻击性破译。或者利用它的同情降低它的戒备，还可以尝试使用大量的复杂物体引起它的好奇来试图转移其注意。如果放弃对它的入侵，它似乎愿意为我们提供一些感谢。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort", "放弃");
+                RegisterString("epdt" + id.ToString() + "-1", "Distract it", "分散它的注意力");
+                RegisterString("epdt" + id.ToString() + "-2", "Arouse its sympathy", "引起它的同情");
+                RegisterString("epdt" + id.ToString() + "-3", "Make it afraid", "让它恐惧");
+            }
+            {
+                int id = 3404;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 9995, 15201 }, new int[] { 10, 1000 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 14, 8 }, new int[] { 0, 100 });
+                ep.SetDecision(2, new int[] { 1 }, new int[] { 14 }, new int[] { 0 });
+                ep.SetDecision(3, new int[] { }, new int[] { 14, 2 }, new int[] { 0, -1 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "分析日志");
+                RegisterString("epd" + id.ToString(), "", "你尝试利用高维宇宙物理法则的违规行为已被COSMO技术伦理委员会发现，他们警告你必须立刻终止相关行动。我们可以无视他们的警告，继续获取元驱动数据，但这可能会带来后果，或者停止违反宇宙公约的行为。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort interpretation", "放弃解译");
+                RegisterString("epdt" + id.ToString() + "-1", "Warn the COSMO Technology Ethics Committee not to meddle", "警告COSMO技术伦理委员会不要多管闲事");
+                RegisterString("epdt" + id.ToString() + "-2", "Bribe the COSMO Technology Ethics Committee", "贿赂COSMO技术伦理委员会");
+                RegisterString("epdt" + id.ToString() + "-3", "Ignore them", "无视他们");
+            }
+            // 4
+            {
+                int id = 4201;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 19486 }, new int[] { 10 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { }, new int[] { 19999, 24, 6, 7 }, new int[] { 0, 3600 * 3, -25, -50 });
+                ep.SetDecision(2, new int[] { 0 }, new int[] { 19999, 24 }, new int[] { 0, 3600 * 10 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "搜寻元驱动");
+                RegisterString("epd" + id.ToString(), "", "元驱动被从黑雾巢穴的废墟中找到，不过已经部分损坏，伊卡洛斯现在可以直接对其进行解译，但可能导致最终的解码轨分离得不够彻底，使得解码轨包含大量冗余代码，这会降低找到更高阶API的概率。或者，伊卡洛斯可以借助量子计算机在解译的过程中预测缺失的源代码，这将规避这种潜在风险。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort interpretation", "放弃解译");
+                RegisterString("epdt" + id.ToString() + "-1", "Run interpretation procedure directly", "直接解译");
+                RegisterString("epdt" + id.ToString() + "-2", "Use quantum computer to predict missing source codes", "使用量子计算机预测缺失的源代码");
+            }
+            {
+                int id = 4301;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 19486 }, new int[] { 100 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { }, new int[] { 19998, 6, 7 }, new int[] { 0, -25, -50 });
+                ep.SetDecision(2, new int[] { 0 }, new int[] { 19998 }, new int[] { 0 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "寻回元驱动");
+                RegisterString("epd" + id.ToString(), "", "元驱动被成功获取，不过已经部分损坏，伊卡洛斯现在可以直接对其进行解译，但可能导致最终的解码轨分离得不够彻底，使得解码轨包含大量冗余代码，这会降低找到更高阶API的概率。或者，伊卡洛斯可以借助量子计算机在解译的过程中预测缺失的源代码，这将规避这种潜在风险。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort interpretation", "放弃解译");
+                RegisterString("epdt" + id.ToString() + "-1", "Run interpretation procedure directly", "直接解译");
+                RegisterString("epdt" + id.ToString() + "-2", "Use quantum computer to predict missing source codes", "使用量子计算机预测缺失的源代码");
+            }
+            {
+                int id = 4302;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 30000 }, new int[] { 3 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 19998 }, new int[] { 0 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "寻回元驱动");
+                RegisterString("epd" + id.ToString(), "", "元驱动被成功获取，伊卡洛斯需要在研究过程中将编译在内的物理规则与可理解的代码结构进行同步，来完成解译过程。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort interpretation", "放弃解译");
+                RegisterString("epdt" + id.ToString() + "-1", "Sync physical rules", "同步物理规则");
+            }
+            {
+                int id = 4303;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 9999 }, new int[] { 300 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 19998 }, new int[] { 0 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "寻回元驱动");
+                RegisterString("epd" + id.ToString(), "", "元驱动被成功获取，这个驱动似乎对黑雾单位的解体过程有反应。每当有黑雾单位被摧毁，都会激发整个星区编码的规律性波动，分析模块或许可以通过学习大量的规律性波动数据来寻找解译驱动的方法。一旦样本量足够，伊卡洛斯就可以启动解译程序。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort", "放弃解译");
+                RegisterString("epdt" + id.ToString() + "-1", "Continue interpretation procedure", "继续解译程序");
+            }
+            {
+                int id = 4304;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 1, 1 }, new int[] { 500, 500 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 19998, 22 }, new int[] { 0, 3600 * 3 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "寻回元驱动");
+                RegisterString("epd" + id.ToString(), "", "元驱动被成功获取，但其物理实体已部分损坏，必须提供一些必要的资源来对其进行修复才能够继续解译进程。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort interpretation", "放弃解译");
+                RegisterString("epdt" + id.ToString() + "-1", "Attempt to repair", "尝试修复");
+            }
+            {
+                int id = 4401;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 19486 }, new int[] { 200 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { }, new int[] { 19998, 6, 7 }, new int[] { 0, -25, -50 });
+                ep.SetDecision(2, new int[] { 0 }, new int[] { 19998 }, new int[] { 0 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "寻回元驱动");
+                RegisterString("epd" + id.ToString(), "", "元驱动被成功获取，不过已经部分损坏，伊卡洛斯现在可以直接对其进行解译，但可能导致最终的解码轨分离得不够彻底，使得解码轨包含大量冗余代码，这会降低找到更高阶API的概率。或者，伊卡洛斯可以借助量子计算机在解译的过程中预测缺失的源代码，这将规避这种潜在风险。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort interpretation", "放弃解译");
+                RegisterString("epdt" + id.ToString() + "-1", "Run interpretation procedure directly", "直接解译");
+                RegisterString("epdt" + id.ToString() + "-2", "Use quantum computer to predict missing source codes", "使用量子计算机预测缺失的源代码");
+            }
+            {
+                int id = 4402;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 30000 }, new int[] { 3 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 19998 }, new int[] { 0 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "寻回元驱动");
+                RegisterString("epd" + id.ToString(), "", "元驱动被成功获取，伊卡洛斯需要在研究过程中将编译在内的物理规则与可理解的代码结构进行同步，来完成解译过程。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort interpretation", "放弃解译");
+                RegisterString("epdt" + id.ToString() + "-1", "Sync physical rules", "同步物理规则");
+            }
+            {
+                int id = 4403;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 9999 }, new int[] { 1200 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 19998 }, new int[] { 0 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "寻回元驱动");
+                RegisterString("epd" + id.ToString(), "", "元驱动被成功获取，这个驱动似乎对黑雾单位的解体过程有反应。每当有黑雾单位被摧毁，都会激发整个星区编码的规律性波动，分析模块或许可以通过学习大量的规律性波动数据来寻找解译驱动的方法。一旦样本量足够，伊卡洛斯就可以启动解译程序。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort", "放弃解译");
+                RegisterString("epdt" + id.ToString() + "-1", "Continue interpretation procedure", "继续解译程序");
+            }
+            {
+                int id = 4404;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 1, 1 }, new int[] { 800, 800 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 19998, 22 }, new int[] { 0, 3600 * 3 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "寻回元驱动");
+                RegisterString("epd" + id.ToString(), "", "元驱动被成功获取，但其物理实体已部分损坏，必须提供一些必要的资源来对其进行修复才能够继续解译进程。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort interpretation", "放弃解译");
+                RegisterString("epdt" + id.ToString() + "-1", "Attempt to repair", "尝试修复");
+            }
+            {
+                int id = 4405;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 5 }, new int[] { 0 });
+                ep.SetDecision(0, new int[] { }, new int[] { -1 }, new int[] { 0 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 19998 }, new int[] { 0 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "寻回元驱动");
+                RegisterString("epd" + id.ToString(), "", "元驱动的一部分被成功获取，但其和某个星系的全部太空黑雾单位处于量子绑定的状态，元驱动的非实体编码在所有单位间以概率波的形式反复传递，却无法通过任何观察而坍缩。我们只有消灭了该星系的所有太空黑雾单位才能继续解译进程。");
+                RegisterString("epdt" + id.ToString() + "-0", "Abort interpretation", "放弃解译");
+                RegisterString("epdt" + id.ToString() + "-1", "Continue interpretation procedure", "继续解译程序");
+            }
+            // 8 用于衔接末尾
+            {
+                int id = 8101;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { }, new int[] { });
+                ep.SetDecision(0, new int[] { }, new int[] { 19999, 24 }, new int[] { 0, 1200 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "搜寻元驱动");
+                RegisterString("epd" + id.ToString(), "", "元驱动的能量波动被成功定位，这个保存完好的元驱动可以直接连接伊卡洛斯以进行解译。");
+                RegisterString("epdt" + id.ToString() + "-0", "Run interpretation procedure", "进行解译");
+            }
+            // 9
+            {
+                int id = 9997;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { }, new int[] { });
+                ep.SetDecision(0, new int[] { }, new int[] { 0 }, new int[] { 0 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "元驱动解译");
+                RegisterString("epd" + id.ToString(), "", "元驱动的信息被部分地解译了出来，但是分成了多条解码轨道，目前一些解码轨道是接近稳定的。你可以直接从中选择一条，将其从其他轨道中分离出来，这将明确并启用它的实际功效，使我们未来可以直接调用该API来规避或重写一些低阶的宇宙法则，但这也会摧毁提取其他解码轨的可能性。你也可以使用黑雾矩阵的友元信息重新编译所有轨道，并重新解译以试图找出其他亚稳态的解码轨。但注意，每次你进行重新编译-解译过程，都会使得圣物变得不稳定，从而增加下一次编译的难度，并加倍黑雾矩阵的花费。");
+                RegisterString("epdt" + id.ToString() + "-0", "OK", "好的");
+            }
+            {
+                int id = 9998;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { 15205, 15204, 15202 }, new int[] { 300, 500, 500 });
+                ep.SetDecision(0, new int[] { }, new int[] { 19999, 24 }, new int[] { 0, 3600 * 5 });
+                ep.SetDecision(1, new int[] { 0 }, new int[] { 19999, 24, 9 }, new int[] { 0, 3600 * 5, 3 });
+                ep.SetDecision(2, new int[] { 1 }, new int[] { 19999, 24, 8 }, new int[] { 0, 3600 * 5, 25 });
+                ep.SetDecision(3, new int[] { 2 }, new int[] { 19999, 24, 6, 7 }, new int[] { 0, 3600 * 5, 25, 25 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "元驱动解译");
+                RegisterString("epd" + id.ToString(), "", "在先前多次的解译进程中，分析模块发现了一些方法可以影响解译过程对解码轨的分离，从而影响最终可探知的高维API的概率分布。伊卡洛斯现在可以在解译进程开始前调整解译手段，从而获得某些调整效果，但只能选择其中一种。");
+                RegisterString("epdt" + id.ToString() + "-0", "OK", "直接解译");
+                RegisterString("epdt" + id.ToString() + "-1", "OK", "稳定元驱动");
+                RegisterString("epdt" + id.ToString() + "-2", "OK", "激发元驱动负熵波动");
+                RegisterString("epdt" + id.ToString() + "-3", "OK", "预解译并分离");
+            }
+            {
+                int id = 9999;
+                var ep = new EventProto(id);
+                ep.SetRequest(new int[] { }, new int[] { });
+                ep.SetDecision(0, new int[] { }, new int[] { 0 }, new int[] { 0 });
+                EventSystem.protos.Add(id, ep);
+                RegisterString("ept" + id.ToString(), "", "元驱动解译");
+                RegisterString("epd" + id.ToString(), "", "元驱动的信息被部分地解译了出来，并分成了多条解码轨道，目前一些解码轨道是接近稳定的。你可以直接从中选择一条，将其从其他轨道中分离出来，这将明确并启用它的实际功效，使我们未来可以直接调用该API来规避或重写一些低阶的宇宙法则，但这也会摧毁提取其他解码轨的可能性。你也可以使用黑雾矩阵的友元信息重新编译所有轨道，并重新解译以试图找出其他亚稳态的解码轨。但注意，每次你进行重新编译-解译过程，都会使得圣物变得不稳定，从而增加下一次编译的难度，并加倍黑雾矩阵的花费。");
+                RegisterString("epdt" + id.ToString() + "-0", "OK", "好的");
+            }
+
+            EventSystem.alterItems = new List<List<Tuple<int, int>>>();
+            List<Tuple<int, int>> altItem0 = new List<Tuple<int, int>>();
+            for (int i = 1101; i <= 1109; i++)
+            {
+                if(i!=1107)
+                    altItem0.Add(new Tuple<int, int>(i, 100));
+            }
+            for (int i = 1201; i <= 1203; i++)
+            {
+                altItem0.Add(new Tuple<int, int>(i, 50));
+            }
+            altItem0.Add(new Tuple<int, int>(1301, 50));
+            EventSystem.alterItems.Add(altItem0);
+
+            List<Tuple<int, int>> altItem1 = new List<Tuple<int, int>>();
+            altItem1.Add(new Tuple<int, int>(1107, 200));
+            altItem1.Add(new Tuple<int, int>(1119, 100));
+            altItem1.Add(new Tuple<int, int>(1204, 200));
+            altItem1.Add(new Tuple<int, int>(1205, 100));
+            altItem1.Add(new Tuple<int, int>(1206, 100));
+            altItem1.Add(new Tuple<int, int>(1303, 100));
+            altItem1.Add(new Tuple<int, int>(1401, 50));
+            EventSystem.alterItems.Add(altItem1);
+
+            List<Tuple<int, int>> altItem2 = new List<Tuple<int, int>>();
+            altItem1.Add(new Tuple<int, int>(1107, 300));
+            altItem1.Add(new Tuple<int, int>(1119, 200));
+            altItem1.Add(new Tuple<int, int>(1124, 400));
+            altItem1.Add(new Tuple<int, int>(1125, 100));
+            altItem1.Add(new Tuple<int, int>(1205, 200));
+            altItem1.Add(new Tuple<int, int>(1206, 200));
+            altItem1.Add(new Tuple<int, int>(1303, 200));
+            altItem1.Add(new Tuple<int, int>(1304, 100));
+            altItem1.Add(new Tuple<int, int>(1305, 40));
+            EventSystem.alterItems.Add(altItem2);
+
+            List<Tuple<int, int>> altItem3 = new List<Tuple<int, int>>();
+            altItem1.Add(new Tuple<int, int>(1124, 500));
+            altItem1.Add(new Tuple<int, int>(1125, 200));
+            altItem1.Add(new Tuple<int, int>(1126, 200));
+            altItem1.Add(new Tuple<int, int>(1127, 100));
+            altItem1.Add(new Tuple<int, int>(1205, 400));
+            altItem1.Add(new Tuple<int, int>(1206, 400));
+            altItem1.Add(new Tuple<int, int>(1209, 50));
+            altItem1.Add(new Tuple<int, int>(1304, 300));
+            altItem1.Add(new Tuple<int, int>(1305, 100));
+            altItem1.Add(new Tuple<int, int>(1402, 200));
+            altItem1.Add(new Tuple<int, int>(1403, 200));
+            altItem1.Add(new Tuple<int, int>(1803, 30));
+            altItem1.Add(new Tuple<int, int>(9481, 50));
+            altItem1.Add(new Tuple<int, int>(9484, 80));
+            altItem1.Add(new Tuple<int, int>(6005, 100));
+            EventSystem.alterItems.Add(altItem3);
+
+
+            List<Tuple<int, int>> altItem4 = new List<Tuple<int, int>>();
+            altItem1.Add(new Tuple<int, int>(1126, 300));
+            altItem1.Add(new Tuple<int, int>(1127, 200));
+            altItem1.Add(new Tuple<int, int>(1205, 600));
+            altItem1.Add(new Tuple<int, int>(1206, 600));
+            altItem1.Add(new Tuple<int, int>(1209, 100));
+            altItem1.Add(new Tuple<int, int>(1210, 300));
+            altItem1.Add(new Tuple<int, int>(1304, 400));
+            altItem1.Add(new Tuple<int, int>(1305, 200));
+            altItem1.Add(new Tuple<int, int>(1402, 400));
+            altItem1.Add(new Tuple<int, int>(1403, 400));
+            altItem1.Add(new Tuple<int, int>(1804, 30));
+            altItem1.Add(new Tuple<int, int>(9481, 120));
+            altItem1.Add(new Tuple<int, int>(9484, 150));
+            altItem1.Add(new Tuple<int, int>(9486, 50));
+            altItem1.Add(new Tuple<int, int>(6005, 200));
+            altItem1.Add(new Tuple<int, int>(6006, 150));
+            altItem1.Add(new Tuple<int, int>(5202, 300));
+            altItem1.Add(new Tuple<int, int>(5203, 200));
+            altItem1.Add(new Tuple<int, int>(5204, 300));
+            altItem1.Add(new Tuple<int, int>(5205, 50));
+            EventSystem.alterItems.Add(altItem4);
+
+        }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(ItemProto), "GetPropName")]
