@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace DSP_Battle
 {
@@ -79,7 +77,7 @@ namespace DSP_Battle
          *  100000000+          隐藏对应的decisionResult，不在按钮Tip上显示
          */
 
-        public EventProto(int id)
+        public EventProto(int id, bool register = true)
         {
             this.id = id;
             this.title = "ept" + id.ToString();
@@ -99,10 +97,18 @@ namespace DSP_Battle
             int level = id / 1000;
             if (level < 0)
                 level = 0;
-            if (level > 9) 
+            if (level > 9)
                 level = 9;
-            if (!EventSystem.protos.ContainsKey(id))
+            if (EventSystem.protos != null && !EventSystem.protos.ContainsKey(id))
                 protoCount[level]++;
+            if (EventSystem.alterProtos != null && register)
+            {
+                int fullLevel = id / 100;
+                if (!EventSystem.alterProtos.ContainsKey(fullLevel))
+                    EventSystem.alterProtos.Add(fullLevel, new List<int> { id });
+                else
+                    EventSystem.alterProtos[fullLevel].Add(id);
+            }
         }
         public void DescInsert(int[] insertId)
         {
@@ -138,6 +144,7 @@ namespace DSP_Battle
 
     public class EventRecorder
     {
+        public static int[] levelByRelicCount = new int[] { 0, 1, 2, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4 };
         public int protoId;
         public int lockedStarIndex;
         public int lockedPlanetId;
@@ -151,9 +158,74 @@ namespace DSP_Battle
         public int decodeType;
         public int decodeTimeNeed;
         public int decodeTimeSpend;
+
+        public void Export(BinaryWriter w)
+        {
+            w.Write(protoId);
+            w.Write(lockedStarIndex);
+            w.Write(lockedPlanetId);
+            w.Write(lockedOriAstroId);
+            w.Write(level);
+            w.Write(requestLen);
+            for (int i = 0; i < requestLen; i++)
+            {
+                w.Write(requestId[i]);
+            }
+            for (int i = 0; i < requestLen; i++)
+            {
+                w.Write(requestCount[i]);
+            }
+            for (int i = 0; i < requestLen; i++)
+            {
+                w.Write(requestMeet[i]);
+            }
+            w.Write(modifier.Length);
+            for (int i = 0; i < modifier.Length; i++)
+            {
+                w.Write(modifier[i]);
+            }
+            w.Write(decodeType);
+            w.Write(decodeTimeNeed);
+            w.Write(decodeTimeSpend);
+        }
+
+        public void Import(BinaryReader r)
+        {
+            protoId = r.ReadInt32();
+            lockedStarIndex = r.ReadInt32();
+            lockedPlanetId = r.ReadInt32();
+            lockedOriAstroId = r.ReadInt32();
+            level = r.ReadInt32();
+            requestLen = r.ReadInt32();
+            requestId = new int[requestLen];
+            for (int i = 0; i < requestLen; i++)
+            {
+                requestId[i] = r.ReadInt32();
+            }
+            requestCount = new int[requestLen];
+            for (int i = 0; i < requestLen; i++)
+            {
+                requestCount[i] = r.ReadInt32();
+            }
+            requestMeet = new int[requestLen];
+            for (int i = 0; i < requestLen; i++)
+            {
+                requestMeet[i] = r.ReadInt32();
+            }
+            int modifierLen = r.ReadInt32();
+            modifier = new int[modifierLen];
+            for (int i = 0; i < modifierLen; i++)
+            {
+                modifier[i] = r.ReadInt32();
+            }
+            decodeType = r.ReadInt32();
+            decodeTimeNeed = r.ReadInt32();
+            decodeTimeSpend = r.ReadInt32();
+        }
+
         public EventRecorder(int protoId, int[] prevModifier = null, int forceLevel = -1)
         {
-            if(EventSystem.protos.ContainsKey(protoId))
+            if (EventSystem.protos.ContainsKey(protoId))
             {
                 EventProto proto = EventSystem.protos[protoId];
                 this.protoId = protoId;
@@ -162,7 +234,12 @@ namespace DSP_Battle
                 lockedPlanetId = -1;
                 lockedOriAstroId = -1;
                 if (level < 0)
-                    level = Relic.GetRelicCount() + (Relic.recordRelics == null ? 0 : Relic.recordRelics.Count);
+                {
+                    int relicCount = Relic.GetRelicCount() + (Relic.recordRelics == null ? 0 : Relic.recordRelics.Count);
+                    if (relicCount > levelByRelicCount.Length)
+                        relicCount = levelByRelicCount.Length;
+                    level = levelByRelicCount[relicCount];
+                }
                 if (proto.requestLen > 0)
                 {
                     requestLen = proto.requestLen;
@@ -192,6 +269,10 @@ namespace DSP_Battle
                 requestId = new int[] { };
                 requestCount = new int[] { };
                 requestMeet = new int[] { };
+                int relicCount = Relic.GetRelicCount() + (Relic.recordRelics == null ? 0 : Relic.recordRelics.Count);
+                if (relicCount > levelByRelicCount.Length)
+                    relicCount = levelByRelicCount.Length;
+                level = levelByRelicCount[relicCount];
             }
             if (prevModifier == null)
                 modifier = new int[] { 0, 0, 0, 0, 0, 0 };
@@ -218,7 +299,7 @@ namespace DSP_Battle
             for (int i = 0; i < requestLen; i++)
             {
                 int code = requestId[i];
-                if(code < 1000)
+                if (code < 1000)
                 {
                     int actual = code * 10000;
                     int realLevel = Math.Min(Math.Max(0, level), 4);
@@ -340,7 +421,7 @@ namespace DSP_Battle
                     }
                     else if (code == 100)
                     {
-                        if(lockedOriAstroId < 0)
+                        if (lockedOriAstroId < 0)
                         {
                             int each = GameMain.galaxy.starCount / 4;
                             if (each < 1) each = 1;
@@ -437,7 +518,7 @@ namespace DSP_Battle
                         }
                         requestId[i] = actual + lockedPlanetId;
                     }
-                    else if(code == 400)
+                    else if (code == 400)
                     {
                         if (lockedPlanetId < 0)
                         {

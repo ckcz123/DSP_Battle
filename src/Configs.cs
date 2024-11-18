@@ -9,15 +9,16 @@ namespace DSP_Battle
 {
     public class Configs
     {
-        public static string versionString = "2.2.5";
-        public static string qq = "694213906";
-        public static bool developerMode = true; //发布前务必修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
-        
+        public static string versionString = "3.2.4";
+        public static string qq = "694213906 & 141801294";
+        public static bool developerMode = false; //发布前务必修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+
         public static bool enableProliferator4 = false;
         public static bool enableBattleBGM = true;
         public static bool enableAlertTextGlowing = true;
+        public static bool enableVoidInvasionUpdate = true;
         public static int versionWhenImporting = -1;
-        public static int versionCode = 30230426;
+        public static int versionCode = 30240830;
 
 
         public static int difficulty = 0; // -1 easy, 0 normal, 1 hard
@@ -59,7 +60,7 @@ namespace DSP_Battle
 
         public static int missile3Range;
 
-        public static int dropletAtk = 400000;
+        public static int dropletAtk = 200000;
 
         public static double dropletSpd = 30000.0;
 
@@ -79,7 +80,7 @@ namespace DSP_Battle
 
         public static int[] enemyLandCnt = new int[] { 1, 3, 5, 5, 10000 };
 
-        public static int[] enemyFireInterval = new int[] {120, 60, int.MaxValue, 60, 60 }; //每攻击一次间隔的tick0
+        public static int[] enemyFireInterval = new int[] { 120, 60, int.MaxValue, 60, 60 }; //每攻击一次间隔的tick0
 
         public static int[] enemyFireRange = new int[] { 5000, 8000, 15000, 15000, 30000 }; //射程
 
@@ -94,6 +95,19 @@ namespace DSP_Battle
         public static int eliteDurationFrames = 3600 * 3; // 精英进攻持续的时间
 
         // --- 虫洞信息
+
+        // 入侵的巢穴等级
+
+        public static List<int> levelMap = new List<int> { 1, 2, 5, 10, 15, 16, 18, 20, 22, 25, 25, 30, 30, 30, 30, 35, 35, 35, 40, 40, 45, 45, 50, 55, 60, 65, 70, 75, 80 }; 
+        // 集结阶段的所需时间（帧数），基本可以认为是入侵准备时间
+        public static List<int> assembleTimeMap = new List<int> { 3600 * 60, 3600 * 50, 3600 * 40, 3600 * 30, 3600 * 30, 3600 * 30, 3600 * 30, 3600 * 25, 3600 * 20, 3600 * 20, 3600 * 20, 3600 * 20, 3600 * 15, 3600 * 15, 3600 * 15, 3600 * 15, 3600 * 10 };
+        // 所有巢穴的入侵枪骑数量总和，标准值，可上下浮动10%
+        //public static List<int> totalAssaultNumMap = new List<int> { 5, 10, 15, 20, 30, 40, 50, 60, 80, 100, 120, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 900, 1000, 1200, 1400, 1600, 1800, 2000, 2250, 2500, 2750, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000, 7500, 8000, 8500, 9000, 9500, 10000, 11520 };
+        public static List<int> totalAssaultNumMap = new List<int> { 4, 8, 10, 12, 15, 20, 25, 30, 40, 50, 60, 70, 85, 100, 120, 130, 140, 150, 160, 170, 180, 190, 200, 220, 240, 260, 280, 300, 340, 380, 420, 460, 500, 550, 600, 650, 700, 750, 800, 900, 1000, 1200, 1440, 1440, 1400, 1440, 1440, 1440, 1440, 1440, 1440 };  // 11520 = 1440 * 8, len = 51
+        public static List<float> voidEnemyTakeDamageFactor = new List<float> {1, 0.9f, 0.8f, 0.7f, 0.7f, 0.7f, 0.6f, 0.6f, 0.6f, 0.58f, 0.58f, 0.56f, 0.56f, 0.54f, 0.54f, 0.52f, 0.52f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.49f, 0.48f, 0.47f, 0.46f, 0.45f, 0.44f, 0.43f, 0.42f, 0.41f, 0.40f, 0.39f, 0.38f, 0.37f, 0.36f, 0.35f, 0.34f, 0.33f, 0.32f, 0.31f, 0.30f, 0.29f, 0.28f, 0.27f, 0.26f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f };
+
+        public static List<int> rewardSPMap = new List<int> { 2, 3, 4, 4, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 26, 28, 30, 30, 30, 30, 30, 30 };
+
         public static int _wormholeRange;
 
         public static int[] intensity;
@@ -109,7 +123,7 @@ namespace DSP_Battle
         // --- 战斗信息
         public static long nextWaveFrameIndex = -1;
         public static int nextWaveStarIndex = -1;
-        public static int nextWaveState = 0; // 0: not generated; 1: wave generated; 2: wormhole generated; 3: in battle
+        public static int combatState = 0; // 0: not generated; 1: wave generated; 2: wormhole generated; 3: in battle
 
         public static long nextWaveDelay = 0;
         public static long extraSpeedFrame = -1;
@@ -140,7 +154,7 @@ namespace DSP_Battle
                 new Tuple<int, int>(50000000, 0) };
 
         //Rank信息
-        public static int[] expToNextRank = new int[] { 10, 100, 800, 3000, 20000, 100000, 500000, 1000000, 8000000, 30000000, 0, 0, 0};
+        public static int[] expToNextRank = new int[] { 20, 200, 1000, 5000, 30000, 200000, 500000, 1000000, 2000000, 10000000, 2000000, 0, 0 };
         public static float[] rewardTimeRatio = new float[] { 1.0f, 1.0f, 1.2f, 1.2f, 1.4f, 1.4f, 1.6f, 1.6f, 1.8f, 1.8f, 2.0f, 2.0f, 2.0f, 2.0f };
         public static float[] expRatioByDifficulty = new float[] { 0.75f, 1f, 1.5f };
         public static int expPerAlienMeta = 20; //每个解码后的异星元数据上传提供的基础功勋点数
@@ -150,6 +164,8 @@ namespace DSP_Battle
         //public static double[] relic1settings = { 0.1, -1, -1, 1, -1, 0.1, 500, 20, 1, -1 }; // 史诗遗物的功能概率或数值设定
         //public static double[] relic2settings = { 0.1, -1, -1, 1, -1, 0.1, 500, 20, 1, -1 }; // 稀有遗物的功能概率或数值设定
         //public static double[] relic3settings = { 0.1, -1, -1, 1, -1, 0.1, 500, 20, 1, -1 }; // 普通遗物的功能概率或数值设定
+
+
 
         public static int totalWave
         {
@@ -251,12 +267,12 @@ namespace DSP_Battle
             enemyHp[0] = 4000; // config.Bind("config", "enemy1Hp", defaultValue: 4000, "敌方飞船1血量").Value;
             enemySpeed[0] = 1000f; // config.Bind("config", "enemy1Speed", defaultValue: 1500f, "敌方飞船1速度（米每秒）").Value;
             enemyRange[0] = 20; // config.Bind("config", "enemy1Range", defaultValue: 20, "敌方飞船1破坏范围").Value;
-            
+
             enemyIntensity[1] = 4; // 对子弹类型的伤害（不包括相位）具有90%闪避概率
             enemyHp[1] = 20000; // config.Bind("config", "enemy2Hp", defaultValue: 20000, "敌方飞船2血量").Value;
             enemySpeed[1] = 1500f; // config.Bind("config", "enemy2Speed", defaultValue: 2000f, "敌方飞船2速度（米每秒）").Value;
             enemyRange[1] = 40; // config.Bind("config", "enemy2Range", defaultValue: 40, "敌方飞船2破坏范围").Value;
-            
+
             enemyIntensity[2] = 6; // 会直接撞向护盾，摧毁自己并对护盾造成巨量伤害
             enemyHp[2] = 10000; // config.Bind("config", "enemy3Hp", defaultValue: 10000, "敌方飞船3血量").Value;
             enemySpeed[2] = 3000f; // config.Bind("config", "enemy3Speed", defaultValue: 5000f, "敌方飞船3速度（米每秒）").Value;
@@ -307,14 +323,14 @@ namespace DSP_Battle
 
             w.Write(nextWaveFrameIndex);
             w.Write(nextWaveStarIndex);
-            w.Write(nextWaveState);
+            w.Write(combatState);
             w.Write(nextWaveDelay);
 
             w.Write(extraSpeedFrame);
             w.Write(extraSpeedEnabled);
 
             w.Write(nextWaveIntensity);
-            
+
             w.Write(nextWaveWormCount);
 
             for (var i = 0; i < 10; ++i) w.Write(nextWaveEnemy[i]);
@@ -339,7 +355,7 @@ namespace DSP_Battle
 
             nextWaveFrameIndex = r.ReadInt64();
             nextWaveStarIndex = r.ReadInt32();
-            nextWaveState = r.ReadInt32();
+            combatState = r.ReadInt32();
             nextWaveDelay = r.ReadInt64();
 
             extraSpeedFrame = r.ReadInt64();
@@ -364,16 +380,16 @@ namespace DSP_Battle
                 for (var i = 0; i < 100; ++i) wavePerStar[i] = r.ReadInt32();
             }
 
-            if(importVersion >= 30220420)
+            if (importVersion >= 30220420)
             {
                 nextWaveMatrixExpectation = r.ReadInt32();
             }
             else
             {
                 nextWaveMatrixExpectation = expectationMatrices[0];
-                if(nextWaveState>0 && nextWaveStarIndex>=0)
+                if (combatState > 0 && nextWaveStarIndex >= 0)
                 {
-                    nextWaveMatrixExpectation = expectationMatrices[Math.Min(expectationMatrices.Length-1, wavePerStar[nextWaveStarIndex])];
+                    nextWaveMatrixExpectation = expectationMatrices[Math.Min(expectationMatrices.Length - 1, wavePerStar[nextWaveStarIndex])];
                 }
             }
 
@@ -398,7 +414,7 @@ namespace DSP_Battle
 
             nextWaveFrameIndex = -1;
             nextWaveStarIndex = -1;
-            nextWaveState = 0;
+            combatState = 0;
             nextWaveDelay = 0;
 
             extraSpeedFrame = -1;

@@ -1,9 +1,5 @@
 ﻿using HarmonyLib;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -66,7 +62,7 @@ namespace DSP_Battle
 
             for (int i = 0; i < __instance.itemIcons.Length; i++)
             {
-                if(data._type == 1)
+                if (data._type == 1)
                 {
                     __instance.itemIcons[i].gameObject.SetActive(true);
                     __instance.itemIcons[i].sprite = data._sprite;
@@ -80,7 +76,7 @@ namespace DSP_Battle
                     __instance.itemIcons[i].sprite = null;
                     __instance.itemButtons[i].tips.itemId = 0;
 
-                } 
+                }
                 else
                 {
                     __instance.itemIcons[i].gameObject.SetActive(true);
@@ -94,7 +90,7 @@ namespace DSP_Battle
             __instance.functionText.text = data._type == 0 ? data._title : "";
             __instance.functionText.rectTransform.anchoredPosition = new Vector2(0f, (float)(-(float)num2));
 
-            if (!string.IsNullOrEmpty(data._title) && data._type==0)
+            if (!string.IsNullOrEmpty(data._title) && data._type == 0)
             {
                 num2 += (int)__instance.functionText.preferredHeight;
                 num2 += 5;
