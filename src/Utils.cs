@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.UI;
 using Random = System.Random;
 
 namespace DSP_Battle
 {
-    public static class Utils
+    public class Utils
     {
         static int seed = Environment.TickCount;
 
@@ -81,11 +84,11 @@ namespace DSP_Battle
 
         public static string KMGFormat(long num)
         {
-            if (num >= 1000000000000000)
+            if(num >= 1000000000000000)
             {
                 return (num * 1.0 / 1000000000000000).ToString("G3") + " P";
             }
-            else if (num >= 1000000000000)
+            else if(num >= 1000000000000)
             {
                 return (num * 1.0 / 1000000000000).ToString("G3") + " T";
             }
@@ -189,22 +192,5 @@ namespace DSP_Battle
             _this.time = (flag ? 0f : 0.3f);
         }
 
-        public static double beginBasic = 0.0001;
-        public static double minBasic = 0.0001;
-        public static double dec = 0.9999;
-        public static void Test()
-        {
-            double total = 1;
-            double basic = beginBasic;
-            for (int i = 0; i < 10000; i++)
-            {
-                total *= 1 - basic;
-                basic *= dec;
-                if (basic < minBasic)
-                    basic = minBasic;
-                Log($"{i} cur prob is {basic}, total prob {1 - total}");
-            }
-        }
-        
     }
 }

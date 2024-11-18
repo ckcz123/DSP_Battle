@@ -15,7 +15,7 @@ using xiaoye97;
 
 namespace DSP_Battle
 {
-    [BepInPlugin("com.ckcz123.DSP_Battle", "DSP_Battle", "3.2.5")]
+    [BepInPlugin("com.ckcz123.DSP_Battle", "DSP_Battle", "2.1.2")]
     [BepInDependency(DSPModSavePlugin.MODGUID)]
     [BepInDependency(CommonAPIPlugin.GUID)]
     [BepInDependency(LDBToolPlugin.MODGUID)]
@@ -23,10 +23,10 @@ namespace DSP_Battle
     [CommonAPISubmoduleDependency(nameof(ProtoRegistry))]
     [CommonAPISubmoduleDependency(nameof(TabSystem))]
     [CommonAPISubmoduleDependency(nameof(LocalizationModule))]
-
+    
     public class DspBattlePlugin : BaseUnityPlugin, IModCanSave
     {
-        public const string GUID = "com.ckcz123.DSP_Battle";
+        public static string GUID = "com.ckcz123.DSP_Battle";
         public static string MODID_tab = "DSPBattle";
 
         public static System.Random randSeed = new System.Random();
@@ -35,18 +35,8 @@ namespace DSP_Battle
         private static ConfigFile config;
         public static ConfigEntry<int> starCannonRenderLevel;
         public static ConfigEntry<bool> starCannonDirectionReverse;
-        public static ConfigEntry<bool> enableBattleBGM;
-        public static ConfigEntry<float> battleBGMVolume;
 
         public static bool isControlDown = false;
-        public static bool isShiftDown = false;
-
-        public static bool playerInvincible = false;
-
-        public static GameObject mainLogo = null;
-        public static GameObject escLogo = null;
-        public static Texture2D logoTexture = null;
-        public static Texture2D escLogoTexture = null;
         public void Awake()
         {
             logger = Logger;
@@ -73,20 +63,16 @@ namespace DSP_Battle
             }
             starCannonRenderLevel = Config.Bind<int>("config", "StarCannonRenderLevel", 2, "[0-3] Higher Level will provide more star cannon effect and particles but might decrease the UPS and FPS when star cannon is firing. 更高的设置会提供更多的恒星炮特效，但可能会在恒星炮开火时降低帧率，反之则可能提高开火时的帧率。");
             starCannonDirectionReverse = Config.Bind<bool>("config", "starCannonDirectionReverse", false, "Deprecated. 已弃用。");
-            enableBattleBGM = Config.Bind<bool>("config", "EnableBattleBGM", true, "Set to false to disable the BGM switching when Icarus is in combat. 设置为false来关闭战斗时的BGM切换。");
-            battleBGMVolume = Config.Bind<float>("config", "BattleBGMVolume", 1.0f, "( 0.0 - 2.0 )Control the Battle BGM's volume, will not affect the vanilla game BGM.  控制战斗音乐的音量大小，不会影响游戏默认BGM的音量。最小为0，最大为2.");
 
-
+            
             MoreMegaStructure.StarCannon.renderLevel = starCannonRenderLevel.Value;
             MoreMegaStructure.StarCannon.renderLevel = MoreMegaStructure.StarCannon.renderLevel > 3 ? 3 : MoreMegaStructure.StarCannon.renderLevel;
             MoreMegaStructure.StarCannon.renderLevel = MoreMegaStructure.StarCannon.renderLevel < 0 ? 0 : MoreMegaStructure.StarCannon.renderLevel;
-            Configs.enableBattleBGM = enableBattleBGM.Value;
-            BattleBGMController.volumeFactor = BattleBGMController.volumeBasic * (float)Maths.Clamp(battleBGMVolume.Value, 0.0f, 2.0f);
             //EnemyShips.Init();
             Harmony.CreateAndPatchAll(typeof(DspBattlePlugin));
-
+            
             Harmony.CreateAndPatchAll(typeof(BattleProtos));
-            Harmony.CreateAndPatchAll(typeof(NewGameOption));
+            Harmony.CreateAndPatchAll(typeof(FastStartOption));
             Harmony.CreateAndPatchAll(typeof(UIDialogPatch));
             Harmony.CreateAndPatchAll(typeof(Droplets));
             Harmony.CreateAndPatchAll(typeof(RendererSphere));
@@ -101,24 +87,16 @@ namespace DSP_Battle
             Harmony.CreateAndPatchAll(typeof(StationOrderFixPatch));
             Harmony.CreateAndPatchAll(typeof(DropletFleetPatchers));
             Harmony.CreateAndPatchAll(typeof(EventSystem));
-            Harmony.CreateAndPatchAll(typeof(AssaultController));
-            Harmony.CreateAndPatchAll(typeof(UIAssaultAlert));
-            Harmony.CreateAndPatchAll(typeof(UIEscMenuPatch));
-            Harmony.CreateAndPatchAll(typeof(UIHiveNamePatcher));
-            Harmony.CreateAndPatchAll(typeof(WormholeRenderer));
-            Harmony.CreateAndPatchAll(typeof(UIEnemyBriefInfoPatcher));
 
             LDBTool.PreAddDataAction += BattleProtos.AddProtos;
             BattleProtos.AddTranslate();
             //LDBTool.PostAddDataAction += BattleProtos.PostDataAction;
             BattleProtos.InitEventProtos();
-            TCFVPerformanceMonitor.Awake();
-            EvolveData.levelExps[100] = 2147483647; // 防止出现除以0的错误
         }
 
         public void Start()
         {
-            BattleBGMController.InitAudioSources();
+            //BattleBGMController.InitAudioSources();
 
         }
 
@@ -134,7 +112,7 @@ namespace DSP_Battle
                 //Debug.Log("Z test log by TCFV");
                 //Debug.LogError("Z error log by TCFV");
                 //EnemyShips.TestDestoryStation();
-                //Rank.AddExp(100000);
+                Rank.AddExp(100000);
                 if (MoreMegaStructure.MoreMegaStructure.curStar != null)
                 {
                     int starIndex = MoreMegaStructure.MoreMegaStructure.curStar.index;
@@ -162,93 +140,45 @@ namespace DSP_Battle
                 isControlDown = false;
                 UIStarFortress.RefreshSetBtnText();
             }
-            if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+            if (Input.GetKeyDown(KeyCode.Minus) && isControlDown && !GameMain.isPaused && (Configs.nextWaveState == 1 || Configs.nextWaveState == 2))
             {
-                isShiftDown = true;
-                UIStarFortress.RefreshSetBtnText();
+                Configs.nextWaveFrameIndex -= 60 * 60;
+                if (Configs.nextWaveFrameIndex < GameMain.instance.timei) Configs.nextWaveFrameIndex = GameMain.instance.timei; // 对于精英波次，如果一次回退超过了倒计时，会减少精英波次的持续时间
+                //由于强行使进攻提前到来，期望掉落的矩阵数减少10%，最少降低到无时间加成（即10min间隔）的对应波次基础期望的10%。
+                if (Relic.HaveRelic(3,4)) // relic 3-4 只减少5%
+                    Configs.nextWaveMatrixExpectation = (int)(Configs.nextWaveMatrixExpectation * 0.95f);
+                else
+                    Configs.nextWaveMatrixExpectation = (int)(Configs.nextWaveMatrixExpectation * 0.9f);
+
+                int minExpectation = (int)(Configs.expectationMatrices[Math.Min(Configs.expectationMatrices.Length - 1, Configs.wavePerStar[Configs.nextWaveStarIndex])] * 0.1f);
+                if (Configs.nextWaveMatrixExpectation < minExpectation) Configs.nextWaveMatrixExpectation = minExpectation;
             }
-            if (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.RightShift))
-            {
-                isShiftDown = false;
-                UIStarFortress.RefreshSetBtnText();
-            }
-            if (Input.GetKeyDown(KeyCode.UpArrow) && UIDevConsole.consoleObj != null && UIDevConsole.consoleObj.activeSelf)
-            {
-                DevConsole.PrevCommand();
-            }
-            if (Input.GetKeyDown(KeyCode.DownArrow) && UIDevConsole.consoleObj != null && UIDevConsole.consoleObj.activeSelf)
-            {
-                DevConsole.NextCommand();
-            }
-            if (Input.GetKeyDown(KeyCode.BackQuote))
-            {
-                if (MoreMegaStructure.MoreMegaStructure.GenesisCompatibility && isControlDown)
-                    UIEventSystem.OnEventButtonClick();
-                else if (!MoreMegaStructure.MoreMegaStructure.GenesisCompatibility)
-                    UIEventSystem.OnEventButtonClick();
-            }
-            if (Input.GetKeyDown(KeyCode.L) && !VFInput.inputing)
-            {
-                UISkillPointsWindow.Switch();
-            }
-            if (Configs.developerMode && isControlDown && Input.GetKeyDown(KeyCode.Z))
+            if(Configs.developerMode && isControlDown && Input.GetKeyDown(KeyCode.Z))
             {
                 Relic.PrepareNewRelic();
                 int planetId = 103;
                 if (GameMain.localPlanet != null)
                     planetId = GameMain.localPlanet.id;
             }
-            if (Configs.developerMode && isControlDown && Input.GetKeyDown(KeyCode.M))
-            {
-            }
-            if (Configs.developerMode && isControlDown && Input.GetKeyDown(KeyCode.K))
-            {
-                GameMain.mainPlayer.Kill();
-            }
             if (Configs.developerMode && isControlDown && Input.GetKeyDown(KeyCode.G))
             {
+                EventSystem.InitNewEvent();
             }
             if (Configs.developerMode && isControlDown && Input.GetKeyDown(KeyCode.H))
             {
-                for (int i = 0; i < AssaultController.assaultHives.Count; i++)
-                {
-                    AssaultController.assaultHives[i].time -= 3600;
-                    AssaultController.assaultHives[i].timeTillAssault -= 3600;
-                }
-            }
-            if (Configs.developerMode && isShiftDown && Input.GetKeyDown(KeyCode.H))
-            {
-                for (int i = 0; i < AssaultController.assaultHives.Count; i++)
-                {
-                    AssaultController.assaultHives[i].time -= 3600 * 5;
-                    AssaultController.assaultHives[i].timeTillAssault -= 3600 * 5;
-                }
+                EventSystem.ClearEvent();
             }
             if (Configs.developerMode && isControlDown && Input.GetKeyDown(KeyCode.J))
             {
-                AssaultController.InitNewAssault(-1);
+                EventSystem.TestIfGroudBaseInited();
             }
-            if (Configs.developerMode && isShiftDown && Input.GetKeyDown(KeyCode.J))
-            {
-                for (int i = 0; i < AssaultController.assaultHives.Count; i++)
-                {
-                    AssaultController.assaultHives[i].state = EAssaultHiveState.Remove;
-                }
-            }
-
-            if (playerInvincible && GameMain.mainPlayer != null)
-                GameMain.mainPlayer.invincibleTicks = 60;
-
             UIRelic.SelectionWindowAnimationUpdate();
             UIRelic.CheckRelicSlotsWindowShowByMouse();
             UIRelic.SlotWindowAnimationUpdate();
             UIEventSystem.OnUpdate();
-            BattleBGMController.BGMLogicUpdate();
-            UISkillPointsWindow.Update();
+            //BattleBGMController.BGMLogicUpdate();
             DevConsole.Update();
         }
-
-
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameMain), "OnDestroy")]
         public static void GameMain_onDestroy()
@@ -275,22 +205,8 @@ namespace DSP_Battle
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(UIMainMenu), "_OnUpdate")]
-        public static void UIMainMenu_OnUpdate()
-        {
-            UpdateLogo();
-        }
-
-        [HarmonyPostfix]
         [HarmonyPatch(typeof(UIEscMenu), "_OnOpen")]
         public static void UIEscMenu_OnOpen()
-        {
-            UpdateLogo();
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(UIEscMenu), "_OnUpdate")]
-        public static void UIEscMenu_OnUpdate()
         {
             UpdateLogo();
         }
@@ -302,52 +218,20 @@ namespace DSP_Battle
             UpdateLogo();
         }
 
-        /// <summary>
-        /// 用于拦截Esc键按下时优先关闭已打开的窗口（如果有），而非打开esc菜单
-        /// </summary>
-        /// <returns></returns>
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(GameMain), "LateUpdate")]
-        public static bool EscLogicBlocker()
-        {
-            UIDevConsole.EscLogic();
-            UIEventSystem.EscLogic();
-            UISkillPointsWindow.EscLogic();
-            return true;
-        }
-
         public static void UpdateLogo()
         {
-            if(mainLogo == null)
-                mainLogo = GameObject.Find("UI Root/Overlay Canvas/Main Menu/dsp-logo");
-            if(escLogo == null)
-                escLogo = GameObject.Find("UI Root/Overlay Canvas/In Game/Esc Menu/logo");
+            var mainLogo = GameObject.Find("UI Root/Overlay Canvas/Main Menu/dsp-logo");
+            var escLogo = GameObject.Find("UI Root/Overlay Canvas/In Game/Esc Menu/logo");
 
-            
-            if (logoTexture == null || escLogoTexture == null)
-            {
-                var iconstr = DSPGame.globalOption.languageLCID == 2052
-                ? "Assets/DSPBattle/LOGO-cn"
-                : "Assets/DSPBattle/LOGO-en";
-                var escIconstr = DSPGame.globalOption.languageLCID == 2052
-                    ? "Assets/DSPBattle/LOGO-cn-c"
-                    : "Assets/DSPBattle/LOGO-en";
-                if (MoreMegaStructure.MoreMegaStructure.GenesisCompatibility)
-                {
-                    iconstr = DSPGame.globalOption.languageLCID == 2052
-                    ? "Assets/DSPBattle/LOGOGB-cn"
-                    : "Assets/DSPBattle/LOGOGB-en";
-                    escIconstr = iconstr;
-                    mainLogo.GetComponent<RectTransform>().sizeDelta = new Vector2(600, 250);
-                    escLogo.GetComponent<RectTransform>().sizeDelta = new Vector2(600, 250);
-                }
-                logoTexture = Resources.Load<Sprite>(iconstr).texture;
-                escLogoTexture = Resources.Load<Sprite>(escIconstr).texture;
-            }
-            if(mainLogo.GetComponent<RawImage>().texture != logoTexture)
-                mainLogo.GetComponent<RawImage>().texture = logoTexture;
-            if(escLogo.GetComponent<RawImage>().texture != escLogoTexture)
-                escLogo.GetComponent<RawImage>().texture = escLogoTexture;
+            var iconstr = DSPGame.globalOption.languageLCID == 2052
+                ? "Assets/DSPBattle/logocn"
+                : "Assets/DSPBattle/logoen";
+            var texture = Resources.Load<Sprite>(iconstr).texture;
+
+            mainLogo.GetComponent<RawImage>().texture = texture;
+            escLogo.GetComponent<RawImage>().texture = texture;
+            mainLogo.GetComponent<RectTransform>().sizeDelta = new Vector2(texture.width, texture.height);
+            escLogo.GetComponent<RectTransform>().sizeDelta = new Vector2(texture.width, texture.height);
         }
 
         [HarmonyPostfix]
@@ -361,10 +245,9 @@ namespace DSP_Battle
         }
 
         public static void InitStaticDataWhenLoad()
-        {
+        { 
             BattleProtos.RewriteTutorialProtosWhenLoad();
             BattleProtos.EditProtossWhenLoad();
-            MP.InitBlocker();
         }
 
         public void Export(BinaryWriter w)
@@ -374,11 +257,8 @@ namespace DSP_Battle
             Rank.Export(w);
             Relic.Export(w);
             EventSystem.Exprot(w);
-            StarFortress.Export(w);
-            SkillPoints.Export(w);
-            AssaultController.Export(w);
-
-            DevConsole.Export(w);
+            //StarFortress.Export(w);
+            //DevConsole.Export(w);
         }
 
         public void Import(BinaryReader r)
@@ -388,24 +268,21 @@ namespace DSP_Battle
             Rank.Import(r);
             Relic.Import(r);
             EventSystem.Import(r);
-            StarFortress.Import(r);
-            SkillPoints.Import(r);
-            AssaultController.Import(r);
-
-            DevConsole.Import(r);
+            //StarFortress.Import(r);
+            //DevConsole.Import(r);
 
             BattleProtos.ReCheckTechUnlockRecipes();
             BattleProtos.UnlockTutorials();
-            BattleBGMController.InitWhenLoad();
+            //BattleBGMController.InitWhenLoad();
 
             InitStaticDataWhenLoad();
-
-            if (RendererSphere.dropletSpheres.Count != GameMain.galaxy.starCount) RendererSphere.InitAll();
         }
 
         public void IntoOtherSave()
         {
             Configs.IntoOtherSave();
+            //EnemyShips.IntoOtherSave();
+            //MissileSilo.IntoOtherSave();
             Droplets.IntoOtherSave();
             Rank.IntoOtherSave();
             Relic.IntoOtherSave();
@@ -413,16 +290,14 @@ namespace DSP_Battle
             StarFortress.IntoOtherSave();
 
             DevConsole.IntoOtherSave();
-            SkillPoints.IntoOtherSave();
-            AssaultController.IntoOtherSave();
 
+            //EnemyShipUIRenderer.Init();
+            //EnemyShipRenderer.Init();
             BattleProtos.ReCheckTechUnlockRecipes();
             BattleProtos.UnlockTutorials();
-            BattleBGMController.InitWhenLoad();
+            //BattleBGMController.InitWhenLoad();
 
             InitStaticDataWhenLoad();
-
-            if (RendererSphere.dropletSpheres.Count != GameMain.galaxy.starCount) RendererSphere.InitAll();
         }
 
 

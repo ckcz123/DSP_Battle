@@ -1,4 +1,9 @@
-﻿namespace DSP_Battle
+﻿using HarmonyLib;
+using System;
+using System.Collections.Generic;
+using System.Reflection.Emit;
+
+namespace DSP_Battle
 {
     /// <summary>
     /// Created by starfi5h

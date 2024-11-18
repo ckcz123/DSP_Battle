@@ -1,9 +1,15 @@
-﻿using HarmonyLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Threading;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
+using System.Collections.Concurrent;
+using System.IO;
+using HarmonyLib;
+using System.Threading;
+using static UnityEngine.EventSystems.EventTrigger;
 
 namespace DSP_Battle
 {
@@ -67,12 +73,10 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(GameData), "GameTick")]
         public static void GameData_GameTick(ref GameData __instance, long time)
         {
-            MoreMegaStructure.MMSCPU.BeginSample(TCFVPerformanceMonitor.MainLogic);
-            MoreMegaStructure.MMSCPU.BeginSample(TCFVPerformanceMonitor.Droplet);
             // 计算当前舰队配置中有多少水滴已经填充，然后设置正确的dropletPool中的水滴状态
             CombatModuleComponent spaceModule = GameMain.mainPlayer?.mecha?.spaceCombatModule;
             int moduleNum = 0;
-            if (spaceModule != null)
+            if(spaceModule != null)
             {
                 if (spaceModule.moduleEnabled)
                 {
@@ -120,10 +124,7 @@ namespace DSP_Battle
 
             //计算当前机甲能量可支持的最大运行状态的水滴数
             double mechaCurEnergy = GameMain.mainPlayer.mecha.coreEnergy;
-            long energyThreshold = 100000000;
-            if (Relic.HaveRelic(1, 4))
-                energyThreshold /= 2;
-            int maxWorkingDropletsNew = (int)((long)mechaCurEnergy / energyThreshold);
+            int maxWorkingDropletsNew = (int)((long)mechaCurEnergy / 100000000);
 
             //每个水滴update
             for (int i = 0; i < dropletArrayLength; i++)
@@ -149,8 +150,6 @@ namespace DSP_Battle
                 if (time % 120 == i)
                     dropletPool[i].CheckBullet(); //游荡而又没有实体的子弹强行返回机甲
             }
-            MoreMegaStructure.MMSCPU.EndSample(TCFVPerformanceMonitor.Droplet);
-            MoreMegaStructure.MMSCPU.EndSample(TCFVPerformanceMonitor.MainLogic);
 
         }
 
@@ -161,51 +160,26 @@ namespace DSP_Battle
 
         public static bool TryConsumeMechaEnergy(double energy)
         {
-            if (Relic.HaveRelic(1, 4)) // relic1-4 水滴减耗
-            {
-                if (Relic.HaveRelic(0, 9)) // 铲子强化
-                    energy *= 0.4;
-                else
-                    energy *= 0.5;
-            }
+            if (Relic.HaveRelic(1, 4)) energy *= 0.5; // relic1-4 水滴减耗
             if (Relic.HaveRelic(2, 6)) energy *= 0.6; // relic2-6 水滴减耗
             if (GameMain.mainPlayer.mecha.coreEnergy >= energy)
             {
-                Mecha obj = GameMain.mainPlayer.mecha;
-                lock (obj)
-                {
-                    GameMain.mainPlayer.mecha.coreEnergy -= energy;
-                    GameMain.mainPlayer.mecha.MarkEnergyChange(13, -energy);
-                }
+                GameMain.mainPlayer.mecha.coreEnergy -= energy;
+                GameMain.mainPlayer.mecha.MarkEnergyChange(13, -energy);
                 return true;
             }
             else
                 return false;
         }
 
-        public static void RestoreMechaEnergy(double energy)
-        {
-            Mecha obj = GameMain.mainPlayer.mecha;
-            lock (obj)
-            {
-                GameMain.mainPlayer.mecha.coreEnergy += energy;
-                if (GameMain.mainPlayer.mecha.coreEnergy > GameMain.mainPlayer.mecha.coreEnergyCap)
-                    GameMain.mainPlayer.mecha.coreEnergy = GameMain.mainPlayer.mecha.coreEnergyCap;
-            }
-        }
-
         public static void ForceConsumeMechaEnergy(double energy)
         {
             if (Relic.HaveRelic(1, 4)) energy *= 0.5; // relic1-4 水滴减耗
             if (Relic.HaveRelic(2, 6)) energy *= 0.6; // relic2-6 水滴减耗
-            Mecha obj = GameMain.mainPlayer.mecha;
-            lock (obj)
-            {
-                double curEnergy = GameMain.mainPlayer.mecha.coreEnergy;
-                energy = energy < curEnergy ? energy : curEnergy;
-                GameMain.mainPlayer.mecha.coreEnergy -= energy;
-                GameMain.mainPlayer.mecha.MarkEnergyChange(13, -energy);
-            }
+            double curEnergy = GameMain.mainPlayer.mecha.coreEnergy;
+            energy = energy < curEnergy ? energy : curEnergy;
+            GameMain.mainPlayer.mecha.coreEnergy -= energy;
+            GameMain.mainPlayer.mecha.MarkEnergyChange(13, -energy);
         }
 
         public static void DamageGrow()
@@ -224,16 +198,11 @@ namespace DSP_Battle
                 int slotNum = 0;
                 for (int rnum = 0; rnum < 10; rnum++)
                 {
-                    if (Relic.HaveRelic(4, rnum) && !Relic.isRecorded(4, rnum))
-                        slotNum++;
-                }
-                for (int rnum = 0; rnum < 10; rnum++)
-                {
-                    if (Relic.HaveRelic(0, rnum) && !Relic.isRecorded(0, rnum))
+                    if (Relic.HaveRelic(0, rnum))
                         slotNum++;
                 }
                 if (slotNum >= 8) return;
-                UIRelic.relicSlotUIBtns[slotNum].tips.tipText = "遗物描述0-10".Translate() + "\n" + "relicTipText0-10".Translate() + "\n\n<color=#61d8ffb4>" + "当前加成gm".Translate() + "  " + Droplets.bonusDamage / 100 + " / " + Droplets.bonusDamageLimit / 100 + "</color>";
+                UIRelic.relicSlotUIBtns[slotNum].tips.tipText = "遗物描述0-10".Translate() + "\n" + "relicTipText0-10".Translate() + "\n\n<color=#61d8ffb4>" + "当前加成gm".Translate() + "  " + Droplets.bonusDamage + " / " + Droplets.bonusDamageLimit + "</color>";
                 if (UIRelic.relicSlotUIBtns[slotNum].tipShowing)
                 {
                     UIRelic.relicSlotUIBtns[slotNum].OnPointerExit(null);
@@ -242,15 +211,15 @@ namespace DSP_Battle
                 }
                 try
                 {
-                    int width = (int)Math.Log10(bonusDamage / 100) * 12 + 200;
-                    Utils.UIItemUp(8035, Relic.dropletDamageGrowth / 100, width, bonusDamage / 100);
+                    int width = (int)Math.Log10(bonusDamage) * 12 + 200;
+                    Utils.UIItemUp(8035, Relic.dropletDamageGrowth, width, bonusDamage);
                 }
                 catch (Exception)
                 { }
             }
         }
 
-        public static void Export(BinaryWriter w)
+        public static void Export(BinaryWriter w) 
         {
             for (int i = 0; i < dropletArrayLength; i++)
             {
@@ -259,10 +228,10 @@ namespace DSP_Battle
             w.Write(bonusDamage);
             w.Write(bonusDamageLimit);
         }
-        public static void Import(BinaryReader r)
+        public static void Import(BinaryReader r) 
         {
             InitAll();
-            if (Configs.versionWhenImporting >= 30220328)
+            if(Configs.versionWhenImporting >= 30220328)
             {
                 for (int i = 0; i < dropletArrayLength; i++)
                 {
@@ -280,7 +249,7 @@ namespace DSP_Battle
                 bonusDamageLimit = Relic.dropletDamageLimitGrowth;
             }
         }
-        public static void IntoOtherSave()
+        public static void IntoOtherSave() 
         {
             InitAll();
         }
@@ -299,8 +268,6 @@ namespace DSP_Battle
         int[] bulletIds = new int[bulletCnt];
         int targetEnemyId = -1;
         int randSeed = 0; //决定水滴在撞向敌舰时的一个随机的小偏移，使其往返攻击时不是在两个点之间来回飞，而是有一些随机的角度变化，每次find敌人和从2阶段回到1阶段都会改变一次randSeed
-
-        int curTargetLockTime = 0; // 在一个敌人上持续锁定的时长。不存档。切换目标时置0。
 
         public Droplet(int idx)
         {
@@ -403,7 +370,7 @@ namespace DSP_Battle
             VectorLF3 beginUPos = GetIdleUPos();
             VectorLF3 endUPos = beginUPos + (GameMain.localPlanet == null ? (VectorLF3)(GameMain.mainPlayer.uRotation * new VectorLF3(0, 0, 300)) : new VectorLF3(0, 0, 300));
             bool validTarget = false;
-            if (CheckOrSearchTarget() || forceLaunchState > 0)
+            if(CheckOrSearchTarget() || forceLaunchState > 0)
             {
                 if (targetEnemyId > 0 && targetEnemyId < GameMain.data.spaceSector.enemyPool.Length)
                 {
@@ -445,18 +412,17 @@ namespace DSP_Battle
         /// 搜索最近的敌军单位（火种除外）
         /// </summary>
         /// <returns></returns>
-        bool SearchNextNearestTarget(bool distanceCenterIsMecha = false, bool nearMecha = false)
+        bool SearchNextNearestTarget(bool nearMecha = false)
         {
             SpaceSector sector = GameMain.data.spaceSector;
             EnemyData[] enemyPool = sector.enemyPool;
             int enemyCursor = sector.enemyCursor;
             EnemyDFHiveSystem[] dfHivesByAstro = sector.dfHivesByAstro;
             Vector3 currentUPos = GetCurrentUPos();
-            if (distanceCenterIsMecha)
+            if (nearMecha)
                 currentUPos = GameMain.mainPlayer.uPosition;
-            Vector3 mechaUPos = GameMain.mainPlayer.uPosition;
             float defaultCheckDistance2 = 60000f * 60000f;
-            if (forceLaunchState > 0)// 手动launch的水滴寻敌距离是无限的，否则只有以 水滴/机甲(取决于nearMecha的值) 本身为中心的1.5AU半径
+            if (forceLaunchState > 0)// 手动launch的水滴寻敌距离是无限的，否则只有以水滴本身为中心的1.5AU半径
             {
                 defaultCheckDistance2 = float.MaxValue;
             }
@@ -487,43 +453,25 @@ namespace DSP_Battle
                         else if (enemyDFHiveSystem.starData.index != swarmIndex)
                             continue;
                     }
-                    sector.TransformFromAstro_ref(ptr.astroId, out zero, ref ptr.pos);
+                    sector.TransformFromAstro_ref(ptr.astroId, out zero, ref ptr.pos); 
                     checkDistance2 = targetDistances[poolLen - 1];
                     if (ptr.unitId > 0)
                         checkDistance2 = isUnitTargetDistance;
                     float x = (float)(zero.x - currentUPos.x);
                     float x2 = x * x;
-                    float xm2 = 0;
-                    if (!distanceCenterIsMecha && nearMecha)
-                    {
-                        float xm = (float)(zero.x - mechaUPos.x);
-                        xm2 = xm * xm;
-                    }
-                    if (x2 <= checkDistance2 && xm2 <= checkDistance2)
+                    if (x2 <= checkDistance2)
                     {
                         float y = (float)(zero.y - currentUPos.y);
                         float y2 = y * y;
-                        float ym2 = 0;
-                        if (!distanceCenterIsMecha && nearMecha)
-                        {
-                            float ym = (float)(zero.y - mechaUPos.y);
-                            ym2 = ym * ym;
-                        }
-                        if (y2 <= checkDistance2 && ym2 <= checkDistance2)
+                        if (y2 <= checkDistance2)
                         {
                             float z = (float)(zero.z - currentUPos.z);
                             float z2 = z * z;
-                            float zm2 = 0;
-                            if (!distanceCenterIsMecha && nearMecha)
-                            {
-                                float zm = (float)(zero.z - mechaUPos.z);
-                                zm2 = zm * zm;
-                            }
-                            if (z2 <= checkDistance2 && zm2 <= checkDistance2)
+                            if (z2 <= checkDistance2)
                             {
                                 //bool isUnit = ptr.unitId > 0;
                                 float distance2 = x2 + y2 + z2;
-                                if (distance2 <= checkDistance2)
+                                if (distance2 <= checkDistance2) 
                                 {
                                     if (ptr.unitId > 0)
                                     {
@@ -568,12 +516,9 @@ namespace DSP_Battle
                 targetEnemyId = targetIds[Utils.RandInt(0, foundCount)];
             else
                 targetEnemyId = isUnitTargetId;
-
-            if(foundCount > 0 || isUnitTargetId > 0)
-                curTargetLockTime = 0;
             return foundCount > 0 || isUnitTargetId > 0;
         }
-
+        
 
         /// <summary>
         /// 判定当前目标是否存在且合法，如果不是，寻找并锁定下一个最近的合法目标，如果找不到，返回false
@@ -584,23 +529,13 @@ namespace DSP_Battle
             if (targetEnemyId > 0)
             {
                 SpaceSector sector = GameMain.data.spaceSector;
-                if (sector.enemyPool.Length > targetEnemyId && sector.enemyCursor > targetEnemyId)
+                if(sector.enemyPool.Length > targetEnemyId && sector.enemyCursor > targetEnemyId)
                 {
                     EnemyData ptr = sector.enemyPool[targetEnemyId];
                     if (ptr.id > 0 && ptr.id == targetEnemyId)
                     {
                         EnemyDFHiveSystem[] dfHivesByAstro = sector.dfHivesByAstro;
                         int hiveAstroId = ptr.originAstroId - 1000000;
-                        if (hiveAstroId >= 0 && hiveAstroId <= AssaultController.invincibleHives.Length)
-                        {
-                            if (AssaultController.invincibleHives[hiveAstroId] >= 0 && curTargetLockTime > 60 && !ptr.isAssaultingUnit) // 攻击/追击近乎无敌的虚空同化中的目标超过一秒后会尝试切换目标
-                            {
-                                if (Utils.RandDouble() <= 0.9)
-                                    return SearchNextNearestTarget(true, true); // 如果是因为攻击无敌目标而且换，有很大概率优先攻击距离机甲较近的，而非距离水滴自己当前位置较近的
-                                return SearchNextNearestTarget(false, true); // 通常攻击距离水滴自身距离比较近的单位
-                            }
-
-                        }
                         if (hiveAstroId >= 0 && hiveAstroId < dfHivesByAstro.Length)
                         {
                             EnemyDFHiveSystem enemyDFHiveSystem = dfHivesByAstro[ptr.originAstroId - 1000000];
@@ -612,12 +547,9 @@ namespace DSP_Battle
                     }
                 }
             }
-            if(Utils.RandDouble() <= 0.05)
-                return SearchNextNearestTarget(true, true); // 一定概率优先攻击距离机甲较近的，而非距离水滴自己当前位置较近的
-            return SearchNextNearestTarget(false, true); // 通常攻击距离水滴自身距离比较近的单位
+            return SearchNextNearestTarget();
         }
 
-        // 发现附近的敌人
         public bool DiscoverSpaceEnemy()
         {
             VectorLF3 centerPosU = GameMain.mainPlayer.uPosition;
@@ -627,7 +559,7 @@ namespace DSP_Battle
             int enemyCursor = sector.enemyCursor;
             EnemyDFHiveSystem[] dfHivesByAstro = sector.dfHivesByAstro;
             float sensorRange = 40000f * 40000f;
-            if (LDB.fleets.Select(3) != null)
+            if(LDB.fleets.Select(3) != null)
             {
                 var fleetProto = LDB.fleets.Select(3);
                 sensorRange = (float)Math.Max(sensorRange, (double)(fleetProto.prefabDesc?.fleetMaxActiveArea * fleetProto.prefabDesc?.fleetMaxActiveArea * 4));
@@ -695,17 +627,16 @@ namespace DSP_Battle
         public void Update(bool working = true)
         {
             if (state < 0) return;
-            //Utils.Log($"droplet {dropletIndex} state is {state}");
             if (swarmIndex < 0)
             {
                 swarmIndex = GameMain.localStar != null ? GameMain.localStar.index : -1;
             }
-            if (GameMain.localStar == null)
+            if(GameMain.localStar == null)
             {
                 SetStandby();
                 return;
             }
-            else if (GameMain.localStar.index != swarmIndex)
+            else if(GameMain.localStar.index != swarmIndex)
             {
                 SetStandby();
                 return;
@@ -718,8 +649,7 @@ namespace DSP_Battle
             }
             int playerSwarmIndex = GameMain.localStar != null ? GameMain.localStar.index : -1;
             //Utils.Log($"playerindex {playerSwarmIndex}/swarm{swarmIndex}, and state = {state}, forceL={forceLaunchState}, discover?{DiscoverSpaceEnemy()}", 60);
-            bool hasNearEnemy = DiscoverSpaceEnemy();
-            if (state == 0 && (hasNearEnemy || forceLaunchState > 0) && playerSwarmIndex >= 0)
+            if (state == 0 && (DiscoverSpaceEnemy() || forceLaunchState > 0) && playerSwarmIndex >= 0)
             {
                 Launch(playerSwarmIndex);
             }
@@ -742,18 +672,10 @@ namespace DSP_Battle
             }
             if (state >= 2 && state <= 3 && working) //只有不是飞出、返航过程，才会消耗能量
             {
-                double ratio = 1.0;
-                if (Relic.HaveRelic(1, 4))
-                    ratio *= 0.5;
-                if (validTargetEnemy)
-                {
-                    if (!hasNearEnemy)
-                        Droplets.ForceConsumeMechaEnergy(Droplets.energyConsumptionPerTick * ratio * 10 * SkillPoints.dropletEnergyPunishmentRate); // 主动出击状态且攻击的远程敌人，10倍耗能
-                    else
-                        Droplets.ForceConsumeMechaEnergy(Droplets.energyConsumptionPerTick * ratio);
-                }
+                if(validTargetEnemy)
+                    Droplets.ForceConsumeMechaEnergy(Droplets.energyConsumptionPerTick);
                 else
-                    Droplets.ForceConsumeMechaEnergy(Droplets.energyConsumptionPerTick * ratio / 100);
+                    Droplets.ForceConsumeMechaEnergy(Droplets.energyConsumptionPerTick / 100);
             }
 
             if (state >= 2 && state <= 3 && !working) //如果因为机甲能量水平不够，水滴会停在原地，但是如果战斗状态结束了，那么水滴会无视能量限制继续正常Update（正常Update会在战斗结束后让水滴立刻进入4阶段回机甲）
@@ -795,7 +717,6 @@ namespace DSP_Battle
             //}
             if (state == 2 || state == 4) //追敌中或强制返航途中
             {
-                curTargetLockTime++;
                 float lastT = swarm.bulletPool[bulletIds[0]].t;
                 float lastMaxt = swarm.bulletPool[bulletIds[0]].maxt;
                 //如果原目标不存在了（或被强制召回（前提是机甲附近没有目标）的状态state==4），回机甲附近，然后收回太空中的水滴
@@ -805,13 +726,9 @@ namespace DSP_Battle
                         state = 2;
                     VectorLF3 newBegin = GetCurrentUPos();
                     VectorLF3 newEnd = GetIdleUPos();
-                    if ((newEnd - newBegin).magnitude <= Configs.dropletSpd * 0.05f * 0.034f || lastMaxt - lastT <= 0.034f)
+                    if ((newEnd - newBegin).magnitude <= Configs.dropletSpd * 0.034f || lastMaxt - lastT <= 0.034f)
                     {
                         SetStandby();
-                    }
-                    else if ((newEnd - newBegin).magnitude <= Configs.dropletSpd * 0.3f && GameMain.localPlanet == null)
-                    {
-                        RetargetAllBullet(newBegin, newEnd, bulletIds.Length, maxPosDelta, maxPosDelta, Configs.dropletSpd * 0.05f * (0.8 + 0.02 * dropletIndex));
                     }
                     else
                     {
@@ -827,7 +744,7 @@ namespace DSP_Battle
                     VectorLF3 newEnd = (enemyUPos - newBegin).normalized * exceedDis + enemyUPos;
                     float newMaxt = (float)((newEnd - newBegin).magnitude / Configs.dropletSpd);
                     double realSpd = Configs.dropletSpd;
-                    if (Rank.rank >= 6 || Configs.developerMode) // 水滴快速接近
+                    if (Rank.rank >= 8 || Configs.developerMode) // 水滴快速接近
                     {
                         double warpRushDist = (enemyUPos - newBegin).magnitude - exceedDis;
                         if (warpRushDist > Droplets.warpRushDistThr && Droplets.warpRushCharge[dropletIndex] >= Droplets.warpRushNeed)
@@ -845,10 +762,10 @@ namespace DSP_Battle
                     if ((newBegin - enemyUPos).magnitude < 500 || newMaxt <= exceedDis * 1.0 / Configs.dropletSpd + 0.035f)
                     {
                         int damage = Configs.dropletAtk;
-                        if (Rank.rank >= 9) damage = 2 * Configs.dropletAtk;
+                        if (Rank.rank >= 10) damage = 5 * Configs.dropletAtk;
                         if (Relic.HaveRelic(0, 10))
-                            damage = damage + Relic.BonusDamage(Droplets.bonusDamage, 1);
-                        Attack(damage);
+                            damage = damage + (Relic.BonusDamage(Droplets.bonusDamage, 1) - Droplets.bonusDamage);
+                        Attack(damage); 
                         newEnd = (enemyUPos - newBegin).normalized * exceedDis * RandExceedDisRatio() + enemyUPos;
                         state = 3; //击中后继续冲过目标，准备转向的阶段
                     }
@@ -862,11 +779,7 @@ namespace DSP_Battle
                 VectorLF3 newBegin = GetCurrentUPos();
                 if (lastMaxt - lastT <= 0.035) //到头了，执行转向/重新索敌
                 {
-                    if (forceLaunchState == 0 && !DiscoverSpaceEnemy()) // 被动接敌模式且附近无敌人，返航
-                    {
-                        state = 4;
-                    }
-                    else if (CheckOrSearchTarget())
+                    if (CheckOrSearchTarget())
                     {
                         state = 2; //回到追敌攻击状态
                         VectorLF3 uEnd = swarm.bulletPool[bulletIds[0]].uEnd;
@@ -900,28 +813,7 @@ namespace DSP_Battle
                 caster.id = 1;
                 caster.type = ETargetType.Player;
                 caster.astroId = 0;
-                ref CombatStat stat = ref sector.skillSystem.DamageObject(damage, 1, ref target, ref caster);
-                if (stat.hp <= 0)
-                {
-                    if (Relic.HaveRelic(0, 10))
-                    {
-                        Droplets.DamageGrow();
-                        Droplets.RestoreMechaEnergy(Relic.dropletEnergyRestore);
-                    }
-                    if(AssaultController.CheckCasterOrTargetHasModifier(ref target) && AssaultController.modifier[4] > 0) // modifier 4
-                    {
-                        if(Utils.RandDouble() * 100 < AssaultController.modifier[4])
-                        {
-                            int fleetIndex = dropletIndex / 3;
-                            int fighterIndex = dropletIndex % 3;
-                            ModuleFleet[] fleets = GameMain.mainPlayer?.mecha?.spaceCombatModule?.moduleFleets;
-                            if(fleets != null && fleets.Length > fleetIndex && fleets[fleetIndex].fighters.Length > fighterIndex)
-                            {
-                                fleets[fleetIndex].ClearFighterCount(fighterIndex);
-                            }
-                        }
-                    }
-                }
+                sector.skillSystem.DamageObject(damage, 1,ref target,ref caster);
             }
             return damage;
         }
@@ -931,7 +823,7 @@ namespace DSP_Battle
             VectorLF3 uPos000 = GetIdleUPos();
             DysonSwarm swarm = GetSwarm();
 
-            if (state <= 0 || swarm == null) return uPos000;
+            if (state <=0 || swarm == null) return uPos000;
             if (swarm.bulletPool.Length <= bulletIds[0])
             {
                 state = 0;
@@ -988,7 +880,7 @@ namespace DSP_Battle
                 Vector3 vec;
                 sector.skillSystem.GetObjectUPositionAndVelocity(ref target, out enemyUPos, out vec);
                 enemyUPos += (VectorLF3)vec * 0.016666667f;
-                if (addRandomPos)
+                if(addRandomPos)
                     enemyUPos += Utils.RandPosDelta(ref randSeed) * 200;
                 return true;
             }
@@ -1033,9 +925,8 @@ namespace DSP_Battle
             int tailT = speed > Droplets.warpRushDistThr * 5 ? 1 : 4;
             float newBeginT = originalT < 0.0166667f * tailT ? originalT : 0.0166667f * tailT;
 
-            VectorLF3 uBegin = newUBegin + (newUBegin - newUEnd).normalized * speed * newBeginT;
+            VectorLF3 uBegin = newUBegin + (newUBegin-newUEnd).normalized * speed * newBeginT;
             VectorLF3 uEnd = newUEnd;
-            VectorLF3 uEndVel = (newUBegin - newUEnd).normalized * speed;
 
             float newMaxt = 1;
             if (speed > 0)
@@ -1051,7 +942,6 @@ namespace DSP_Battle
             swarm.bulletPool[bulletIds[0]].maxt = newMaxt + newBeginT;
             swarm.bulletPool[bulletIds[0]].uBegin = uBegin;
             swarm.bulletPool[bulletIds[0]].uEnd = uEnd;
-            swarm.bulletPool[bulletIds[0]].uEndVel = uEndVel;
 
             for (int i = 1; i < bulletNum; i++)
             {
@@ -1060,12 +950,11 @@ namespace DSP_Battle
                 swarm.bulletPool[bulletIds[i]].maxt = newMaxt + newBeginT;
                 swarm.bulletPool[bulletIds[i]].uBegin = newUBegin + Utils.RandPosDelta(ref randSeed) * randomBeginRatio; //uBegin + Utils.RandPosDelta(randSeed + i + 100) * randomBeginRatio;
                 swarm.bulletPool[bulletIds[i]].uEnd = uEnd + Utils.RandPosDelta(ref randSeed) * randomEndRatio;
-                swarm.bulletPool[bulletIds[i]].uEndVel = uEndVel;
             }
 
         }
 
-        public void TryRemoveOtherBullets(int beginIndex = 1)
+        public void TryRemoveOtherBullets(int beginIndex=1)
         {
             state = state >= 0 ? 0 : state;
             if (swarmIndex < 0) return;
