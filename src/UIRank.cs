@@ -1,7 +1,12 @@
-﻿using HarmonyLib;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
+using HarmonyLib;
 using UnityEngine.UI;
+using System.IO;
 
 namespace DSP_Battle
 {
@@ -14,12 +19,10 @@ namespace DSP_Battle
         public static GameObject rankExpBarObj;
         public static GameObject frontBarObj;
         public static GameObject backBarObj;
-        public static GameObject attentionMarkObj;
         public static Image rankIcon;
         public static Image expBarImg;
         public static Text rankText;
         public static Text expText;
-        public static Text attentionMarkText;
         static string color1Left = "<color=#c2853d>";
         static string colorRight = "</color>";
         public static Text promotionNoticeMainText = null;
@@ -29,8 +32,6 @@ namespace DSP_Battle
         public static Color rank03Color = new Color(0.38f, 0.847f, 1f, 0.7f);
         public static Color rank46Color = new Color(0.823f, 0.22f, 1f, 0.7f);
         public static Color rank79Color = new Color(0.99f, 0.588f, 0.125f, 0.753f);
-
-        public static Sprite[] rank = new Sprite[12];
 
         public static void InitUI()
         {
@@ -47,7 +48,7 @@ namespace DSP_Battle
             }
             rankObj = new GameObject();
             GameObject inGameObj = GameObject.Find("UI Root/Overlay Canvas/In Game");
-
+            
             rankObj.name = "BattleRank";
             rankObj.transform.SetParent(inGameObj.transform);
 
@@ -62,14 +63,8 @@ namespace DSP_Battle
             rankIconObj.transform.localPosition = new Vector3(0, 40, 0);
             rankIconObj.transform.localScale = new Vector3(1, 1, 1);
             rankIcon = rankIconObj.GetComponent<Image>();
-            if (rank[0] == null) {
-                rank[0] = Resources.Load<Sprite>("Assets/DSPBattle/rank0");
-            }
-            rankIcon.sprite = rank[0];
+            rankIcon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/rank0");
             uiBtn = rankIconObj.GetComponent<UIButton>();
-            Button rankClickButton = rankIconObj.AddComponent<Button>();
-            rankClickButton.onClick.RemoveAllListeners();
-            rankClickButton.onClick.AddListener(() => { UISkillPointsWindow.Switch(); });
 
             rankTextObj = GameObject.Instantiate(oriTextObj);
             rankTextObj.name = "text-title";
@@ -115,16 +110,6 @@ namespace DSP_Battle
             expText.supportRichText = true;
             expText.text = "";
 
-            attentionMarkObj = GameObject.Instantiate(GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Assembler Window/produce/circle-back/cnt-text"), rankObj.transform);
-            attentionMarkObj.name = "attentionmark";
-            attentionMarkObj.transform.localPosition = new Vector3(46f, 22f, 0);
-            attentionMarkObj.transform.localScale = new Vector3(1, 1, 1);
-            attentionMarkText = attentionMarkObj.GetComponent<Text>();
-            attentionMarkText.text = "□";
-            attentionMarkText.alignment = TextAnchor.MiddleRight;
-            attentionMarkText.fontSize = 30;
-
-
             if (Rank.rank >= 0 && Rank.rank <= 10) ForceRefreshAll();
         }
 
@@ -136,7 +121,7 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(UIButtonTip), "Create")]
         public static void UIButtonTipTitleSetSupportRichText(string title, ref UIButtonTip __result)
         {
-            if (title != null && title.Length > 0 && title[0] == '<') //对于<color=#>形式的标题，修改标题支持richtext
+            if( title !=null && title.Length>0 && title[0] == '<') //对于<color=#>形式的标题，修改标题支持richtext
             {
                 __result.titleComp.supportRichText = true;
             }
@@ -161,14 +146,11 @@ namespace DSP_Battle
             if (rankObj == null) return;
             rankIconObj.SetActive(true);
             rankText.text = ("gmRank" + Rank.rank.ToString()).Translate();
-            if (rank[Rank.rank] == null) {
-                rank[Rank.rank] = Resources.Load<Sprite>($"Assets/DSPBattle/rank{Rank.rank}");
-            }
-            rankIcon.sprite = rank[Rank.rank];
-            uiBtn.tips.width = 250;
+            rankIcon.sprite = Resources.Load<Sprite>("Assets/DSPBattle/rank" + Rank.rank.ToString());
+            uiBtn.tips.width = 270;
             uiBtn.tips.delay = 0.1f;
             uiBtn.tips.offset = new Vector2(-190, 60);
-            RefreshTextAndMark();
+            RefreshText();
 
             if (uiBtn.tipShowing)
             {
@@ -177,10 +159,10 @@ namespace DSP_Battle
                 uiBtn.enterTime = 1;
             }
 
-            if (Rank.rank > 10)
+            if (Rank.rank >= 10)
             {
-                rankExpBarObj.SetActive(true);
-                rankExpTextObj.SetActive(true);
+                rankExpBarObj.SetActive(false);
+                rankExpTextObj.SetActive(false);
             }
             else
             {
@@ -208,52 +190,42 @@ namespace DSP_Battle
         {
             int rank = Rank.rank;
             string res = "";
-
-            if (SkillPoints.UnusedPoints() > 0 && !SkillPoints.isFullLevel)
+            if (rank > 0)
             {
-                if (UISkillPointsWindow.tempLevelAddedL.Sum() + UISkillPointsWindow.tempLevelAddedR.Sum() > 0)
-                    res = "剩余技能点待确认".Translate() + "\n";
-                else
-                    res = string.Format("剩余技能点".Translate(), SkillPoints.UnusedPoints()) + "\n";
-            }
-
-            res += "<color=#61d8ffb4>";
-            if (Relic.resurrectCoinCount > 0)
-                res += "-  " + "剩余复活币".Translate() + $"  {Relic.resurrectCoinCount}\n";
-            if (rank >= 1)
-                res += "-  " + "gmRankReward1".Translate() + "\n";
-            if (rank >= 2)
-                res += "-  " + "gmRankReward2".Translate() + "\n";
-            if (rank >= 3)
-                res += "-  " + "gmRankReward3".Translate() + "\n";
-            if (rank >= 4)
-            {
-                if (rank >= 10)
-                    res += "-  " + "gmRankReward10".Translate() + "\n";
-                else if (rank >= 7)
+                res = "<color=#61d8ffb4>";
+                if (rank >= 1)
+                    res += "-  " + "gmRankReward1".Translate() + "\n";
+                if (rank >= 7)
                     res += "-  " + "gmRankReward7".Translate() + "\n";
-                else
-                    res += "-  " + "gmRankReward4".Translate() + "\n";
+                else if (rank >= 3)
+                    res += "-  " + "gmRankReward3".Translate() + "\n";
+                if (rank >= 5)
+                    res += "-  " + "gmRankReward5".Translate() + "\n";
+                if (rank >= 2)
+                    res += "-  " + "gmRankReward2".Translate() + (rank / 2 * 2).ToString() + "0%\n";
+                if (rank >= 8)
+                    res += "-  " + "gmRankReward8".Translate() + "\n";
+                if (rank >= 9)
+                    res += "-  " + "gmRankReward9".Translate() + "\n";
+                if (rank == 10)
+                    res += "-  " + "gmRankReward10".Translate();
+                res += "</color>";
             }
-            if (rank >= 5)
-                res += "-  " + "gmRankReward5".Translate() + "\n";
-            if (rank >= 6)
-                res += "-  " + "gmRankReward6".Translate() + "\n";
-            if (rank >= 8)
-                res += "-  " + "gmRankReward8".Translate() + "\n";
-            if (rank >= 9)
-                res += "-  " + "gmRankReward9".Translate();
-            if (Relic.trueDamageActive > 0)
-                res += "\n- " + "真实伤害已启用".Translate();
-            res += "</color>";
-
             int nextRank = rank + 1;
-            if (rank > 0 && rank < 10)
+            if (rank > 0 && rank < 10) 
                 res += "\n";
-            if (rank < 10)
+            if (rank<10)
             {
                 res += "下一功勋等级解锁".Translate() + "\n<color=#61d8ffb4>-  ";
-                res += $"gmRankUnlockText{nextRank}".Translate();
+                if (nextRank % 2 == 0)
+                    res += "gmRankReward2".Translate() + "20%";
+                else
+                    res += ("gmRankReward" + nextRank.ToString()).Translate();
+                if (nextRank == 10)
+                    res += "\n-  " + "gmRankReward10".Translate();
+                else if (nextRank == 8)
+                    res += "\n-  " + "gmRankReward8".Translate();
+
                 res += "</color>";
             }
 
@@ -264,11 +236,11 @@ namespace DSP_Battle
         [HarmonyPatch(typeof(GameData), "GameTick")]
         public static void UIRankGameTick(ref GameData __instance, long time)
         {
-            if (Rank.rank >= 0 && Rank.rank <= 10)
+            if (Rank.rank >= 0 && Rank.rank < 10)
             {
                 float expProp = Rank.exp * 1.0f / Configs.expToNextRank[Rank.rank];
                 expBarImg.fillAmount = expProp < 1 ? expProp : 1;
-                if (uiBtn.tip != null && uiBtn.tipShowing)
+                if(uiBtn.tip != null && uiBtn.tipShowing)
                 {
                     expText.text = Rank.exp.ToString() + " / " + Configs.expToNextRank[Rank.rank].ToString();
                 }
@@ -283,60 +255,14 @@ namespace DSP_Battle
             if (promotionNoticeSubText == null)
                 promotionNoticeSubText = GameObject.Find("UI Root/Overlay Canvas/In Game/Top Tips/research-complete/sub-text").GetComponent<Text>();
 
-            if (time % 120 == 22)
-            {
-                int fullLevel = 0;
-                for (int i = 0; i < SkillPoints.skillCountL; i++)
-                {
-                    fullLevel += SkillPoints.skillMaxLevelL[i];
-                    fullLevel -= SkillPoints.skillLevelL[i];
-                }
-                for (int i = 0; i < SkillPoints.skillCountR; i++)
-                {
-                    fullLevel += SkillPoints.skillMaxLevelR[i];
-                    fullLevel -= SkillPoints.skillLevelR[i];
-                }
-                if (fullLevel <= 0)
-                    SkillPoints.isFullLevel = true;
-                else
-                    SkillPoints.isFullLevel = false;
-            }
-
-            RefreshTextAndMark();
+            RefreshText();
         }
 
-        public static void RefreshTextAndMark()
+        public static void RefreshText()
         {
             //刷新
             uiBtn.tips.tipTitle = ("gmRank" + Rank.rank.ToString()).Translate();
             uiBtn.tips.tipText = GetRankInfoText();
-
-            // 有未使用的授权点时，且还能使用时，闪烁感叹号
-            if (SkillPoints.UnusedPoints() > 0 && !SkillPoints.isFullLevel)
-            {
-                attentionMarkObj.SetActive(true);
-                //if (Rank.rank <= 8)
-                //{
-                //    // attentionMarkObj.transform.localPosition = new Vector3(49.5f, -75, 0); // -75
-                //}
-                //else
-                //{
-                //    // attentionMarkObj.transform.localPosition = new Vector3(49.5f, -78, 0); // -78
-                //}
-                int t = (int)(GameMain.instance.timei % 120);
-                float alpha = 0.65f + 0.2f * t / 60;
-                if (t > 60)
-                {
-                    alpha = 0.85f - 0.2f * (t - 60) / 60;
-                }
-                attentionMarkText.color = new Color(1f, 0.62f, 0.14f, alpha);
-                attentionMarkText.text = SkillPoints.UnusedPoints().ToString(); 
-            }
-            else
-            {
-                attentionMarkObj.SetActive(false);
-                //ESButtonCircle.color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
-            }
         }
 
         public static void UIPromotionNotify()
@@ -352,9 +278,6 @@ namespace DSP_Battle
 
             UIDialogPatch.ShowUIDialog(("gmRankNoColor" + Rank.rank.ToString()).Translate(), ("gmRankUnlockText" + Rank.rank.ToString()).Translate(), 1, rankIcon.sprite);
         }
-        public static void UIPointsGainNotify()
-        {
-            VFAudio.Create("research-complete", null, Vector3.zero, true, 0, -1, -1L);
-        }
+        
     }
 }

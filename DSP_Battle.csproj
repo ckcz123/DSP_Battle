@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>D:\SteamLibrary\steamapps\common\Dyson Sphere Program\BepInEx\plugins\</OutputPath>
+    <OutputPath>..\..\..\Steam\steamapps\common\Dyson Sphere Program\BepInEx\plugins\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -35,41 +35,35 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony20">
-      <HintPath>D:\SteamLibrary\steamapps\common\Dyson Sphere Program\BepInEx\core\0Harmony20.dll</HintPath>
+      <HintPath>..\..\..\Steam\steamapps\common\Dyson Sphere Program\BepInEx\core\0Harmony20.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-publicized">
       <HintPath>dependencies\Assembly-CSharp-publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="BepInEx, Version=5.4.17.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="BepInEx">
       <HintPath>D:\SteamLibrary\steamapps\common\Dyson Sphere Program\BepInEx\core\BepInEx.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="CommonAPI, Version=1.6.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\SteamLibrary\steamapps\common\Dyson Sphere Program\BepInEx\plugins\CommonAPI\CommonAPI.dll</HintPath>
+      <HintPath>..\..\..\Steam\steamapps\common\Dyson Sphere Program\BepInEx\plugins\CommonAPI\plugins\CommonAPI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DSPModSave, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\SteamLibrary\steamapps\common\Dyson Sphere Program\BepInEx\plugins\DSPModSave.dll</HintPath>
+      <HintPath>..\..\..\Steam\steamapps\common\Dyson Sphere Program\BepInEx\plugins\DSPModSave.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="LDBTool, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\SteamLibrary\steamapps\common\Dyson Sphere Program\BepInEx\plugins\LDBTool.dll</HintPath>
+      <HintPath>..\..\..\Steam\steamapps\common\Dyson Sphere Program\BepInEx\plugins\LDBTool.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MoreMegaStructure, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\SteamLibrary\steamapps\common\Dyson Sphere Program\BepInEx\plugins\MoreMegaStructure.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="NebulaAPI, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\SteamLibrary\steamapps\common\Dyson Sphere Program\BepInEx\plugins\NebulaAPI\NebulaAPI.dll</HintPath>
+      <HintPath>dependencies\MoreMegaStructure.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -89,11 +83,11 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule">
-      <HintPath>D:\SteamLibrary\steamapps\common\Dyson Sphere Program\DSPGAME_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+      <HintPath>..\..\..\Steam\steamapps\common\Dyson Sphere Program\DSPGAME_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AudioModule">
-      <HintPath>D:\SteamLibrary\steamapps\common\Dyson Sphere Program\DSPGAME_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
+      <HintPath>..\..\..\Steam\steamapps\common\Dyson Sphere Program\DSPGAME_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
@@ -120,10 +114,6 @@
       <HintPath>..\..\..\Steam\steamapps\common\Dyson Sphere Program\DSPGAME_Data\Managed\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.UIElementsModule">
-      <HintPath>..\..\..\Steam\steamapps\common\Dyson Sphere Program\DSPGAME_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="UnityEngine.UIModule">
       <HintPath>..\..\..\Steam\steamapps\common\Dyson Sphere Program\DSPGAME_Data\Managed\UnityEngine.UIModule.dll</HintPath>
       <Private>False</Private>
@@ -134,8 +124,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\AssaultController.cs" />
-    <Compile Include="src\AssaultHive.cs" />
     <Compile Include="src\BattleBGMController.cs" />
     <Compile Include="src\BattleProtos.cs" />
     <Compile Include="src\DevConsole.cs" />
@@ -143,44 +131,27 @@
     <Compile Include="src\DropletFleetPatchers.cs" />
     <Compile Include="src\EventProto.cs" />
     <Compile Include="src\EventSystem.cs" />
-    <Compile Include="src\NebulaCompat\MP.cs" />
-    <Compile Include="src\NebulaCompat\NebulaCompatPlugin.cs" />
-    <Compile Include="src\NebulaCompat\PacketHandler.cs" />
-    <Compile Include="src\NebulaCompat\Packets.cs" />
-    <Compile Include="src\NebulaCompat\Synchronizer.cs" />
-    <Compile Include="src\NewGameOption.cs" />
+    <Compile Include="src\FastStartOption.cs" />
     <Compile Include="src\Rank.cs" />
     <Compile Include="src\Relic.cs" />
     <Compile Include="src\PlanetEngine.cs" />
     <Compile Include="src\RendererSphere.cs" />
-    <Compile Include="src\SkillPoints.cs" />
     <Compile Include="src\StarFortress.cs" />
     <Compile Include="src\StarFortressSilo.cs" />
     <Compile Include="src\StationOrderFixPatch.cs" />
     <Compile Include="src\Configs.cs" />
     <Compile Include="src\DspBattlePlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\TCFVPerformanceMonitor.cs" />
-    <Compile Include="src\UIAssaultAlert.cs" />
     <Compile Include="src\UIDialogPatch.cs" />
-    <Compile Include="src\UIEnemyBriefInfoPatcher.cs" />
-    <Compile Include="src\UIEscMenuPatch.cs" />
     <Compile Include="src\UIEventSystem.cs" />
-    <Compile Include="src\UIHiveNamePatcher.cs" />
     <Compile Include="src\UIRank.cs" />
     <Compile Include="src\UIRelic.cs" />
-    <Compile Include="src\UISkillPointsWindow.cs" />
     <Compile Include="src\UIStarFortress.cs" />
     <Compile Include="src\Utils.cs" />
-    <Compile Include="src\WormholeRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="battlebgm" />
-    <None Include="packages.config" />
     <None Include="README.md" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="src\Compat\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
